@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import relief from "@/assets/hero-relief.jpg";
 import water from "@/assets/hero-water.jpg";
 import mosque from "@/assets/hero-mosque.jpg";
