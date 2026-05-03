@@ -1,47 +1,113 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { posts } from "@/data/blog";
-import { toBnNum } from "@/data/projects";
+import relief from "@/assets/hero-relief.jpg";
 
 const Blog = () => {
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<string>("সকল");
+
+  const cats = useMemo(() => ["সকল", ...Array.from(new Set(posts.map((p) => p.category)))], []);
+  const filtered = posts.filter(
+    (p) =>
+      (cat === "সকল" || p.category === cat) &&
+      (q.trim() === "" || p.title.toLowerCase().includes(q.toLowerCase()) || p.excerpt.toLowerCase().includes(q.toLowerCase()))
+  );
+
+  const [featured, ...rest] = filtered;
+
   return (
     <SiteLayout>
       <Seo title="ব্লগ ও আপডেট | ইউনাইট ফাউন্ডেশন" description="ফাউন্ডেশনের সর্বশেষ ক্যাম্পেইন, ফিল্ড রিপোর্ট ও স্বচ্ছতা প্রতিবেদন।" canonical="/blog" />
 
-      <section className="bg-secondary/40 pt-14 pb-10 md:pt-20 md:pb-14">
-        <div className="container-page">
-          <span className="eyebrow">ব্লগ ও আপডেট</span>
-          <h1 className="heading-display mt-3 max-w-2xl">খবর, প্রতিবেদন ও মাঠের গল্প</h1>
-          <p className="mt-4 text-muted-foreground max-w-xl">
-            আমাদের প্রতিটি ক্যাম্পেইনের অগ্রগতি, ফিল্ড রিপোর্ট এবং স্বচ্ছতা প্রতিবেদন।
-          </p>
+      {/* Hero */}
+      <section className="relative h-[280px] md:h-[360px] overflow-hidden">
+        <img src={relief} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/75 to-primary/85" />
+        <div className="relative h-full container-page flex flex-col items-center justify-center text-center text-primary-foreground">
+          <h1 className="text-4xl md:text-6xl font-extrabold animate-fade-up">ব্লগ</h1>
+          <p className="mt-3 text-primary-foreground/85 max-w-xl animate-fade-up">খবর, প্রতিবেদন ও মাঠের গল্প — এক জায়গায়।</p>
         </div>
       </section>
 
-      <section className="py-12 md:py-16">
-        <div className="container-page grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
-          {posts.map((p) => (
-            <article key={p.slug} className="card-base flex flex-col">
-              <Link to={`/blog/${p.slug}`} className="block aspect-[16/10] overflow-hidden">
-                <img src={p.cover} alt={p.title} loading="lazy" width={900} height={600} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
-              </Link>
-              <div className="p-6 flex-1 flex flex-col">
-                <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
-                  <span className="px-2 py-1 rounded bg-accent text-accent-foreground font-semibold">{p.category}</span>
-                  <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" />{p.date}</span>
-                  <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{toBnNum(p.readMin)} মিনিট</span>
-                </div>
-                <h2 className="mt-3 text-lg font-bold leading-snug line-clamp-2 hover:text-primary transition-colors">
-                  <Link to={`/blog/${p.slug}`}>{p.title}</Link>
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
-                <Link to={`/blog/${p.slug}`} className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:gap-2.5 transition-all">
-                  পড়ুন <ArrowRight className="h-4 w-4" />
-                </Link>
+      {/* Search + filter bar */}
+      <section className="py-8 md:py-10 border-b border-border bg-secondary/30">
+        <div className="container-page flex flex-col md:flex-row gap-4 items-stretch md:items-center justify-between">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="ব্লগ খুঁজুন…"
+              className="w-full pl-11 pr-4 py-3 rounded-full bg-card shadow-card border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {cats.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCat(c)}
+                className={`whitespace-nowrap px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  cat === c
+                    ? "bg-accent text-primary border border-primary/20"
+                    : "bg-card border border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured */}
+      {featured && (
+        <section className="py-10 md:py-14">
+          <div className="container-page">
+            <Link
+              to={`/blog/${featured.slug}`}
+              className="group grid lg:grid-cols-2 gap-6 md:gap-10 items-stretch bg-card rounded-card overflow-hidden shadow-card hover:shadow-card-hover transition-all border border-border"
+            >
+              <div className="aspect-[16/11] lg:aspect-auto overflow-hidden">
+                <img src={featured.cover} alt={featured.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700" />
               </div>
-            </article>
+              <div className="p-6 md:p-10 flex flex-col justify-center">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary"><Calendar className="h-3.5 w-3.5" />{featured.date}</span>
+                <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-[1.2] group-hover:text-primary transition-colors">{featured.title}</h2>
+                <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-3">{featured.excerpt}</p>
+                <span className="mt-6 inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
+                  বিস্তারিত পড়ুন <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Grid */}
+      <section className="pb-16">
+        <div className="container-page grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+          {rest.map((p) => (
+            <Link
+              key={p.slug}
+              to={`/blog/${p.slug}`}
+              className="group bg-card rounded-card overflow-hidden shadow-card hover:shadow-card-hover transition-all border border-border flex flex-col"
+            >
+              <div className="aspect-[16/10] overflow-hidden">
+                <img src={p.cover} alt={p.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              </div>
+              <div className="p-6 flex-1 flex flex-col">
+                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{p.date}</span>
+                <h3 className="mt-2 text-lg font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.title}</h3>
+                <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm group-hover:gap-2.5 transition-all">
+                  পড়ুন <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
