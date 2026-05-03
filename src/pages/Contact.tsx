@@ -3,6 +3,8 @@ import { Mail, Phone, MapPin, MessageCircle, Send, Facebook, Youtube, Instagram 
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
+import contactImg from "@/assets/hero-mosque.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
