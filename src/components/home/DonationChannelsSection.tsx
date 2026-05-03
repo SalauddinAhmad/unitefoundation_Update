@@ -88,9 +88,9 @@ export const DonationChannelsSection = () => {
       {/* Glow accents */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl -z-10" />
       <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl -z-10" />
-      {/* Top & bottom edge fade */}
-      <div className="absolute inset-x-0 top-0 h-24 -z-10 bg-gradient-to-b from-background to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-background to-transparent" />
+      {/* Top & bottom edge fade to blend with page */}
+      <div className="absolute inset-x-0 top-0 h-16 -z-10 bg-gradient-to-b from-background to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-16 -z-10 bg-gradient-to-t from-background to-transparent" />
 
 
       <div className="container-page">
