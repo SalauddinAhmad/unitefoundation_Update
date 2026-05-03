@@ -20,27 +20,43 @@ export const Header = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "pt-2 md:pt-3" : "pt-4 md:pt-6"
+        scrolled ? "pt-2 md:pt-3" : "pt-3 md:pt-5"
       }`}
     >
-      <div className="container-page">
+      <div className="mx-auto w-full max-w-[1480px] px-3 md:px-5">
         <div
-          className={`relative flex items-center justify-between gap-4 rounded-full transition-all duration-500 animate-fade-up ${
-            scrolled
-              ? "bg-card/95 backdrop-blur-xl shadow-card-hover px-4 md:px-5 py-2.5"
-              : "bg-card/80 backdrop-blur-xl shadow-card px-5 md:px-6 py-3"
+          className={`relative flex items-center justify-between gap-4 rounded-full transition-all duration-500 animate-fade-up overflow-hidden border border-white/40 ${
+            scrolled ? "px-4 md:px-6 py-2" : "px-5 md:px-8 py-2.5"
           }`}
+          style={{
+            background:
+              "linear-gradient(135deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.35) 100%)",
+            backdropFilter: "blur(24px) saturate(180%)",
+            WebkitBackdropFilter: "blur(24px) saturate(180%)",
+            boxShadow:
+              "0 10px 40px -10px hsl(0 0% 0% / 0.18), inset 0 1px 0 hsl(0 0% 100% / 0.6), inset 0 -1px 0 hsl(0 0% 100% / 0.15)",
+          }}
         >
+          {/* Glossy highlight */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full"
+            style={{
+              background:
+                "linear-gradient(180deg, hsl(0 0% 100% / 0.45) 0%, hsl(0 0% 100% / 0) 100%)",
+            }}
+          />
+
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center shrink-0 transition-transform duration-300 hover:scale-[1.03]"
+            className="relative flex items-center shrink-0 transition-transform duration-300 hover:scale-[1.03]"
             aria-label={site.nameEn}
           >
             <img
               src={logo}
               alt={site.nameEn}
-              className={`w-auto transition-all duration-500 ${scrolled ? "h-9" : "h-10 md:h-11"}`}
+              className={`w-auto transition-all duration-500 ${scrolled ? "h-9" : "h-11 md:h-12"}`}
             />
           </Link>
 
