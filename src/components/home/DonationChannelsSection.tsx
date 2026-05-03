@@ -96,28 +96,28 @@ export const DonationChannelsSection = () => {
       <div className="container-page">
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-14 md:mb-16 animate-fade-in">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--donate-highlight))]/15 text-[hsl(var(--donate-highlight))] text-xs font-bold tracking-wider uppercase ring-1 ring-[hsl(var(--donate-highlight))]/30">
             <Sparkles className="h-3.5 w-3.5" /> দানের মাধ্যম
           </span>
-          <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-foreground tracking-tight leading-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-white tracking-tight leading-tight">
             যেভাবে আপনি পাশে দাঁড়াতে পারেন
           </h2>
-          <p className="text-muted-foreground mt-4 text-base md:text-lg leading-relaxed">
+          <p className="text-white/70 mt-4 text-base md:text-lg leading-relaxed">
             ব্যাংক ট্রান্সফার অথবা মোবাইল ব্যাংকিং — আস্থা ও স্বচ্ছতার সাথে যেকোনো মাধ্যমে আপনার দান পৌঁছে দিন।
           </p>
-          <div className="mt-5 inline-flex items-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheck className="h-4 w-4 text-primary" />
+          <div className="mt-5 inline-flex items-center gap-2 text-xs text-white/70">
+            <ShieldCheck className="h-4 w-4 text-[hsl(var(--donate-highlight))]" />
             <span>১০০% নিরাপদ · যাচাইকৃত অ্যাকাউন্ট</span>
           </div>
         </div>
 
         {/* Bank section */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+          <div className="h-9 w-9 rounded-xl bg-white/10 text-[hsl(var(--donate-highlight))] flex items-center justify-center ring-1 ring-white/15">
             <Landmark className="h-4.5 w-4.5" />
           </div>
-          <h3 className="text-lg md:text-xl font-bold text-foreground">ব্যাংক ট্রান্সফার</h3>
-          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+          <h3 className="text-lg md:text-xl font-bold text-white">ব্যাংক ট্রান্সফার</h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
