@@ -73,12 +73,25 @@ const copy = (text: string, label: string) => {
 
 export const DonationChannelsSection = () => {
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden bg-[donate-highlight-foreground] bg-primary-foreground">
-      {/* Background layers */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/50 via-background to-background" />
-      <div className="absolute inset-0 -z-10 opacity-[0.04] [background-image:radial-gradient(hsl(var(--primary))_1px,transparent_1px)] [background-size:24px_24px]" />
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/[0.06] blur-3xl -z-10" />
-      <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-donate-orange/[0.07] blur-3xl -z-10" />
+    <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Premium branded background */}
+      <div className="absolute inset-0 -z-10 bg-[hsl(var(--primary))]" />
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 50% -10%, hsl(var(--donate-highlight) / 0.18), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(var(--donate-orange) / 0.18), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(152 100% 14% / 0.55), transparent 55%), linear-gradient(180deg, hsl(152 80% 9%) 0%, hsl(152 100% 12%) 50%, hsl(152 80% 8%) 100%)",
+        }}
+      />
+      {/* Subtle pattern */}
+      <div className="absolute inset-0 -z-10 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
+      {/* Glow accents */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl -z-10" />
+      <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl -z-10" />
+      {/* Top & bottom edge fade */}
+      <div className="absolute inset-x-0 top-0 h-24 -z-10 bg-gradient-to-b from-background to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-24 -z-10 bg-gradient-to-t from-background to-transparent" />
+
 
       <div className="container-page">
         {/* Heading */}
