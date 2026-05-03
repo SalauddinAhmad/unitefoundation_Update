@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Heart, Menu, X, User, Sparkles } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/data/site";
 import logo from "@/assets/logo.svg";
