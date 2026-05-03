@@ -3,38 +3,34 @@ import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-r
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
-import relief from "@/assets/hero-relief.jpg";
-import water from "@/assets/hero-water.jpg";
-import mosque from "@/assets/hero-mosque.jpg";
-import food from "@/assets/program-food.jpg";
-import orphan from "@/assets/program-orphan.jpg";
-import winter from "@/assets/program-winter.jpg";
-import education from "@/assets/program-education.jpg";
-import wellWork from "@/assets/program-water.jpg";
-import mosqueBuild from "@/assets/program-mosque.jpg";
-import about from "@/assets/about-mission.jpg";
-import field from "@/assets/blog-field.jpg";
-import ramadan from "@/assets/blog-ramadan.jpg";
+import g1 from "@/assets/gallery/01.jpg";
+import g2 from "@/assets/gallery/02.jpg";
+import g3 from "@/assets/gallery/03.jpg";
+import g4 from "@/assets/gallery/04.jpg";
+import g5 from "@/assets/gallery/05.jpg";
+import g6 from "@/assets/gallery/06.jpg";
+import g7 from "@/assets/gallery/07.jpg";
+import g8 from "@/assets/gallery/08.jpg";
+import g9 from "@/assets/gallery/09.jpg";
+import g10 from "@/assets/gallery/10.jpg";
 
 type Tab = "ছবি" | "ভিডিও";
-type Cat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "শিক্ষা" | "এতিম" | "মসজিদ" | "শীত" | "পানি";
+type Cat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "ইফতার";
 
 const items: { src: string; alt: string; cat: Cat }[] = [
-  { src: relief, alt: "ত্রাণ বিতরণ — সন্ধ্যাবেলা", cat: "ত্রাণ" },
-  { src: water, alt: "নলকূপের পানি সংগ্রহ", cat: "পানি" },
-  { src: mosque, alt: "গ্রামীণ মসজিদ — সূর্যোদয়", cat: "মসজিদ" },
-  { src: food, alt: "খাদ্য প্যাকেজ প্রস্তুত", cat: "খাদ্য বিতরণ" },
-  { src: orphan, alt: "এতিম শিশুদের পাঠদান", cat: "এতিম" },
-  { src: winter, alt: "শীতবস্ত্র বিতরণ", cat: "শীত" },
-  { src: education, alt: "মেয়েদের শিক্ষা কর্মসূচি", cat: "শিক্ষা" },
-  { src: wellWork, alt: "নলকূপ স্থাপন", cat: "পানি" },
-  { src: mosqueBuild, alt: "মসজিদ নির্মাণ চলমান", cat: "মসজিদ" },
-  { src: about, alt: "বন্যা ত্রাণ অভিযান", cat: "ত্রাণ" },
-  { src: field, alt: "মাঠ পর্যায়ে পরিদর্শন", cat: "ত্রাণ" },
-  { src: ramadan, alt: "রমজান ইফতার আয়োজন", cat: "খাদ্য বিতরণ" },
+  { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন", cat: "ত্রাণ" },
+  { src: g2, alt: "নদীর তীরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ" },
+  { src: g4, alt: "বন্যায় ত্রাণ পৌঁছে দেওয়া", cat: "ত্রাণ" },
+  { src: g5, alt: "ত্রাণ প্যাকেজ প্রস্তুতি", cat: "খাদ্য বিতরণ" },
+  { src: g6, alt: "শিশুদের সহায়তা", cat: "ত্রাণ" },
+  { src: g7, alt: "ইফতার প্রোগ্রাম — নেত্রকোণা", cat: "ইফতার" },
+  { src: g8, alt: "ইফতার প্রোগ্রাম — খুলনা", cat: "ইফতার" },
+  { src: g9, alt: "ইফতার প্রোগ্রাম — দিনাজপুর", cat: "ইফতার" },
+  { src: g10, alt: "বন্যায় ত্রাণ বহন", cat: "ত্রাণ" },
 ];
 
-const cats: Cat[] = ["সকল", "ত্রাণ", "খাদ্য বিতরণ", "শিক্ষা", "এতিম", "মসজিদ", "শীত", "পানি"];
+const cats: Cat[] = ["সকল", "ত্রাণ", "খাদ্য বিতরণ", "ইফতার"];
 
 const Gallery = () => {
   const [tab, setTab] = useState<Tab>("ছবি");
@@ -50,7 +46,7 @@ const Gallery = () => {
       <Seo title="গ্যালারি | ইউনাইট ফাউন্ডেশন" description="মাঠ পর্যায়ের কাজের ছবি ও মুহূর্তগুলো।" canonical="/gallery" />
 
       <PageHero
-        image={relief}
+        image={g1}
         eyebrow="গ্যালারি"
         title="আমাদের কাজের মুহূর্তগুলো"
         subtitle="মাঠ পর্যায়ের ছবি ও ভিডিওতে আমাদের সেবার গল্প।"
