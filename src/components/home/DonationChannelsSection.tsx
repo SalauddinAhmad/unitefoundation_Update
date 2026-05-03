@@ -73,7 +73,7 @@ const copy = (text: string, label: string) => {
 
 export const DonationChannelsSection = () => {
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden">
+    <section className="relative py-20 md:py-28 overflow-hidden bg-[donate-highlight-foreground] bg-primary-foreground">
       {/* Background layers */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/50 via-background to-background" />
       <div className="absolute inset-0 -z-10 opacity-[0.04] [background-image:radial-gradient(hsl(var(--primary))_1px,transparent_1px)] [background-size:24px_24px]" />
