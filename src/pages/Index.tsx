@@ -4,7 +4,7 @@ import { TrustStrip } from "@/components/home/TrustStrip";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { QuickDonate } from "@/components/home/QuickDonate";
-import { BlogSection } from "@/components/home/BlogSection";
+import { GallerySection } from "@/components/home/GallerySection";
 import { ImpactStats } from "@/components/home/ImpactStats";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { DonationChannelsSection } from "@/components/home/DonationChannelsSection";
