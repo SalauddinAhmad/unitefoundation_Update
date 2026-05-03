@@ -25,19 +25,22 @@ const BlogPost = () => {
       <Seo title={`${post.title} | ব্লগ`} description={post.excerpt} canonical={`/blog/${post.slug}`} />
 
       {/* Hero header */}
-      <section className="relative h-[340px] md:h-[440px] overflow-hidden">
-        <img src={post.cover} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/80 to-primary/90" />
-        <div className="relative h-full container-page flex flex-col justify-center text-primary-foreground">
-          <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/80 hover:text-white w-fit mb-4">
-            <ArrowLeft className="h-4 w-4" /> সব পোস্ট
-          </Link>
-          <span className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/85 animate-fade-up">
-            <Calendar className="h-4 w-4" /> {post.date}
-          </span>
-          <h1 className="mt-3 text-3xl md:text-5xl font-extrabold leading-[1.15] max-w-4xl animate-fade-up">{post.title}</h1>
-        </div>
-      </section>
+      <PageHero
+        image={post.cover}
+        eyebrow={post.category || post.date}
+        title={post.title}
+        height="h-[340px] md:h-[440px]"
+      >
+        <Link
+          to="/blog"
+          className="mt-5 inline-flex items-center gap-1.5 text-sm text-primary-foreground/85 hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" /> সব পোস্ট
+        </Link>
+        <span className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary-foreground/85">
+          <Calendar className="h-4 w-4" /> {post.date}
+        </span>
+      </PageHero>
 
       {/* Content + sidebar */}
       <section className="py-12 md:py-16">
