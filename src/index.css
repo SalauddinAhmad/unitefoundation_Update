@@ -2,95 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Unite Foundation Design System
+   All colors are HSL. Tokens map to design.md §1.1 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Surfaces */
+    --background: 40 14% 98%;          /* #F9F9F9 */
+    --foreground: 0 0% 10%;            /* #1A1A1A */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --muted: 40 10% 94%;
+    --muted-foreground: 0 0% 40%;      /* #666 */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Brand */
+    --primary: 152 100% 21%;           /* #006837 green */
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 40 10% 96%;
+    --secondary-foreground: 0 0% 10%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 152 60% 95%;
+    --accent-foreground: 152 100% 18%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Donation */
+    --donate-red: 359 84% 53%;         /* #ED2324 */
+    --donate-orange: 24 91% 54%;       /* #F57E20 */
+    --donate-highlight: 39 96% 61%;    /* #FBB03B */
+    --donate-highlight-foreground: 0 0% 12%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Footer */
+    --footer: 142 56% 11%;             /* #0C2B1D */
+    --footer-foreground: 40 14% 96%;
 
-    --radius: 0.5rem;
+    --destructive: 359 84% 53%;
+    --destructive-foreground: 0 0% 100%;
 
-    --sidebar-background: 0 0% 98%;
+    --border: 36 14% 88%;
+    --input: 36 14% 88%;
+    --ring: 152 100% 21%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --radius: 1rem;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Gradients */
+    --gradient-donate: linear-gradient(135deg, hsl(var(--donate-red)) 0%, hsl(var(--donate-orange)) 100%);
+    --gradient-donate-soft: linear-gradient(135deg, hsl(var(--donate-orange) / 0.08), hsl(var(--donate-red) / 0.08));
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    /* Shadows */
+    --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.04), 0 4px 16px -8px hsl(152 60% 15% / 0.08);
+    --shadow-card-hover: 0 4px 12px -2px hsl(0 0% 0% / 0.06), 0 16px 32px -12px hsl(152 60% 15% / 0.16);
+    --shadow-donate: 0 8px 24px -8px hsl(var(--donate-red) / 0.45);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --transition-base: 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 }
 
@@ -98,8 +66,61 @@ All colors MUST be HSL.
   * {
     @apply border-border;
   }
-
-  body {
-    @apply bg-background text-foreground;
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+  body {
+    @apply bg-background text-foreground font-bangla;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bangla font-bold tracking-tight text-foreground;
+  }
+  .font-en { font-family: "Ubuntu", system-ui, sans-serif; }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-[1280px] px-5 md:px-8;
+  }
+  .section-y {
+    @apply py-20 md:py-28;
+  }
+  .btn-donate {
+    background: var(--gradient-donate);
+    box-shadow: var(--shadow-donate);
+    @apply text-white font-semibold rounded-btn px-6 py-3 inline-flex items-center justify-center gap-2 transition-transform duration-300 hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-donate:focus-visible {
+    @apply outline-none ring-2 ring-offset-2;
+    --tw-ring-color: hsl(var(--donate-red));
+  }
+  .card-base {
+    @apply bg-card rounded-card overflow-hidden transition-all duration-300;
+    box-shadow: var(--shadow-card);
+  }
+  .card-base:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-4px);
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary;
+  }
+  .heading-display {
+    @apply text-3xl md:text-5xl font-bold leading-[1.15];
+  }
+  .prose-bn p { @apply leading-[1.85] text-muted-foreground; }
+}
+
+@layer utilities {
+  .gradient-donate-bg { background: var(--gradient-donate); }
+  .gradient-donate-text {
+    background: var(--gradient-donate);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
