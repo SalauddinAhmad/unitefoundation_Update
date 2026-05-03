@@ -177,11 +177,11 @@ export const DonationChannelsSection = () => {
 
         {/* Mobile banking section */}
         <div className="flex items-center gap-3 mt-16 mb-6">
-          <div className="h-9 w-9 rounded-xl bg-donate-orange/15 text-donate-orange flex items-center justify-center">
+          <div className="h-9 w-9 rounded-xl bg-[hsl(var(--donate-orange))]/20 text-[hsl(var(--donate-highlight))] flex items-center justify-center ring-1 ring-white/15">
             <Smartphone className="h-4.5 w-4.5" />
           </div>
-          <h3 className="text-lg md:text-xl font-bold text-foreground">মোবাইল ব্যাংকিং</h3>
-          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+          <h3 className="text-lg md:text-xl font-bold text-white">মোবাইল ব্যাংকিং</h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent" />
         </div>
 
         {/* General mobile */}
@@ -199,7 +199,7 @@ export const DonationChannelsSection = () => {
         </div>
 
         {/* Footer note */}
-        <p className="text-center text-xs md:text-sm text-muted-foreground mt-12 italic max-w-xl mx-auto">
+        <p className="text-center text-xs md:text-sm text-white/60 mt-12 italic max-w-xl mx-auto">
           "যে ব্যক্তি ভালো কাজে উদ্যোগী হয়, সে ঐ কাজ সম্পাদনকারীর সমান সওয়াব পায়।"
         </p>
       </div>
