@@ -134,10 +134,10 @@ export const Header = () => {
                 </NavLink>
               ))}
               <Link
-                to="/donate?type=auto"
-                className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)]"
+                to="/donate"
+                className="mt-2 btn-donate text-sm rounded-full px-5 py-3"
               >
-                <Sparkles className="h-4 w-4" /> অটো ডোনেশন
+                <Heart className="h-4 w-4" /> দান করুন
               </Link>
             </nav>
           </div>
