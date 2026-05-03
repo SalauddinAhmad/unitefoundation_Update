@@ -1,6 +1,7 @@
 import { Copy, Landmark, Smartphone, ShieldCheck, Sparkles } from "lucide-react";
 import bkashLogo from "@/assets/pay-bkash.png";
 import nagadLogo from "@/assets/pay-nagad.png";
+import rocketLogo from "@/assets/pay-rocket.png";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
