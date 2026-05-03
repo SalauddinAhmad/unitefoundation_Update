@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Heart } from "lucide-react";
 import { site } from "@/data/site";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 
 export const Footer = () => {
   return (
@@ -25,14 +25,8 @@ export const Footer = () => {
 
       <div className="container-page py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
         <div className="col-span-2 md:col-span-1">
-          <Link to="/" className="flex items-center gap-2.5">
-            <img src={logo} alt="" width={40} height={40} className="h-10 w-10" />
-            <div>
-              <div className="font-bold text-white">{site.name}</div>
-              <div className="font-en text-[10px] uppercase tracking-[0.18em] text-white/60">
-                {site.nameEn}
-              </div>
-            </div>
+          <Link to="/" className="inline-block bg-white/95 rounded-btn px-3 py-2">
+            <img src={logo} alt={site.nameEn} className="h-10 w-auto" />
           </Link>
           <p className="mt-4 text-sm text-white/70 leading-relaxed">
             স্বচ্ছতা, আস্থা ও মানবতার সেবায় নিবেদিত একটি অরাজনৈতিক ইসলামিক চ্যারিটি প্ল্যাটফর্ম।
