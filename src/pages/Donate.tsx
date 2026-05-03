@@ -4,6 +4,8 @@ import { Heart, ShieldCheck, Lock, RefreshCw } from "lucide-react";
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
+import donateImg from "@/assets/hero-relief.jpg";
 import { projects, toBnNum, getProject } from "@/data/projects";
 import { PaymentInstructionsModal } from "@/components/donation/PaymentInstructionsModal";
 import { toast } from "@/hooks/use-toast";
