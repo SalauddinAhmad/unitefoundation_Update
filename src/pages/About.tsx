@@ -2,6 +2,7 @@ import { CheckCircle2, Heart, Target, Eye, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import about from "@/assets/about-mission.jpg";
 import t1 from "@/assets/team-1.jpg";
 import t2 from "@/assets/team-2.jpg";
