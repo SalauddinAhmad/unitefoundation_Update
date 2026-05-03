@@ -24,7 +24,7 @@ const Index = () => {
       <AboutSection />
       <ProgramsSection />
       <QuickDonate />
-      <BlogSection />
+      <GallerySection />
       <ImpactStats />
       <DonationChannelsSection />
       <PartnersSection />
