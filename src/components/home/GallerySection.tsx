@@ -12,7 +12,7 @@ const galleryImages = [
 
 export const GallerySection = () => {
   return (
-    <section className="section-y bg-secondary/40">
+    <section className="section-y">
       <div className="container-page">
         <div className="text-center mb-10">
           <span className="eyebrow">আমাদের কার্যক্রম</span>
