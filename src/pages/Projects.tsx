@@ -4,7 +4,21 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { projects, Category } from "@/data/projects";
 
-const cats: ("সব" | Category)[] = ["সব", "ত্রাণ", "এতিম", "শিক্ষা", "পানি", "মসজিদ", "শীত"];
+const cats: ("সব" | Category)[] = [
+  "সব",
+  "দাওয়াহ",
+  "মাদরাসা",
+  "মাসজিদ",
+  "ইয়াতিম",
+  "শিক্ষা",
+  "ফিলিস্তিন",
+  "পথশিশু",
+  "দুর্যোগ",
+  "শীতবস্ত্র",
+  "কুরবানী",
+  "কর্জ-এ-হাসানাহ",
+  "ইউনাইট টিভি",
+];
 
 const Projects = () => {
   const [active, setActive] = useState<(typeof cats)[number]>("সব");
