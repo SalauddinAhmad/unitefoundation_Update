@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { projects, Category } from "@/data/projects";
+import heroImg from "@/assets/program-food.jpg";
 
 const cats: ("সব" | Category)[] = [
   "সব",
