@@ -26,12 +26,6 @@ export const Header = () => {
           className={`relative flex items-center justify-between gap-4 rounded-b-2xl transition-all duration-500 animate-fade-up overflow-hidden border border-t-0 border-white/40 ${
             scrolled ? "px-4 md:px-6 py-2" : "px-5 md:px-8 py-2.5"
           }`}
-    >
-      <div className="mx-auto w-full max-w-[1480px] px-3 md:px-5">
-        <div
-          className={`relative flex items-center justify-between gap-4 rounded-2xl transition-all duration-500 animate-fade-up overflow-hidden border border-white/40 ${
-            scrolled ? "px-4 md:px-6 py-2" : "px-5 md:px-8 py-2.5"
-          }`}
           style={{
             background:
               "linear-gradient(135deg, hsl(0 0% 100% / 0.55) 0%, hsl(0 0% 100% / 0.35) 100%)",
