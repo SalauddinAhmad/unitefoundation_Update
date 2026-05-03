@@ -2,10 +2,10 @@ import { CheckCircle2 } from "lucide-react";
 import about from "@/assets/about-mission.jpg";
 
 const points = [
-  "১০০% শরীয়াহ-সম্মত ও স্বচ্ছ আর্থিক ব্যবস্থাপনা",
+  "পবিত্র কুরআন ও সহীহ হাদীছের আলোকে পরিচালিত",
+  "দাওয়াহ, তালীম, সমাজকল্যাণ ও জরুরি ত্রাণে নিবেদিত",
+  "শতভাগ স্বচ্ছ ও শরীয়াহ-সম্মত আর্থিক ব্যবস্থাপনা",
   "প্রতিটি দানের জন্য বিস্তারিত প্রভাব প্রতিবেদন",
-  "নিজস্ব ফিল্ড টিম ও যাচাইকৃত সুবিধাভোগী",
-  "প্রশাসনিক ব্যয় ৫% এর নিচে",
 ];
 
 export const AboutSection = () => {
@@ -25,21 +25,21 @@ export const AboutSection = () => {
         <div className="order-1 lg:order-2">
           <span className="eyebrow">আমরা কারা</span>
           <h2 className="heading-display mt-3">
-            স্বচ্ছতা, আস্থা ও মানবতার সেবায়{" "}
-            <span className="gradient-donate-text">নিবেদিত</span>
+            অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে{" "}
+            <span className="gradient-donate-text">ইউনাইট ফাউন্ডেশন</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85]">
-            ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক, অলাভজনক ইসলামিক চ্যারিটি প্ল্যাটফর্ম। আমরা
-            বিশ্বাস করি — প্রকৃত দান সেটিই, যা সঠিক হাতে, সঠিক সময়ে পৌঁছায়। ২০১১ সাল থেকে
-            আমরা দেশের প্রত্যন্ত অঞ্চলে কাজ করে চলেছি — আপনার বিশ্বাসকে সঙ্গী করে।
+            ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম। পবিত্র কুরআন
+            ও সহীহ হাদীছের দাওয়াত পৌঁছে দেওয়া, তরুণ সমাজকে তাক্বওয়াশীল দাঈ হিসেবে গড়ে
+            তোলা, বিশুদ্ধ আক্বীদা ও আমলের সচেতনতা সৃষ্টি এবং সমাজকল্যাণমূলক কার্যক্রম
+            পরিচালনাই আমাদের প্রধান লক্ষ্য।
           </p>
 
           <blockquote className="mt-6 border-l-4 border-donate-highlight pl-5 py-2 bg-accent/40 rounded-r-card">
             <p className="text-foreground italic leading-relaxed">
-              "যে ব্যক্তি একজন মুমিনের একটি দুনিয়াবি কষ্ট দূর করে দেয়, আল্লাহ কিয়ামতের
-              দিন তার একটি কষ্ট দূর করে দেবেন।"
+              "তোমরা একটি খেজুরের টুকরা দান করে হলেও জাহান্নামের আগুন থেকে বাঁচো।"
             </p>
-            <footer className="text-sm text-muted-foreground mt-2 font-en">— সহীহ মুসলিম</footer>
+            <footer className="text-sm text-muted-foreground mt-2 font-en">— তিরমিযী, হা/২৯৫৩</footer>
           </blockquote>
 
           <ul className="mt-6 grid sm:grid-cols-2 gap-3">
