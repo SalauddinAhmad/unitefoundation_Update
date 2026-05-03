@@ -127,10 +127,10 @@
     transform: translateY(-4px);
   }
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary;
+    @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary text-center;
   }
   .heading-display {
-    @apply text-3xl md:text-5xl font-bold leading-[1.15];
+    @apply text-3xl md:text-5xl font-bold leading-[1.15] text-center;
   }
   .prose-bn p { @apply leading-[1.85] text-muted-foreground; }
 }
