@@ -61,7 +61,7 @@ export const Header = () => {
           </Link>
 
           {/* Nav */}
-          <nav className="hidden lg:flex items-center gap-0.5" aria-label="মূল মেনু">
+          <nav className="relative hidden lg:flex items-center gap-0.5" aria-label="মূল মেনু">
             {nav.map((item) => (
               <NavLink
                 key={item.href}
