@@ -186,12 +186,8 @@ export const DonationChannelsSection = () => {
           ))}
         </div>
 
-        {/* Zakat mobile */}
-        <div className="mt-3 md:mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-w-4xl mx-auto">
-          {mobileZakat.map((m) => (
-            <MobileCard key={m.label} {...m} />
-          ))}
-        </div>
+
+
 
         {/* Footer note */}
         <p className="text-center text-xs text-white/60 mt-6 md:mt-8 italic max-w-xl mx-auto">
