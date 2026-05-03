@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Heart, Menu, X, User, Sparkles } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/data/site";
 import logo from "@/assets/logo.svg";
@@ -99,24 +99,11 @@ export const Header = () => {
           {/* CTAs */}
           <div className="relative flex items-center gap-2">
             <Link
-              to="/donate?type=auto"
-              className="hidden md:inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)] shadow-[0_8px_20px_-6px_hsl(265_70%_55%/0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-6px_hsl(265_70%_55%/0.7)]"
-            >
-              <Sparkles className="h-4 w-4" />
-              <span className="leading-tight">অটো ডোনেশন</span>
-            </Link>
-            <Link
               to="/donate"
               className="btn-donate text-sm rounded-full px-5 py-2.5"
             >
               <Heart className="h-4 w-4" aria-hidden /> দান করুন
             </Link>
-            <button
-              aria-label="অ্যাকাউন্ট"
-              className="hidden md:inline-flex items-center justify-center h-10 w-10 rounded-full bg-accent text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
-            >
-              <User className="h-4 w-4" />
-            </button>
             <button
               className="lg:hidden p-2 rounded-full text-foreground hover:bg-accent transition-colors"
               onClick={() => setOpen((v) => !v)}
@@ -147,10 +134,10 @@ export const Header = () => {
                 </NavLink>
               ))}
               <Link
-                to="/donate?type=auto"
-                className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)]"
+                to="/donate"
+                className="mt-2 btn-donate text-sm rounded-full px-5 py-3"
               >
-                <Sparkles className="h-4 w-4" /> অটো ডোনেশন
+                <Heart className="h-4 w-4" /> দান করুন
               </Link>
             </nav>
           </div>
