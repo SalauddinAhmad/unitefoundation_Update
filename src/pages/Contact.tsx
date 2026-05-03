@@ -37,13 +37,12 @@ const Contact = () => {
     <SiteLayout>
       <Seo title="যোগাযোগ | ইউনাইট ফাউন্ডেশন" description="আমাদের সাথে যোগাযোগ করুন — ফোন, ই-মেইল, WhatsApp বা সরাসরি অফিসে আসুন।" canonical="/contact" />
 
-      <section className="bg-secondary/40 pt-14 pb-10 md:pt-20 md:pb-14">
-        <div className="container-page max-w-3xl">
-          <span className="eyebrow">যোগাযোগ</span>
-          <h1 className="heading-display mt-3">আমরা আপনার কথা শুনতে আগ্রহী</h1>
-          <p className="mt-4 text-muted-foreground max-w-xl">যেকোনো প্রশ্ন, পরামর্শ বা সহযোগিতার জন্য নিচের যেকোনো মাধ্যমে আমাদের সাথে যোগাযোগ করুন।</p>
-        </div>
-      </section>
+      <PageHero
+        image={contactImg}
+        eyebrow="যোগাযোগ"
+        title="আমরা আপনার কথা শুনতে আগ্রহী"
+        subtitle="যেকোনো প্রশ্ন, পরামর্শ বা সহযোগিতার জন্য নিচের যেকোনো মাধ্যমে যোগাযোগ করুন।"
+      />
 
       <section className="py-12 md:py-16">
         <div className="container-page grid lg:grid-cols-3 gap-8">
