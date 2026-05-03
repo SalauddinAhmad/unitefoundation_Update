@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Bornomala BN";
+  src: url("/fonts/Bornomala-Regular.woff2") format("woff2");
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bornomala BN";
+  src: url("/fonts/Bornomala-Bold.woff2") format("woff2");
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ubuntu Sans";
+  src: url("/fonts/UbuntuSans.woff2") format("woff2-variations"), url("/fonts/UbuntuSans.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Unite Foundation Design System
    All colors are HSL. Tokens map to design.md §1.1 */
 
@@ -77,7 +99,7 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-bangla font-bold tracking-tight text-foreground;
   }
-  .font-en { font-family: "Ubuntu", system-ui, sans-serif; }
+  .font-en { font-family: "Ubuntu Sans", system-ui, sans-serif; }
 }
 
 @layer components {

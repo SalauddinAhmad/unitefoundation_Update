@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        bangla: ['"Anek Bangla"', '"Bornomala BN"', "Ubuntu", "system-ui", "sans-serif"],
-        en: ["Ubuntu", "system-ui", "sans-serif"],
+        bangla: ['"Bornomala BN"', '"Ubuntu Sans"', "system-ui", "sans-serif"],
+        en: ['"Ubuntu Sans"', "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
