@@ -1,13 +1,19 @@
 import { Link } from "react-router-dom";
 import { Images } from "lucide-react";
+import g1 from "@/assets/gallery/01.jpg";
+import g2 from "@/assets/gallery/02.jpg";
+import g3 from "@/assets/gallery/03.jpg";
+import g4 from "@/assets/gallery/04.jpg";
+import g5 from "@/assets/gallery/05.jpg";
+import g6 from "@/assets/gallery/06.jpg";
 
 const galleryImages = [
-  { src: "https://picsum.photos/seed/gallery1/800/600", alt: "গ্যালারি ছবি ১" },
-  { src: "https://picsum.photos/seed/gallery2/800/600", alt: "গ্যালারি ছবি ২" },
-  { src: "https://picsum.photos/seed/gallery3/800/600", alt: "গ্যালারি ছবি ৩" },
-  { src: "https://picsum.photos/seed/gallery4/800/600", alt: "গ্যালারি ছবি ৪" },
-  { src: "https://picsum.photos/seed/gallery5/800/600", alt: "গ্যালারি ছবি ৫" },
-  { src: "https://picsum.photos/seed/gallery6/800/600", alt: "গ্যালারি ছবি ৬" },
+  { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন" },
+  { src: g2, alt: "নৌকায় ত্রাণ বিতরণ" },
+  { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম" },
+  { src: g4, alt: "বন্যায় ত্রাণ পৌঁছে দেওয়া" },
+  { src: g5, alt: "ত্রাণ প্যাকেজ প্রস্তুতি" },
+  { src: g6, alt: "শিশুদের সহায়তা" },
 ];
 
 export const GallerySection = () => {
