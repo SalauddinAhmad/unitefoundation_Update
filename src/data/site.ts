@@ -1,29 +1,31 @@
 export const site = {
   name: "ইউনাইট ফাউন্ডেশন",
   nameEn: "Unite Foundation",
-  tagline: "মানবতার সেবায়, একসাথে",
+  tagline: "অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে",
   taglineEn: "United in service of humanity",
   email: "info@unitefoundation.org",
-  phone: "+৮৮০ ১৭০০-০০০০০০",
-  whatsapp: "8801700000000", // E.164 without +
-  address: "১২৩, গুলশান এভিনিউ, ঢাকা ১২১২, বাংলাদেশ",
+  phone: "+৮৮০ ১৭৫৯-৭৫৪২৬৫",
+  whatsapp: "8801759754265", // E.164 without +
+  address: "উত্তরখান, উত্তরা, ঢাকা ১২৩০।",
   // Manual payment channels
   payments: {
-    bkash: { number: "01700-000000", type: "Personal" },
-    nagad: { number: "01700-000000", type: "Personal" },
-    rocket: { number: "01700-000000-1", type: "Personal" },
+    bkash: { number: "01759-754265", type: "Personal" },
+    nagad: { number: "01759-754265", type: "Personal" },
+    rocket: { number: "01759-754265-1", type: "Personal" },
     bank: {
       bank: "Islami Bank Bangladesh Ltd.",
-      branch: "Gulshan Branch",
-      account: "Unite Foundation",
-      number: "20502123456789012",
-      routing: "125261234",
+      branch: "Uttara Branch",
+      account: "Abdullah Al Mujahid",
+      number: "20502070205708118",
+      routing: "IBBLBDDH207",
     },
   },
   socials: {
-    facebook: "https://facebook.com/unitefoundation",
-    youtube: "https://youtube.com/@unitefoundation",
+    facebook: "https://www.facebook.com/UniteFoundation.UniteTv",
+    youtube: "https://youtube.com/@unite.foundation",
     instagram: "https://instagram.com/unitefoundation",
+    tvFacebook: "https://www.facebook.com/unitetv",
+    tvYoutube: "https://www.youtube.com/@UniteTelevision",
   },
 };
 

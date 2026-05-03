@@ -65,6 +65,36 @@ const Donate = () => {
           <p className="mt-4 text-donate-highlight-foreground/85 max-w-xl mx-auto">
             পেমেন্ট তথ্য পেতে নিচের ফর্মটি পূরণ করুন। ১০০% নিরাপদ ও স্বচ্ছ।
           </p>
+          <blockquote className="mt-8 max-w-2xl mx-auto bg-donate-highlight-foreground/10 backdrop-blur rounded-card p-5 text-donate-highlight-foreground">
+            <p className="font-en text-lg leading-relaxed" dir="rtl">لِيَقِ أَحَدُكُمْ وَجْهَهُ النَّارَ وَلَوْ بِشِقِّ تَمْرَةٍ</p>
+            <p className="mt-2 text-sm italic">"তোমরা একটি খেজুরের টুকরা দান করে হলেও জাহান্নামের আগুন থেকে বাঁচো।"</p>
+            <footer className="mt-1 text-xs opacity-80 font-en">— তিরমিযী, হা/২৯৫৩</footer>
+          </blockquote>
+        </div>
+      </section>
+
+      {/* Donor types */}
+      <section className="py-10 md:py-12 bg-secondary/40 border-b border-border">
+        <div className="container-page">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <span className="eyebrow">দাতা সদস্যপদ</span>
+            <h2 className="text-2xl md:text-3xl font-bold mt-2">আপনি কীভাবে পাশে থাকতে চান?</h2>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { t: "এককালীন দান", d: "যেকোনো প্রকল্পে যেকোনো পরিমাণে দান করুন।", h: "Donate" },
+              { t: "নিয়মিত দাতা সদস্য", d: "মাসিক নির্দিষ্ট পরিমাণে দান করে কার্যক্রমে অংশীদার হোন।", h: "Regular Donor" },
+              { t: "আজীবন দাতা সদস্য", d: "এককালীন বড় অনুদানে আজীবন দাতা সদস্যপদ গ্রহণ করুন।", h: "Lifetime Donor" },
+              { t: "স্বেচ্ছাসেবক", d: "সময়, দক্ষতা ও শ্রম দিয়ে আমাদের কার্যক্রমে যুক্ত হোন।", h: "Volunteer" },
+            ].map((c) => (
+              <div key={c.t} className="card-base p-5 text-center">
+                <div className="h-10 w-10 rounded-card gradient-donate-bg text-white flex items-center justify-center mx-auto"><Heart className="h-5 w-5" /></div>
+                <h3 className="mt-3 font-bold">{c.t}</h3>
+                <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{c.d}</p>
+                <p className="text-[10px] font-en text-primary mt-2 tracking-wider">{c.h}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
