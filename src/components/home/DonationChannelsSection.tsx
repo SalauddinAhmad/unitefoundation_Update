@@ -73,38 +73,51 @@ const copy = (text: string, label: string) => {
 
 export const DonationChannelsSection = () => {
   return (
-    <section className="relative py-20 md:py-28 overflow-hidden bg-[donate-highlight-foreground] bg-primary-foreground">
-      {/* Background layers */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-secondary/50 via-background to-background" />
-      <div className="absolute inset-0 -z-10 opacity-[0.04] [background-image:radial-gradient(hsl(var(--primary))_1px,transparent_1px)] [background-size:24px_24px]" />
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-primary/[0.06] blur-3xl -z-10" />
-      <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-donate-orange/[0.07] blur-3xl -z-10" />
+    <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Premium branded background */}
+      <div className="absolute inset-0 -z-10 bg-[hsl(var(--primary))]" />
+      <div
+        className="absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 50% -10%, hsl(var(--donate-highlight) / 0.18), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(var(--donate-orange) / 0.18), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(152 100% 14% / 0.55), transparent 55%), linear-gradient(180deg, hsl(152 80% 9%) 0%, hsl(152 100% 12%) 50%, hsl(152 80% 8%) 100%)",
+        }}
+      />
+      {/* Subtle pattern */}
+      <div className="absolute inset-0 -z-10 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
+      {/* Glow accents */}
+      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl -z-10" />
+      <div className="absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl -z-10" />
+      {/* Top & bottom edge fade to blend with page */}
+      <div className="absolute inset-x-0 top-0 h-16 -z-10 bg-gradient-to-b from-background to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-16 -z-10 bg-gradient-to-t from-background to-transparent" />
+
 
       <div className="container-page">
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-14 md:mb-16 animate-fade-in">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-wider uppercase">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--donate-highlight))]/15 text-[hsl(var(--donate-highlight))] text-xs font-bold tracking-wider uppercase ring-1 ring-[hsl(var(--donate-highlight))]/30">
             <Sparkles className="h-3.5 w-3.5" /> দানের মাধ্যম
           </span>
-          <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-foreground tracking-tight leading-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold mt-4 text-white tracking-tight leading-tight">
             যেভাবে আপনি পাশে দাঁড়াতে পারেন
           </h2>
-          <p className="text-muted-foreground mt-4 text-base md:text-lg leading-relaxed">
+          <p className="text-white/70 mt-4 text-base md:text-lg leading-relaxed">
             ব্যাংক ট্রান্সফার অথবা মোবাইল ব্যাংকিং — আস্থা ও স্বচ্ছতার সাথে যেকোনো মাধ্যমে আপনার দান পৌঁছে দিন।
           </p>
-          <div className="mt-5 inline-flex items-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheck className="h-4 w-4 text-primary" />
+          <div className="mt-5 inline-flex items-center gap-2 text-xs text-white/70">
+            <ShieldCheck className="h-4 w-4 text-[hsl(var(--donate-highlight))]" />
             <span>১০০% নিরাপদ · যাচাইকৃত অ্যাকাউন্ট</span>
           </div>
         </div>
 
         {/* Bank section */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+          <div className="h-9 w-9 rounded-xl bg-white/10 text-[hsl(var(--donate-highlight))] flex items-center justify-center ring-1 ring-white/15">
             <Landmark className="h-4.5 w-4.5" />
           </div>
-          <h3 className="text-lg md:text-xl font-bold text-foreground">ব্যাংক ট্রান্সফার</h3>
-          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+          <h3 className="text-lg md:text-xl font-bold text-white">ব্যাংক ট্রান্সফার</h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent" />
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -164,11 +177,11 @@ export const DonationChannelsSection = () => {
 
         {/* Mobile banking section */}
         <div className="flex items-center gap-3 mt-16 mb-6">
-          <div className="h-9 w-9 rounded-xl bg-donate-orange/15 text-donate-orange flex items-center justify-center">
+          <div className="h-9 w-9 rounded-xl bg-[hsl(var(--donate-orange))]/20 text-[hsl(var(--donate-highlight))] flex items-center justify-center ring-1 ring-white/15">
             <Smartphone className="h-4.5 w-4.5" />
           </div>
-          <h3 className="text-lg md:text-xl font-bold text-foreground">মোবাইল ব্যাংকিং</h3>
-          <div className="flex-1 h-px bg-gradient-to-r from-border to-transparent" />
+          <h3 className="text-lg md:text-xl font-bold text-white">মোবাইল ব্যাংকিং</h3>
+          <div className="flex-1 h-px bg-gradient-to-r from-white/20 to-transparent" />
         </div>
 
         {/* General mobile */}
@@ -186,7 +199,7 @@ export const DonationChannelsSection = () => {
         </div>
 
         {/* Footer note */}
-        <p className="text-center text-xs md:text-sm text-muted-foreground mt-12 italic max-w-xl mx-auto">
+        <p className="text-center text-xs md:text-sm text-white/60 mt-12 italic max-w-xl mx-auto">
           "যে ব্যক্তি ভালো কাজে উদ্যোগী হয়, সে ঐ কাজ সম্পাদনকারীর সমান সওয়াব পায়।"
         </p>
       </div>
