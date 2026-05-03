@@ -41,7 +41,7 @@ type Mobile = {
 const mobileGeneral: Mobile[] = [
   { logo: bkashLogo, label: "বিকাশ পার্সোনাল", number: "01759-754265", brand: "bkash" },
   { logo: nagadLogo, label: "নগদ পার্সোনাল", number: "01759-754265", brand: "nagad" },
-  { logo: null, text: "Rocket", label: "রকেট পার্সোনাল", number: "01759-754265-1", brand: "rocket" },
+  { logo: rocketLogo, label: "রকেট পার্সোনাল", number: "01759-754265-1", brand: "rocket" },
 ];
 
 const mobileZakat: Mobile[] = [
