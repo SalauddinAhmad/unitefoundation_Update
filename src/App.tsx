@@ -12,6 +12,9 @@ const ProjectDetail = lazy(() => import("./pages/ProjectDetail.tsx"));
 const Donate = lazy(() => import("./pages/Donate.tsx"));
 const Blog = lazy(() => import("./pages/Blog.tsx"));
 const BlogPost = lazy(() => import("./pages/BlogPost.tsx"));
+const About = lazy(() => import("./pages/About.tsx"));
+const Gallery = lazy(() => import("./pages/Gallery.tsx"));
+const Contact = lazy(() => import("./pages/Contact.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -35,6 +38,9 @@ const App = () => (
             <Route path="/donate" element={<Donate />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

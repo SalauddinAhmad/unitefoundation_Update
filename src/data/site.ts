@@ -29,7 +29,9 @@ export const site = {
 
 export const nav = [
   { label: "হোম", href: "/" },
-  { label: "প্রকল্পসমূহ", href: "/projects" },
+  { label: "কার্যক্রম", href: "/projects" },
+  { label: "আমাদের সম্পর্কে", href: "/about" },
+  { label: "গ্যালারি", href: "/gallery" },
   { label: "ব্লগ", href: "/blog" },
-  { label: "দান করুন", href: "/donate" },
+  { label: "যোগাযোগ", href: "/contact" },
 ];
