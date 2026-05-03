@@ -24,14 +24,12 @@ export const GallerySection = () => {
   return (
     <section className="section-y bg-secondary/40">
       <div className="container-page">
-        <div className="flex items-end justify-between gap-6 mb-10">
-          <div>
-            <span className="eyebrow">আমাদের কার্যক্রম</span>
-            <h2 className="heading-display mt-3 max-w-xl">গ্যালারি</h2>
-          </div>
+        <div className="text-center mb-10">
+          <span className="eyebrow">আমাদের কার্যক্রম</span>
+          <h2 className="heading-display mt-3 mx-auto">গ্যালারি</h2>
           <button
             onClick={() => setOpen(true)}
-            className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all mt-4"
           >
             আরও দেখুন <Images className="h-4 w-4" />
           </button>
