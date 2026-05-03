@@ -1,6 +1,7 @@
 import { Copy, Landmark, Smartphone, ShieldCheck, Sparkles } from "lucide-react";
 import bkashLogo from "@/assets/pay-bkash.png";
 import nagadLogo from "@/assets/pay-nagad.png";
+import rocketLogo from "@/assets/pay-rocket.png";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
@@ -40,7 +41,7 @@ type Mobile = {
 const mobileGeneral: Mobile[] = [
   { logo: bkashLogo, label: "বিকাশ পার্সোনাল", number: "01759-754265", brand: "bkash" },
   { logo: nagadLogo, label: "নগদ পার্সোনাল", number: "01759-754265", brand: "nagad" },
-  { logo: null, text: "Rocket", label: "রকেট পার্সোনাল", number: "01759-754265-1", brand: "rocket" },
+  { logo: rocketLogo, label: "রকেট পার্সোনাল", number: "01759-754265-1", brand: "rocket" },
 ];
 
 const mobileZakat: Mobile[] = [
