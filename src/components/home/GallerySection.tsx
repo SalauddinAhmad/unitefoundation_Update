@@ -17,12 +17,6 @@ export const GallerySection = () => {
         <div className="text-center mb-10">
           <span className="eyebrow">আমাদের কার্যক্রম</span>
           <h2 className="heading-display mt-3 mx-auto">গ্যালারি</h2>
-          <Link
-            to="/gallery"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all mt-4"
-          >
-            আরও দেখুন <Images className="h-4 w-4" />
-          </Link>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -42,10 +36,10 @@ export const GallerySection = () => {
           ))}
         </div>
 
-        <div className="mt-6 md:hidden text-center">
+        <div className="mt-6 md:mt-8 text-center">
           <Link
             to="/gallery"
-            className="inline-flex items-center gap-2 text-primary font-semibold"
+            className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
           >
             আরও দেখুন <Images className="h-4 w-4" />
           </Link>
