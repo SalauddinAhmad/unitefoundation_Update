@@ -46,7 +46,7 @@ export const GallerySection = () => {
         <div className="mt-6 md:mt-8 text-center">
           <Link
             to="/gallery"
-            className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 text-[hsl(var(--donate-highlight))] font-semibold hover:gap-3 transition-all"
           >
             আরও দেখুন <Images className="h-4 w-4" />
           </Link>
