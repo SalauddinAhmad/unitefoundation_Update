@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import { getPost, posts } from "@/data/blog";
 import { toBnNum } from "@/data/projects";
 import NotFound from "./NotFound";
