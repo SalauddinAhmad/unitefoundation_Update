@@ -100,9 +100,6 @@ export const DonationChannelsSection = () => {
           <p className="text-white/70 mt-2 text-sm md:text-base leading-relaxed">
             নিচের যে কোনো পদ্ধতিতে আমাদের সঙ্গে যুক্ত হয়ে আর্তমানবতার সেবায় ভূমিকা রাখতে পারেন।
           </p>
-          <div className="mt-3 inline-flex items-center gap-2 text-xs text-white/70">
-            <span>​</span>
-          </div>
         </div>
 
         {/* Bank section */}
