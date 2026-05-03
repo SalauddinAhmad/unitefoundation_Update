@@ -10,16 +10,14 @@ export const ProgramsSection = () => {
   return (
     <section className="section-y bg-secondary/40">
       <div className="container-page">
-        <div className="flex items-end justify-between gap-6 mb-10 md:mb-12">
-          <div>
-            <span className="eyebrow">আমাদের কার্যক্রম</span>
-            <h2 className="heading-display mt-3 max-w-2xl">
-              চলমান প্রকল্পসমূহ — যেখানে আপনার দান সরাসরি কাজ করছে
-            </h2>
-          </div>
+        <div className="text-center mb-10 md:mb-12">
+          <span className="eyebrow">আমাদের কার্যক্রম</span>
+          <h2 className="heading-display mt-3 max-w-2xl mx-auto">
+            চলমান প্রকল্পসমূহ — যেখানে আপনার দান সরাসরি কাজ করছে
+          </h2>
           <Link
             to="/projects"
-            className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+            className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all mt-4"
           >
             সব প্রকল্প <ArrowRight className="h-4 w-4" />
           </Link>
