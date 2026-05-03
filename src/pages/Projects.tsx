@@ -33,15 +33,12 @@ const Projects = () => {
     <SiteLayout>
       <Seo title="প্রকল্পসমূহ | ইউনাইট ফাউন্ডেশন" description="চলমান প্রকল্পগুলো দেখুন এবং সরাসরি দান করুন।" canonical="/projects" />
 
-      <section className="bg-secondary/40 pt-14 pb-10 md:pt-20 md:pb-14">
-        <div className="container-page">
-          <span className="eyebrow">আমাদের প্রকল্প</span>
-          <h1 className="heading-display mt-3 max-w-2xl">চলমান সকল প্রকল্প — সরাসরি দান করুন</h1>
-          <p className="mt-4 text-muted-foreground max-w-xl">
-            প্রতিটি প্রকল্পের অগ্রগতি, লক্ষ্য ও বিস্তারিত হিসাব স্বচ্ছভাবে প্রকাশ করা হয়।
-          </p>
-        </div>
-      </section>
+      <PageHero
+        image={heroImg}
+        eyebrow="আমাদের প্রকল্প"
+        title="চলমান সকল প্রকল্প — সরাসরি দান করুন"
+        subtitle="প্রতিটি প্রকল্পের অগ্রগতি, লক্ষ্য ও বিস্তারিত হিসাব স্বচ্ছভাবে প্রকাশ করা হয়।"
+      />
 
       <section className="py-10 md:py-14">
         <div className="container-page">
