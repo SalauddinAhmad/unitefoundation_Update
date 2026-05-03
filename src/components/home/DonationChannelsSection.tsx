@@ -95,10 +95,10 @@ export const DonationChannelsSection = () => {
             <Sparkles className="h-3.5 w-3.5" /> দানের মাধ্যম
           </span>
           <h2 className="text-2xl md:text-4xl font-extrabold mt-3 text-white tracking-tight leading-tight">
-            আমাদের সাথে যুক্ত হোন
+            আমাদের সাথে যুক্ত হোন{" "}
           </h2>
           <p className="text-white/70 mt-2 text-sm md:text-base leading-relaxed">
-            নিচের যে কোনো পদ্ধতিতে আমাদের সঙ্গে যুক্ত হয়ে আর্তমানবতার সেবায় ভূমিকা রাখতে পারেন।
+            নিচের যে কোনো পদ্ধতিতে আমাদের সঙ্গে যুক্ত হয়ে আর্তমানবতার সেবায় ভূমিকা রাখতে পারেন।{" "}
           </p>
         </div>
 
