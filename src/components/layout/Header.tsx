@@ -2,7 +2,7 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { Heart, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/data/site";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
@@ -24,14 +24,8 @@ export const Header = () => {
       }`}
     >
       <div className="container-page flex h-[72px] items-center justify-between gap-6">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0" aria-label={site.nameEn}>
-          <img src={logo} alt="" width={40} height={40} className="h-10 w-10" />
-          <div className="leading-tight">
-            <div className="text-base font-bold text-foreground">{site.name}</div>
-            <div className="font-en text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-              {site.nameEn}
-            </div>
-          </div>
+        <Link to="/" className="flex items-center shrink-0" aria-label={site.nameEn}>
+          <img src={logo} alt={site.nameEn} className="h-10 md:h-11 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1" aria-label="মূল মেনু">
