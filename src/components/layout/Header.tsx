@@ -97,7 +97,7 @@ export const Header = () => {
           </nav>
 
           {/* CTAs */}
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <Link
               to="/donate?type=auto"
               className="hidden md:inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)] shadow-[0_8px_20px_-6px_hsl(265_70%_55%/0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-6px_hsl(265_70%_55%/0.7)]"
