@@ -25,7 +25,7 @@ export const Header = () => {
     >
       <div className="mx-auto w-full max-w-[1480px] px-3 md:px-5">
         <div
-          className={`relative flex items-center justify-between gap-4 rounded-full transition-all duration-500 animate-fade-up overflow-hidden border border-white/40 ${
+          className={`relative flex items-center justify-between gap-4 rounded-2xl transition-all duration-500 animate-fade-up overflow-hidden border border-white/40 ${
             scrolled ? "px-4 md:px-6 py-2" : "px-5 md:px-8 py-2.5"
           }`}
           style={{
@@ -40,7 +40,7 @@ export const Header = () => {
           {/* Glossy highlight */}
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full"
+            className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-2xl"
             style={{
               background:
                 "linear-gradient(180deg, hsl(0 0% 100% / 0.45) 0%, hsl(0 0% 100% / 0) 100%)",
