@@ -1,16 +1,31 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Seo } from "@/components/Seo";
+import { Hero } from "@/components/home/Hero";
+import { TrustStrip } from "@/components/home/TrustStrip";
+import { AboutSection } from "@/components/home/AboutSection";
+import { ProgramsSection } from "@/components/home/ProgramsSection";
+import { QuickDonate } from "@/components/home/QuickDonate";
+import { BlogSection } from "@/components/home/BlogSection";
+import { ImpactStats } from "@/components/home/ImpactStats";
+import { SiteLayout } from "@/components/layout/SiteLayout";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
+    <SiteLayout>
+      <Seo
+        title="ইউনাইট ফাউন্ডেশন | মানবতার সেবায়, একসাথে"
+        description="বাংলাদেশের সবচেয়ে স্বচ্ছ ইসলামিক চ্যারিটি প্ল্যাটফর্ম। খাদ্য, পানি, এতিম স্পনসরশিপ, শিক্ষা ও মসজিদ নির্মাণে সরাসরি দান করুন।"
+        canonical="/"
+      />
+      <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — মানবতার সেবায়, একসাথে</h1>
+      <Hero />
+      <TrustStrip />
+      <AboutSection />
+      <ProgramsSection />
+      <QuickDonate />
+      <BlogSection />
+      <ImpactStats />
+    </SiteLayout>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
