@@ -95,14 +95,13 @@ export const DonationChannelsSection = () => {
             <Sparkles className="h-3.5 w-3.5" /> দানের মাধ্যম
           </span>
           <h2 className="text-2xl md:text-4xl font-extrabold mt-3 text-white tracking-tight leading-tight">
-            যেভাবে আপনি পাশে দাঁড়াতে পারেন
+            আমাদের সাথে যুক্ত হোন
           </h2>
           <p className="text-white/70 mt-2 text-sm md:text-base leading-relaxed">
-            ব্যাংক ট্রান্সফার অথবা মোবাইল ব্যাংকিং — যেকোনো মাধ্যমে আপনার দান পৌঁছে দিন।
+            নিচের যে কোনো পদ্ধতিতে আমাদের সঙ্গে যুক্ত হয়ে আর্তমানবতার সেবায় ভূমিকা রাখতে পারেন।
           </p>
           <div className="mt-3 inline-flex items-center gap-2 text-xs text-white/70">
-            <ShieldCheck className="h-4 w-4 text-[hsl(var(--donate-highlight))]" />
-            <span>১০০% নিরাপদ · যাচাইকৃত অ্যাকাউন্ট</span>
+            <span>​</span>
           </div>
         </div>
 
