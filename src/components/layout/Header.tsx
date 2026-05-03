@@ -19,13 +19,11 @@ export const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "pt-2 md:pt-3" : "pt-3 md:pt-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500`}
     >
       <div className="mx-auto w-full max-w-[1480px] px-3 md:px-5">
         <div
-          className={`relative flex items-center justify-between gap-4 rounded-2xl transition-all duration-500 animate-fade-up overflow-hidden border border-white/40 ${
+          className={`relative flex items-center justify-between gap-4 rounded-b-2xl transition-all duration-500 animate-fade-up overflow-hidden border border-t-0 border-white/40 ${
             scrolled ? "px-4 md:px-6 py-2" : "px-5 md:px-8 py-2.5"
           }`}
           style={{
