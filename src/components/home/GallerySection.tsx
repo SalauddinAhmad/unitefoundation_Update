@@ -44,13 +44,6 @@ export const GallerySection = () => {
             আরও দেখুন <Images className="h-4 w-4" />
           </Link>
         </div>
-          <Link
-            to="/gallery"
-            className="inline-flex items-center gap-2 text-primary font-semibold"
-          >
-            আরও দেখুন <Images className="h-4 w-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );
