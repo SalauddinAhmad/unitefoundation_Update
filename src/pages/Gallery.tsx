@@ -46,7 +46,7 @@ const Gallery = () => {
       <Seo title="গ্যালারি | ইউনাইট ফাউন্ডেশন" description="মাঠ পর্যায়ের কাজের ছবি ও মুহূর্তগুলো।" canonical="/gallery" />
 
       <PageHero
-        image={relief}
+        image={g1}
         eyebrow="গ্যালারি"
         title="আমাদের কাজের মুহূর্তগুলো"
         subtitle="মাঠ পর্যায়ের ছবি ও ভিডিওতে আমাদের সেবার গল্প।"
