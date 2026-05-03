@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Search } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import { posts } from "@/data/blog";
 import relief from "@/assets/hero-relief.jpg";
 
@@ -23,15 +24,12 @@ const Blog = () => {
     <SiteLayout>
       <Seo title="ব্লগ ও আপডেট | ইউনাইট ফাউন্ডেশন" description="ফাউন্ডেশনের সর্বশেষ ক্যাম্পেইন, ফিল্ড রিপোর্ট ও স্বচ্ছতা প্রতিবেদন।" canonical="/blog" />
 
-      {/* Hero */}
-      <section className="relative h-[280px] md:h-[360px] overflow-hidden">
-        <img src={relief} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/75 to-primary/85" />
-        <div className="relative h-full container-page flex flex-col items-center justify-center text-center text-primary-foreground">
-          <h1 className="text-4xl md:text-6xl font-extrabold animate-fade-up">ব্লগ</h1>
-          <p className="mt-3 text-primary-foreground/85 max-w-xl animate-fade-up">খবর, প্রতিবেদন ও মাঠের গল্প — এক জায়গায়।</p>
-        </div>
-      </section>
+      <PageHero
+        image={relief}
+        eyebrow="ব্লগ ও আপডেট"
+        title="খবর, প্রতিবেদন ও মাঠের গল্প"
+        subtitle="ফাউন্ডেশনের সর্বশেষ ক্যাম্পেইন, ফিল্ড রিপোর্ট ও স্বচ্ছতা প্রতিবেদন — এক জায়গায়।"
+      />
 
       {/* Search + filter bar */}
       <section className="py-8 md:py-10 border-b border-border bg-secondary/30">

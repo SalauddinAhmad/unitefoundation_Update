@@ -2,6 +2,7 @@ import { CheckCircle2, Heart, Target, Eye, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import about from "@/assets/about-mission.jpg";
 import t1 from "@/assets/team-1.jpg";
 import t2 from "@/assets/team-2.jpg";
@@ -33,17 +34,12 @@ const About = () => (
   <SiteLayout>
     <Seo title="আমাদের সম্পর্কে | ইউনাইট ফাউন্ডেশন" description="ইউনাইট ফাউন্ডেশনের যাত্রা, লক্ষ্য, মূল্যবোধ ও টিম।" canonical="/about" />
 
-    <section className="bg-secondary/40 pt-14 pb-10 md:pt-20 md:pb-14">
-      <div className="container-page max-w-3xl">
-        <span className="eyebrow">আমাদের সম্পর্কে</span>
-        <h1 className="heading-display mt-3">অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে — ইউনাইট ফাউন্ডেশন</h1>
-        <p className="mt-5 text-lg text-muted-foreground leading-[1.85]">
-          ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম। পবিত্র কুরআন ও
-          সহীহ হাদীছের আলোকে দাওয়াহ, তালীম, প্রকাশনা, গবেষণা ও সমাজকল্যাণমূলক কার্যক্রম
-          পরিচালনার মাধ্যমে আমরা একটি সচেতন, তাক্বওয়াশীল সমাজ গঠনে কাজ করছি।
-        </p>
-      </div>
-    </section>
+    <PageHero
+      image={about}
+      eyebrow="আমাদের সম্পর্কে"
+      title="অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে"
+      subtitle="ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম — কুরআন ও সহীহ হাদীছের আলোকে দাওয়াহ, তালীম ও সমাজকল্যাণে নিবেদিত।"
+    />
 
     <section className="section-y">
       <div className="container-page grid lg:grid-cols-2 gap-12 items-center">

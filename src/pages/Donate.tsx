@@ -4,6 +4,8 @@ import { Heart, ShieldCheck, Lock, RefreshCw } from "lucide-react";
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
+import donateImg from "@/assets/hero-relief.jpg";
 import { projects, toBnNum, getProject } from "@/data/projects";
 import { PaymentInstructionsModal } from "@/components/donation/PaymentInstructionsModal";
 import { toast } from "@/hooks/use-toast";
@@ -56,22 +58,12 @@ const Donate = () => {
     <SiteLayout>
       <Seo title="দান করুন | ইউনাইট ফাউন্ডেশন" description="আপনার পছন্দের প্রকল্পে সরাসরি দান করুন — bKash, Nagad, ব্যাংক ট্রান্সফার বা WhatsApp-এর মাধ্যমে।" canonical="/donate" />
 
-      <section className="bg-donate-highlight py-14 md:py-20">
-        <div className="container-page text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-donate-highlight-foreground/10 text-sm font-bold text-donate-highlight-foreground"><Heart className="h-4 w-4" /> দান প্ল্যাটফর্ম</span>
-          <h1 className="heading-display mt-4 text-donate-highlight-foreground max-w-2xl mx-auto">
-            আপনার দান, কারো জীবনের নতুন আশা
-          </h1>
-          <p className="mt-4 text-donate-highlight-foreground/85 max-w-xl mx-auto">
-            পেমেন্ট তথ্য পেতে নিচের ফর্মটি পূরণ করুন। ১০০% নিরাপদ ও স্বচ্ছ।
-          </p>
-          <blockquote className="mt-8 max-w-2xl mx-auto bg-donate-highlight-foreground/10 backdrop-blur rounded-card p-5 text-donate-highlight-foreground">
-            <p className="font-en text-lg leading-relaxed" dir="rtl">لِيَقِ أَحَدُكُمْ وَجْهَهُ النَّارَ وَلَوْ بِشِقِّ تَمْرَةٍ</p>
-            <p className="mt-2 text-sm italic">"তোমরা একটি খেজুরের টুকরা দান করে হলেও জাহান্নামের আগুন থেকে বাঁচো।"</p>
-            <footer className="mt-1 text-xs opacity-80 font-en">— তিরমিযী, হা/২৯৫৩</footer>
-          </blockquote>
-        </div>
-      </section>
+      <PageHero
+        image={donateImg}
+        eyebrow="দান প্ল্যাটফর্ম"
+        title="আপনার দান, কারো জীবনের নতুন আশা"
+        subtitle="পেমেন্ট তথ্য পেতে নিচের ফর্মটি পূরণ করুন। ১০০% নিরাপদ ও স্বচ্ছ।"
+      />
 
       {/* Donor types */}
       <section className="py-10 md:py-12 bg-secondary/40 border-b border-border">

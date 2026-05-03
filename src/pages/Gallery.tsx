@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { PageHero } from "@/components/layout/PageHero";
 import relief from "@/assets/hero-relief.jpg";
 import water from "@/assets/hero-water.jpg";
 import mosque from "@/assets/hero-mosque.jpg";
@@ -48,15 +49,12 @@ const Gallery = () => {
     <SiteLayout>
       <Seo title="গ্যালারি | ইউনাইট ফাউন্ডেশন" description="মাঠ পর্যায়ের কাজের ছবি ও মুহূর্তগুলো।" canonical="/gallery" />
 
-      {/* Hero banner */}
-      <section className="relative h-[280px] md:h-[360px] overflow-hidden">
-        <img src={relief} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/75 to-primary/85" />
-        <div className="relative h-full container-page flex flex-col items-center justify-center text-center text-primary-foreground">
-          <h1 className="text-4xl md:text-6xl font-extrabold animate-fade-up">গ্যালারি</h1>
-          <p className="mt-3 text-primary-foreground/85 max-w-xl animate-fade-up">আমাদের কাজের মুহূর্তগুলো — ছবি ও ভিডিওতে।</p>
-        </div>
-      </section>
+      <PageHero
+        image={relief}
+        eyebrow="গ্যালারি"
+        title="আমাদের কাজের মুহূর্তগুলো"
+        subtitle="মাঠ পর্যায়ের ছবি ও ভিডিওতে আমাদের সেবার গল্প।"
+      />
 
       {/* Tab switcher */}
       <section className="bg-secondary/40 py-8 md:py-10 border-b border-border">
