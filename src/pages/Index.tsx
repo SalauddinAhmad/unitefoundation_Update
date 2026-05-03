@@ -6,6 +6,7 @@ import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { QuickDonate } from "@/components/home/QuickDonate";
 import { BlogSection } from "@/components/home/BlogSection";
 import { ImpactStats } from "@/components/home/ImpactStats";
+import { PartnersSection } from "@/components/home/PartnersSection";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
       <QuickDonate />
       <BlogSection />
       <ImpactStats />
+      <PartnersSection />
     </SiteLayout>
   );
 };
