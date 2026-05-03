@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Heart, Menu, X } from "lucide-react";
+import { Heart, Menu, X, User, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/data/site";
 import logo from "@/assets/logo.svg";
@@ -11,7 +11,7 @@ export const Header = () => {
 
   useEffect(() => setOpen(false), [location.pathname]);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 12);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -19,72 +19,127 @@ export const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        scrolled ? "bg-card/95 backdrop-blur shadow-card" : "bg-card"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled ? "pt-2 md:pt-3" : "pt-4 md:pt-6"
       }`}
     >
-      <div className="container-page flex h-[72px] items-center justify-between gap-6">
-        <Link to="/" className="flex items-center shrink-0" aria-label={site.nameEn}>
-          <img src={logo} alt={site.nameEn} className="h-10 md:h-11 w-auto" />
-        </Link>
-
-        <nav className="hidden lg:flex items-center gap-1" aria-label="মূল মেনু">
-          {nav.map((item) => (
-            <NavLink
-              key={item.href}
-              to={item.href}
-              end={item.href === "/"}
-              className={({ isActive }) =>
-                `px-4 py-2 rounded-btn text-[15px] font-medium transition-colors ${
-                  isActive
-                    ? "text-primary bg-accent"
-                    : "text-foreground/80 hover:text-primary hover:bg-accent/60"
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <Link to="/donate" className="btn-donate hidden sm:inline-flex text-sm">
-            <Heart className="h-4 w-4" aria-hidden /> দান করুন
-          </Link>
-          <button
-            className="lg:hidden p-2 rounded-btn text-foreground"
-            onClick={() => setOpen((v) => !v)}
-            aria-label="মেনু খুলুন"
-            aria-expanded={open}
+      <div className="container-page">
+        <div
+          className={`relative flex items-center justify-between gap-4 rounded-full transition-all duration-500 animate-fade-up ${
+            scrolled
+              ? "bg-card/95 backdrop-blur-xl shadow-card-hover px-4 md:px-5 py-2.5"
+              : "bg-card/80 backdrop-blur-xl shadow-card px-5 md:px-6 py-3"
+          }`}
+        >
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center shrink-0 transition-transform duration-300 hover:scale-[1.03]"
+            aria-label={site.nameEn}
           >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-      </div>
+            <img
+              src={logo}
+              alt={site.nameEn}
+              className={`w-auto transition-all duration-500 ${scrolled ? "h-9" : "h-10 md:h-11"}`}
+            />
+          </Link>
 
-      {open && (
-        <div className="lg:hidden border-t border-border bg-card">
-          <nav className="container-page py-4 flex flex-col gap-1">
+          {/* Nav */}
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="মূল মেনু">
             {nav.map((item) => (
               <NavLink
                 key={item.href}
                 to={item.href}
                 end={item.href === "/"}
                 className={({ isActive }) =>
-                  `px-4 py-3 rounded-btn text-[15px] font-medium ${
-                    isActive ? "text-primary bg-accent" : "text-foreground/80"
+                  `relative px-3.5 py-2 rounded-full text-[15px] font-medium transition-all duration-300 group ${
+                    isActive
+                      ? "text-primary"
+                      : "text-foreground/75 hover:text-primary"
                   }`
                 }
               >
-                {item.label}
+                {({ isActive }) => (
+                  <>
+                    <span className="relative z-10">{item.label}</span>
+                    <span
+                      className={`absolute inset-0 rounded-full bg-accent transition-all duration-300 ${
+                        isActive
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
+                      }`}
+                    />
+                    <span
+                      className={`absolute left-1/2 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-donate-red to-donate-orange transition-all duration-300 -translate-x-1/2 ${
+                        isActive ? "w-6 opacity-100" : "w-0 opacity-0 group-hover:w-6 group-hover:opacity-100"
+                      }`}
+                    />
+                  </>
+                )}
               </NavLink>
             ))}
-            <Link to="/donate" className="btn-donate mt-2 sm:hidden">
-              <Heart className="h-4 w-4" /> দান করুন
-            </Link>
           </nav>
+
+          {/* CTAs */}
+          <div className="flex items-center gap-2">
+            <Link
+              to="/donate?type=auto"
+              className="hidden md:inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)] shadow-[0_8px_20px_-6px_hsl(265_70%_55%/0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-6px_hsl(265_70%_55%/0.7)]"
+            >
+              <Sparkles className="h-4 w-4" />
+              <span className="leading-tight">অটো ডোনেশন</span>
+            </Link>
+            <Link
+              to="/donate"
+              className="btn-donate text-sm rounded-full px-5 py-2.5"
+            >
+              <Heart className="h-4 w-4" aria-hidden /> দান করুন
+            </Link>
+            <button
+              aria-label="অ্যাকাউন্ট"
+              className="hidden md:inline-flex items-center justify-center h-10 w-10 rounded-full bg-accent text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              <User className="h-4 w-4" />
+            </button>
+            <button
+              className="lg:hidden p-2 rounded-full text-foreground hover:bg-accent transition-colors"
+              onClick={() => setOpen((v) => !v)}
+              aria-label="মেনু খুলুন"
+              aria-expanded={open}
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
-      )}
+
+        {/* Mobile menu */}
+        {open && (
+          <div className="lg:hidden mt-2 rounded-3xl bg-card/95 backdrop-blur-xl shadow-card-hover overflow-hidden animate-fade-up">
+            <nav className="p-3 flex flex-col gap-1">
+              {nav.map((item) => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  end={item.href === "/"}
+                  className={({ isActive }) =>
+                    `px-4 py-3 rounded-full text-[15px] font-medium transition-colors ${
+                      isActive ? "text-primary bg-accent" : "text-foreground/80 hover:bg-accent/60"
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+              <Link
+                to="/donate?type=auto"
+                className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[hsl(265_70%_55%)] to-[hsl(285_75%_60%)]"
+              >
+                <Sparkles className="h-4 w-4" /> অটো ডোনেশন
+              </Link>
+            </nav>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
