@@ -30,7 +30,10 @@ export const ProgramsSection = () => {
           <div className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-20 z-10 bg-gradient-to-r from-secondary/40 to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-20 z-10 bg-gradient-to-l from-secondary/40 to-transparent" />
 
-          <div className="flex gap-6 md:gap-7 animate-marquee hover:[animation-play-state:paused] py-2">
+          <div
+            className="flex gap-6 md:gap-7 animate-marquee hover:[animation-play-state:paused] py-2"
+            style={{ animationDuration: "60s" }}
+          >
             {loop.map((p, i) => (
               <div
                 key={`${p.id}-${i}`}
