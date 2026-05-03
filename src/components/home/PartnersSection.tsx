@@ -34,7 +34,7 @@ export const PartnersSection = () => {
             {loop.map((p, i) => (
               <div
                 key={i}
-                className="shrink-0 w-[calc((100%-3rem)/3)] md:w-[calc((100%-4rem)/3)] group relative bg-card border border-border/60 rounded-card p-8 md:p-10 flex items-center justify-center min-h-[160px] shadow-card hover:shadow-card-hover transition-all duration-300"
+                className="shrink-0 w-[80vw] sm:w-[40vw] md:w-[calc((min(72rem,100vw)-6rem)/3)] group relative bg-card border border-border/60 rounded-card p-8 md:p-10 flex items-center justify-center min-h-[160px] shadow-card hover:shadow-card-hover transition-all duration-300"
               >
                 <img
                   src={p.logo}
