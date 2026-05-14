@@ -42,12 +42,12 @@ export const DonationChannelsSection = () => {
       className="relative py-16 md:py-24 overflow-hidden isolate"
       style={{
         background:
-          "radial-gradient(900px 500px at 50% 0%, hsl(220 40% 14%), transparent 60%), linear-gradient(180deg, hsl(222 35% 9%) 0%, hsl(222 40% 7%) 100%)",
+          "radial-gradient(1200px 600px at 50% -10%, hsl(var(--donate-highlight) / 0.18), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(var(--donate-orange) / 0.18), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(152 100% 14% / 0.55), transparent 55%), linear-gradient(180deg, hsl(152 80% 9%) 0%, hsl(152 100% 12%) 50%, hsl(152 80% 8%) 100%)",
       }}
     >
-      {/* Soft glow accents */}
-      <div className="pointer-events-none absolute -top-32 left-1/3 w-[520px] h-[520px] rounded-full bg-amber-500/5 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[420px] h-[420px] rounded-full bg-pink-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl" />
 
       <div className="container-page relative">
         {/* Heading */}
