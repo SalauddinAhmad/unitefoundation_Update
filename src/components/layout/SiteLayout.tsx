@@ -12,16 +12,7 @@ export const SiteLayout = ({ children }: { children: React.ReactNode }) => {
       <Header />
       <main className={`flex-1 ${isHome ? "" : "pt-28 md:pt-32"}`}>{children}</main>
       <Footer />
-      {/* Mobile floating donate */}
-      {!onDonate && (
-        <Link
-          to="/donate"
-          className="sm:hidden fixed bottom-4 left-4 right-4 z-40 btn-donate text-base"
-          aria-label="দান করুন"
-        >
-          <Heart className="h-5 w-5" /> এখনই দান করুন
-        </Link>
-      )}
+      {/* Mobile floating donate removed per request */}
     </div>
   );
 };
