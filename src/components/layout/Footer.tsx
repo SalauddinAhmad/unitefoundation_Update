@@ -89,7 +89,7 @@ export const Footer = () => {
         <div className="border-t border-white/10">
           <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
             <div>© {new Date().getFullYear()} {site.nameEn}. সর্বস্বত্ব সংরক্ষিত।</div>
-            <div className="font-en">Built with care · Trust · Transparency</div>
+            <div className="font-en">Designed & Developed by Salauddin Ahmad</div>
           </div>
         </div>
       </div>
