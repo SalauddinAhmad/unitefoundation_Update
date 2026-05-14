@@ -104,44 +104,6 @@ const PartnerDetail = () => {
                 </div>
               </div>
             </div>
-
-            {/* Heading */}
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
-                <Sparkles className="h-3.5 w-3.5" /> সহযোগী প্রতিষ্ঠান
-              </span>
-              <h1 className="heading-display mt-5 text-4xl md:text-6xl font-bold text-foreground leading-tight">
-                {partner.name}
-              </h1>
-              <div className="mt-5 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-primary/60 to-transparent" />
-              <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-                {partner.tagline}
-              </p>
-
-              {/* Meta row */}
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                {partner.established && (
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    {partner.established}
-                  </div>
-                )}
-                <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
-                  <Award className="h-4 w-4 text-primary" />
-                  ইউনাইট ফাউন্ডেশন পরিবার
-                </div>
-              </div>
-
-              {partner.website && (
-                <Button asChild size="lg" className="mt-8 group/btn shadow-lg shadow-primary/20">
-                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                    <Globe2 className="mr-2 h-4 w-4" />
-                    ওয়েবসাইট ভিজিট করুন
-                    <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                  </a>
-                </Button>
-              )}
-            </div>
           </div>
         </div>
       </section>
