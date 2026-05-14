@@ -126,18 +126,16 @@ export const DonationChannelsSection = () => {
             </article>
           ))}
 
-          {/* Mobile banking card */}
+          {/* Mobile banking — same card style as bank */}
           <article
-            className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1 lg:col-span-2"
+            className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
             style={{
               background:
                 "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
             }}
           >
-            {/* Decorative heart */}
-            <Heart className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-white/[0.03]" strokeWidth={1} />
+            <Smartphone className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-white/[0.03]" strokeWidth={1} />
 
-            {/* Top */}
             <div className="flex items-start justify-between mb-6">
               <div>
                 <div className="text-[11px] font-bold tracking-[0.22em] text-white/50 uppercase">
@@ -146,42 +144,50 @@ export const DonationChannelsSection = () => {
                 <h3 className="text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">
                   Personal Number
                 </h3>
-                <div className="text-xs text-white/50 mt-1.5">পার্সোনাল অ্যাকাউন্ট</div>
+                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">পার্সোনাল অ্যাকাউন্ট</div>
               </div>
-              <div className="flex -space-x-2">
-                <span className="h-8 w-8 rounded-full bg-pink-500 border-2 border-[hsl(152_70%_8%)]" />
-                <span className="h-8 w-8 rounded-full bg-[hsl(var(--donate-highlight))] border-2 border-[hsl(152_70%_8%)]" />
-                <span className="h-8 w-8 rounded-full bg-purple-500 border-2 border-[hsl(152_70%_8%)]" />
+              <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-[hsl(var(--donate-highlight))]/30 to-[hsl(var(--donate-highlight))]/10 border border-[hsl(var(--donate-highlight))]/30 flex items-center justify-center">
+                <Smartphone className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
               </div>
             </div>
 
-            {/* Big number */}
-            <button
-              onClick={() => copy(site.payments.bkash.number, "মোবাইল নম্বর")}
-              className="w-full rounded-2xl bg-black/30 border border-white/5 hover:border-white/15 p-6 md:p-8 text-center transition-colors"
-            >
-              <div className="font-mono font-bold text-white text-3xl md:text-5xl tracking-wider" dir="ltr">
-                {site.payments.bkash.number}
+            {/* Account holder */}
+            <div className="mb-4">
+              <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                Account Name
               </div>
-              <div className="text-[hsl(var(--donate-highlight))]/90 text-xs mt-3 inline-flex items-center gap-1.5">
-                <Copy className="h-3 w-3" /> কপি করতে ট্যাপ করুন
-              </div>
-            </button>
+              <div className="text-[hsl(var(--donate-highlight))] font-bold text-lg">{site.payments.bank.account}</div>
+            </div>
 
-            {/* Brand pills */}
-            <div className="flex items-center justify-center gap-2.5 mt-5 flex-wrap">
+            {/* Number — highlighted row */}
+            <div className="rounded-2xl bg-black/30 border border-white/5 p-4 md:p-5 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                  Mobile Number
+                </div>
+                <div className="font-mono font-bold text-white text-xl md:text-2xl tracking-wide" dir="ltr">
+                  {site.payments.bkash.number}
+                </div>
+              </div>
+              <button
+                onClick={() => copy(site.payments.bkash.number, "মোবাইল নম্বর")}
+                aria-label="মোবাইল নম্বর কপি করুন"
+                className="shrink-0 h-11 w-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white flex items-center justify-center transition-colors"
+              >
+                <Copy className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Brand pills row */}
+            <div className="grid grid-cols-3 gap-2 mt-5">
               {mobileNumbers.map((m) => (
                 <span
                   key={m.brand}
-                  className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-white/80 text-sm font-medium"
+                  className="text-center px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/80 text-xs font-medium"
                 >
                   {m.brand}
                 </span>
               ))}
-            </div>
-
-            <div className="text-center text-xs text-white/50 mt-5">
-              রেফারেন্স: <span className="text-[hsl(var(--donate-highlight))] font-medium">আপনার নাম / প্রকল্প</span>
             </div>
           </article>
         </div>
