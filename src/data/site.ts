@@ -35,5 +35,6 @@ export const nav = [
   { label: "আমাদের সম্পর্কে", href: "/about" },
   { label: "গ্যালারি", href: "/gallery" },
   { label: "ব্লগ", href: "/blog" },
+  { label: "স্বেচ্ছাসেবক", href: "/volunteer" },
   { label: "যোগাযোগ", href: "/contact" },
 ];
