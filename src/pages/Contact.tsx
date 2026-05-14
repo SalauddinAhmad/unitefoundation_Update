@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, MessageCircle, Send, Facebook, Youtube, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Facebook, Youtube, Instagram } from "lucide-react";
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -50,7 +50,7 @@ const Contact = () => {
           <div className="space-y-4 lg:col-span-1">
             <InfoCard icon={Phone} title="ফোন" lines={[site.phone]} href={`tel:${site.phone.replace(/\s/g, "")}`} />
             <InfoCard icon={Mail} title="ই-মেইল" lines={[site.email]} href={`mailto:${site.email}`} />
-            <InfoCard icon={MessageCircle} title="WhatsApp" lines={["২৪/৭ দ্রুত প্রতিক্রিয়া"]} href={`https://wa.me/${site.whatsapp}`} accent />
+            <InfoCard iconSrc={whatsappIcon} title="WhatsApp" lines={["২৪/৭ দ্রুত প্রতিক্রিয়া"]} href={`https://wa.me/${site.whatsapp}`} accent />
             <InfoCard icon={MapPin} title="ঠিকানা" lines={[site.address, "অফিস সময়: শনি-বৃহঃ, সকাল ১০টা - সন্ধ্যা ৬টা"]} />
 
             <div className="card-base p-6">
@@ -117,11 +117,13 @@ const Field = ({ label, children }: { label: string; children: React.ReactNode }
   </label>
 );
 
-const InfoCard = ({ icon: Icon, title, lines, href, accent }: { icon: any; title: string; lines: string[]; href?: string; accent?: boolean }) => {
+import whatsappIcon from "@/assets/whatsapp-icon.svg";
+
+const InfoCard = ({ icon: Icon, iconSrc, title, lines, href, accent }: { icon?: any; iconSrc?: string; title: string; lines: string[]; href?: string; accent?: boolean }) => {
   const inner = (
     <div className={`card-base p-5 flex gap-4 ${href ? "hover:border-primary cursor-pointer" : ""}`}>
       <div className={`h-11 w-11 rounded-card flex items-center justify-center shrink-0 ${accent ? "bg-[#25D366] text-white" : "bg-accent text-primary"}`}>
-        <Icon className="h-5 w-5" />
+        {iconSrc ? <img src={iconSrc} alt={title} className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
       </div>
       <div className="min-w-0">
         <div className="font-bold">{title}</div>
