@@ -40,10 +40,7 @@ export const QuickDonate = () => {
 
       <div className="container-page relative grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div className="text-donate-highlight-foreground">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-donate-highlight-foreground/10 text-sm font-bold">
-            <Sparkles className="h-4 w-4" /> দ্রুত দান
-          </span>
-          <h2 className="heading-display mt-4 text-donate-highlight-foreground">
+          <h2 className="heading-display text-donate-highlight-foreground">
             ৩০ সেকেন্ডে দান করুন — পরিবর্তন শুরু হোক এখনই
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-donate-highlight-foreground/80 max-w-lg">
