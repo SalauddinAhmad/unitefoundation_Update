@@ -40,7 +40,7 @@ export const QuickDonate = () => {
 
       <div className="container-page relative grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div className="text-donate-highlight-foreground">
-          <h2 className="heading-display text-donate-highlight-foreground">
+          <h2 className="heading-display text-left text-donate-highlight-foreground">
             ৩০ সেকেন্ডে দান করুন — পরিবর্তন শুরু হোক এখনই
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-donate-highlight-foreground/80 max-w-lg">
