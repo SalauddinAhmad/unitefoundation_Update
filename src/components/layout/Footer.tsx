@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv } from "lucide-react";
 import { site } from "@/data/site";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/logo-white.svg";
 import footerBg from "@/assets/footer-bg.svg";
 
 export const Footer = () => {
