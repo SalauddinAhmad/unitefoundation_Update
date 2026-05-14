@@ -12,15 +12,6 @@ const bankCards = [
     routing: site.payments.bank.routing,
     fundLabel: "সাধারণ ফান্ড",
   },
-  {
-    badge: "BANK TRANSFER",
-    title: "Islami Bank",
-    accountName: `${site.payments.bank.account} (Zakat)`,
-    accountNumber: "20502070205708219",
-    branch: site.payments.bank.branch,
-    routing: site.payments.bank.routing,
-    fundLabel: "শিক্ষাবৃত্তি (যাকাত ফান্ড)",
-  },
 ];
 
 const mobileNumbers = [
