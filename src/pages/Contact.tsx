@@ -124,9 +124,13 @@ import whatsappIcon from "@/assets/whatsapp-icon.svg";
 const InfoCard = ({ icon: Icon, iconSrc, title, lines, href, accent }: { icon?: any; iconSrc?: string; title: string; lines: string[]; href?: string; accent?: boolean }) => {
   const inner = (
     <div className={`card-base p-5 flex gap-4 ${href ? "hover:border-primary cursor-pointer" : ""}`}>
-      <div className={`h-11 w-11 rounded-card flex items-center justify-center shrink-0 ${accent ? "bg-[#25D366] text-white" : "bg-accent text-primary"}`}>
-        {iconSrc ? <img src={iconSrc} alt={title} className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
-      </div>
+      {iconSrc ? (
+        <img src={iconSrc} alt={title} className="h-11 w-11 rounded-card shrink-0" />
+      ) : (
+        <div className={`h-11 w-11 rounded-card flex items-center justify-center shrink-0 ${accent ? "bg-[#25D366] text-white" : "bg-accent text-primary"}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+      )}
       <div className="min-w-0">
         <div className="font-bold">{title}</div>
         {lines.map((l, i) => (<div key={i} className="text-sm text-muted-foreground mt-0.5" dir={i === 0 && title === "ফোন" ? "ltr" : undefined}>{l}</div>))}
