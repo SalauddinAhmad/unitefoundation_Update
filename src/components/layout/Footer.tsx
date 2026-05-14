@@ -40,7 +40,6 @@ export const Footer = () => {
                 src={logo}
                 alt={site.nameEn}
                 className="h-12 w-auto"
-                style={{ filter: "brightness(0) invert(1)" }}
               />
             </Link>
             <p className="mt-4 text-sm text-white/80 leading-relaxed">
