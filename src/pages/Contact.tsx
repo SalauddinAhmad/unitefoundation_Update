@@ -96,10 +96,12 @@ const Contact = () => {
         <div className="container-page">
           <div className="rounded-card overflow-hidden shadow-card aspect-[16/7] bg-muted">
             <iframe
-              title="আমাদের অবস্থান"
-              src="https://www.openstreetmap.org/export/embed.html?bbox=90.4050%2C23.7800%2C90.4250%2C23.7950&layer=mapnik&marker=23.7875%2C90.4150"
+              title="Unitefoundation — আমাদের অবস্থান"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3648.4403623099843!2d90.4460879753398!3d23.873998578586303!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c551a26063a7%3A0xdff6509b3a97f058!2sUnite%20Foundation!5e0!3m2!1sen!2sbd!4v1778757284293!5m2!1sen!2sbd"
               className="w-full h-full border-0"
+              allowFullScreen
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
         </div>
