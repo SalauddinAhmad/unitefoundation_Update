@@ -50,7 +50,7 @@ const Contact = () => {
           <div className="space-y-4 lg:col-span-1">
             <InfoCard icon={Phone} title="ফোন" lines={[site.phone]} href={`tel:${site.phone.replace(/\s/g, "")}`} />
             <InfoCard icon={Mail} title="ই-মেইল" lines={[site.email]} href={`mailto:${site.email}`} />
-            <InfoCard icon={MessageCircle} title="WhatsApp" lines={["২৪/৭ দ্রুত প্রতিক্রিয়া"]} href={`https://wa.me/${site.whatsapp}`} accent />
+            <InfoCard iconSrc={whatsappIcon} title="WhatsApp" lines={["২৪/৭ দ্রুত প্রতিক্রিয়া"]} href={`https://wa.me/${site.whatsapp}`} accent />
             <InfoCard icon={MapPin} title="ঠিকানা" lines={[site.address, "অফিস সময়: শনি-বৃহঃ, সকাল ১০টা - সন্ধ্যা ৬টা"]} />
 
             <div className="card-base p-6">
