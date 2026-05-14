@@ -68,33 +68,14 @@ export const Header = () => {
                 to={item.href}
                 end={item.href === "/"}
                 className={({ isActive }) =>
-                  `relative px-3.5 py-2 text-[15px] font-medium transition-all duration-300 group ${
+                  `relative px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 group ${
                     isActive
-                      ? "text-foreground"
+                      ? "text-donate-red"
                       : "text-foreground/75 hover:text-foreground"
                   }`
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    {isActive && (
-                      <span
-                        className="absolute inset-0 rounded-lg bg-[hsl(var(--donate-orange)/0.05)] pointer-events-none"
-                        aria-hidden
-                      />
-                    )}
-                    <span className="relative z-10 transition-colors duration-300">
-                      {item.label}
-                    </span>
-                    <span
-                      className={`absolute left-1/2 -translate-x-1/2 -bottom-[3px] h-[2px] rounded-full bg-gradient-to-r from-donate-orange to-primary transition-all duration-300 ${
-                        isActive
-                          ? "w-6 opacity-100"
-                          : "w-0 opacity-0 group-hover:w-5 group-hover:opacity-60"
-                      }`}
-                    />
-                  </>
-                )}
+                {item.label}
               </NavLink>
             ))}
           </nav>
