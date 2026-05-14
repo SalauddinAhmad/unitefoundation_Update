@@ -42,12 +42,12 @@ export const DonationChannelsSection = () => {
       className="relative py-16 md:py-24 overflow-hidden isolate"
       style={{
         background:
-          "radial-gradient(900px 500px at 50% 0%, hsl(220 40% 14%), transparent 60%), linear-gradient(180deg, hsl(222 35% 9%) 0%, hsl(222 40% 7%) 100%)",
+          "radial-gradient(1200px 600px at 50% -10%, hsl(var(--donate-highlight) / 0.18), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(var(--donate-orange) / 0.18), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(152 100% 14% / 0.55), transparent 55%), linear-gradient(180deg, hsl(152 80% 9%) 0%, hsl(152 100% 12%) 50%, hsl(152 80% 8%) 100%)",
       }}
     >
-      {/* Soft glow accents */}
-      <div className="pointer-events-none absolute -top-32 left-1/3 w-[520px] h-[520px] rounded-full bg-amber-500/5 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[420px] h-[420px] rounded-full bg-pink-500/5 blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
+      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl" />
 
       <div className="container-page relative">
         {/* Heading */}
@@ -68,7 +68,7 @@ export const DonationChannelsSection = () => {
               className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
               style={{
                 background:
-                  "linear-gradient(145deg, hsl(222 35% 12% / 0.8), hsl(222 40% 8% / 0.9))",
+                  "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
               }}
             >
               {/* Decorative shield icon */}
@@ -83,10 +83,10 @@ export const DonationChannelsSection = () => {
                   <h3 className="text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">
                     {b.title}
                   </h3>
-                  <div className="text-xs text-amber-400/80 mt-1.5 font-medium">{b.fundLabel}</div>
+                  <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">{b.fundLabel}</div>
                 </div>
-                <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-amber-500/30 to-amber-600/10 border border-amber-500/30 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-amber-400" />
+                <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-[hsl(var(--donate-highlight))]/30 to-[hsl(var(--donate-highlight))]/10 border border-[hsl(var(--donate-highlight))]/30 flex items-center justify-center">
+                  <CreditCard className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
                 </div>
               </div>
 
@@ -95,7 +95,7 @@ export const DonationChannelsSection = () => {
                 <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
                   Account Name
                 </div>
-                <div className="text-amber-400 font-bold text-lg">{b.accountName}</div>
+                <div className="text-[hsl(var(--donate-highlight))] font-bold text-lg">{b.accountName}</div>
               </div>
 
               {/* Account number — highlighted */}
@@ -140,7 +140,7 @@ export const DonationChannelsSection = () => {
             className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1 lg:col-span-2"
             style={{
               background:
-                "linear-gradient(145deg, hsl(222 35% 12% / 0.8), hsl(222 40% 8% / 0.9))",
+                "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
             }}
           >
             {/* Decorative heart */}
@@ -158,9 +158,9 @@ export const DonationChannelsSection = () => {
                 <div className="text-xs text-white/50 mt-1.5">পার্সোনাল অ্যাকাউন্ট</div>
               </div>
               <div className="flex -space-x-2">
-                <span className="h-8 w-8 rounded-full bg-pink-500 border-2 border-[hsl(222_40%_8%)]" />
-                <span className="h-8 w-8 rounded-full bg-amber-500 border-2 border-[hsl(222_40%_8%)]" />
-                <span className="h-8 w-8 rounded-full bg-purple-500 border-2 border-[hsl(222_40%_8%)]" />
+                <span className="h-8 w-8 rounded-full bg-pink-500 border-2 border-[hsl(152_70%_8%)]" />
+                <span className="h-8 w-8 rounded-full bg-[hsl(var(--donate-highlight))] border-2 border-[hsl(152_70%_8%)]" />
+                <span className="h-8 w-8 rounded-full bg-purple-500 border-2 border-[hsl(152_70%_8%)]" />
               </div>
             </div>
 
@@ -172,7 +172,7 @@ export const DonationChannelsSection = () => {
               <div className="font-mono font-bold text-white text-3xl md:text-5xl tracking-wider" dir="ltr">
                 {site.payments.bkash.number}
               </div>
-              <div className="text-amber-400/90 text-xs mt-3 inline-flex items-center gap-1.5">
+              <div className="text-[hsl(var(--donate-highlight))]/90 text-xs mt-3 inline-flex items-center gap-1.5">
                 <Copy className="h-3 w-3" /> কপি করতে ট্যাপ করুন
               </div>
             </button>
@@ -190,7 +190,7 @@ export const DonationChannelsSection = () => {
             </div>
 
             <div className="text-center text-xs text-white/50 mt-5">
-              রেফারেন্স: <span className="text-amber-400 font-medium">আপনার নাম / প্রকল্প</span>
+              রেফারেন্স: <span className="text-[hsl(var(--donate-highlight))] font-medium">আপনার নাম / প্রকল্প</span>
             </div>
           </article>
         </div>
