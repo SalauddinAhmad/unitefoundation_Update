@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv } from "lucide-react";
 import { site } from "@/data/site";
-import logo from "@/assets/logo.svg";
+import logo from "@/assets/logo-white.svg";
 import footerBg from "@/assets/footer-bg.svg";
 
 export const Footer = () => {
@@ -40,7 +40,6 @@ export const Footer = () => {
                 src={logo}
                 alt={site.nameEn}
                 className="h-12 w-auto"
-                style={{ filter: "brightness(0) invert(1)" }}
               />
             </Link>
             <p className="mt-4 text-sm text-white/80 leading-relaxed">
