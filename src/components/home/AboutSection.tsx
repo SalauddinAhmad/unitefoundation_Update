@@ -23,7 +23,7 @@ export const AboutSection = () => {
         </div>
 
         <div className="order-1 lg:order-2">
-          <span className="eyebrow">আমরা কারা</span>
+          
           <h2 className="heading-display mt-3">
             অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে{" "}
             <span className="gradient-donate-text">ইউনাইট ফাউন্ডেশন</span>
