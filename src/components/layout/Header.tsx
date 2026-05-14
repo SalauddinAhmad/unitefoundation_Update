@@ -77,17 +77,20 @@ export const Header = () => {
               >
                 {({ isActive }) => (
                   <>
-                    <span className="relative z-10">{item.label}</span>
                     <span
-                      className={`absolute inset-0 rounded-full bg-accent transition-all duration-300 ${
+                      className={`relative z-10 transition-colors duration-300 ${
                         isActive
-                          ? "opacity-100 scale-100"
-                          : "opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
+                          ? "bg-gradient-to-r from-donate-orange via-donate-red to-primary bg-clip-text text-transparent font-semibold"
+                          : ""
                       }`}
-                    />
+                    >
+                      {item.label}
+                    </span>
                     <span
-                      className={`absolute left-1/2 -bottom-0.5 h-0.5 rounded-full bg-gradient-to-r from-donate-red to-donate-orange transition-all duration-300 -translate-x-1/2 ${
-                        isActive ? "w-6 opacity-100" : "w-0 opacity-0 group-hover:w-6 group-hover:opacity-100"
+                      className={`absolute inset-x-0 -bottom-1 mx-auto h-[2px] rounded-full bg-gradient-to-r from-donate-orange via-donate-red to-primary transition-all duration-300 ${
+                        isActive
+                          ? "w-7 opacity-100 shadow-[0_0_8px_hsl(var(--donate-orange)/0.6)]"
+                          : "w-0 opacity-0 group-hover:w-7 group-hover:opacity-70"
                       }`}
                     />
                   </>
