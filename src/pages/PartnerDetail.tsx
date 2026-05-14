@@ -47,28 +47,9 @@ const PartnerDetail = () => {
             হোম পেজে ফিরে যান
           </Link>
 
-          <div className="grid lg:grid-cols-[420px,1fr] gap-10 lg:gap-14 items-center">
-            {/* Logo card */}
-            <div className="relative group">
-              <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-tr from-primary/40 via-primary/10 to-primary/40 opacity-70 blur-xl group-hover:opacity-100 transition-opacity" />
-              <div className="relative rounded-[2rem] border border-border/60 bg-card/80 backdrop-blur-xl p-10 md:p-14 shadow-card overflow-hidden">
-                {/* Corner accents */}
-                <span className="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2 border-primary/60" />
-                <span className="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2 border-primary/60" />
-                <span className="absolute bottom-4 left-4 h-3 w-3 border-b-2 border-l-2 border-primary/60" />
-                <span className="absolute bottom-4 right-4 h-3 w-3 border-b-2 border-r-2 border-primary/60" />
-                <div className="flex items-center justify-center min-h-[200px]">
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="max-h-40 md:max-h-48 w-auto object-contain drop-shadow-xl"
-                  />
-                </div>
-              </div>
-            </div>
-
+          <div className="grid lg:grid-cols-[1fr,420px] gap-10 lg:gap-14 items-center">
             {/* Heading */}
-            <div>
+            <div className="order-2 lg:order-1">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
                 <Sparkles className="h-3.5 w-3.5" /> সহযোগী প্রতিষ্ঠান
               </span>
@@ -103,6 +84,25 @@ const PartnerDetail = () => {
                   </a>
                 </Button>
               )}
+            </div>
+
+            {/* Logo card */}
+            <div className="relative group order-1 lg:order-2">
+              <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-tr from-primary/40 via-primary/10 to-primary/40 opacity-70 blur-xl group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-[2rem] border border-border/60 bg-card/80 backdrop-blur-xl p-10 md:p-14 shadow-card overflow-hidden">
+                {/* Corner accents */}
+                <span className="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2 border-primary/60" />
+                <span className="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2 border-primary/60" />
+                <span className="absolute bottom-4 left-4 h-3 w-3 border-b-2 border-l-2 border-primary/60" />
+                <span className="absolute bottom-4 right-4 h-3 w-3 border-b-2 border-r-2 border-primary/60" />
+                <div className="flex items-center justify-center min-h-[200px]">
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className="max-h-40 md:max-h-48 w-auto object-contain drop-shadow-xl"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
