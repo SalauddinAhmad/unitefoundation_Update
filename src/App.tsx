@@ -16,6 +16,7 @@ const About = lazy(() => import("./pages/About.tsx"));
 const Gallery = lazy(() => import("./pages/Gallery.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Volunteer = lazy(() => import("./pages/Volunteer.tsx"));
+const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/partners/:slug" element={<PartnerDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
