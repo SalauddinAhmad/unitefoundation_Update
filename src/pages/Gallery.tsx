@@ -78,11 +78,25 @@ const cats: Cat[] = ["সকল", "ত্রাণ", "খাদ্য বিত�
 const Gallery = () => {
   const [tab, setTab] = useState<Tab>("ছবি");
   const [active, setActive] = useState<Cat>("সকল");
+  const [activeVideoCat, setActiveVideoCat] = useState<VideoCat>("সকল");
   const [open, setOpen] = useState<number | null>(null);
+  const [openVideo, setOpenVideo] = useState<number | null>(null);
+
   const filtered = active === "সকল" ? items : items.filter((i) => i.cat === active);
+  const filteredVideos = activeVideoCat === "সকল" ? videos : videos.filter((v) => v.cat === activeVideoCat);
 
   const next = () => setOpen((o) => (o === null ? o : (o + 1) % filtered.length));
   const prev = () => setOpen((o) => (o === null ? o : (o - 1 + filtered.length) % filtered.length));
+
+  const nextVideo = () => setOpenVideo((o) => (o === null ? o : (o + 1) % filteredVideos.length));
+  const prevVideo = () => setOpenVideo((o) => (o === null ? o : (o - 1 + filteredVideos.length) % filteredVideos.length));
+
+  const sidebarCats: string[] = tab === "ছবি" ? cats : videoCats;
+  const activeCat: string = tab === "ছবি" ? active : activeVideoCat;
+  const setActiveCat = (c: string) => {
+    if (tab === "ছবি") setActive(c as Cat);
+    else setActiveVideoCat(c as VideoCat);
+  };
 
   return (
     <SiteLayout>
@@ -122,14 +136,14 @@ const Gallery = () => {
           {/* Sidebar categories */}
           <aside className="lg:sticky lg:top-28 self-start">
             <div className="bg-card rounded-card shadow-card border border-border overflow-hidden">
-              {cats.map((c, idx) => {
-                const isActive = active === c;
+              {sidebarCats.map((c, idx) => {
+                const isActive = activeCat === c;
                 return (
                   <button
                     key={c}
-                    onClick={() => setActive(c)}
+                    onClick={() => setActiveCat(c)}
                     className={`relative w-full text-left px-5 py-3.5 text-[15px] font-medium transition-colors ${
-                      idx !== cats.length - 1 ? "border-b border-border" : ""
+                      idx !== sidebarCats.length - 1 ? "border-b border-border" : ""
                     } ${isActive ? "text-primary" : "text-foreground/80 hover:bg-accent/50"}`}
                   >
                     {isActive && (
@@ -166,22 +180,41 @@ const Gallery = () => {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-5">
-              {filtered.slice(0, 6).map((it, i) => (
-                <div key={i} className="group relative rounded-card overflow-hidden aspect-video shadow-card hover:shadow-card-hover transition-all">
-                  <img src={it.src} alt="" className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              {filteredVideos.length === 0 && (
+                <div className="col-span-full text-center text-muted-foreground py-16">
+                  এই ক্যাটাগরিতে কোনো ভিডিও পাওয়া যায়নি।
+                </div>
+              )}
+              {filteredVideos.map((v, i) => (
+                <button
+                  key={i}
+                  onClick={() => setOpenVideo(i)}
+                  className="group relative rounded-card overflow-hidden aspect-video shadow-card hover:shadow-card-hover transition-all text-left"
+                >
+                  <img src={v.thumb} alt={v.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+                  <div className="absolute inset-0 flex items-center justify-center">
                     <span className="h-16 w-16 rounded-full bg-white/95 flex items-center justify-center shadow-donate group-hover:scale-110 transition-transform">
                       <Play className="h-7 w-7 text-donate-red ml-1" fill="currentColor" />
                     </span>
                   </div>
-                </div>
+                  {v.duration && (
+                    <span className="absolute top-3 right-3 text-[11px] font-semibold text-white bg-black/70 backdrop-blur px-2 py-1 rounded">
+                      {v.duration}
+                    </span>
+                  )}
+                  <div className="absolute left-0 right-0 bottom-0 p-4">
+                    <span className="inline-block text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-donate-highlight text-donate-highlight-foreground font-bold">{v.cat}</span>
+                    <p className="mt-1.5 text-white text-sm font-semibold leading-snug">{v.title}</p>
+                  </div>
+                </button>
               ))}
             </div>
           )}
         </div>
       </section>
 
-      {/* Lightbox */}
+      {/* Image Lightbox */}
       {open !== null && (
         <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-fade-up" onClick={() => setOpen(null)}>
           <button onClick={(e) => { e.stopPropagation(); setOpen(null); }} className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center" aria-label="বন্ধ করুন"><X className="h-5 w-5" /></button>
@@ -189,6 +222,27 @@ const Gallery = () => {
           <button onClick={(e) => { e.stopPropagation(); next(); }} className="absolute right-4 md:right-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center" aria-label="পরের"><ChevronRight className="h-6 w-6" /></button>
           <img src={filtered[open].src} alt={filtered[open].alt} className="max-h-[88vh] max-w-[92vw] rounded-card object-contain shadow-2xl" />
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 backdrop-blur px-5 py-2.5 rounded-full">{filtered[open].alt}</div>
+        </div>
+      )}
+
+      {/* Video Lightbox */}
+      {openVideo !== null && filteredVideos[openVideo] && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 animate-fade-up" onClick={() => setOpenVideo(null)}>
+          <button onClick={(e) => { e.stopPropagation(); setOpenVideo(null); }} className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10" aria-label="বন্ধ করুন"><X className="h-5 w-5" /></button>
+          <button onClick={(e) => { e.stopPropagation(); prevVideo(); }} className="absolute left-4 md:left-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10" aria-label="আগের"><ChevronLeft className="h-6 w-6" /></button>
+          <button onClick={(e) => { e.stopPropagation(); nextVideo(); }} className="absolute right-4 md:right-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10" aria-label="পরের"><ChevronRight className="h-6 w-6" /></button>
+          <div className="w-full max-w-5xl aspect-video rounded-card overflow-hidden shadow-2xl bg-black" onClick={(e) => e.stopPropagation()}>
+            <iframe
+              src={`https://www.youtube.com/embed/${filteredVideos[openVideo].youtubeId}?autoplay=1&rel=0`}
+              title={filteredVideos[openVideo].title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 backdrop-blur px-5 py-2.5 rounded-full max-w-[90vw] truncate">
+            {filteredVideos[openVideo].title}
+          </div>
         </div>
       )}
     </SiteLayout>
