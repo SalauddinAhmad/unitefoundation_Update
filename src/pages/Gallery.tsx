@@ -26,6 +26,29 @@ import g20 from "@/assets/gallery/20.jpg";
 
 type Tab = "ছবি" | "ভিডিও";
 type Cat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "ইফতার";
+type VideoCat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "ইফতার" | "প্রতিবেদন";
+
+type VideoItem = {
+  thumb: string;
+  title: string;
+  cat: VideoCat;
+  youtubeId: string;
+  duration?: string;
+};
+
+const videos: VideoItem[] = [
+  { thumb: g4, title: "বন্যা কবলিত এলাকায় ত্রাণ অভিযান", cat: "ত্রাণ", youtubeId: "dQw4w9WgXcQ", duration: "৩:২৪" },
+  { thumb: g2, title: "নৌকায় ত্রাণ বিতরণ — নেত্রকোণা", cat: "ত্রাণ", youtubeId: "dQw4w9WgXcQ", duration: "৫:১২" },
+  { thumb: g13, title: "নদীপথে ত্রাণ — সরাসরি প্রতিবেদন", cat: "প্রতিবেদন", youtubeId: "dQw4w9WgXcQ", duration: "৭:৪৫" },
+  { thumb: g3, title: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ", youtubeId: "dQw4w9WgXcQ", duration: "৪:১০" },
+  { thumb: g5, title: "ত্রাণ প্যাকেজ প্রস্তুতি — বিহাইন্ড দ্য সিন", cat: "খাদ্য বিতরণ", youtubeId: "dQw4w9WgXcQ", duration: "২:৫০" },
+  { thumb: g7, title: "ইফতার প্রোগ্রাম — নেত্রকোণা", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৬:০২" },
+  { thumb: g8, title: "ইফতার প্রোগ্রাম — খুলনা", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৪:৩৮" },
+  { thumb: g9, title: "ইফতার প্রোগ্রাম — দিনাজপুর", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৫:২০" },
+  { thumb: g20, title: "ত্রাণ অভিযান — সূর্যাস্তের মুহূর্ত", cat: "প্রতিবেদন", youtubeId: "dQw4w9WgXcQ", duration: "৩:১৫" },
+];
+
+const videoCats: VideoCat[] = ["সকল", "ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "প্রতিবেদন"];
 
 const items: { src: string; alt: string; cat: Cat }[] = [
   { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন", cat: "ত্রাণ" },
