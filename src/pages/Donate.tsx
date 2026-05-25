@@ -47,8 +47,12 @@ const Donate = () => {
   const selected = useMemo(() => getProject(project) || projects[0], [project]);
 
   const methodNumber =
-    method === "bank" ? site.payments.bank.number : site.payments[method].number;
-  const methodLabel = methods.find((m) => m.id === method)!;
+    method === "bank"
+      ? site.payments.bank.number
+      : method === "ssl"
+        ? ""
+        : site.payments[method].number;
+  const methodLabel = methods.find((m) => m.id === method);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
