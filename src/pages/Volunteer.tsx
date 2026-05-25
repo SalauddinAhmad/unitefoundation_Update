@@ -11,6 +11,10 @@ import {
   MapPin,
   CheckCircle2,
   ChevronRight,
+  PartyPopper,
+  Phone,
+  Mail,
+  RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
@@ -108,21 +112,134 @@ const careerSchema = z.object({
 });
 
 // ---------- Helpers ----------
-const sendToWhatsApp = (title: string, body: string) => {
+const buildWhatsAppUrl = (title: string, body: string) => {
   const text = `*${title} — ইউনাইট ফাউন্ডেশন*\n\n${body}`;
-  window.open(
-    `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`,
-    "_blank",
-    "noopener,noreferrer",
-  );
-  toast({
-    title: "ধন্যবাদ!",
-    description: "আপনার তথ্য WhatsApp-এ পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।",
-  });
+  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 };
 
 const showError = (msg?: string) =>
   toast({ title: "তথ্য যাচাই করুন", description: msg, variant: "destructive" });
+
+// ---------- Per-topic success content ----------
+const successContent: Record<TabKey, {
+  title: string;
+  subtitle: string;
+  message: string;
+  bullets: string[];
+  nextStep: string;
+}> = {
+  regular: {
+    title: "জাযাকাল্লাহু খাইরান!",
+    subtitle: "নিয়মিত দাতা হিসেবে আপনার আবেদন গৃহীত হয়েছে",
+    message:
+      "আপনার নিয়মিত অবদান একটি এতিম শিশুর হাসি, একটি পরিবারের খাদ্য এবং একজন রোগীর চিকিৎসার ধারাবাহিকতা নিশ্চিত করবে — ইন শা আল্লাহ।",
+    bullets: [
+      "আমাদের টিম ২৪ ঘণ্টার মধ্যে যোগাযোগ করে মাসিক সেটআপ সম্পন্ন করবে",
+      "প্রতি মাসে অটো-রিমাইন্ডার ও রসিদ পাবেন",
+      "মাসিক ইমপ্যাক্ট রিপোর্ট সরাসরি আপনার ই-মেইলে",
+    ],
+    nextStep: "WhatsApp-এ বিস্তারিত পাঠান",
+  },
+  member: {
+    title: "আলহামদুলিল্লাহ!",
+    subtitle: "সদস্যপদের আবেদন গৃহীত হয়েছে",
+    message:
+      "আপনি এখন ইউনাইট ফাউন্ডেশনের স্থায়ী অংশীদার হওয়ার পথে। আপনার সদস্যপদ প্রতিটি দীর্ঘমেয়াদি প্রকল্পে চিরস্থায়ী অবদান রাখবে — ইন শা আল্লাহ।",
+    bullets: [
+      "৪৮ ঘণ্টার মধ্যে আমাদের প্রতিনিধি ফোনে যোগাযোগ করবেন",
+      "পেমেন্ট নিশ্চিত হওয়ার পর সদস্যপদ কার্ড ও সার্টিফিকেট",
+      "বার্ষিক সাধারণ সভায় আমন্ত্রণ ও প্রকল্প পরিদর্শনের সুযোগ",
+    ],
+    nextStep: "WhatsApp-এ আবেদন পাঠান",
+  },
+  volunteer: {
+    title: "জাযাকাল্লাহু খাইরান!",
+    subtitle: "স্বেচ্ছাসেবক টিমে যুক্ত হওয়ার আবেদন পেয়েছি",
+    message:
+      "আপনার সময় ও ইচ্ছা আল্লাহর কাছে অত্যন্ত মূল্যবান। আমরা শীঘ্রই আপনার আগ্রহের ক্ষেত্র অনুযায়ী টিমে অন্তর্ভুক্ত করব — ইন শা আল্লাহ।",
+    bullets: [
+      "২৪-৪৮ ঘণ্টার মধ্যে অরিয়েন্টেশন কলের সময় জানানো হবে",
+      "আপনার এলাকার নিকটতম টিম লিডের সাথে পরিচয়",
+      "প্রথম মাঠ-কার্যক্রমে যোগদানের সুযোগ",
+    ],
+    nextStep: "WhatsApp-এ আবেদন পাঠান",
+  },
+  career: {
+    title: "ধন্যবাদ!",
+    subtitle: "আপনার ক্যারিয়ার আবেদন গ্রহণ করা হয়েছে",
+    message:
+      "আমাদের HR টিম আপনার তথ্য ও CV যাচাই করছেন। শর্টলিস্টেড হলে ৭ কর্মদিবসের মধ্যে ইন্টারভিউয়ের জন্য আপনাকে জানানো হবে।",
+    bullets: [
+      "প্রাথমিক যাচাই: ২-৩ কর্মদিবস",
+      "শর্টলিস্ট হলে ফোনে ইন্টারভিউয়ের সময় নির্ধারণ",
+      "চূড়ান্ত নির্বাচন: ইন-পারসন ইন্টারভিউ ও অফার লেটার",
+    ],
+    nextStep: "WhatsApp-এ CV পাঠান",
+  },
+};
+
+const SuccessCard = ({
+  topic,
+  waUrl,
+  onReset,
+}: {
+  topic: TabKey;
+  waUrl: string;
+  onReset: () => void;
+}) => {
+  const c = successContent[topic];
+  return (
+    <div className="text-white text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mx-auto h-20 w-20 rounded-full bg-white/15 backdrop-blur flex items-center justify-center ring-4 ring-white/20">
+        <PartyPopper className="h-10 w-10 text-white" />
+      </div>
+      <h3 className="mt-6 text-2xl md:text-3xl font-extrabold tracking-tight">{c.title}</h3>
+      <p className="mt-2 text-white/90 font-semibold">{c.subtitle}</p>
+      <p className="mt-4 text-white/85 leading-relaxed text-sm md:text-base">{c.message}</p>
+
+      <div className="mt-6 rounded-card bg-white/10 backdrop-blur border border-white/20 p-5 text-left">
+        <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-3">
+          পরবর্তী ধাপ
+        </div>
+        <ul className="space-y-2.5">
+          {c.bullets.map((b) => (
+            <li key={b} className="flex items-start gap-2.5 text-sm text-white/95">
+              <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+              <span className="leading-relaxed">{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-6 grid sm:grid-cols-2 gap-3">
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3 hover:bg-white/90 transition-colors"
+        >
+          <Send className="h-4 w-4" /> {c.nextStep}
+        </a>
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 hover:bg-white/20 transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" /> নতুন আবেদন
+        </button>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/75">
+        <a href={`tel:${site.whatsapp}`} className="inline-flex items-center gap-1.5 hover:text-white">
+          <Phone className="h-3.5 w-3.5" /> {site.whatsapp}
+        </a>
+        <a href={`mailto:${site.email || "info@unite.org"}`} className="inline-flex items-center gap-1.5 hover:text-white">
+          <Mail className="h-3.5 w-3.5" /> {site.email || "info@unite.org"}
+        </a>
+      </div>
+    </div>
+  );
+};
 
 // ============================================================
 const Volunteer = () => {
@@ -438,18 +555,20 @@ const FormHeader = ({ title, sub }: { title: string; sub: string }) => (
 // ============================================================
 // 1) REGULAR DONOR FORM
 const RegularForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+  const init = { name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = regularSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "নিয়মিত দাতা আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nদানের ক্ষেত্র: ${f.area}\nমাসিক পরিমাণ: ৳${f.amount}\nপেমেন্ট: ${f.method}\n\nবার্তা: ${f.note || "—"}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="নিয়মিত দাতা হিসেবে যুক্ত হোন" sub="মাসিক ভিত্তিতে দানের জন্য তথ্য দিন — WhatsApp-এ আমাদের টিম আপনাকে সেটআপে সাহায্য করবে।" />
@@ -487,7 +606,7 @@ const RegularForm = () => {
         <FieldLight label="বার্তা (ঐচ্ছিক)">
           <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" placeholder="বিশেষ কিছু জানাতে চাইলে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
@@ -496,19 +615,21 @@ const RegularForm = () => {
 // ============================================================
 // 2) MEMBERSHIP FORM
 const MemberForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+  const init = { name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = memberSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
     const typeLabel = membershipTypes.find((t) => t.value === f.type)?.label || f.type;
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "সদস্যপদ আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nসদস্যপদ: ${typeLabel}\nঠিকানা: ${f.address}\n\nবার্তা: ${f.note || "—"}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="আজীবন ও দাতা সদস্য হোন" sub="আবেদন গ্রহণের পর আমাদের টিম সদস্যপদ ও পেমেন্ট প্রক্রিয়া নিশ্চিত করবে।" />
@@ -532,7 +653,7 @@ const MemberForm = () => {
         <FieldLight label="বার্তা (ঐচ্ছিক)">
           <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
@@ -541,18 +662,20 @@ const MemberForm = () => {
 // ============================================================
 // 3) VOLUNTEER FORM (existing)
 const VolunteerForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+  const init = { name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = volunteerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "স্বেচ্ছাসেবক আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nবয়স: ${f.age}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nআগ্রহের ক্ষেত্র: ${f.area}\nসময়: ${f.availability}\n\nকেন যুক্ত হতে চান:\n${f.motivation}`,
-    );
-    setF({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="volunteer" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="স্বেচ্ছাসেবক হিসেবে যুক্ত হোন" sub="ফর্মটি পূরণ করুন — আমাদের টিম ২৪-৪৮ ঘণ্টার মধ্যে যোগাযোগ করবে।" />
@@ -585,7 +708,7 @@ const VolunteerForm = () => {
         <FieldLight label="কেন যুক্ত হতে চান? *">
           <textarea required rows={4} maxLength={1000} value={f.motivation} onChange={u("motivation")} className="vol-input resize-none" placeholder="আপনার অনুপ্রেরণা সংক্ষেপে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
@@ -594,18 +717,20 @@ const VolunteerForm = () => {
 // ============================================================
 // 4) CAREER FORM
 const CareerForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+  const init = { name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = careerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "ক্যারিয়ার আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nপদ: ${f.position}\nঅভিজ্ঞতা: ${f.experience}\nশিক্ষাগত যোগ্যতা: ${f.qualification}\nCV: ${f.cv || "—"}\n\nকভার লেটার:\n${f.cover}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="career" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="ক্যারিয়ার আবেদন" sub="আপনার জন্য উপযুক্ত পদে আবেদন করুন — CV-সহ তথ্য পাঠান।" />
@@ -640,7 +765,7 @@ const CareerForm = () => {
         <FieldLight label="কভার লেটার *">
           <textarea required rows={4} maxLength={1000} value={f.cover} onChange={u("cover")} className="vol-input resize-none" placeholder="কেন এই পদে আবেদন করছেন তা সংক্ষেপে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
