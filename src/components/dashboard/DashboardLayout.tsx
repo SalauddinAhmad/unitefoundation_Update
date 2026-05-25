@@ -19,7 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import logo from "@/assets/uflogo.png";
+import logo from "@/assets/logo.png";
 
 const menu = [
   { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true },
