@@ -653,7 +653,7 @@ const MemberForm = () => {
         <FieldLight label="বার্তা (ঐচ্ছিক)">
           <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
@@ -708,7 +708,7 @@ const VolunteerForm = () => {
         <FieldLight label="কেন যুক্ত হতে চান? *">
           <textarea required rows={4} maxLength={1000} value={f.motivation} onChange={u("motivation")} className="vol-input resize-none" placeholder="আপনার অনুপ্রেরণা সংক্ষেপে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
@@ -765,7 +765,7 @@ const CareerForm = () => {
         <FieldLight label="কভার লেটার *">
           <textarea required rows={4} maxLength={1000} value={f.cover} onChange={u("cover")} className="vol-input resize-none" placeholder="কেন এই পদে আবেদন করছেন তা সংক্ষেপে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
