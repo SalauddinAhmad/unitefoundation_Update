@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   HandHeart,
   HeartHandshake,
@@ -20,7 +19,33 @@ import volunteerImg from "@/assets/program-food.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
-const areas = [
+type TabKey = "regular" | "member" | "volunteer" | "career";
+
+const tabs: { key: TabKey; label: string; icon: typeof HandHeart }[] = [
+  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
+  { key: "member", label: "আজীবন ও দাতা সদস্য", icon: HeartHandshake },
+  { key: "volunteer", label: "স্বেচ্ছাসেবক", icon: HandHeart },
+  { key: "career", label: "ক্যারিয়ার", icon: Briefcase },
+];
+
+// ---------- Topic-specific options ----------
+const regularAreas = [
+  "এতিম ও সুবিধাবঞ্চিত শিশু",
+  "শিক্ষা সহায়তা",
+  "মাসিক খাদ্য সহায়তা",
+  "চিকিৎসা সহায়তা",
+  "মসজিদ ও দাওয়াহ",
+  "যেখানে প্রয়োজন সেখানে",
+];
+const regularAmounts = ["৫০০", "১০০০", "২০০০", "৫০০০", "১০০০০", "অন্যান্য"];
+
+const membershipTypes = [
+  { value: "lifetime", label: "আজীবন সদস্য — এককালীন ৳৫০,০০০" },
+  { value: "donor", label: "দাতা সদস্য — এককালীন ৳২৫,০০০" },
+  { value: "honorary", label: "সম্মানিত সদস্য — এককালীন ৳১,০০,০০০+" },
+];
+
+const volunteerAreas = [
   "ত্রাণ বিতরণ",
   "শিক্ষা ও মেন্টরশিপ",
   "স্বাস্থ্যসেবা ক্যাম্প",
@@ -29,108 +54,92 @@ const areas = [
   "মসজিদ ও দাওয়াহ",
 ];
 
-const scopeList = [
-  "বন্যা, শীত ও দুর্যোগে মাঠপর্যায়ে ত্রাণ পৌঁছে দেওয়া",
-  "এতিম ও সুবিধাবঞ্চিত শিশুদের শিক্ষায় সাপ্তাহিক সময়দান",
-  "ফ্রি মেডিকেল ক্যাম্পে ডাক্তার, নার্স ও সহকারী হিসেবে অংশগ্রহণ",
-  "অনলাইন ও অফলাইন ফান্ডরাইজিং প্রচারণায় সহযোগিতা",
-  "ফটোগ্রাফি, ভিডিও, গ্রাফিক ও সোশ্যাল মিডিয়া কন্টেন্ট তৈরি",
-  "দাওয়াহ ও মসজিদ কেন্দ্রিক সামাজিক কার্যক্রম পরিচালনা",
+const careerPositions = [
+  "প্রোগ্রাম অফিসার",
+  "ফিল্ড কোঅর্ডিনেটর",
+  "একাউন্টস / ফাইন্যান্স",
+  "মিডিয়া ও কনটেন্ট",
+  "গ্রাফিক ডিজাইনার",
+  "সফটওয়্যার / আইটি",
+  "ফান্ডরাইজিং",
+  "অন্যান্য",
 ];
 
-const tabs = [
-  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat, href: "/donate" },
-  { key: "member", label: "আজীবন ও দাতা সদস্য", icon: HeartHandshake, href: "/donate" },
-  { key: "volunteer", label: "স্বেচ্ছাসেবক", icon: HandHeart, href: "/volunteer" },
-  { key: "career", label: "ক্যারিয়ার", icon: Briefcase, href: "/contact" },
-] as const;
-
-const schema = z.object({
+// ---------- Schemas ----------
+const baseContact = {
   name: z.string().trim().min(2, "নাম লিখুন").max(80),
   phone: z.string().trim().regex(/^01[3-9]\d{8}$/, "সঠিক মোবাইল নম্বর দিন"),
   email: z.string().trim().email("সঠিক ই-মেইল দিন").max(255).or(z.literal("")),
-  age: z.string().trim().min(1, "বয়স দিন"),
   city: z.string().trim().min(2, "শহর/জেলা লিখুন").max(80),
+};
+
+const regularSchema = z.object({
+  ...baseContact,
+  area: z.string().min(1, "ক্ষেত্র নির্বাচন করুন"),
+  amount: z.string().min(1, "পরিমাণ নির্বাচন করুন"),
+  method: z.string().min(1, "পেমেন্ট মাধ্যম নির্বাচন করুন"),
+  note: z.string().trim().max(500).or(z.literal("")),
+});
+
+const memberSchema = z.object({
+  ...baseContact,
+  profession: z.string().trim().max(120).or(z.literal("")),
+  type: z.string().min(1, "সদস্যপদ নির্বাচন করুন"),
+  address: z.string().trim().min(5, "পূর্ণ ঠিকানা দিন").max(300),
+  note: z.string().trim().max(500).or(z.literal("")),
+});
+
+const volunteerSchema = z.object({
+  ...baseContact,
+  age: z.string().trim().min(1, "বয়স দিন"),
   profession: z.string().trim().max(120).or(z.literal("")),
   area: z.string().min(1, "আগ্রহের ক্ষেত্র নির্বাচন করুন"),
   availability: z.string().min(1, "সময় নির্বাচন করুন"),
   motivation: z.string().trim().min(10, "অন্তত ১০ অক্ষর লিখুন").max(1000),
 });
 
-const Volunteer = () => {
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    age: "",
-    city: "",
-    profession: "",
-    area: "",
-    availability: "",
-    motivation: "",
+const careerSchema = z.object({
+  ...baseContact,
+  position: z.string().min(1, "পদ নির্বাচন করুন"),
+  experience: z.string().min(1, "অভিজ্ঞতা নির্বাচন করুন"),
+  qualification: z.string().trim().min(2, "শিক্ষাগত যোগ্যতা দিন").max(200),
+  cv: z.string().trim().url("CV লিংক দিন (Google Drive/Dropbox)").or(z.literal("")),
+  cover: z.string().trim().min(10, "অন্তত ১০ অক্ষর লিখুন").max(1000),
+});
+
+// ---------- Helpers ----------
+const sendToWhatsApp = (title: string, body: string) => {
+  const text = `*${title} — ইউনাইট ফাউন্ডেশন*\n\n${body}`;
+  window.open(
+    `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`,
+    "_blank",
+    "noopener,noreferrer",
+  );
+  toast({
+    title: "ধন্যবাদ!",
+    description: "আপনার তথ্য WhatsApp-এ পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।",
   });
+};
 
-  const upd =
-    (k: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-      setForm({ ...form, [k]: e.target.value });
+const showError = (msg?: string) =>
+  toast({ title: "তথ্য যাচাই করুন", description: msg, variant: "destructive" });
 
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = schema.safeParse(form);
-    if (!r.success) {
-      toast({
-        title: "তথ্য যাচাই করুন",
-        description: r.error.issues[0]?.message,
-        variant: "destructive",
-      });
-      return;
-    }
-    const text =
-      `*স্বেচ্ছাসেবক আবেদন — ইউনাইট ফাউন্ডেশন*\n\n` +
-      `নাম: ${form.name}\nফোন: ${form.phone}\nই-মেইল: ${form.email || "—"}\n` +
-      `বয়স: ${form.age}\nশহর/জেলা: ${form.city}\nপেশা: ${form.profession || "—"}\n` +
-      `আগ্রহের ক্ষেত্র: ${form.area}\nসময়: ${form.availability}\n\n` +
-      `কেন যুক্ত হতে চান:\n${form.motivation}`;
-    window.open(
-      `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`,
-      "_blank",
-      "noopener,noreferrer",
-    );
-    toast({
-      title: "ধন্যবাদ!",
-      description: "আপনার আবেদন WhatsApp-এ পাঠানো হয়েছে। আমরা শীঘ্রই যোগাযোগ করব।",
-    });
-    setForm({
-      name: "",
-      phone: "",
-      email: "",
-      age: "",
-      city: "",
-      profession: "",
-      area: "",
-      availability: "",
-      motivation: "",
-    });
-  };
+// ============================================================
+const Volunteer = () => {
+  const [active, setActive] = useState<TabKey>("volunteer");
 
   return (
     <SiteLayout>
       <Seo
         title="আমাদের সাথে যুক্ত হোন | ইউনাইট ফাউন্ডেশন"
-        description="ইউনাইট ফাউন্ডেশনের সাথে স্বেচ্ছাসেবক হিসেবে যুক্ত হোন। ত্রাণ, শিক্ষা, স্বাস্থ্য, মিডিয়া ও দাওয়াহ — যেকোনো ক্ষেত্রে অবদান রাখার সুযোগ।"
+        description="নিয়মিত দাতা, আজীবন সদস্য, স্বেচ্ছাসেবক বা ক্যারিয়ার — যেকোনো ভাবে ইউনাইট ফাউন্ডেশনের সাথে যুক্ত হোন।"
         canonical="/volunteer"
       />
 
-      {/* HERO — image with deep green overlay, centered title (As-Sunnah style) */}
+      {/* HERO */}
       <section className="relative isolate">
         <div className="absolute inset-0 -z-10">
-          <img
-            src={volunteerImg}
-            alt="স্বেচ্ছাসেবক কার্যক্রম"
-            className="h-full w-full object-cover"
-            loading="eager"
-          />
+          <img src={volunteerImg} alt="যুক্ত হোন" className="h-full w-full object-cover" loading="eager" />
           <div
             className="absolute inset-0"
             style={{
@@ -147,7 +156,7 @@ const Volunteer = () => {
         </div>
       </section>
 
-      {/* INTRO + TAB SELECTOR */}
+      {/* TABS + FORMS */}
       <section className="py-14 md:py-20">
         <div className="container-page">
           <div className="max-w-3xl">
@@ -155,26 +164,26 @@ const Volunteer = () => {
               আমাদের সঙ্গে যুক্ত হতে পারেন বিভিন্নভাবে
             </h2>
             <p className="text-muted-foreground mt-4 leading-relaxed">
-              আপনি যদি ইউনাইট ফাউন্ডেশনের কল্যাণকর কাজসমূহের অংশীদার হতে চান, নিচের
-              যেকোনো একটি উপায়ে আমাদের সঙ্গে যুক্ত হতে পারেন। আপনার আগ্রহ অনুযায়ী
-              যেকোনো অপশনে ক্লিক করুন।
+              নিচ থেকে যেকোনো একটি অপশন নির্বাচন করুন — তার জন্য নির্দিষ্ট ফর্ম পূরণ করে
+              সরাসরি আমাদের কাছে আবেদন পাঠাতে পারবেন।
             </p>
           </div>
 
-          {/* Tab cards */}
+          {/* Tabs */}
           <div className="mt-10 rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {tabs.map((t) => {
-                const active = t.key === "volunteer";
+                const isActive = t.key === active;
                 const Icon = t.icon;
                 return (
-                  <Link
+                  <button
                     key={t.key}
-                    to={t.href}
-                    aria-current={active ? "page" : undefined}
+                    type="button"
+                    onClick={() => setActive(t.key)}
+                    aria-pressed={isActive}
                     className={
                       "group flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 py-5 md:py-6 px-3 rounded-xl text-sm md:text-base font-semibold text-center transition-colors " +
-                      (active
+                      (isActive
                         ? "bg-accent text-accent-foreground"
                         : "text-foreground/70 hover:bg-secondary hover:text-foreground")
                     }
@@ -182,7 +191,7 @@ const Volunteer = () => {
                     <span
                       className={
                         "h-10 w-10 rounded-full flex items-center justify-center transition-colors " +
-                        (active
+                        (isActive
                           ? "bg-primary text-primary-foreground"
                           : "bg-secondary text-primary group-hover:bg-accent")
                       }
@@ -190,7 +199,7 @@ const Volunteer = () => {
                       <Icon className="h-5 w-5" />
                     </span>
                     <span>{t.label}</span>
-                  </Link>
+                  </button>
                 );
               })}
             </div>
@@ -198,7 +207,7 @@ const Volunteer = () => {
 
           {/* Info strip */}
           <div className="mt-5 rounded-card bg-accent/60 border border-accent px-5 md:px-6 py-4 text-sm md:text-base text-foreground/80 text-center">
-            স্বেচ্ছাসেবা সংক্রান্ত যেকোনো বিষয় বুঝতে অসুবিধা হলে, দয়া করে{" "}
+            যেকোনো বিষয় বুঝতে অসুবিধা হলে, দয়া করে{" "}
             <a
               href={`mailto:${site.email || "info@unite.org"}`}
               className="font-semibold text-primary underline-offset-4 hover:underline"
@@ -210,44 +219,10 @@ const Volunteer = () => {
 
           {/* Two-column content */}
           <div className="mt-14 grid lg:grid-cols-2 gap-10 items-start">
-            {/* Left: scope */}
-            <div>
-              <p className="text-base md:text-lg leading-relaxed text-foreground/85">
-                স্বেচ্ছাসেবা শুধু সময়দান নয় — এটি একটি ইবাদত, একটি দায়িত্ব। আপনার
-                একটি ছোট প্রচেষ্টা বদলে দিতে পারে কারো জীবনের গল্প। আমাদের সঙ্গে যুক্ত
-                হয়ে নিজের দক্ষতা, সময় ও ভালোবাসা দিয়ে মানবতার সেবায় হাত বাড়ান।
-              </p>
+            {/* Left: contextual info */}
+            <LeftPanel active={active} />
 
-              <blockquote className="mt-6 rounded-card border-l-4 border-primary bg-accent/40 p-5 text-foreground/80 italic leading-relaxed">
-                আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়,
-                যদিও তা অল্প হয়। <span className="not-italic text-sm text-muted-foreground">(সহীহ বুখারী, হাদীস ৬৪৬৪)</span>
-              </blockquote>
-
-              <h3 className="mt-8 text-xl font-bold">স্বেচ্ছাসেবকের কাজের ক্ষেত্র</h3>
-              <ul className="mt-4 space-y-3">
-                {scopeList.map((s) => (
-                  <li key={s} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground/80 leading-relaxed">{s}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-8 grid grid-cols-3 gap-3">
-                {[
-                  { v: "৩,৪৫০+", l: "স্বেচ্ছাসেবক" },
-                  { v: "১৪", l: "জেলায় নেটওয়ার্ক" },
-                  { v: "১২৮০+", l: "প্রকল্প" },
-                ].map((s) => (
-                  <div key={s.l} className="rounded-card bg-secondary/60 p-4 text-center">
-                    <div className="text-xl md:text-2xl font-extrabold text-primary">{s.v}</div>
-                    <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: form card (green like reference) */}
+            {/* Right: dynamic form */}
             <div
               id="apply"
               className="rounded-card overflow-hidden shadow-[var(--shadow-card-hover)] scroll-mt-28"
@@ -257,83 +232,10 @@ const Volunteer = () => {
               }}
             >
               <div className="p-7 md:p-9 text-white">
-                <h3 className="text-xl md:text-2xl font-bold">
-                  স্বেচ্ছাসেবক হিসেবে যুক্ত হোন
-                </h3>
-                <p className="text-white/85 text-sm mt-2 leading-relaxed">
-                  ফর্মটি পূরণ করুন — আপনার তথ্য সরাসরি WhatsApp-এ পৌঁছাবে এবং আমাদের
-                  টিম ২৪-৪৮ ঘণ্টার মধ্যে যোগাযোগ করবে।
-                </p>
-
-                <form onSubmit={submit} className="mt-6 space-y-3">
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <FieldLight label="পূর্ণ নাম *">
-                      <input required maxLength={80} value={form.name} onChange={upd("name")} className="vol-input" />
-                    </FieldLight>
-                    <FieldLight label="মোবাইল *">
-                      <input
-                        required
-                        type="tel"
-                        inputMode="numeric"
-                        maxLength={11}
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "") })}
-                        placeholder="01XXXXXXXXX"
-                        className="vol-input"
-                      />
-                    </FieldLight>
-                    <FieldLight label="ই-মেইল">
-                      <input type="email" maxLength={255} value={form.email} onChange={upd("email")} className="vol-input" />
-                    </FieldLight>
-                    <FieldLight label="বয়স *">
-                      <input required type="number" min={14} max={80} value={form.age} onChange={upd("age")} className="vol-input" />
-                    </FieldLight>
-                    <FieldLight label="শহর / জেলা *">
-                      <input required maxLength={80} value={form.city} onChange={upd("city")} className="vol-input" />
-                    </FieldLight>
-                    <FieldLight label="পেশা / ছাত্রত্ব">
-                      <input maxLength={120} value={form.profession} onChange={upd("profession")} className="vol-input" placeholder="যেমন: ছাত্র, ডাক্তার" />
-                    </FieldLight>
-                  </div>
-
-                  <FieldLight label="আগ্রহের ক্ষেত্র *">
-                    <select required value={form.area} onChange={upd("area")} className="vol-input">
-                      <option value="">— নির্বাচন করুন —</option>
-                      {areas.map((a) => (
-                        <option key={a} value={a}>{a}</option>
-                      ))}
-                      <option value="অন্যান্য">অন্যান্য</option>
-                    </select>
-                  </FieldLight>
-
-                  <FieldLight label="সাপ্তাহিক সময় *">
-                    <select required value={form.availability} onChange={upd("availability")} className="vol-input">
-                      <option value="">— নির্বাচন করুন —</option>
-                      <option>১-৪ ঘণ্টা / সপ্তাহ</option>
-                      <option>৫-১০ ঘণ্টা / সপ্তাহ</option>
-                      <option>১০+ ঘণ্টা / সপ্তাহ</option>
-                      <option>প্রজেক্টভিত্তিক</option>
-                      <option>শুধু উইকএন্ড</option>
-                    </select>
-                  </FieldLight>
-
-                  <FieldLight label="কেন যুক্ত হতে চান? *">
-                    <textarea required rows={4} maxLength={1000} value={form.motivation} onChange={upd("motivation")} className="vol-input resize-none" placeholder="আপনার অনুপ্রেরণা সংক্ষেপে লিখুন" />
-                  </FieldLight>
-
-                  <button
-                    type="submit"
-                    className="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3.5 hover:bg-white/90 transition-colors"
-                  >
-                    <Send className="h-4 w-4" /> পরবর্তী ধাপ
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-
-                  <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/80 pt-2">
-                    <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" />তথ্য সুরক্ষিত</span>
-                    <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />২৪-৪৮ ঘণ্টায় উত্তর</span>
-                  </div>
-                </form>
+                {active === "regular" && <RegularForm />}
+                {active === "member" && <MemberForm />}
+                {active === "volunteer" && <VolunteerForm />}
+                {active === "career" && <CareerForm />}
               </div>
             </div>
           </div>
@@ -347,7 +249,7 @@ const Volunteer = () => {
               <div>
                 <h4 className="font-bold">দ্রুত WhatsApp</h4>
                 <a
-                  href={`https://wa.me/${site.whatsapp}?text=${encodeURIComponent("আসসালামু আলাইকুম, আমি স্বেচ্ছাসেবক হিসেবে যুক্ত হতে আগ্রহী।")}`}
+                  href={`https://wa.me/${site.whatsapp}?text=${encodeURIComponent("আসসালামু আলাইকুম, আমি যুক্ত হতে আগ্রহী।")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-primary font-semibold hover:underline"
@@ -388,11 +290,360 @@ const Volunteer = () => {
   );
 };
 
+// ============================================================
+// Left panel: contextual content per tab
+const leftContent: Record<TabKey, { title: string; quote?: { text: string; source: string }; intro: string; list: string[]; stats: { v: string; l: string }[] }> = {
+  regular: {
+    title: "নিয়মিত দাতার গুরুত্ব",
+    intro:
+      "আপনার মাসিক ছোট অবদানই আমাদের কার্যক্রমকে টেকসই করে — এতিম শিশুর শিক্ষা, খাদ্য সহায়তা ও চিকিৎসা নিরবচ্ছিন্ন রাখে।",
+    quote: {
+      text: "আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়।",
+      source: "(সহীহ বুখারী, হাদীস ৬৪৬৪)",
+    },
+    list: [
+      "প্রতি মাসে স্বয়ংক্রিয় রিমাইন্ডার",
+      "প্রতিটি দানের রসিদ ও প্রমাণ",
+      "যেকোনো সময় বন্ধ বা পরিবর্তনের সুযোগ",
+      "মাসিক ইমপ্যাক্ট রিপোর্ট",
+    ],
+    stats: [
+      { v: "১২,০০০+", l: "নিয়মিত দাতা" },
+      { v: "৬৪", l: "জেলা কাভারেজ" },
+      { v: "১০০%", l: "স্বচ্ছতা" },
+    ],
+  },
+  member: {
+    title: "আজীবন ও দাতা সদস্য",
+    intro:
+      "এককালীন অবদানের মাধ্যমে আপনি ফাউন্ডেশনের স্থায়ী অংশীদার হবেন এবং দীর্ঘমেয়াদি সকল প্রকল্পে আপনার নাম যুক্ত থাকবে।",
+    list: [
+      "সদস্যপদ কার্ড ও সার্টিফিকেট",
+      "বার্ষিক সাধারণ সভায় অংশগ্রহণ",
+      "প্রকল্প পরিদর্শনের সুযোগ",
+      "ত্রৈমাসিক বিস্তারিত প্রতিবেদন",
+      "ফাউন্ডেশনের সিদ্ধান্ত প্রক্রিয়ায় মতামত",
+    ],
+    stats: [
+      { v: "২৪০+", l: "আজীবন সদস্য" },
+      { v: "১৮০+", l: "দাতা সদস্য" },
+      { v: "১২৮০+", l: "প্রকল্প" },
+    ],
+  },
+  volunteer: {
+    title: "স্বেচ্ছাসেবকের কাজের ক্ষেত্র",
+    intro:
+      "স্বেচ্ছাসেবা শুধু সময়দান নয় — এটি একটি ইবাদত। আপনার ছোট প্রচেষ্টা বদলে দিতে পারে কারো জীবনের গল্প।",
+    quote: {
+      text: "আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়।",
+      source: "(সহীহ বুখারী, হাদীস ৬৪৬৪)",
+    },
+    list: [
+      "বন্যা, শীত ও দুর্যোগে মাঠপর্যায়ে ত্রাণ",
+      "এতিম শিশুদের শিক্ষায় সাপ্তাহিক সময়দান",
+      "ফ্রি মেডিকেল ক্যাম্পে অংশগ্রহণ",
+      "ফান্ডরাইজিং প্রচারণায় সহযোগিতা",
+      "ফটোগ্রাফি, ভিডিও ও সোশ্যাল মিডিয়া",
+      "দাওয়াহ ও মসজিদ কেন্দ্রিক কার্যক্রম",
+    ],
+    stats: [
+      { v: "৩,৪৫০+", l: "স্বেচ্ছাসেবক" },
+      { v: "১৪", l: "জেলা নেটওয়ার্ক" },
+      { v: "১২৮০+", l: "প্রকল্প" },
+    ],
+  },
+  career: {
+    title: "ক্যারিয়ার সুযোগ",
+    intro:
+      "ইউনাইট ফাউন্ডেশনের পূর্ণকালীন/খণ্ডকালীন টিমে যুক্ত হয়ে মানবসেবার পেশায় গড়ুন নিজের ক্যারিয়ার।",
+    list: [
+      "প্রতিযোগিতামূলক বেতন কাঠামো",
+      "প্রশিক্ষণ ও পেশাগত উন্নয়ন",
+      "ইসলামিক ওয়ার্ক এনভায়রনমেন্ট",
+      "পারফরম্যান্স ভিত্তিক বোনাস",
+      "স্বাস্থ্য ও পরিবার সাপোর্ট",
+    ],
+    stats: [
+      { v: "৪২", l: "পূর্ণকালীন কর্মী" },
+      { v: "১৪", l: "জেলা অফিস" },
+      { v: "১২", l: "ওপেন পজিশন" },
+    ],
+  },
+};
+
+const LeftPanel = ({ active }: { active: TabKey }) => {
+  const c = leftContent[active];
+  return (
+    <div>
+      <p className="text-base md:text-lg leading-relaxed text-foreground/85">{c.intro}</p>
+      {c.quote && (
+        <blockquote className="mt-6 rounded-card border-l-4 border-primary bg-accent/40 p-5 text-foreground/80 italic leading-relaxed">
+          {c.quote.text}{" "}
+          <span className="not-italic text-sm text-muted-foreground">{c.quote.source}</span>
+        </blockquote>
+      )}
+      <h3 className="mt-8 text-xl font-bold">{c.title}</h3>
+      <ul className="mt-4 space-y-3">
+        {c.list.map((s) => (
+          <li key={s} className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <span className="text-foreground/80 leading-relaxed">{s}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8 grid grid-cols-3 gap-3">
+        {c.stats.map((s) => (
+          <div key={s.l} className="rounded-card bg-secondary/60 p-4 text-center">
+            <div className="text-xl md:text-2xl font-extrabold text-primary">{s.v}</div>
+            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// Shared form chrome
 const FieldLight = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <label className="block">
     <span className="text-xs font-semibold text-white/90 mb-1.5 block">{label}</span>
     {children}
   </label>
 );
+
+const SubmitButton = ({ children = "পরবর্তী ধাপ" }: { children?: React.ReactNode }) => (
+  <>
+    <button
+      type="submit"
+      className="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3.5 hover:bg-white/90 transition-colors"
+    >
+      <Send className="h-4 w-4" /> {children}
+      <ChevronRight className="h-4 w-4" />
+    </button>
+    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/80 pt-2">
+      <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" />তথ্য সুরক্ষিত</span>
+      <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />২৪-৪৮ ঘণ্টায় উত্তর</span>
+    </div>
+  </>
+);
+
+const FormHeader = ({ title, sub }: { title: string; sub: string }) => (
+  <>
+    <h3 className="text-xl md:text-2xl font-bold">{title}</h3>
+    <p className="text-white/85 text-sm mt-2 leading-relaxed">{sub}</p>
+  </>
+);
+
+// ============================================================
+// 1) REGULAR DONOR FORM
+const RegularForm = () => {
+  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = regularSchema.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    sendToWhatsApp(
+      "নিয়মিত দাতা আবেদন",
+      `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nদানের ক্ষেত্র: ${f.area}\nমাসিক পরিমাণ: ৳${f.amount}\nপেমেন্ট: ${f.method}\n\nবার্তা: ${f.note || "—"}`,
+    );
+    setF({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+  };
+  return (
+    <>
+      <FormHeader title="নিয়মিত দাতা হিসেবে যুক্ত হোন" sub="মাসিক ভিত্তিতে দানের জন্য তথ্য দিন — WhatsApp-এ আমাদের টিম আপনাকে সেটআপে সাহায্য করবে।" />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label="পূর্ণ নাম *"><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label="মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label="ই-মেইল"><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label="শহর / জেলা *"><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+        </div>
+        <FieldLight label="দানের ক্ষেত্র *">
+          <select required value={f.area} onChange={u("area")} className="vol-input">
+            <option value="">— নির্বাচন করুন —</option>
+            {regularAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </FieldLight>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label="মাসিক পরিমাণ (৳) *">
+            <select required value={f.amount} onChange={u("amount")} className="vol-input">
+              <option value="">— নির্বাচন করুন —</option>
+              {regularAmounts.map((a) => <option key={a} value={a}>{a}</option>)}
+            </select>
+          </FieldLight>
+          <FieldLight label="পেমেন্ট মাধ্যম *">
+            <select required value={f.method} onChange={u("method")} className="vol-input">
+              <option value="">— নির্বাচন করুন —</option>
+              <option>bKash</option>
+              <option>Nagad</option>
+              <option>Rocket</option>
+              <option>ব্যাংক ট্রান্সফার</option>
+              <option>কার্ড (SSLCommerz)</option>
+            </select>
+          </FieldLight>
+        </div>
+        <FieldLight label="বার্তা (ঐচ্ছিক)">
+          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" placeholder="বিশেষ কিছু জানাতে চাইলে লিখুন" />
+        </FieldLight>
+        <SubmitButton />
+      </form>
+    </>
+  );
+};
+
+// ============================================================
+// 2) MEMBERSHIP FORM
+const MemberForm = () => {
+  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = memberSchema.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    const typeLabel = membershipTypes.find((t) => t.value === f.type)?.label || f.type;
+    sendToWhatsApp(
+      "সদস্যপদ আবেদন",
+      `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nসদস্যপদ: ${typeLabel}\nঠিকানা: ${f.address}\n\nবার্তা: ${f.note || "—"}`,
+    );
+    setF({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+  };
+  return (
+    <>
+      <FormHeader title="আজীবন ও দাতা সদস্য হোন" sub="আবেদন গ্রহণের পর আমাদের টিম সদস্যপদ ও পেমেন্ট প্রক্রিয়া নিশ্চিত করবে।" />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label="পূর্ণ নাম *"><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label="মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label="ই-মেইল"><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label="শহর / জেলা *"><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+          <FieldLight label="পেশা"><input maxLength={120} value={f.profession} onChange={u("profession")} className="vol-input" placeholder="যেমন: ব্যবসায়ী" /></FieldLight>
+          <FieldLight label="সদস্যপদের ধরন *">
+            <select required value={f.type} onChange={u("type")} className="vol-input">
+              <option value="">— নির্বাচন করুন —</option>
+              {membershipTypes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+          </FieldLight>
+        </div>
+        <FieldLight label="পূর্ণ ঠিকানা *">
+          <textarea required rows={2} maxLength={300} value={f.address} onChange={u("address")} className="vol-input resize-none" />
+        </FieldLight>
+        <FieldLight label="বার্তা (ঐচ্ছিক)">
+          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" />
+        </FieldLight>
+        <SubmitButton />
+      </form>
+    </>
+  );
+};
+
+// ============================================================
+// 3) VOLUNTEER FORM (existing)
+const VolunteerForm = () => {
+  const [f, setF] = useState({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = volunteerSchema.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    sendToWhatsApp(
+      "স্বেচ্ছাসেবক আবেদন",
+      `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nবয়স: ${f.age}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nআগ্রহের ক্ষেত্র: ${f.area}\nসময়: ${f.availability}\n\nকেন যুক্ত হতে চান:\n${f.motivation}`,
+    );
+    setF({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+  };
+  return (
+    <>
+      <FormHeader title="স্বেচ্ছাসেবক হিসেবে যুক্ত হোন" sub="ফর্মটি পূরণ করুন — আমাদের টিম ২৪-৪৮ ঘণ্টার মধ্যে যোগাযোগ করবে।" />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label="পূর্ণ নাম *"><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label="মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label="ই-মেইল"><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label="বয়স *"><input required type="number" min={14} max={80} value={f.age} onChange={u("age")} className="vol-input" /></FieldLight>
+          <FieldLight label="শহর / জেলা *"><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+          <FieldLight label="পেশা / ছাত্রত্ব"><input maxLength={120} value={f.profession} onChange={u("profession")} className="vol-input" placeholder="যেমন: ছাত্র, ডাক্তার" /></FieldLight>
+        </div>
+        <FieldLight label="আগ্রহের ক্ষেত্র *">
+          <select required value={f.area} onChange={u("area")} className="vol-input">
+            <option value="">— নির্বাচন করুন —</option>
+            {volunteerAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+            <option value="অন্যান্য">অন্যান্য</option>
+          </select>
+        </FieldLight>
+        <FieldLight label="সাপ্তাহিক সময় *">
+          <select required value={f.availability} onChange={u("availability")} className="vol-input">
+            <option value="">— নির্বাচন করুন —</option>
+            <option>১-৪ ঘণ্টা / সপ্তাহ</option>
+            <option>৫-১০ ঘণ্টা / সপ্তাহ</option>
+            <option>১০+ ঘণ্টা / সপ্তাহ</option>
+            <option>প্রজেক্টভিত্তিক</option>
+            <option>শুধু উইকএন্ড</option>
+          </select>
+        </FieldLight>
+        <FieldLight label="কেন যুক্ত হতে চান? *">
+          <textarea required rows={4} maxLength={1000} value={f.motivation} onChange={u("motivation")} className="vol-input resize-none" placeholder="আপনার অনুপ্রেরণা সংক্ষেপে লিখুন" />
+        </FieldLight>
+        <SubmitButton />
+      </form>
+    </>
+  );
+};
+
+// ============================================================
+// 4) CAREER FORM
+const CareerForm = () => {
+  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = careerSchema.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    sendToWhatsApp(
+      "ক্যারিয়ার আবেদন",
+      `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nপদ: ${f.position}\nঅভিজ্ঞতা: ${f.experience}\nশিক্ষাগত যোগ্যতা: ${f.qualification}\nCV: ${f.cv || "—"}\n\nকভার লেটার:\n${f.cover}`,
+    );
+    setF({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+  };
+  return (
+    <>
+      <FormHeader title="ক্যারিয়ার আবেদন" sub="আপনার জন্য উপযুক্ত পদে আবেদন করুন — CV-সহ তথ্য পাঠান।" />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label="পূর্ণ নাম *"><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label="মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label="ই-মেইল"><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label="শহর / জেলা *"><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+          <FieldLight label="আবেদনকৃত পদ *">
+            <select required value={f.position} onChange={u("position")} className="vol-input">
+              <option value="">— নির্বাচন করুন —</option>
+              {careerPositions.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </FieldLight>
+          <FieldLight label="অভিজ্ঞতা *">
+            <select required value={f.experience} onChange={u("experience")} className="vol-input">
+              <option value="">— নির্বাচন করুন —</option>
+              <option>ফ্রেশার (০ বছর)</option>
+              <option>১-২ বছর</option>
+              <option>৩-৫ বছর</option>
+              <option>৫+ বছর</option>
+            </select>
+          </FieldLight>
+        </div>
+        <FieldLight label="শিক্ষাগত যোগ্যতা *">
+          <input required maxLength={200} value={f.qualification} onChange={u("qualification")} className="vol-input" placeholder="যেমন: BBA, ঢাকা বিশ্ববিদ্যালয়" />
+        </FieldLight>
+        <FieldLight label="CV লিংক (Google Drive / Dropbox)">
+          <input type="url" value={f.cv} onChange={u("cv")} className="vol-input" placeholder="https://" />
+        </FieldLight>
+        <FieldLight label="কভার লেটার *">
+          <textarea required rows={4} maxLength={1000} value={f.cover} onChange={u("cover")} className="vol-input resize-none" placeholder="কেন এই পদে আবেদন করছেন তা সংক্ষেপে লিখুন" />
+        </FieldLight>
+        <SubmitButton />
+      </form>
+    </>
+  );
+};
 
 export default Volunteer;
