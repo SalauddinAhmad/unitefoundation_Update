@@ -6,6 +6,7 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import donateImg from "@/assets/hero-relief.jpg";
+import sslLogo from "@/assets/sslcommerz-logo.png";
 import { projects, toBnNum, getProject } from "@/data/projects";
 import { PaymentInstructionsModal } from "@/components/donation/PaymentInstructionsModal";
 import { toast } from "@/hooks/use-toast";
@@ -13,13 +14,13 @@ import { site } from "@/data/site";
 
 const presets = [4250, 3800, 2550, 1700, 850];
 
-type PayMethod = "bkash" | "nagad" | "rocket" | "bank";
+type PayMethod = "ssl" | "bkash" | "nagad" | "rocket" | "bank";
 
-const methods: { id: PayMethod; label: string; sub: string; color: string }[] = [
-  { id: "bkash", label: "bKash", sub: "পার্সোনাল", color: "bg-pink-50 text-pink-700 border-pink-200" },
-  { id: "nagad", label: "Nagad", sub: "পার্সোনাল", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  { id: "rocket", label: "Rocket", sub: "পার্সোনাল", color: "bg-purple-50 text-purple-700 border-purple-200" },
-  { id: "bank", label: "ব্যাংক", sub: "Islami Bank", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+const methods: { id: PayMethod; label: string; sub: string }[] = [
+  { id: "bkash", label: "bKash", sub: "পার্সোনাল" },
+  { id: "nagad", label: "Nagad", sub: "পার্সোনাল" },
+  { id: "rocket", label: "Rocket", sub: "পার্সোনাল" },
+  { id: "bank", label: "ব্যাংক", sub: "Islami Bank" },
 ];
 
 const schema = z.object({
