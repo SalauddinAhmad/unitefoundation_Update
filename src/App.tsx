@@ -18,6 +18,19 @@ const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Volunteer = lazy(() => import("./pages/Volunteer.tsx"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 
+// Admin dashboard
+const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
+const DashOverview = lazy(() => import("./pages/dashboard/Overview.tsx"));
+const DashDonations = lazy(() => import("./pages/dashboard/Donations.tsx"));
+const DashVolunteers = lazy(() => import("./pages/dashboard/Volunteers.tsx"));
+const DashMembers = lazy(() => import("./pages/dashboard/Members.tsx"));
+const DashProjects = lazy(() => import("./pages/dashboard/Projects.tsx"));
+const DashBlog = lazy(() => import("./pages/dashboard/Blog.tsx"));
+const DashGallery = lazy(() => import("./pages/dashboard/Gallery.tsx"));
+const DashMessages = lazy(() => import("./pages/dashboard/Messages.tsx"));
+const DashCareers = lazy(() => import("./pages/dashboard/Careers.tsx"));
+const DashSettings = lazy(() => import("./pages/dashboard/Settings.tsx"));
+
 const queryClient = new QueryClient();
 
 const Loader = () => (
