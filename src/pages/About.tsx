@@ -4,7 +4,7 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import about from "@/assets/about-mission.jpg";
-import t1 from "@/assets/team-1.jpg";
+import t1 from "@/assets/team-founder.jpg";
 import t2 from "@/assets/team-2.jpg";
 import t3 from "@/assets/team-3.jpg";
 
