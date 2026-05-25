@@ -662,18 +662,20 @@ const MemberForm = () => {
 // ============================================================
 // 3) VOLUNTEER FORM (existing)
 const VolunteerForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+  const init = { name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = volunteerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "স্বেচ্ছাসেবক আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nবয়স: ${f.age}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nআগ্রহের ক্ষেত্র: ${f.area}\nসময়: ${f.availability}\n\nকেন যুক্ত হতে চান:\n${f.motivation}`,
-    );
-    setF({ name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="volunteer" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="স্বেচ্ছাসেবক হিসেবে যুক্ত হোন" sub="ফর্মটি পূরণ করুন — আমাদের টিম ২৪-৪৮ ঘণ্টার মধ্যে যোগাযোগ করবে।" />
