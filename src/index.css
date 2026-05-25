@@ -97,7 +97,8 @@
     font-feature-settings: "ss01", "cv11";
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bangla font-bold tracking-tight text-foreground;
+    @apply font-bangla font-bold tracking-tight;
+    color: inherit;
   }
   .font-en { font-family: "Ubuntu Sans", system-ui, sans-serif; }
 }
