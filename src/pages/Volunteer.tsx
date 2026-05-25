@@ -615,19 +615,21 @@ const RegularForm = () => {
 // ============================================================
 // 2) MEMBERSHIP FORM
 const MemberForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+  const init = { name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = memberSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
     const typeLabel = membershipTypes.find((t) => t.value === f.type)?.label || f.type;
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "সদস্যপদ আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nসদস্যপদ: ${typeLabel}\nঠিকানা: ${f.address}\n\nবার্তা: ${f.note || "—"}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="আজীবন ও দাতা সদস্য হোন" sub="আবেদন গ্রহণের পর আমাদের টিম সদস্যপদ ও পেমেন্ট প্রক্রিয়া নিশ্চিত করবে।" />
