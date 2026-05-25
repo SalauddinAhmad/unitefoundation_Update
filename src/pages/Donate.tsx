@@ -269,14 +269,19 @@ const Donate = () => {
                         key={m.id}
                         type="button"
                         onClick={() => setMethod(m.id)}
-                        className={`relative p-3 rounded-btn border-2 text-left transition-all ${
+                        className={`relative p-3 rounded-btn border-2 text-left transition-all flex items-center gap-2.5 ${
                           active
                             ? "border-primary bg-accent/40 shadow-card"
                             : "border-border bg-card hover:border-primary/40"
                         }`}
                       >
-                        <div className="text-sm font-bold text-foreground">{m.label}</div>
-                        <div className="text-xs text-muted-foreground mt-0.5">{m.sub}</div>
+                        <div className="h-8 w-8 rounded-md bg-white border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                          <img src={m.logo} alt={m.label} className="max-h-7 max-w-7 object-contain" />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-sm font-bold text-foreground leading-tight">{m.label}</div>
+                          <div className="text-[11px] text-muted-foreground mt-0.5 truncate">{m.sub}</div>
+                        </div>
                         {active && (
                           <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                             <Check className="h-2.5 w-2.5" strokeWidth={3} />
