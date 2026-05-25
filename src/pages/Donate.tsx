@@ -144,27 +144,7 @@ const Donate = () => {
             </div>
 
             <div className="p-5 md:p-6 space-y-5">
-              {/* Selected payment quick-info — hidden for SSL */}
-              {method !== "ssl" && methodLabel && (
-                <div className="rounded-btn border border-border bg-muted/40 p-3 flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
-                      {methodLabel.label} ({methodLabel.sub})
-                    </div>
-                    <div className="font-mono font-bold text-foreground mt-0.5 truncate" dir="ltr">
-                      {methodNumber}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={copyNumber}
-                    className="shrink-0 p-2 rounded-btn hover:bg-accent text-primary"
-                    aria-label="নম্বর কপি করুন"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
+
 
               {/* Amount presets — 3 cols */}
               <div className="grid grid-cols-3 gap-2">
