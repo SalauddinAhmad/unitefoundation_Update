@@ -284,11 +284,34 @@ const Donate = () => {
                 </div>
               </Field>
 
+              {/* Selected mobile-banking number — shown right above donate button */}
+              {method !== "ssl" && methodLabel && (
+                <div className="rounded-btn border-2 border-primary/30 bg-accent/40 p-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                      {methodLabel.label} ({methodLabel.sub}) নম্বর
+                    </div>
+                    <div className="font-mono font-bold text-foreground mt-0.5 truncate" dir="ltr">
+                      {methodNumber}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={copyNumber}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-btn bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90"
+                    aria-label="নম্বর কপি করুন"
+                  >
+                    <Copy className="h-3.5 w-3.5" /> কপি
+                  </button>
+                </div>
+              )}
+
               {/* Submit */}
               <button type="submit" className="btn-donate w-full text-base py-4">
                 <Heart className="h-5 w-5" />
                 দান করুন — ৳{toBnNum(new Intl.NumberFormat("en-IN").format(finalAmount || 0))}
               </button>
+
 
               <p className="text-[11px] text-center text-muted-foreground leading-relaxed">
                 "দান করুন" ক্লিক করে আপনি আমাদের <span className="underline">শর্তাবলী</span> ও{" "}
