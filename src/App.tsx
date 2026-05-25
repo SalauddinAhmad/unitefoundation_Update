@@ -58,6 +58,21 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/partners/:slug" element={<PartnerDetail />} />
+
+            {/* Admin dashboard */}
+            <Route path="/dashboard" element={<DashboardLayout />}>
+              <Route index element={<DashOverview />} />
+              <Route path="donations" element={<DashDonations />} />
+              <Route path="volunteers" element={<DashVolunteers />} />
+              <Route path="members" element={<DashMembers />} />
+              <Route path="projects" element={<DashProjects />} />
+              <Route path="blog" element={<DashBlog />} />
+              <Route path="gallery" element={<DashGallery />} />
+              <Route path="messages" element={<DashMessages />} />
+              <Route path="careers" element={<DashCareers />} />
+              <Route path="settings" element={<DashSettings />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
