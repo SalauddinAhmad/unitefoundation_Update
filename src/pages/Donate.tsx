@@ -254,6 +254,29 @@ const Donate = () => {
 
               {/* Payment method */}
               <Field label="পেমেন্ট মেথড" required>
+                {/* SSLCommerz — featured gateway */}
+                <button
+                  type="button"
+                  onClick={() => setMethod("ssl")}
+                  className={`relative w-full p-3 rounded-btn border-2 flex items-center gap-3 transition-all mb-2 ${
+                    method === "ssl"
+                      ? "border-primary bg-accent/40 shadow-card"
+                      : "border-border bg-card hover:border-primary/40"
+                  }`}
+                >
+                  <img src={sslLogo} alt="SSLCommerz" className="h-7 w-auto" />
+                  <div className="text-left flex-1">
+                    <div className="text-sm font-bold text-foreground">কার্ড / মোবাইল ব্যাংকিং</div>
+                    <div className="text-[11px] text-muted-foreground">Visa · Mastercard · bKash · Nagad · Rocket</div>
+                  </div>
+                  {method === "ssl" && (
+                    <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                  )}
+                </button>
+
+                {/* Manual methods */}
                 <div className="grid grid-cols-2 gap-2">
                   {methods.map((m) => {
                     const active = method === m.id;
@@ -268,10 +291,8 @@ const Donate = () => {
                             : "border-border bg-card hover:border-primary/40"
                         }`}
                       >
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${m.color}`}>
-                          {m.label}
-                        </span>
-                        <div className="text-xs text-muted-foreground mt-1.5">{m.sub}</div>
+                        <div className="text-sm font-bold text-foreground">{m.label}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{m.sub}</div>
                         {active && (
                           <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                             <Check className="h-2.5 w-2.5" strokeWidth={3} />
