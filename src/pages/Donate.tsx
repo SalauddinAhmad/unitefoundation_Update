@@ -6,6 +6,7 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import donateImg from "@/assets/hero-relief.jpg";
+import sslLogo from "@/assets/sslcommerz-logo.png";
 import { projects, toBnNum, getProject } from "@/data/projects";
 import { PaymentInstructionsModal } from "@/components/donation/PaymentInstructionsModal";
 import { toast } from "@/hooks/use-toast";
@@ -13,13 +14,13 @@ import { site } from "@/data/site";
 
 const presets = [4250, 3800, 2550, 1700, 850];
 
-type PayMethod = "bkash" | "nagad" | "rocket" | "bank";
+type PayMethod = "ssl" | "bkash" | "nagad" | "rocket" | "bank";
 
-const methods: { id: PayMethod; label: string; sub: string; color: string }[] = [
-  { id: "bkash", label: "bKash", sub: "পার্সোনাল", color: "bg-pink-50 text-pink-700 border-pink-200" },
-  { id: "nagad", label: "Nagad", sub: "পার্সোনাল", color: "bg-orange-50 text-orange-700 border-orange-200" },
-  { id: "rocket", label: "Rocket", sub: "পার্সোনাল", color: "bg-purple-50 text-purple-700 border-purple-200" },
-  { id: "bank", label: "ব্যাংক", sub: "Islami Bank", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+const methods: { id: PayMethod; label: string; sub: string }[] = [
+  { id: "bkash", label: "bKash", sub: "পার্সোনাল" },
+  { id: "nagad", label: "Nagad", sub: "পার্সোনাল" },
+  { id: "rocket", label: "Rocket", sub: "পার্সোনাল" },
+  { id: "bank", label: "ব্যাংক", sub: "Islami Bank" },
 ];
 
 const schema = z.object({
@@ -46,8 +47,12 @@ const Donate = () => {
   const selected = useMemo(() => getProject(project) || projects[0], [project]);
 
   const methodNumber =
-    method === "bank" ? site.payments.bank.number : site.payments[method].number;
-  const methodLabel = methods.find((m) => m.id === method)!;
+    method === "bank"
+      ? site.payments.bank.number
+      : method === "ssl"
+        ? ""
+        : site.payments[method].number;
+  const methodLabel = methods.find((m) => m.id === method);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,25 +144,27 @@ const Donate = () => {
             </div>
 
             <div className="p-5 md:p-6 space-y-5">
-              {/* Selected payment quick-info */}
-              <div className="rounded-btn border border-border bg-muted/40 p-3 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
-                    {methodLabel.label} ({methodLabel.sub})
+              {/* Selected payment quick-info — hidden for SSL */}
+              {method !== "ssl" && methodLabel && (
+                <div className="rounded-btn border border-border bg-muted/40 p-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
+                      {methodLabel.label} ({methodLabel.sub})
+                    </div>
+                    <div className="font-mono font-bold text-foreground mt-0.5 truncate" dir="ltr">
+                      {methodNumber}
+                    </div>
                   </div>
-                  <div className="font-mono font-bold text-foreground mt-0.5 truncate" dir="ltr">
-                    {methodNumber}
-                  </div>
+                  <button
+                    type="button"
+                    onClick={copyNumber}
+                    className="shrink-0 p-2 rounded-btn hover:bg-accent text-primary"
+                    aria-label="নম্বর কপি করুন"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={copyNumber}
-                  className="shrink-0 p-2 rounded-btn hover:bg-accent text-primary"
-                  aria-label="নম্বর কপি করুন"
-                >
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
+              )}
 
               {/* Amount presets — 3 cols */}
               <div className="grid grid-cols-3 gap-2">
@@ -247,6 +254,29 @@ const Donate = () => {
 
               {/* Payment method */}
               <Field label="পেমেন্ট মেথড" required>
+                {/* SSLCommerz — featured gateway */}
+                <button
+                  type="button"
+                  onClick={() => setMethod("ssl")}
+                  className={`relative w-full p-3 rounded-btn border-2 flex items-center gap-3 transition-all mb-2 ${
+                    method === "ssl"
+                      ? "border-primary bg-accent/40 shadow-card"
+                      : "border-border bg-card hover:border-primary/40"
+                  }`}
+                >
+                  <img src={sslLogo} alt="SSLCommerz" className="h-7 w-auto" />
+                  <div className="text-left flex-1">
+                    <div className="text-sm font-bold text-foreground">কার্ড / মোবাইল ব্যাংকিং</div>
+                    <div className="text-[11px] text-muted-foreground">Visa · Mastercard · bKash · Nagad · Rocket</div>
+                  </div>
+                  {method === "ssl" && (
+                    <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                    </span>
+                  )}
+                </button>
+
+                {/* Manual methods */}
                 <div className="grid grid-cols-2 gap-2">
                   {methods.map((m) => {
                     const active = method === m.id;
@@ -261,10 +291,8 @@ const Donate = () => {
                             : "border-border bg-card hover:border-primary/40"
                         }`}
                       >
-                        <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${m.color}`}>
-                          {m.label}
-                        </span>
-                        <div className="text-xs text-muted-foreground mt-1.5">{m.sub}</div>
+                        <div className="text-sm font-bold text-foreground">{m.label}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{m.sub}</div>
                         {active && (
                           <span className="absolute top-2 right-2 h-4 w-4 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                             <Check className="h-2.5 w-2.5" strokeWidth={3} />
