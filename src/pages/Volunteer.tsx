@@ -11,6 +11,10 @@ import {
   MapPin,
   CheckCircle2,
   ChevronRight,
+  PartyPopper,
+  Phone,
+  Mail,
+  RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
 import { Seo } from "@/components/Seo";
