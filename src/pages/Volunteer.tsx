@@ -717,18 +717,20 @@ const VolunteerForm = () => {
 // ============================================================
 // 4) CAREER FORM
 const CareerForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+  const init = { name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = careerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "ক্যারিয়ার আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nপদ: ${f.position}\nঅভিজ্ঞতা: ${f.experience}\nশিক্ষাগত যোগ্যতা: ${f.qualification}\nCV: ${f.cv || "—"}\n\nকভার লেটার:\n${f.cover}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="career" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="ক্যারিয়ার আবেদন" sub="আপনার জন্য উপযুক্ত পদে আবেদন করুন — CV-সহ তথ্য পাঠান।" />
