@@ -555,18 +555,20 @@ const FormHeader = ({ title, sub }: { title: string; sub: string }) => (
 // ============================================================
 // 1) REGULAR DONOR FORM
 const RegularForm = () => {
-  const [f, setF] = useState({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+  const init = { name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
   const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = regularSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
-    sendToWhatsApp(
+    setWaUrl(buildWhatsAppUrl(
       "নিয়মিত দাতা আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nদানের ক্ষেত্র: ${f.area}\nমাসিক পরিমাণ: ৳${f.amount}\nপেমেন্ট: ${f.method}\n\nবার্তা: ${f.note || "—"}`,
-    );
-    setF({ name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" });
+    ));
   };
+  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
       <FormHeader title="নিয়মিত দাতা হিসেবে যুক্ত হোন" sub="মাসিক ভিত্তিতে দানের জন্য তথ্য দিন — WhatsApp-এ আমাদের টিম আপনাকে সেটআপে সাহায্য করবে।" />
@@ -604,7 +606,7 @@ const RegularForm = () => {
         <FieldLight label="বার্তা (ঐচ্ছিক)">
           <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" placeholder="বিশেষ কিছু জানাতে চাইলে লিখুন" />
         </FieldLight>
-        <SubmitButton />
+        <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
   );
