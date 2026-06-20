@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Sparkles, Quote, ArrowUpRight, Award, Calendar, Globe2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Quote, ArrowUpRight, Award, Calendar, Globe2, Phone, MapPin, Target, BookOpen, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
 import { Button } from "@/components/ui/button";
@@ -69,21 +69,38 @@ const PartnerDetail = () => {
                     {partner.established}
                   </div>
                 )}
+                {partner.license && (
+                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
+                    <Award className="h-4 w-4 text-primary" />
+                    লাইসেন্স: {partner.license}
+                  </div>
+                )}
                 <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
                   <Award className="h-4 w-4 text-primary" />
                   ইউনাইট ফাউন্ডেশন পরিবার
                 </div>
               </div>
 
-              {partner.website && (
-                <Button asChild size="lg" className="mt-8 group/btn shadow-lg shadow-primary/20">
-                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                    <Globe2 className="mr-2 h-4 w-4" />
-                    ওয়েবসাইট ভিজিট করুন
-                    <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                  </a>
-                </Button>
-              )}
+              {/* Contact CTAs */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {partner.phone && (
+                  <Button asChild size="lg" variant="outline" className="group/btn border-primary/40 hover:bg-primary/10">
+                    <a href={`tel:${partner.phone}`}>
+                      <Phone className="mr-2 h-4 w-4 text-primary" />
+                      {partner.phone}
+                    </a>
+                  </Button>
+                )}
+                {partner.website && (
+                  <Button asChild size="lg" className="group/btn shadow-lg shadow-primary/20">
+                    <a href={partner.website} target="_blank" rel="noopener noreferrer">
+                      <Globe2 className="mr-2 h-4 w-4" />
+                      ওয়েবসাইট ভিজিট করুন
+                      <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                    </a>
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Logo card */}
@@ -187,6 +204,77 @@ const PartnerDetail = () => {
           </div>
         </div>
       </section>
+
+      {/* Training Programs — detailed category cards */}
+      {partner.programs && partner.programs.length > 0 && (
+        <section className="section-y relative overflow-hidden border-t border-border/40">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-muted/20 via-background to-muted/30" />
+          <div className="container-page">
+            <div className="text-center mb-14 md:mb-16">
+              <span className="eyebrow text-primary">প্রশিক্ষণ</span>
+              <h2 className="heading-display mt-3 text-3xl md:text-4xl font-bold text-foreground">
+                🎓 আমাদের বিশেষ ট্রেনিং কার্যক্রমসমূহ
+              </h2>
+              <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+              {partner.programs.map((group, gi) => (
+                <div
+                  key={gi}
+                  className="relative overflow-hidden rounded-card border border-border/60 bg-card/80 backdrop-blur p-7 md:p-8 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-primary/40 transition-all duration-500"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-70" />
+                  <div className="relative">
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
+                      <BookOpen className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-bold text-foreground text-xl leading-snug">{group.category}</h3>
+                    <div className="mt-3 h-px w-10 bg-primary/40" />
+                    <ul className="mt-5 space-y-3">
+                      {group.items.map((item, ii) => (
+                        <li key={ii} className="flex items-start gap-3 text-sm md:text-base text-muted-foreground leading-relaxed">
+                          <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Goal & contact */}
+      {(partner.goal || partner.address) && (
+        <section className="section-y relative overflow-hidden border-t border-border/40">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-background" />
+          <div className="container-page">
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+              {partner.goal && (
+                <div className="rounded-card border border-border/60 bg-card/80 backdrop-blur p-8 md:p-10 shadow-card">
+                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
+                    <Target className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-bold text-foreground text-xl">আমাদের লক্ষ্য</h3>
+                  <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">{partner.goal}</p>
+                </div>
+              )}
+              {partner.address && (
+                <div className="rounded-card border border-border/60 bg-card/80 backdrop-blur p-8 md:p-10 shadow-card">
+                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-bold text-foreground text-xl">ঠিকানা</h3>
+                  <p className="mt-4 text-base text-muted-foreground leading-relaxed whitespace-pre-line">{partner.address}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Other partners */}
       {others.length > 0 && (
