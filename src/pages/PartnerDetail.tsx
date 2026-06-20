@@ -69,21 +69,38 @@ const PartnerDetail = () => {
                     {partner.established}
                   </div>
                 )}
+                {partner.license && (
+                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
+                    <Award className="h-4 w-4 text-primary" />
+                    লাইসেন্স: {partner.license}
+                  </div>
+                )}
                 <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
                   <Award className="h-4 w-4 text-primary" />
                   ইউনাইট ফাউন্ডেশন পরিবার
                 </div>
               </div>
 
-              {partner.website && (
-                <Button asChild size="lg" className="mt-8 group/btn shadow-lg shadow-primary/20">
-                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                    <Globe2 className="mr-2 h-4 w-4" />
-                    ওয়েবসাইট ভিজিট করুন
-                    <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                  </a>
-                </Button>
-              )}
+              {/* Contact CTAs */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {partner.phone && (
+                  <Button asChild size="lg" variant="outline" className="group/btn border-primary/40 hover:bg-primary/10">
+                    <a href={`tel:${partner.phone}`}>
+                      <Phone className="mr-2 h-4 w-4 text-primary" />
+                      {partner.phone}
+                    </a>
+                  </Button>
+                )}
+                {partner.website && (
+                  <Button asChild size="lg" className="group/btn shadow-lg shadow-primary/20">
+                    <a href={partner.website} target="_blank" rel="noopener noreferrer">
+                      <Globe2 className="mr-2 h-4 w-4" />
+                      ওয়েবসাইট ভিজিট করুন
+                      <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
+                    </a>
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Logo card */}
