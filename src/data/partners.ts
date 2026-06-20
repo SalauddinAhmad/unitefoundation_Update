@@ -1,5 +1,6 @@
 import uniteTv from "@/assets/partner-unite-tv.png";
 import attayeba from "@/assets/partner-attayeba.png";
+import uniteTrainingCenter from "@/assets/partner-unite-training-center.png";
 
 export type Partner = {
   slug: string;
