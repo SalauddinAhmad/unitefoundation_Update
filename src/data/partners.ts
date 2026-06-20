@@ -12,6 +12,11 @@ export type Partner = {
   website?: string;
   established?: string;
   gallery?: string[];
+  license?: string;
+  address?: string;
+  phone?: string;
+  programs?: { category: string; items: string[] }[];
+  goal?: string;
 };
 
 export const partners: Partner[] = [
