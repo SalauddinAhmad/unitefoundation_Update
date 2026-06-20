@@ -1,5 +1,5 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft, ExternalLink, Sparkles, Quote, ArrowUpRight, Award, Calendar, Globe2 } from "lucide-react";
+import { ArrowLeft, Sparkles, Quote, ArrowUpRight, Award, Calendar, Globe2, Phone, MapPin, Target, BookOpen, CheckCircle2 } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
 import { Button } from "@/components/ui/button";
