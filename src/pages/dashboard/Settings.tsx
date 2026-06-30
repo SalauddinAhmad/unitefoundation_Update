@@ -70,6 +70,7 @@ const TABS = [
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
   { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল" },
+  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা" },
   { k: "notifications", icon: Bell, l: "নোটিফিকেশন" },
 ] as const;
 
