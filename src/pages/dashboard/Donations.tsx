@@ -109,6 +109,7 @@ const Donations = () => {
                 </tr>
               ))}
             </tbody>
+            <tfoot>
               <tr className="border-t-2 border-border bg-muted/40">
                 <td colSpan={2} className="px-5 py-3 text-xs font-bold uppercase text-muted-foreground">সম্পন্ন দান মোট</td>
                 <td className="py-3 font-extrabold text-primary tabular-nums">৳ {total.toLocaleString()}</td>
