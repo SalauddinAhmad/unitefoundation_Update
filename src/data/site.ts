@@ -3,7 +3,8 @@ export const site = {
   nameEn: "Unite Foundation",
   tagline: "অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে",
   taglineEn: "United in service of humanity",
-  email: "info@unitefoundation.org",
+  email: "info@unitefoundation.bd",
+  website: "https://unitefoundation.bd",
   phone: "+৮৮০ ১৭৫৯-৭৫৪২৬৫",
   whatsapp: "8801759754265", // E.164 without +
   address: "উত্তরখান, উত্তরা, ঢাকা ১২৩০।",
