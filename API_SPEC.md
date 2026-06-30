@@ -171,3 +171,88 @@ Access-Control-Allow-Credentials: true
 Access-Control-Allow-Methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
 Access-Control-Allow-Headers: Authorization, Content-Type, Accept
 ```
+
+---
+
+## ৪. নতুন endpoints — Auth, Admin Management, Messages
+
+> এই endpoints গুলো Express + MySQL backend-এ যোগ করতে হবে। প্রতিটি email-related কাজ আপনার cPanel SMTP (`mail.unitefoundation.bd:465`) দিয়ে nodemailer ব্যবহার করে পাঠাবে। SMTP credentials শুধু backend `.env`-এ রাখুন।
+
+### Auth — Forgot / Reset Password
+
+`POST /auth/forgot-password`
+```json
+{ "email": "admin@unitefoundation.bd" }
+```
+- সর্বদা `200 { ok: true }` ফেরত দিন (email enumeration প্রতিরোধে)
+- backend-এ: `password_resets` টেবিলে `{ user_id, token (random 32), expires_at (1h) }` insert; SMTP দিয়ে এই লিংক পাঠান:
+  `https://unitefoundation.bd/reset-password/<token>`
+
+`POST /auth/reset-password`
+```json
+{ "token": "...", "password": "newPass123" }
+```
+- token valid + not expired হলে user-এর `password_hash` update; token delete
+
+### Auth — 2FA OTP
+
+`POST /auth/login` response variants:
+```json
+// 2FA off
+{ "token": "jwt...", "user": { "id":"...", "name":"...", "email":"...", "role":"admin" } }
+
+// 2FA on
+{ "requiresOtp": true }
+```
+- `requiresOtp: true` হলে: backend একটি ৬-অঙ্কের OTP তৈরি করে `otp_codes(user_id, code, expires_at 5min)`-এ রাখে এবং SMTP দিয়ে user-এর email-এ পাঠায়।
+
+`POST /auth/verify-otp`
+```json
+{ "email": "...", "code": "123456" }
+```
+- valid হলে JWT + user ফেরত দিন
+
+### Admin Management
+
+`GET /admin/users` → `[{ id, name, email, role, created_at }]` (admin only)
+
+`POST /admin/users`
+```json
+{ "name": "...", "email": "...", "role": "admin|editor|viewer", "password": "auto-generated-by-frontend-or-backend", "sendEmail": true }
+```
+- backend password hash করে save; `sendEmail: true` হলে SMTP দিয়ে welcome email পাঠান (ID + temporary password সহ, ১ম লগইনে পরিবর্তনের অনুরোধ)
+
+`POST /admin/users/:id/reset-credentials`
+```json
+{ "password": "newOne", "sendEmail": true }
+```
+
+`DELETE /admin/users/:id`
+
+### Messages — Reply / Compose
+
+`POST /messages/:id/reply`
+```json
+{ "to": "user@example.com", "subject": "Re: ...", "body": "..." }
+```
+- SMTP দিয়ে পাঠান; DB-তে `message_replies(message_id, body, sent_at)` save; parent message-এর status `replied`-এ update
+
+`POST /messages`
+```json
+{ "name": "...", "email": "to@x.com", "subject": "...", "body": "..." }
+```
+- নতুন outbound message; SMTP দিয়ে পাঠান এবং DB-তে record রাখুন
+
+---
+
+### Nodemailer setup (Express side, reference only)
+
+```js
+import nodemailer from 'nodemailer';
+export const mailer = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),  // 465
+  secure: true,                          // 465 = SSL
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+});
+```
