@@ -1,12 +1,44 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
 import { messages as seedMessages, type Message } from "@/data/dashboardMock";
-import { Search, Star, Archive, Reply, Trash2, Plus, X, Send, Loader2, Mail } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  Search,
+  Star,
+  Archive,
+  Reply,
+  Trash2,
+  Plus,
+  X,
+  Send,
+  Loader2,
+  Mail,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  Paperclip,
+  Eye,
+  PenLine,
+  Smile,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Quote,
+  Code as CodeIcon,
+  Palette,
+  FileText,
+  Minimize2,
+  Maximize2,
+  ChevronDown,
+} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 
-type Reply = { id: string; body: string; at: string };
-type MessageEx = Message & { replies?: Reply[] };
+type ReplyItem = { id: string; body: string; at: string };
+type MessageEx = Message & { replies?: ReplyItem[] };
 
 const LS_KEY = "uf_messages_state";
 
@@ -72,10 +104,8 @@ const Messages = () => {
           subject: `Re: ${active.subject}`,
           body: replyText,
         });
-      } catch {
-        // backend offline — proceed in demo mode
-      }
-      const reply: Reply = {
+      } catch {}
+      const reply: ReplyItem = {
         id: `R-${Date.now()}`,
         body: replyText,
         at: new Date().toLocaleString("bn-BD"),
@@ -93,27 +123,32 @@ const Messages = () => {
     }
   };
 
-  const sendNew = async (data: { name: string; email: string; subject: string; body: string }) => {
+  const sendNew = async (data: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+    subject: string;
+    html: string;
+    attachments: { name: string; size: number }[];
+  }) => {
     try {
       await api.post(`/messages`, data);
-    } catch {
-      // offline ok
-    }
+    } catch {}
     const newMsg: MessageEx = {
       id: `M-${Math.floor(Math.random() * 9000) + 1000}`,
-      name: data.name,
-      email: data.email,
+      name: data.to[0] || "প্রাপক",
+      email: data.to[0] || "",
       subject: data.subject,
-      preview: data.body.slice(0, 80),
+      preview: data.html.replace(/<[^>]+>/g, "").slice(0, 80),
       date: "এইমাত্র",
       status: "replied",
-      replies: [{ id: `R-${Date.now()}`, body: data.body, at: new Date().toLocaleString("bn-BD") }],
+      replies: [{ id: `R-${Date.now()}`, body: data.html, at: new Date().toLocaleString("bn-BD") }],
     };
     const next = [newMsg, ...list];
     update(next);
     setSelected(newMsg.id);
     setComposeOpen(false);
-    toast.success(`${data.email} ঠিকানায় মেসেজ পাঠানো হয়েছে`);
+    toast.success(`${data.to.join(", ")} ঠিকানায় মেসেজ পাঠানো হয়েছে`);
   };
 
   return (
@@ -219,7 +254,11 @@ const Messages = () => {
                           </span>
                           <span>{r.at}</span>
                         </div>
-                        <p className="whitespace-pre-wrap text-foreground/85">{r.body}</p>
+                        {/^<.+>/.test(r.body.trim()) ? (
+                          <div className="prose prose-sm max-w-none text-foreground/85" dangerouslySetInnerHTML={{ __html: r.body }} />
+                        ) : (
+                          <p className="whitespace-pre-wrap text-foreground/85">{r.body}</p>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -264,59 +303,432 @@ const Messages = () => {
   );
 };
 
+/* ============================================================
+   Premium Compose Modal — rich text, images, attachments,
+   templates, preview, expand, CC/BCC.
+   ============================================================ */
+
+type Recipient = string;
+
+const TEMPLATES = [
+  {
+    id: "blank",
+    name: "ফাঁকা",
+    subject: "",
+    html: "",
+  },
+  {
+    id: "thanks",
+    name: "ধন্যবাদ বার্তা",
+    subject: "আপনাকে ধন্যবাদ",
+    html: `<p>আসসালামু আলাইকুম,</p><p>আপনার সদয় সহযোগিতার জন্য <b>ইউনাইট ফাউন্ডেশন</b> আন্তরিকভাবে কৃতজ্ঞ। আপনার অবদান আমাদের মানবিক কাজগুলোকে এগিয়ে নিতে অসামান্য ভূমিকা রাখছে।</p><p>মহান আল্লাহ আপনাকে উত্তম প্রতিদান দান করুন।</p><p>— ইউনাইট ফাউন্ডেশন টিম</p>`,
+  },
+  {
+    id: "donation",
+    name: "ডোনেশন রিসিট",
+    subject: "আপনার দান গৃহীত হয়েছে",
+    html: `<p>আসসালামু আলাইকুম,</p><p>আপনার দান <b>সফলভাবে গৃহীত</b> হয়েছে। নিচে রসিদের বিবরণ দেওয়া হলো:</p><ul><li>রসিদ নম্বর: <b>UF-XXXXX</b></li><li>পরিমাণ: <b>৳ ___</b></li><li>তারিখ: ___</li></ul><p>জাযাকাল্লাহু খাইরান।</p>`,
+  },
+  {
+    id: "volunteer",
+    name: "স্বেচ্ছাসেবক স্বাগতম",
+    subject: "ইউনাইট ফাউন্ডেশনে আপনাকে স্বাগতম",
+    html: `<p>প্রিয় স্বেচ্ছাসেবক,</p><p>আপনার আবেদন গৃহীত হয়েছে। শিগগিরই আমাদের টিম আপনার সাথে যোগাযোগ করবে এবং পরবর্তী ধাপের নির্দেশনা প্রদান করবে।</p><p>— ইউনাইট ফাউন্ডেশন</p>`,
+  },
+];
+
+const COLORS = ["#0F172A", "#1F6F4A", "#2563EB", "#DC2626", "#D97706", "#7C3AED", "#0891B2", "#64748B"];
+
 const ComposeModal = ({
   onClose,
   onSend,
 }: {
   onClose: () => void;
-  onSend: (d: { name: string; email: string; subject: string; body: string }) => Promise<void>;
+  onSend: (d: {
+    to: string[];
+    cc: string[];
+    bcc: string[];
+    subject: string;
+    html: string;
+    attachments: { name: string; size: number }[];
+  }) => Promise<void>;
 }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [to, setTo] = useState<Recipient[]>([]);
+  const [cc, setCc] = useState<Recipient[]>([]);
+  const [bcc, setBcc] = useState<Recipient[]>([]);
+  const [showCc, setShowCc] = useState(false);
+  const [showBcc, setShowBcc] = useState(false);
   const [subject, setSubject] = useState("");
-  const [body, setBody] = useState("");
+  const [html, setHtml] = useState("");
+  const [attachments, setAttachments] = useState<{ name: string; size: number; url?: string }[]>([]);
   const [sending, setSending] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [showTpl, setShowTpl] = useState(false);
+  const [showColor, setShowColor] = useState(false);
+
+  // Insert initial template HTML
+  useEffect(() => {
+    if (editorRef.current && !editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = `<p>আসসালামু আলাইকুম,</p><p><br/></p><p>— ইউনাইট ফাউন্ডেশন</p>`;
+      setHtml(editorRef.current.innerHTML);
+    }
+  }, []);
+
+  const cmd = (command: string, value?: string) => {
+    document.execCommand(command, false, value);
+    editorRef.current?.focus();
+    if (editorRef.current) setHtml(editorRef.current.innerHTML);
+  };
+
+  const onEditorInput = () => {
+    if (editorRef.current) setHtml(editorRef.current.innerHTML);
+  };
+
+  const insertImage = () => {
+    const url = window.prompt("ছবির URL দিন:", "https://");
+    if (url && /^https?:\/\//.test(url)) {
+      cmd("insertHTML", `<img src="${url}" alt="image" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
+    }
+  };
+
+  const insertLink = () => {
+    const url = window.prompt("লিংক URL দিন:", "https://");
+    if (url && /^https?:\/\//.test(url)) cmd("createLink", url);
+  };
+
+  const onFiles = (files: FileList | null) => {
+    if (!files) return;
+    const arr: { name: string; size: number; url?: string }[] = [];
+    Array.from(files).forEach((f) => {
+      const item: { name: string; size: number; url?: string } = { name: f.name, size: f.size };
+      if (f.type.startsWith("image/")) {
+        const url = URL.createObjectURL(f);
+        item.url = url;
+        cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
+      }
+      arr.push(item);
+    });
+    setAttachments((p) => [...p, ...arr]);
+  };
+
+  const addRecipient = (kind: "to" | "cc" | "bcc", value: string) => {
+    const v = value.trim().replace(/,$/, "");
+    if (!v) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      toast.error("সঠিক ইমেইল ঠিকানা দিন");
+      return;
+    }
+    const set = kind === "to" ? setTo : kind === "cc" ? setCc : setBcc;
+    set((prev) => (prev.includes(v) ? prev : [...prev, v]));
+  };
+
+  const applyTemplate = (id: string) => {
+    const t = TEMPLATES.find((x) => x.id === id);
+    if (!t || !editorRef.current) return;
+    setSubject(t.subject);
+    editorRef.current.innerHTML = t.html || "<p><br/></p>";
+    setHtml(editorRef.current.innerHTML);
+    setShowTpl(false);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (to.length === 0) return toast.error("কমপক্ষে একজন প্রাপক যুক্ত করুন");
+    if (!subject.trim()) return toast.error("বিষয় লিখুন");
+    if (!html.replace(/<[^>]+>/g, "").trim()) return toast.error("মেসেজ লিখুন");
+
     setSending(true);
-    await onSend({ name: name || "প্রাপক", email, subject, body });
+    await onSend({
+      to,
+      cc,
+      bcc,
+      subject,
+      html,
+      attachments: attachments.map(({ name, size }) => ({ name, size })),
+    });
     setSending(false);
   };
 
+  const charCount = html.replace(/<[^>]+>/g, "").length;
+
   return (
-    <div className="fixed inset-0 z-50 bg-foreground/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-border">
+    <div className="fixed inset-0 z-50 bg-foreground/60 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-6">
+      <div
+        className={
+          "w-full bg-card rounded-t-2xl md:rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col " +
+          (expanded ? "max-w-[1200px] h-[95vh]" : "max-w-3xl max-h-[90vh]")
+        }
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border bg-gradient-to-r from-primary/5 to-transparent">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <Mail className="h-4 w-4" />
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground flex items-center justify-center shadow-sm">
+              <PenLine className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="font-bold text-base">নতুন মেসেজ</h3>
-              <p className="text-[11px] text-muted-foreground">যেকোনো ইমেইল ঠিকানায় পাঠান</p>
+              <h3 className="font-bold text-base leading-tight">নতুন মেসেজ</h3>
+              <p className="text-[11px] text-muted-foreground">SMTP-এর মাধ্যমে সরাসরি পাঠানো হবে</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setPreview((p) => !p)}
+              className={
+                "px-2.5 py-1.5 rounded-md text-xs font-semibold inline-flex items-center gap-1.5 transition " +
+                (preview ? "bg-primary text-primary-foreground" : "hover:bg-secondary")
+              }
+            >
+              <Eye className="h-3.5 w-3.5" /> {preview ? "এডিট" : "প্রিভিউ"}
+            </button>
+            <button type="button" onClick={() => setExpanded((e) => !e)} className="p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="পূর্ণ স্ক্রিন">
+              {expanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            </button>
+            <button type="button" onClick={onClose} className="p-2 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+          </div>
         </div>
 
-        <form onSubmit={submit} className="p-5 space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="প্রাপকের নাম" className="px-3 py-2.5 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
-            <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" className="px-3 py-2.5 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
+        <form onSubmit={submit} className="flex-1 overflow-hidden flex flex-col">
+          {/* Recipients */}
+          <div className="px-5 py-3 border-b border-border space-y-2 bg-background/50">
+            <RecipientField
+              label="প্রাপক"
+              values={to}
+              onAdd={(v) => addRecipient("to", v)}
+              onRemove={(v) => setTo((p) => p.filter((x) => x !== v))}
+              right={
+                <div className="flex gap-2 text-[11px] font-semibold">
+                  {!showCc && <button type="button" onClick={() => setShowCc(true)} className="text-muted-foreground hover:text-primary">Cc</button>}
+                  {!showBcc && <button type="button" onClick={() => setShowBcc(true)} className="text-muted-foreground hover:text-primary">Bcc</button>}
+                </div>
+              }
+            />
+            {showCc && (
+              <RecipientField label="Cc" values={cc} onAdd={(v) => addRecipient("cc", v)} onRemove={(v) => setCc((p) => p.filter((x) => x !== v))} />
+            )}
+            {showBcc && (
+              <RecipientField label="Bcc" values={bcc} onAdd={(v) => addRecipient("bcc", v)} onRemove={(v) => setBcc((p) => p.filter((x) => x !== v))} />
+            )}
+            <div className="flex items-center gap-3 border-t border-border pt-2">
+              <span className="text-[11px] font-bold text-muted-foreground w-14">বিষয়</span>
+              <input
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                placeholder="মেসেজের বিষয় লিখুন..."
+                className="flex-1 bg-transparent text-sm font-semibold focus:outline-none placeholder:font-normal placeholder:text-muted-foreground"
+              />
+            </div>
           </div>
-          <input required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="বিষয়" className="w-full px-3 py-2.5 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
-          <textarea required rows={6} value={body} onChange={(e) => setBody(e.target.value)} placeholder="মেসেজ..." className="w-full px-3 py-2.5 rounded-lg bg-secondary text-sm resize-none focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
 
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary">বাতিল</button>
-            <button type="submit" disabled={sending} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-primary/90 disabled:opacity-60">
-              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              পাঠান
-            </button>
+          {/* Toolbar */}
+          {!preview && (
+            <div className="px-3 py-2 border-b border-border flex flex-wrap items-center gap-0.5 bg-muted/30">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowTpl((s) => !s)}
+                  className="px-2.5 py-1.5 rounded-md text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-secondary"
+                >
+                  <FileText className="h-3.5 w-3.5" /> টেমপ্লেট <ChevronDown className="h-3 w-3" />
+                </button>
+                {showTpl && (
+                  <div className="absolute top-full left-0 mt-1 w-56 rounded-lg border border-border bg-card shadow-xl z-10 py-1">
+                    {TEMPLATES.map((t) => (
+                      <button key={t.id} type="button" onClick={() => applyTemplate(t.id)} className="w-full text-left px-3 py-2 text-xs hover:bg-secondary">
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="h-5 w-px bg-border mx-1" />
+              <TBtn onClick={() => cmd("bold")} icon={Bold} title="বোল্ড" />
+              <TBtn onClick={() => cmd("italic")} icon={Italic} title="ইটালিক" />
+              <TBtn onClick={() => cmd("underline")} icon={Underline} title="আন্ডারলাইন" />
+
+              <div className="h-5 w-px bg-border mx-1" />
+              <select
+                onChange={(e) => { cmd("formatBlock", e.target.value); e.target.value = "p"; }}
+                defaultValue="p"
+                className="bg-transparent text-xs font-semibold px-2 py-1.5 rounded-md hover:bg-secondary focus:outline-none cursor-pointer"
+              >
+                <option value="p">টেক্সট</option>
+                <option value="h1">হেডিং ১</option>
+                <option value="h2">হেডিং ২</option>
+                <option value="h3">হেডিং ৩</option>
+                <option value="blockquote">উদ্ধৃতি</option>
+              </select>
+
+              <div className="relative">
+                <button type="button" onClick={() => setShowColor((s) => !s)} className="p-1.5 rounded-md hover:bg-secondary" title="রঙ">
+                  <Palette className="h-3.5 w-3.5" />
+                </button>
+                {showColor && (
+                  <div className="absolute top-full left-0 mt-1 p-2 rounded-lg border border-border bg-card shadow-xl z-10 flex gap-1.5">
+                    {COLORS.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => { cmd("foreColor", c); setShowColor(false); }}
+                        className="h-5 w-5 rounded-full border border-border hover:scale-110 transition"
+                        style={{ background: c }}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="h-5 w-px bg-border mx-1" />
+              <TBtn onClick={() => cmd("insertUnorderedList")} icon={List} title="বুলেট" />
+              <TBtn onClick={() => cmd("insertOrderedList")} icon={ListOrdered} title="সংখ্যা" />
+              <TBtn onClick={() => cmd("formatBlock", "blockquote")} icon={Quote} title="উদ্ধৃতি" />
+              <TBtn onClick={() => cmd("formatBlock", "pre")} icon={CodeIcon} title="কোড" />
+
+              <div className="h-5 w-px bg-border mx-1" />
+              <TBtn onClick={() => cmd("justifyLeft")} icon={AlignLeft} title="বাম" />
+              <TBtn onClick={() => cmd("justifyCenter")} icon={AlignCenter} title="মাঝে" />
+              <TBtn onClick={() => cmd("justifyRight")} icon={AlignRight} title="ডানে" />
+
+              <div className="h-5 w-px bg-border mx-1" />
+              <TBtn onClick={insertLink} icon={LinkIcon} title="লিংক" />
+              <TBtn onClick={insertImage} icon={ImageIcon} title="ছবির লিংক" />
+              <TBtn onClick={() => cmd("insertHTML", "😊")} icon={Smile} title="ইমোজি" />
+            </div>
+          )}
+
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto">
+            {preview ? (
+              <div className="p-8 max-w-2xl mx-auto">
+                <div className="rounded-2xl border border-border overflow-hidden bg-white">
+                  <div className="bg-gradient-to-r from-primary to-primary/70 text-primary-foreground p-6 text-center">
+                    <div className="text-xs font-bold tracking-[0.2em] opacity-80">UNITE FOUNDATION</div>
+                    <div className="mt-2 text-xl font-bold">{subject || "মেসেজের বিষয়"}</div>
+                  </div>
+                  <div className="p-7 text-sm text-foreground/85 leading-relaxed prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: html }} />
+                  <div className="p-5 bg-muted/40 border-t border-border text-center text-[11px] text-muted-foreground">
+                    © ইউনাইট ফাউন্ডেশন · unitefoundation.bd
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                ref={editorRef}
+                contentEditable
+                suppressContentEditableWarning
+                onInput={onEditorInput}
+                className="min-h-[260px] p-6 text-sm leading-relaxed focus:outline-none prose prose-sm max-w-none [&_h1]:text-2xl [&_h2]:text-xl [&_h3]:text-lg [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:rounded-md"
+              />
+            )}
+
+            {/* Attachments */}
+            {attachments.length > 0 && (
+              <div className="px-6 pb-4 flex flex-wrap gap-2">
+                {attachments.map((a, i) => (
+                  <div key={i} className="inline-flex items-center gap-2 bg-secondary border border-border rounded-lg pl-2 pr-1 py-1 text-xs">
+                    <Paperclip className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="font-medium max-w-[160px] truncate">{a.name}</span>
+                    <span className="text-muted-foreground">{(a.size / 1024).toFixed(0)} KB</span>
+                    <button
+                      type="button"
+                      onClick={() => setAttachments((p) => p.filter((_, idx) => idx !== i))}
+                      className="ml-1 p-0.5 rounded hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-5 py-3 border-t border-border flex items-center justify-between gap-3 bg-background">
+            <div className="flex items-center gap-1">
+              <label className="p-2 rounded-md hover:bg-secondary cursor-pointer text-muted-foreground hover:text-foreground" title="ফাইল সংযুক্ত">
+                <Paperclip className="h-4 w-4" />
+                <input type="file" multiple className="hidden" onChange={(e) => onFiles(e.target.files)} />
+              </label>
+              <label className="p-2 rounded-md hover:bg-secondary cursor-pointer text-muted-foreground hover:text-foreground" title="ছবি আপলোড">
+                <ImageIcon className="h-4 w-4" />
+                <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => onFiles(e.target.files)} />
+              </label>
+              <span className="ml-2 text-[11px] text-muted-foreground">
+                {charCount} অক্ষর · {attachments.length} সংযুক্তি
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold hover:bg-secondary">
+                বাতিল
+              </button>
+              <button
+                type="submit"
+                disabled={sending}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-5 py-2 rounded-lg text-sm shadow-md hover:shadow-lg disabled:opacity-60 transition"
+              >
+                {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                পাঠান
+              </button>
+            </div>
           </div>
         </form>
       </div>
+    </div>
+  );
+};
+
+const TBtn = ({ onClick, icon: Icon, title }: { onClick: () => void; icon: any; title: string }) => (
+  <button type="button" onClick={onClick} title={title} className="p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground">
+    <Icon className="h-3.5 w-3.5" />
+  </button>
+);
+
+const RecipientField = ({
+  label,
+  values,
+  onAdd,
+  onRemove,
+  right,
+}: {
+  label: string;
+  values: string[];
+  onAdd: (v: string) => void;
+  onRemove: (v: string) => void;
+  right?: React.ReactNode;
+}) => {
+  const [input, setInput] = useState("");
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-[11px] font-bold text-muted-foreground w-14">{label}</span>
+      <div className="flex-1 flex flex-wrap items-center gap-1.5">
+        {values.map((v) => (
+          <span key={v} className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-medium px-2 py-0.5 rounded-full">
+            {v}
+            <button type="button" onClick={() => onRemove(v)} className="hover:bg-primary/20 rounded-full">
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === "," || e.key === " ") {
+              e.preventDefault();
+              if (input.trim()) { onAdd(input); setInput(""); }
+            } else if (e.key === "Backspace" && !input && values.length) {
+              onRemove(values[values.length - 1]);
+            }
+          }}
+          onBlur={() => { if (input.trim()) { onAdd(input); setInput(""); } }}
+          placeholder={values.length === 0 ? "email@example.com" : ""}
+          className="flex-1 min-w-[160px] bg-transparent text-sm focus:outline-none py-1"
+        />
+      </div>
+      {right}
     </div>
   );
 };
