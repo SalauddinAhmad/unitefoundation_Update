@@ -204,7 +204,7 @@ const LOCAL_SETTINGS_KEY = "uf_settings_draft";
 function loadLocalSettings(): SiteSettings {
   try {
     const raw = localStorage.getItem(LOCAL_SETTINGS_KEY);
-    if (raw) return { ...defaultSettings, ...JSON.parse(raw) };
+    if (raw) return withDefaults(JSON.parse(raw));
   } catch {}
   return defaultSettings;
 }
@@ -214,7 +214,8 @@ export const useSettings = () =>
     queryKey: ["settings"],
     queryFn: async () => {
       try {
-        return await api.get<SiteSettings>("/settings", { auth: false });
+        const remote = await api.get<Partial<SiteSettings>>("/settings", { auth: false });
+        return withDefaults(remote);
       } catch {
         return loadLocalSettings();
       }
@@ -229,7 +230,6 @@ export const useUpdateSettings = () => {
       try {
         return await api.put<SiteSettings>("/settings", data);
       } catch {
-        // Backend not live yet — persist locally so admin edits survive reload
         localStorage.setItem(LOCAL_SETTINGS_KEY, JSON.stringify(data));
         return data;
       }
