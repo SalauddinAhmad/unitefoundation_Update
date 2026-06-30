@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Images } from "lucide-react";
+import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 import g1 from "@/assets/gallery/01.jpg";
 import g2 from "@/assets/gallery/02.jpg";
 import g3 from "@/assets/gallery/03.jpg";
@@ -17,6 +18,10 @@ const galleryImages = [
 ];
 
 export const GallerySection = () => {
+  const [open, setOpen] = useState<number | null>(null);
+  const next = () => setOpen((o) => (o === null ? o : (o + 1) % galleryImages.length));
+  const prev = () => setOpen((o) => (o === null ? o : (o - 1 + galleryImages.length) % galleryImages.length));
+
   return (
     <section className="section-y">
       <div className="container-page">
@@ -27,10 +32,11 @@ export const GallerySection = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
           {galleryImages.map((img, i) => (
-            <Link
+            <button
               key={i}
-              to="/gallery"
+              onClick={() => setOpen(i)}
               className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-muted card-base p-0 block"
+              aria-label={img.alt}
             >
               <img
                 src={img.src}
@@ -38,7 +44,7 @@ export const GallerySection = () => {
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-            </Link>
+            </button>
           ))}
         </div>
 
@@ -51,6 +57,44 @@ export const GallerySection = () => {
           </Link>
         </div>
       </div>
+
+      {open !== null && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-fade-up"
+          onClick={() => setOpen(null)}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setOpen(null); }}
+            className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
+            aria-label="বন্ধ করুন"
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); prev(); }}
+            className="absolute left-4 md:left-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
+            aria-label="আগের"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); next(); }}
+            className="absolute right-4 md:right-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
+            aria-label="পরের"
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <img
+            src={galleryImages[open].src}
+            alt={galleryImages[open].alt}
+            className="max-h-[88vh] max-w-[92vw] rounded-card object-contain shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 backdrop-blur px-5 py-2.5 rounded-full">
+            {galleryImages[open].alt}
+          </div>
+        </div>
+      )}
     </section>
   );
 };
