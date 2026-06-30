@@ -1,8 +1,11 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { galleryItems } from "@/data/dashboardMock";
+import { useGallery } from "@/hooks/api/useDashboardData";
 import { Plus, Upload, ImageIcon, Trash2, Edit3, Calendar } from "lucide-react";
 
-const Gallery = () => (
+const Gallery = () => {
+  const { data = [] } = useGallery();
+  const galleryItems = data as Array<{ id: string; title: string; album: string; date: string; count: number }>;
+  return (
   <>
     <PageHeader
       title="গ্যালারি"
