@@ -22,6 +22,8 @@ const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
 const RequireAuth = lazy(() => import("./components/dashboard/RequireAuth.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const DashOverview = lazy(() => import("./pages/dashboard/Overview.tsx"));
 const DashDonations = lazy(() => import("./pages/dashboard/Donations.tsx"));
 const DashVolunteers = lazy(() => import("./pages/dashboard/Volunteers.tsx"));
@@ -63,6 +65,8 @@ const App = () => (
 
             {/* Admin dashboard */}
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
               <Route index element={<DashOverview />} />
               <Route path="donations" element={<DashDonations />} />
