@@ -3,7 +3,6 @@ import { Hero } from "@/components/home/Hero";
 import { TrustStrip } from "@/components/home/TrustStrip";
 import { AboutSection } from "@/components/home/AboutSection";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
-import { QuickDonate } from "@/components/home/QuickDonate";
 import { GallerySection } from "@/components/home/GallerySection";
 import { ImpactStats } from "@/components/home/ImpactStats";
 import { PartnersSection } from "@/components/home/PartnersSection";
@@ -23,7 +22,7 @@ const Index = () => {
       <TrustStrip />
       <AboutSection />
       <ProgramsSection />
-      <QuickDonate />
+
       <ImpactStats />
       <DonationChannelsSection />
       <GallerySection />
