@@ -24,7 +24,7 @@ export const AboutSection = () => {
 
         <div className="order-1 lg:order-2">
           <h2 className="heading-display text-left">
-            অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে{" "}
+            সুন্নাহর অনুসরণে, মানবতার কল্যাণে{" "}
             <span className="gradient-donate-text">ইউনাইট ফাউন্ডেশন</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85]">
