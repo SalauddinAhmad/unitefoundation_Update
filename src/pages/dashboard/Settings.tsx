@@ -47,9 +47,9 @@ const Settings = () => {
             <div className="grid sm:grid-cols-2 gap-4">
               <Field label="প্রতিষ্ঠানের নাম" value="ইউনাইট ফাউন্ডেশন" />
               <Field label="ট্যাগলাইন" value="অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে" />
-              <Field label="ইমেইল" value="info@unitefoundation.org" type="email" />
+              <Field label="ইমেইল" value="info@unitefoundation.bd" type="email" />
               <Field label="ফোন / WhatsApp" value="+880 1700-000000" type="tel" />
-              <Field label="ওয়েবসাইট" value="https://unitefoundation.org" />
+              <Field label="ওয়েবসাইট" value="https://unitefoundation.bd" />
               <Field label="রেজিস্ট্রেশন নং" value="S-12345/2024" />
             </div>
             <div className="mt-4">
@@ -84,8 +84,8 @@ const Settings = () => {
               <Btn>সংরক্ষণ</Btn>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Facebook" value="https://facebook.com/unitefoundation" />
-              <Field label="YouTube" value="https://youtube.com/@unitefoundation" />
+              <Field label="Facebook" value="https://www.facebook.com/UniteFoundation.UniteTv" />
+              <Field label="YouTube" value="https://youtube.com/@unite.foundation" />
               <Field label="Instagram" value="https://instagram.com/unitefoundation" />
               <Field label="Twitter / X" value="https://x.com/unitefoundation" />
             </div>
