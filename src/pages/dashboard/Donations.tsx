@@ -1,12 +1,14 @@
 import { Download, Filter, Plus, Search } from "lucide-react";
 import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
-import { donations } from "@/data/dashboardMock";
+import type { Donation } from "@/data/dashboardMock";
+import { useDonations } from "@/hooks/api/useDashboardData";
 import { useState } from "react";
 
 const Donations = () => {
+  const { data = [], isLoading } = useDonations();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
-  const filtered = donations.filter((d) =>
+  const filtered = (data as Donation[]).filter((d) =>
     (status === "all" || d.status === status) &&
     (q === "" || d.name.includes(q) || d.id.toLowerCase().includes(q.toLowerCase()) || d.phone.includes(q))
   );
@@ -86,6 +88,12 @@ const Donations = () => {
               </tr>
             </thead>
             <tbody>
+              {isLoading && (
+                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">লোড হচ্ছে...</td></tr>
+              )}
+              {!isLoading && filtered.length === 0 && (
+                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">কোনো রেকর্ড পাওয়া যায়নি</td></tr>
+              )}
               {filtered.map((d) => (
                 <tr key={d.id} className="border-t border-border hover:bg-muted/40 transition-colors">
                   <td className="px-5 py-3 font-mono text-xs text-foreground/70">{d.id}</td>

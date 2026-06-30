@@ -1,8 +1,11 @@
 import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
-import { projects } from "@/data/dashboardMock";
+import type { Project } from "@/data/dashboardMock";
+import { useProjects } from "@/hooks/api/useDashboardData";
 import { Plus, Edit3, Eye, Users, Download } from "lucide-react";
 
 const Projects = () => {
+  const { data = [] } = useProjects();
+  const projects = data as Project[];
   return (
     <>
       <PageHeader
