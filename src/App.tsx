@@ -65,6 +65,8 @@ const App = () => (
 
             {/* Admin dashboard */}
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
               <Route index element={<DashOverview />} />
               <Route path="donations" element={<DashDonations />} />
