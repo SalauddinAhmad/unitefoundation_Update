@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { Lock, Mail, ShieldCheck, Loader2, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
+import { Lock, Mail, ShieldCheck, Loader2, Eye, EyeOff, ArrowRight, Heart, Users, BookOpen } from "lucide-react";
+import logoWhite from "@/assets/logo-white.svg";
 import logo from "@/assets/logo.png";
+import mosqueBg from "@/assets/footer-bg.svg";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -29,148 +31,226 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="relative min-h-screen flex items-center justify-center px-4 py-10 overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(1200px 600px at 10% -10%, hsl(152 80% 30% / 0.55), transparent 60%), radial-gradient(900px 500px at 100% 110%, hsl(152 90% 18% / 0.7), transparent 55%), linear-gradient(135deg, #04140b 0%, #06251a 45%, #021a10 100%)",
-      }}
-    >
-      {/* Ambient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 h-[28rem] w-[28rem] rounded-full bg-emerald-400/20 blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -right-32 h-[32rem] w-[32rem] rounded-full bg-teal-300/15 blur-3xl" />
-        <div className="absolute top-1/3 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-lime-200/10 blur-3xl" />
-        {/* Grid */}
+    <div className="min-h-screen bg-background flex">
+      {/* LEFT — brand storytelling panel (desktop) */}
+      <aside
+        className="relative hidden lg:flex w-[46%] xl:w-[44%] flex-col justify-between p-12 xl:p-16 text-white overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(160deg, hsl(152 100% 14%) 0%, hsl(152 100% 21%) 55%, hsl(150 80% 10%) 100%)",
+        }}
+      >
+        {/* mosque silhouette */}
+        <img
+          src={mosqueBg}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 w-full opacity-[0.06] select-none"
+        />
+        {/* soft glow */}
+        <div className="pointer-events-none absolute -top-32 -left-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-emerald-300/10 blur-3xl" />
+        {/* subtle pattern */}
         <div
-          className="absolute inset-0 opacity-[0.07]"
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
-            maskImage: "radial-gradient(ellipse at center, black 40%, transparent 75%)",
+              "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.8) 1px, transparent 0)",
+            backgroundSize: "22px 22px",
           }}
         />
-      </div>
 
-      {/* Card */}
-      <div className="relative w-full max-w-md">
-        {/* Glow ring */}
-        <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-br from-emerald-300/60 via-white/10 to-emerald-500/40 opacity-70 blur-[2px]" />
-        <div
-          className="relative rounded-3xl border border-white/15 bg-white/10 backdrop-blur-2xl shadow-2xl p-7 sm:p-9"
-          style={{ boxShadow: "0 30px 80px -20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15)" }}
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-11 w-11 rounded-2xl bg-white/15 backdrop-blur border border-white/20 grid place-items-center shadow-inner">
-                <img src={logo} alt="Unite Foundation" className="h-7 w-7" />
-              </div>
-              <div className="leading-tight">
-                <div className="text-white font-extrabold">Unite Foundation</div>
-                <div className="text-[11px] uppercase tracking-[0.18em] text-emerald-200/80">Admin Console</div>
-              </div>
-            </div>
-            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-100/90 bg-white/10 border border-white/15 rounded-full px-2.5 py-1">
-              <Sparkles className="h-3 w-3" /> Premium
-            </span>
+        {/* Logo */}
+        <div className="relative flex items-center gap-3">
+          <img src={logoWhite} alt="Unite Foundation" className="h-11 w-auto" />
+        </div>
+
+        {/* Hero copy */}
+        <div className="relative space-y-7">
+          <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-200/90 bg-white/10 border border-white/15 rounded-full px-3 py-1.5 backdrop-blur">
+            <ShieldCheck className="h-3.5 w-3.5" /> Admin Console
           </div>
+          <h1 className="font-bangla text-4xl xl:text-[2.75rem] font-extrabold leading-[1.2]">
+            ইনশাআল্লাহ,<br />
+            আপনার সেবায়<br />
+            <span className="text-emerald-200">ইউনাইট ফাউন্ডেশন</span>
+          </h1>
+          <p className="text-white/75 max-w-md leading-[1.85]">
+            দান, স্বেচ্ছাসেবক, প্রকল্প, ব্লগ ও সেটিংস — একটি নিরাপদ ড্যাশবোর্ড থেকে সবকিছু পরিচালনা করুন।
+          </p>
 
-          <div className="mt-8">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white">স্বাগতম 👋</h1>
-            <p className="mt-1.5 text-sm text-white/70">
-              ড্যাশবোর্ডে প্রবেশ করতে অ্যাডমিন তথ্য দিন।
+          {/* Quick stats / features */}
+          <ul className="grid grid-cols-3 gap-3 pt-2 max-w-md">
+            {[
+              { icon: Heart, label: "দান ব্যবস্থাপনা" },
+              { icon: Users, label: "স্বেচ্ছাসেবক" },
+              { icon: BookOpen, label: "কন্টেন্ট" },
+            ].map((f) => (
+              <li
+                key={f.label}
+                className="rounded-2xl bg-white/[0.07] border border-white/10 backdrop-blur px-3 py-3 text-center"
+              >
+                <f.icon className="h-4 w-4 mx-auto text-emerald-200" />
+                <div className="mt-1.5 text-[11px] text-white/80 font-medium">{f.label}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Quote / footer */}
+        <div className="relative space-y-4">
+          <figure className="border-l-2 border-emerald-300/60 pl-4 max-w-md">
+            <blockquote className="font-bangla text-sm text-white/85 leading-[1.9] italic">
+              "তোমাদের মধ্যে শ্রেষ্ঠ সেই, যে মানুষের কল্যাণে নিবেদিত।"
+            </blockquote>
+            <figcaption className="mt-1.5 text-[11px] text-white/55">— হাদীস</figcaption>
+          </figure>
+          <div className="text-[11px] text-white/45">
+            © {new Date().getFullYear()} Unite Foundation · unitefoundation.bd
+          </div>
+        </div>
+      </aside>
+
+      {/* RIGHT — form */}
+      <main className="relative flex-1 flex items-center justify-center px-4 py-10 sm:px-8">
+        {/* Mobile branded backdrop */}
+        <div className="lg:hidden absolute inset-x-0 top-0 h-72 -z-0"
+          style={{
+            background: "linear-gradient(160deg, hsl(152 100% 21%) 0%, hsl(150 80% 12%) 100%)",
+          }}
+        >
+          <img src={mosqueBg} alt="" aria-hidden className="absolute bottom-0 w-full opacity-[0.07]" />
+        </div>
+
+        <div className="relative w-full max-w-[420px]">
+          {/* Mobile header */}
+          <div className="lg:hidden flex flex-col items-center text-center mb-6 pt-4">
+            <img src={logoWhite} alt="Unite Foundation" className="h-12" />
+            <p className="mt-3 text-xs uppercase tracking-[0.22em] text-white/75 font-semibold">
+              Admin Console
             </p>
           </div>
 
-          <form onSubmit={submit} className="mt-7 space-y-4">
-            {/* Email */}
-            <label className="block">
-              <span className="text-xs font-semibold text-white/80">ইমেইল</span>
-              <div className="mt-1.5 group relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60 group-focus-within:text-emerald-200 transition-colors" />
-                <input
-                  type="email"
-                  required
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@unitefoundation.bd"
-                  className="w-full h-12 pl-11 pr-3 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 text-sm backdrop-blur focus:outline-none focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/50 transition"
-                />
-              </div>
-            </label>
-
-            {/* Password */}
-            <label className="block">
-              <span className="text-xs font-semibold text-white/80">পাসওয়ার্ড</span>
-              <div className="mt-1.5 group relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60 group-focus-within:text-emerald-200 transition-colors" />
-                <input
-                  type={show ? "text" : "password"}
-                  required
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full h-12 pl-11 pr-11 rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 text-sm backdrop-blur focus:outline-none focus:ring-2 focus:ring-emerald-300/60 focus:border-emerald-300/50 transition"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShow((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white/60 hover:text-white"
-                  aria-label="toggle password"
-                >
-                  {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </label>
-
-            <div className="flex items-center justify-between text-xs">
-              <label className="flex items-center gap-2 text-white/75 select-none cursor-pointer">
-                <input type="checkbox" defaultChecked className="h-3.5 w-3.5 rounded border-white/30 bg-white/10 accent-emerald-400" />
-                মনে রাখুন
-              </label>
-              <a href="#" className="text-emerald-200 hover:text-white font-medium">
-                পাসওয়ার্ড ভুলে গেছেন?
-              </a>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative w-full h-12 rounded-xl font-bold text-sm text-emerald-950 overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed transition-transform active:scale-[0.99]"
+          {/* Card */}
+          <div className="relative rounded-3xl border border-border bg-card shadow-[0_30px_80px_-30px_rgba(0,40,20,0.25)] p-7 sm:p-9">
+            {/* top accent */}
+            <div
+              className="absolute -top-px left-8 right-8 h-px"
               style={{
-                background: "linear-gradient(135deg, #d1fae5 0%, #6ee7b7 50%, #34d399 100%)",
-                boxShadow: "0 12px 30px -10px rgba(52,211,153,0.55), inset 0 1px 0 rgba(255,255,255,0.6)",
+                background:
+                  "linear-gradient(90deg, transparent, hsl(var(--primary)/0.6), transparent)",
               }}
-            >
-              <span className="relative z-10 inline-flex items-center justify-center gap-2">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                লগইন করুন
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </span>
-              <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent group-hover:translate-x-full transition-transform duration-700" />
-            </button>
+            />
 
-            <div className="flex items-center gap-2 text-[11px] text-white/70 justify-center pt-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" />
-              JWT‑সুরক্ষিত · এনক্রিপ্টেড সেশন
+            <div className="hidden lg:flex items-center gap-3 mb-1">
+              <img src={logo} alt="" className="h-8 w-8" />
+              <span className="text-sm font-bold text-foreground">Unite Foundation</span>
             </div>
 
-            <div className="mt-2 rounded-xl border border-white/15 bg-white/5 backdrop-blur p-3 text-[11px] text-white/75">
-              <div className="font-semibold text-white mb-0.5">ডেমো অ্যাক্সেস</div>
-              ইমেইল: <code className="text-emerald-200">admin@unitefoundation.bd</code> · পাসওয়ার্ড:{" "}
-              <code className="text-emerald-200">admin123</code>
-            </div>
-          </form>
+            <h2 className="font-bangla text-2xl sm:text-[1.75rem] font-extrabold text-foreground mt-2">
+              স্বাগতম 👋
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1.5">
+              ড্যাশবোর্ডে প্রবেশ করতে অ্যাডমিন তথ্য দিন।
+            </p>
+
+            <form onSubmit={submit} className="mt-7 space-y-4">
+              {/* Email */}
+              <label className="block">
+                <span className="text-[12px] font-semibold text-foreground/80">ইমেইল</span>
+                <div className="mt-1.5 group relative">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    type="email"
+                    required
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="admin@unitefoundation.bd"
+                    className="w-full h-12 pl-11 pr-3 rounded-xl bg-background border border-input text-foreground placeholder:text-muted-foreground/70 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/60 transition"
+                  />
+                </div>
+              </label>
+
+              {/* Password */}
+              <label className="block">
+                <span className="text-[12px] font-semibold text-foreground/80">পাসওয়ার্ড</span>
+                <div className="mt-1.5 group relative">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <input
+                    type={show ? "text" : "password"}
+                    required
+                    autoComplete="current-password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full h-12 pl-11 pr-11 rounded-xl bg-background border border-input text-foreground placeholder:text-muted-foreground/70 text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary/60 transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShow((s) => !s)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground"
+                    aria-label="toggle password"
+                  >
+                    {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </label>
+
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 text-muted-foreground select-none cursor-pointer">
+                  <input
+                    type="checkbox"
+                    defaultChecked
+                    className="h-3.5 w-3.5 rounded border-input accent-primary"
+                  />
+                  মনে রাখুন
+                </label>
+                <a href="#" className="text-primary hover:underline font-semibold">
+                  পাসওয়ার্ড ভুলে গেছেন?
+                </a>
+              </div>
+
+              {/* CTA */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="group relative w-full h-12 rounded-xl font-bold text-sm text-primary-foreground overflow-hidden transition-transform active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{
+                  background:
+                    "linear-gradient(135deg, hsl(152 100% 21%) 0%, hsl(152 100% 16%) 100%)",
+                  boxShadow:
+                    "0 14px 30px -12px hsl(152 100% 21% / 0.55), inset 0 1px 0 rgba(255,255,255,0.12)",
+                }}
+              >
+                <span className="relative z-10 inline-flex items-center justify-center gap-2">
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  লগইন করুন
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-700" />
+              </button>
+
+              {/* Trust line */}
+              <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                JWT‑সুরক্ষিত · এনক্রিপ্টেড সেশন
+              </div>
+
+              {/* Demo hint */}
+              <div className="mt-2 rounded-xl border border-dashed border-primary/25 bg-accent/40 p-3 text-[11px] text-foreground/75">
+                <div className="font-semibold text-foreground mb-0.5">ডেমো অ্যাক্সেস</div>
+                ইমেইল: <code className="text-primary font-semibold">admin@unitefoundation.bd</code> · পাসওয়ার্ড:{" "}
+                <code className="text-primary font-semibold">admin123</code>
+              </div>
+            </form>
+          </div>
+
+          <p className="mt-5 text-center text-[11px] text-muted-foreground">
+            © {new Date().getFullYear()} Unite Foundation · unitefoundation.bd
+          </p>
         </div>
-
-        <p className="relative mt-6 text-center text-xs text-white/50">
-          © {new Date().getFullYear()} Unite Foundation · All rights reserved
-        </p>
-      </div>
+      </main>
     </div>
   );
 };
