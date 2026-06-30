@@ -19,7 +19,9 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
+import { useAuth } from "@/hooks/useAuth";
 
 const menu = [
   { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true },
@@ -38,7 +40,7 @@ const generalMenu = [
   { to: "/dashboard/help", icon: HelpCircle, label: "সাহায্য" },
 ];
 
-const SidebarContent = ({ onNav }: { onNav?: () => void }) => (
+const SidebarContent = ({ onNav, onLogout }: { onNav?: () => void; onLogout?: () => void }) => (
   <div className="flex h-full flex-col">
     {/* Logo */}
     <div className="px-6 pt-6 pb-8 flex items-center gap-3">
@@ -115,7 +117,8 @@ const SidebarContent = ({ onNav }: { onNav?: () => void }) => (
         ))}
         <button
           type="button"
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/70 hover:bg-secondary hover:text-foreground transition-colors"
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
         >
           <LogOut className="h-[18px] w-[18px]" />
           <span>লগ আউট</span>
@@ -139,7 +142,7 @@ const SidebarContent = ({ onNav }: { onNav?: () => void }) => (
   </div>
 );
 
-const Topbar = ({ onMenu }: { onMenu: () => void }) => {
+const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
   const location = useLocation();
   const current =
     [...menu, ...generalMenu].find((m) =>
@@ -176,15 +179,19 @@ const Topbar = ({ onMenu }: { onMenu: () => void }) => {
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-card" />
         </button>
-        <div className="flex items-center gap-2.5 pl-2 md:pl-3 ml-1 md:ml-2 md:border-l md:border-border">
+        <button
+          onClick={onLogout}
+          title="লগ আউট"
+          className="flex items-center gap-2.5 pl-2 md:pl-3 ml-1 md:ml-2 md:border-l md:border-border hover:opacity-80 transition"
+        >
           <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
-            UF
+            {(user?.name || "UF").slice(0, 2).toUpperCase()}
           </div>
-          <div className="hidden md:block leading-tight">
-            <div className="text-sm font-bold">এডমিন</div>
-            <div className="text-[11px] text-muted-foreground">admin@unite.org</div>
+          <div className="hidden md:block leading-tight text-left">
+            <div className="text-sm font-bold">{user?.name || "এডমিন"}</div>
+            <div className="text-[11px] text-muted-foreground">{user?.email || "—"}</div>
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -192,11 +199,18 @@ const Topbar = ({ onMenu }: { onMenu: () => void }) => {
 
 export const DashboardLayout = () => {
   const [open, setOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const nav = useNavigate();
+  const handleLogout = () => {
+    logout();
+    nav("/login", { replace: true });
+  };
+
   return (
     <div className="min-h-screen bg-muted/40">
       {/* Sidebar — desktop */}
       <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-[260px] bg-card border-r border-border z-40 flex-col">
-        <SidebarContent />
+        <SidebarContent onLogout={handleLogout} />
       </aside>
 
       {/* Sidebar — mobile drawer */}
@@ -210,13 +224,13 @@ export const DashboardLayout = () => {
             >
               <X className="h-4 w-4" />
             </button>
-            <SidebarContent onNav={() => setOpen(false)} />
+            <SidebarContent onNav={() => setOpen(false)} onLogout={handleLogout} />
           </aside>
         </>
       )}
 
       <div className="lg:ml-[260px]">
-        <Topbar onMenu={() => setOpen(true)} />
+        <Topbar onMenu={() => setOpen(true)} user={user} onLogout={handleLogout} />
         <main className="p-4 md:p-8">
           <Outlet />
         </main>
