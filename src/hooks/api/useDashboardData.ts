@@ -150,7 +150,7 @@ export type SiteSettings = {
 const defaultSettings: SiteSettings = {
   organization: {
     name: "ইউনাইট ফাউন্ডেশন",
-    tagline: "অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে",
+    tagline: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে।",
     email: "info@unitefoundation.bd",
     phone: "+880 1759-754265",
     website: "https://unitefoundation.bd",

@@ -43,7 +43,7 @@ export const Footer = () => {
               />
             </Link>
             <p className="mt-4 text-sm text-white/80 leading-relaxed">
-              অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে — পবিত্র কুরআন ও সহীহ হাদীছের আলোকে
+              সুন্নাহর অনুসরণে, মানবতার কল্যাণে। পবিত্র কুরআন ও সহীহ হাদীছের আলোকে
               পরিচালিত একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম।
             </p>
             <div className="flex flex-wrap gap-3 mt-5">

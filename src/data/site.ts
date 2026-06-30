@@ -1,8 +1,8 @@
 export const site = {
   name: "ইউনাইট ফাউন্ডেশন",
   nameEn: "Unite Foundation",
-  tagline: "অহিভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে",
-  taglineEn: "United in service of humanity",
+  tagline: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে।",
+  taglineEn: "Following the Sunnah, Serving Humanity.",
   email: "info@unitefoundation.bd",
   website: "https://unitefoundation.bd",
   phone: "+৮৮০ ১৭৫৯-৭৫৪২৬৫",
