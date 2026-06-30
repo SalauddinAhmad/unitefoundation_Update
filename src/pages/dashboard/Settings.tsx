@@ -256,6 +256,10 @@ const Settings = () => {
             </Card>
           )}
 
+          {active === "admins" && <AdminsPanel />}
+
+
+
           {active === "notifications" && (
             <Card>
               <div className="flex items-center justify-between mb-5">
