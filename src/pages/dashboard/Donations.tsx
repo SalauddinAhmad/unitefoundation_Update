@@ -1,12 +1,14 @@
 import { Download, Filter, Plus, Search } from "lucide-react";
 import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
-import { donations } from "@/data/dashboardMock";
+import type { Donation } from "@/data/dashboardMock";
+import { useDonations } from "@/hooks/api/useDashboardData";
 import { useState } from "react";
 
 const Donations = () => {
+  const { data = [], isLoading } = useDonations();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
-  const filtered = donations.filter((d) =>
+  const filtered = (data as Donation[]).filter((d) =>
     (status === "all" || d.status === status) &&
     (q === "" || d.name.includes(q) || d.id.toLowerCase().includes(q.toLowerCase()) || d.phone.includes(q))
   );
