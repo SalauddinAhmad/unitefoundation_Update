@@ -22,6 +22,8 @@ const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
 const RequireAuth = lazy(() => import("./components/dashboard/RequireAuth.tsx"));
 const Login = lazy(() => import("./pages/Login.tsx"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const DashOverview = lazy(() => import("./pages/dashboard/Overview.tsx"));
 const DashDonations = lazy(() => import("./pages/dashboard/Donations.tsx"));
 const DashVolunteers = lazy(() => import("./pages/dashboard/Volunteers.tsx"));
