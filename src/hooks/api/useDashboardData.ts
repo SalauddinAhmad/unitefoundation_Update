@@ -129,6 +129,22 @@ export type SiteSettings = {
     instagram: string;
     twitter: string;
   };
+  security: {
+    two_factor: boolean;
+    session_timeout_min: number;
+    password_min_length: number;
+    require_strong_password: boolean;
+    login_alerts: boolean;
+    allowed_admin_emails: string;
+  };
+  notifications: {
+    email_on_donation: boolean;
+    email_on_volunteer: boolean;
+    email_on_message: boolean;
+    weekly_report: boolean;
+    sms_alerts: boolean;
+    notify_email: string;
+  };
 };
 
 const defaultSettings: SiteSettings = {
@@ -155,7 +171,33 @@ const defaultSettings: SiteSettings = {
     instagram: "https://instagram.com/unitefoundation",
     twitter: "https://x.com/unitefoundation",
   },
+  security: {
+    two_factor: false,
+    session_timeout_min: 60,
+    password_min_length: 8,
+    require_strong_password: true,
+    login_alerts: true,
+    allowed_admin_emails: "admin@unitefoundation.bd",
+  },
+  notifications: {
+    email_on_donation: true,
+    email_on_volunteer: true,
+    email_on_message: true,
+    weekly_report: false,
+    sms_alerts: false,
+    notify_email: "admin@unitefoundation.bd",
+  },
 };
+
+function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
+  return {
+    organization: { ...defaultSettings.organization, ...(s?.organization || {}) },
+    payments: { ...defaultSettings.payments, ...(s?.payments || {}) },
+    socials: { ...defaultSettings.socials, ...(s?.socials || {}) },
+    security: { ...defaultSettings.security, ...(s?.security || {}) },
+    notifications: { ...defaultSettings.notifications, ...(s?.notifications || {}) },
+  };
+}
 
 const LOCAL_SETTINGS_KEY = "uf_settings_draft";
 
