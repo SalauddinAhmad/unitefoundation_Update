@@ -1,8 +1,10 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, Quote, ArrowUpRight, Award, Calendar, Globe2, Phone, MapPin, Target, BookOpen, CheckCircle2 } from "lucide-react";
+import {
+  ArrowLeft, ArrowUpRight, BadgeCheck, Calendar, Globe2, Phone, MapPin,
+  Target, BookOpen, CheckCircle2, Sparkles, Mail,
+} from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
-import { Button } from "@/components/ui/button";
 import { getPartner, partners } from "@/data/partners";
 
 const PartnerDetail = () => {
@@ -12,6 +14,7 @@ const PartnerDetail = () => {
   if (!partner) return <Navigate to="/" replace />;
 
   const others = partners.filter((p) => p.slug !== partner.slug);
+  const year = partner.established?.match(/\d{4}|[০-৯]{4}/)?.[0] || "—";
 
   return (
     <SiteLayout>
@@ -21,305 +24,280 @@ const PartnerDetail = () => {
         canonical={`/partners/${partner.slug}`}
       />
 
-      {/* Hero */}
-      <section className="relative pt-32 md:pt-40 pb-20 md:pb-28 overflow-hidden">
-        {/* Decorative background */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/15 via-background to-background" />
-        <div
-          className="absolute inset-0 -z-10 opacity-[0.07]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, hsl(var(--primary)) 1px, transparent 0)",
-            backgroundSize: "28px 28px",
-          }}
-        />
-        <div className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-primary/20 blur-3xl -z-10" />
-        <div className="absolute -bottom-32 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-3xl -z-10" />
+      <div className="bg-[#fcfaf2]">
+        {/* Hero */}
+        <section className="relative pt-28 md:pt-32 pb-12 md:pb-16">
+          <div className="container-page">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10"
+            >
+              <ArrowLeft className="h-4 w-4" /> হোমে ফিরে যান
+            </Link>
 
-        <div className="container-page">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-10 group"
-          >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-card/60 backdrop-blur group-hover:border-primary/60 group-hover:text-primary transition-colors">
-              <ArrowLeft className="h-4 w-4" />
-            </span>
-            হোম পেজে ফিরে যান
-          </Link>
-
-          <div className="grid lg:grid-cols-[1fr,420px] gap-10 lg:gap-14 items-center">
-            {/* Heading */}
-            <div className="order-2 lg:order-1">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-primary uppercase">
-                <Sparkles className="h-3.5 w-3.5" /> সহযোগী প্রতিষ্ঠান
-              </span>
-              <h1 className="heading-display mt-5 text-4xl md:text-6xl font-bold text-foreground leading-tight">
-                {partner.name}
-              </h1>
-              <div className="mt-5 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-primary/60 to-transparent" />
-              <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-                {partner.tagline}
-              </p>
-
-              {/* Meta row */}
-              <div className="mt-8 flex flex-wrap items-center gap-3">
-                {partner.established && (
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    {partner.established}
+            <div className="flex flex-col md:flex-row items-center md:items-end gap-8 border-b border-[#e2dfd5] pb-12">
+              {/* Logo */}
+              <div className="relative shrink-0">
+                <div className="w-32 h-32 md:w-44 md:h-44 rounded-full border-2 border-[hsl(var(--donate-highlight))] p-2 bg-white flex items-center justify-center shadow-xl">
+                  <div className="w-full h-full rounded-full bg-primary flex items-center justify-center overflow-hidden">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="w-[78%] h-[78%] object-contain"
+                    />
                   </div>
-                )}
-                {partner.license && (
-                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
-                    <Award className="h-4 w-4 text-primary" />
-                    লাইসেন্স: {partner.license}
-                  </div>
-                )}
-                <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 backdrop-blur px-4 py-2 text-sm text-foreground/80">
-                  <Award className="h-4 w-4 text-primary" />
-                  ইউনাইট ফাউন্ডেশন পরিবার
+                </div>
+                <div className="absolute -bottom-2 -right-2 bg-[hsl(var(--donate-highlight))] text-white p-2 rounded-full shadow-md">
+                  <BadgeCheck className="w-5 h-5" />
                 </div>
               </div>
 
-              {/* Contact CTAs */}
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                {partner.phone && (
-                  <Button asChild size="lg" variant="outline" className="group/btn border-primary/40 hover:bg-primary/10">
-                    <a href={`tel:${partner.phone}`}>
-                      <Phone className="mr-2 h-4 w-4 text-primary" />
-                      {partner.phone}
-                    </a>
-                  </Button>
-                )}
-                {partner.website && (
-                  <Button asChild size="lg" className="group/btn shadow-lg shadow-primary/20">
-                    <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                      <Globe2 className="mr-2 h-4 w-4" />
-                      ওয়েবসাইট ভিজিট করুন
-                      <ArrowUpRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            {/* Logo card */}
-            <div className="relative group order-1 lg:order-2">
-              <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-tr from-primary/40 via-primary/10 to-primary/40 opacity-70 blur-xl group-hover:opacity-100 transition-opacity" />
-              <div className="relative rounded-[2rem] border border-border/60 bg-card/80 backdrop-blur-xl p-10 md:p-14 shadow-card overflow-hidden">
-                {/* Corner accents */}
-                <span className="absolute top-4 left-4 h-3 w-3 border-t-2 border-l-2 border-primary/60" />
-                <span className="absolute top-4 right-4 h-3 w-3 border-t-2 border-r-2 border-primary/60" />
-                <span className="absolute bottom-4 left-4 h-3 w-3 border-b-2 border-l-2 border-primary/60" />
-                <span className="absolute bottom-4 right-4 h-3 w-3 border-b-2 border-r-2 border-primary/60" />
-                <div className="flex items-center justify-center min-h-[200px]">
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="max-h-40 md:max-h-48 w-auto object-contain drop-shadow-xl"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About — editorial style */}
-      <section className="section-y relative overflow-hidden">
-        <div className="container-page">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-16">
-            <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-28">
-                <span className="eyebrow text-primary">পরিচিতি</span>
-                <h2 className="heading-display mt-3 text-3xl md:text-4xl font-bold text-foreground leading-tight">
-                  প্রতিষ্ঠান<br />সম্পর্কে
-                </h2>
-                <div className="mt-5 h-1 w-16 rounded-full bg-gradient-to-r from-primary to-primary/30" />
-                <p className="mt-5 text-sm text-muted-foreground">
-                  আমাদের যাত্রা, লক্ষ্য ও কর্মপরিধি সম্পর্কে এক নজরে জানুন।
+              {/* Name & tagline */}
+              <div className="text-center md:text-left flex-1">
+                <span className="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold tracking-wide mb-3">
+                  সহযোগী প্রতিষ্ঠান
+                </span>
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary mb-3 leading-tight">
+                  {partner.name}
+                </h1>
+                <p className="text-lg md:text-xl text-[hsl(var(--donate-highlight))] font-medium">
+                  {partner.tagline}
                 </p>
               </div>
+
+              {/* CTA */}
+              {partner.website && (
+                <div className="flex gap-3">
+                  <a
+                    href={partner.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-7 py-4 bg-primary text-primary-foreground rounded-xl font-bold shadow-lg hover:bg-primary/90 transition-all hover:-translate-y-0.5"
+                  >
+                    ভিজিট করুন <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                </div>
+              )}
             </div>
-            <div className="lg:col-span-8">
-              <div className="relative rounded-card border border-border/60 bg-gradient-to-br from-card to-card/40 backdrop-blur p-8 md:p-12 shadow-card">
-                <Quote className="absolute -top-4 -left-2 h-12 w-12 text-primary/20" strokeWidth={1.5} />
-                <p className="text-lg md:text-xl leading-[1.9] text-foreground/90 first-letter:text-5xl first-letter:font-bold first-letter:text-primary first-letter:mr-2 first-letter:float-left first-letter:leading-[1]">
+          </div>
+        </section>
+
+        {/* Main grid */}
+        <section className="pb-20 md:pb-28">
+          <div className="container-page grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+            {/* Left content */}
+            <div className="lg:col-span-8 space-y-12">
+              {/* About */}
+              <section>
+                <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-3">
+                  <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
+                  সংক্ষিপ্ত বর্ণনা
+                </h2>
+                <p className="text-lg text-foreground/80 leading-relaxed">
                   {partner.description}
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+              </section>
 
-      {/* Activities — premium numbered cards */}
-      <section className="section-y relative overflow-hidden border-t border-border/40">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-muted/30 via-background to-muted/20" />
-        <div
-          className="absolute inset-0 -z-10 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        <div className="container-page">
-          <div className="text-center mb-14 md:mb-16">
-            <span className="eyebrow text-primary">কার্যাবলী</span>
-            <h2 className="heading-display mt-3 text-3xl md:text-4xl font-bold text-foreground">
-              আমাদের সংক্ষিপ্ত কার্যক্রম
-            </h2>
-            <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
-            <p className="mx-auto mt-5 max-w-2xl text-muted-foreground">
-              যে সকল ক্ষেত্রে আমরা নিরবিচ্ছিন্নভাবে কাজ করে যাচ্ছি
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6 md:gap-7 max-w-5xl mx-auto">
-            {partner.activities.map((a, i) => (
-              <div
-                key={i}
-                className="group relative overflow-hidden rounded-card border border-border/60 bg-card/80 backdrop-blur p-7 md:p-8 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-primary/40 transition-all duration-500"
-              >
-                {/* Hover gradient sweep */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                {/* Big number watermark */}
-                <span className="absolute -top-2 -right-2 text-[7rem] font-black leading-none text-primary/5 select-none group-hover:text-primary/10 transition-colors">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="relative">
-                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-bold text-lg shadow-lg shadow-primary/30">
-                    {i + 1}
-                  </div>
-                  <h3 className="mt-5 font-bold text-foreground text-xl">{a.title}</h3>
-                  <div className="mt-3 h-px w-10 bg-primary/40 group-hover:w-16 transition-all duration-500" />
-                  <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-                    {a.detail}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Training Programs — detailed category cards */}
-      {partner.programs && partner.programs.length > 0 && (
-        <section className="section-y relative overflow-hidden border-t border-border/40">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-muted/20 via-background to-muted/30" />
-          <div className="container-page">
-            <div className="text-center mb-14 md:mb-16">
-              <span className="eyebrow text-primary">প্রশিক্ষণ</span>
-              <h2 className="heading-display mt-3 text-3xl md:text-4xl font-bold text-foreground">
-                🎓 আমাদের বিশেষ ট্রেনিং কার্যক্রমসমূহ
-              </h2>
-              <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
-              {partner.programs.map((group, gi) => (
-                <div
-                  key={gi}
-                  className="relative overflow-hidden rounded-card border border-border/60 bg-card/80 backdrop-blur p-7 md:p-8 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-primary/40 transition-all duration-500"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-70" />
-                  <div className="relative">
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
-                      <BookOpen className="h-5 w-5" />
-                    </div>
-                    <h3 className="font-bold text-foreground text-xl leading-snug">{group.category}</h3>
-                    <div className="mt-3 h-px w-10 bg-primary/40" />
-                    <ul className="mt-5 space-y-3">
-                      {group.items.map((item, ii) => (
-                        <li key={ii} className="flex items-start gap-3 text-sm md:text-base text-muted-foreground leading-relaxed">
-                          <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Goal & contact */}
-      {(partner.goal || partner.address) && (
-        <section className="section-y relative overflow-hidden border-t border-border/40">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-background" />
-          <div className="container-page">
-            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+              {/* Goal */}
               {partner.goal && (
-                <div className="rounded-card border border-border/60 bg-card/80 backdrop-blur p-8 md:p-10 shadow-card">
-                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
-                    <Target className="h-5 w-5" />
+                <section className="relative p-7 md:p-8 rounded-2xl border-l-4 border-[hsl(var(--donate-highlight))] bg-white shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                      <Target className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-xs uppercase tracking-[0.18em] font-bold text-[hsl(var(--donate-highlight))] mb-1.5">
+                        আমাদের লক্ষ্য
+                      </div>
+                      <p className="text-lg font-semibold text-primary leading-snug">
+                        {partner.goal}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-foreground text-xl">আমাদের লক্ষ্য</h3>
-                  <p className="mt-4 text-base md:text-lg text-muted-foreground leading-relaxed">{partner.goal}</p>
-                </div>
+                </section>
               )}
-              {partner.address && (
-                <div className="rounded-card border border-border/60 bg-card/80 backdrop-blur p-8 md:p-10 shadow-card">
-                  <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 mb-5">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-bold text-foreground text-xl">ঠিকানা</h3>
-                  <p className="mt-4 text-base text-muted-foreground leading-relaxed whitespace-pre-line">{partner.address}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Other partners */}
-      {others.length > 0 && (
-        <section className="section-y border-t border-border/40">
-          <div className="container-page">
-            <div className="text-center mb-12">
-              <span className="eyebrow text-primary">আরও দেখুন</span>
-              <h2 className="heading-display mt-3 text-2xl md:text-3xl font-bold text-foreground">
-                অন্যান্য সহযোগী প্রতিষ্ঠান
-              </h2>
-              <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
-            </div>
-            <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6">
-              {others.map((p) => (
-                <Link
-                  key={p.slug}
-                  to={`/partners/${p.slug}`}
-                  className="group relative overflow-hidden rounded-card border border-border/60 bg-card/80 backdrop-blur p-8 shadow-card hover:shadow-card-hover hover:-translate-y-1 hover:border-primary/40 transition-all duration-500"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative flex items-center gap-6">
-                    <div className="shrink-0 h-20 w-20 rounded-xl border border-border/60 bg-background flex items-center justify-center">
-                      <img
-                        src={p.logo}
-                        alt={p.name}
-                        className="max-h-14 w-auto object-contain transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-foreground text-lg truncate">{p.name}</h3>
-                      <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{p.tagline}</p>
-                      <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-                        বিস্তারিত দেখুন
-                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      </span>
-                    </div>
+              {/* Programs (categorized) */}
+              {partner.programs && partner.programs.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-primary mb-8 flex items-center gap-3">
+                    <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
+                    প্রশিক্ষণ ও প্রোগ্রাম
+                  </h2>
+                  <div className="space-y-6">
+                    {partner.programs.map((g, i) => (
+                      <div key={i} className="bg-white rounded-2xl border border-[#e2dfd5] p-6 md:p-7 shadow-sm">
+                        <div className="flex items-center gap-3 mb-5 pb-4 border-b border-[#e2dfd5]">
+                          <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                            <BookOpen className="w-5 h-5" />
+                          </div>
+                          <h3 className="text-lg font-bold text-primary">{g.category}</h3>
+                        </div>
+                        <ul className="grid sm:grid-cols-2 gap-3">
+                          {g.items.map((it, j) => (
+                            <li key={j} className="flex items-start gap-3 text-foreground/80 leading-relaxed">
+                              <CheckCircle2 className="w-5 h-5 text-[hsl(var(--donate-highlight))] mt-0.5 shrink-0" />
+                              <span className="text-[15px]">{it}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
-                </Link>
-              ))}
+                </section>
+              )}
+
+              {/* Activities */}
+              {partner.activities?.length > 0 && (
+                <section>
+                  <h2 className="text-2xl font-bold text-primary mb-8 flex items-center gap-3">
+                    <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
+                    কার্যক্রম ও সেবা
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {partner.activities.map((a, i) => (
+                      <div
+                        key={i}
+                        className="group p-6 bg-white rounded-2xl border border-[#e2dfd5] hover:border-[hsl(var(--donate-highlight))] transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                      >
+                        <div className="w-12 h-12 bg-[#fcfaf2] text-[hsl(var(--donate-highlight))] rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                          <Sparkles className="w-5 h-5" />
+                        </div>
+                        <h3 className="text-lg font-bold text-primary mb-2">{a.title}</h3>
+                        <p className="text-sm text-foreground/65 leading-relaxed">{a.detail}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
+
+            {/* Right sidebar */}
+            <aside className="lg:col-span-4">
+              <div className="sticky top-28 space-y-6">
+                {/* Facts card */}
+                <div className="bg-primary rounded-3xl p-8 text-primary-foreground shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 opacity-10 pointer-events-none">
+                    <svg width="220" height="220" viewBox="0 0 100 100">
+                      <circle cx="100" cy="0" r="80" fill="currentColor" />
+                    </svg>
+                  </div>
+
+                  <h2 className="text-2xl font-bold mb-7 relative z-10">এক নজরে</h2>
+                  <dl className="space-y-5 relative z-10">
+                    <Row label="প্রতিষ্ঠাকাল" value={year} />
+                    {partner.license && <Row label="লাইসেন্স" value={partner.license} mono />}
+                    {partner.phone && (
+                      <Row label="যোগাযোগ" value={partner.phone} mono />
+                    )}
+                    {partner.address && <Row label="ঠিকানা" value={partner.address} />}
+                    <Row
+                      label="অভিভাবক"
+                      value="ইউনাইট ফাউন্ডেশন"
+                      highlight
+                    />
+                  </dl>
+
+                  <div className="mt-9 relative z-10">
+                    <p className="text-sm text-primary-foreground/70 mb-4 italic">
+                      "সুন্নাহর অনুসরণে, মানবতার কল্যাণে — ইউনাইট ফাউন্ডেশনের গর্বিত অঙ্গপ্রতিষ্ঠান।"
+                    </p>
+                    {partner.website && (
+                      <a
+                        href={partner.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center py-3 bg-[hsl(var(--donate-highlight))] hover:opacity-90 text-primary font-bold rounded-xl transition-colors"
+                      >
+                        ওয়েবসাইট ভিজিট করুন
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                {/* Contact card */}
+                <div className="p-6 border border-[#e2dfd5] rounded-3xl bg-white shadow-sm">
+                  <h3 className="font-bold text-primary mb-4">যোগাযোগ</h3>
+                  <ul className="space-y-3 text-sm text-foreground/70">
+                    {partner.phone && (
+                      <li className="flex items-center gap-2.5">
+                        <Phone className="w-4 h-4 text-[hsl(var(--donate-highlight))]" />
+                        <a href={`tel:${partner.phone}`} dir="ltr" className="hover:text-primary">{partner.phone}</a>
+                      </li>
+                    )}
+                    {partner.address && (
+                      <li className="flex items-start gap-2.5">
+                        <MapPin className="w-4 h-4 text-[hsl(var(--donate-highlight))] mt-0.5" />
+                        <span>{partner.address}</span>
+                      </li>
+                    )}
+                    {partner.website && (
+                      <li className="flex items-center gap-2.5">
+                        <Globe2 className="w-4 h-4 text-[hsl(var(--donate-highlight))]" />
+                        <a href={partner.website} target="_blank" rel="noopener noreferrer" className="hover:text-primary truncate">
+                          {partner.website.replace(/^https?:\/\//, "")}
+                        </a>
+                      </li>
+                    )}
+                    <li className="flex items-center gap-2.5">
+                      <Mail className="w-4 h-4 text-[hsl(var(--donate-highlight))]" />
+                      <a href="mailto:contact@unitefoundation.bd" className="hover:text-primary">contact@unitefoundation.bd</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
-      )}
+
+        {/* Related partners */}
+        {others.length > 0 && (
+          <section className="pb-24 md:pb-32">
+            <div className="container-page">
+              <div className="flex items-end justify-between mb-8 border-t border-[#e2dfd5] pt-12">
+                <h2 className="text-2xl md:text-3xl font-bold text-primary flex items-center gap-3">
+                  <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
+                  অন্যান্য প্রতিষ্ঠান
+                </h2>
+                <Link to="/" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
+                  সবগুলো দেখুন <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {others.map((p) => (
+                  <Link
+                    key={p.slug}
+                    to={`/partners/${p.slug}`}
+                    className="group flex items-center gap-5 p-5 bg-white rounded-2xl border border-[#e2dfd5] hover:border-[hsl(var(--donate-highlight))] transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-primary/5 border border-[#e2dfd5] flex items-center justify-center shrink-0 overflow-hidden">
+                      <img src={p.logo} alt={p.name} className="w-[78%] h-[78%] object-contain" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-primary truncate">{p.name}</div>
+                      <p className="mt-1 text-sm text-foreground/65 line-clamp-2">{p.tagline}</p>
+                    </div>
+                    <ArrowUpRight className="w-5 h-5 text-primary/60 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
     </SiteLayout>
   );
 };
+
+const Row = ({ label, value, highlight, mono }: { label: string; value: string; highlight?: boolean; mono?: boolean }) => (
+  <div className="flex justify-between items-start gap-4 border-b border-white/10 pb-4 last:border-b-0 last:pb-0">
+    <dt className="text-primary-foreground/60 text-sm">{label}</dt>
+    <dd className={
+      "font-bold text-right " +
+      (highlight ? "text-[hsl(var(--donate-highlight))]" : "") +
+      (mono ? " font-mono text-sm" : "")
+    } dir={mono ? "ltr" : undefined}>{value}</dd>
+  </div>
+);
 
 export default PartnerDetail;
