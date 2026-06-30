@@ -88,6 +88,12 @@ const Donations = () => {
               </tr>
             </thead>
             <tbody>
+              {isLoading && (
+                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">লোড হচ্ছে...</td></tr>
+              )}
+              {!isLoading && filtered.length === 0 && (
+                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">কোনো রেকর্ড পাওয়া যায়নি</td></tr>
+              )}
               {filtered.map((d) => (
                 <tr key={d.id} className="border-t border-border hover:bg-muted/40 transition-colors">
                   <td className="px-5 py-3 font-mono text-xs text-foreground/70">{d.id}</td>
@@ -103,7 +109,6 @@ const Donations = () => {
                 </tr>
               ))}
             </tbody>
-            <tfoot>
               <tr className="border-t-2 border-border bg-muted/40">
                 <td colSpan={2} className="px-5 py-3 text-xs font-bold uppercase text-muted-foreground">সম্পন্ন দান মোট</td>
                 <td className="py-3 font-extrabold text-primary tabular-nums">৳ {total.toLocaleString()}</td>
