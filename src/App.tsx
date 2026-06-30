@@ -20,6 +20,8 @@ const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 
 // Admin dashboard
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
+const RequireAuth = lazy(() => import("./components/dashboard/RequireAuth.tsx"));
+const Login = lazy(() => import("./pages/Login.tsx"));
 const DashOverview = lazy(() => import("./pages/dashboard/Overview.tsx"));
 const DashDonations = lazy(() => import("./pages/dashboard/Donations.tsx"));
 const DashVolunteers = lazy(() => import("./pages/dashboard/Volunteers.tsx"));
@@ -60,7 +62,8 @@ const App = () => (
             <Route path="/partners/:slug" element={<PartnerDetail />} />
 
             {/* Admin dashboard */}
-            <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
               <Route index element={<DashOverview />} />
               <Route path="donations" element={<DashDonations />} />
               <Route path="volunteers" element={<DashVolunteers />} />
