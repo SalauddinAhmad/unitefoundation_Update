@@ -1,11 +1,14 @@
 // Lightweight auth hook for admin dashboard.
-// Wraps JWT login (via /auth/login) with a graceful demo fallback so the
-// dashboard remains usable while the Express backend is still in progress.
+// Supports: JWT login, 2FA OTP step, forgot/reset password.
+// Falls back to a demo mode when the Express backend isn't reachable so
+// the dashboard remains testable.
 
 import { useCallback, useEffect, useState } from "react";
-import { ApiError, auth, authApi } from "@/lib/api";
+import { ApiError, api, auth, authApi } from "@/lib/api";
 
 const USER_KEY = "uf_auth_user";
+const OTP_KEY = "uf_auth_otp_demo";
+const RESET_KEY = "uf_auth_reset_demo";
 
 export type AuthUser = {
   id: string;
@@ -32,51 +35,153 @@ function readUser(): AuthUser | null {
   }
 }
 
+function isNetworkErr(err: unknown) {
+  return !(err instanceof ApiError) || err.status >= 500 || err.status === 0;
+}
+
+function isTwoFactorEnabled() {
+  try {
+    const raw = localStorage.getItem("uf_settings_draft");
+    if (!raw) return false;
+    const s = JSON.parse(raw);
+    return Boolean(s?.security?.two_factor);
+  } catch {
+    return false;
+  }
+}
+
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(() => readUser());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Re-sync if token disappears (e.g. cleared from another tab)
     const onStorage = () => setUser(readUser());
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
+  // STEP 1 — login (password). May return { requiresOtp: true } when 2FA on.
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
     try {
       try {
-        const res = await authApi.login(email, password);
-        const u = (res.user as AuthUser) ?? DEMO_USER;
-        auth.set(res.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(u));
-        setUser(u);
-        return { ok: true as const };
+        const res = await api.post<{
+          token?: string;
+          user?: AuthUser;
+          requiresOtp?: boolean;
+        }>("/auth/login", { email, password }, { auth: false });
+
+        if (res.requiresOtp) {
+          return { ok: true as const, requiresOtp: true, email };
+        }
+        if (res.token && res.user) {
+          auth.set(res.token);
+          localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+          setUser(res.user);
+          return { ok: true as const };
+        }
+        return { ok: false as const, message: "অপ্রত্যাশিত প্রতিক্রিয়া" };
       } catch (err) {
-        // Backend not reachable — allow demo credentials so dashboard is testable.
-        const networkOrServerDown =
-          !(err instanceof ApiError) || err.status >= 500 || err.status === 0;
         if (
-          networkOrServerDown &&
+          isNetworkErr(err) &&
           email === DEMO_USER.email &&
           password === DEMO_PASSWORD
         ) {
+          if (isTwoFactorEnabled()) {
+            const code = String(Math.floor(100000 + Math.random() * 900000));
+            sessionStorage.setItem(OTP_KEY, code);
+            // eslint-disable-next-line no-console
+            console.info("[DEMO OTP] কোড:", code);
+            return { ok: true as const, requiresOtp: true, email, demoOtp: code };
+          }
           auth.set(DEMO_TOKEN);
           localStorage.setItem(USER_KEY, JSON.stringify(DEMO_USER));
           setUser(DEMO_USER);
           return { ok: true as const, demo: true };
         }
-        if (err instanceof ApiError) {
-          return { ok: false as const, message: err.message };
-        }
+        if (err instanceof ApiError) return { ok: false as const, message: err.message };
         return {
           ok: false as const,
-          message: "সার্ভারে সংযোগ করা যায়নি। ডেমো লগইন: admin@unitefoundation.bd / admin123",
+          message: "সার্ভারে সংযোগ করা যায়নি। ডেমো: admin@unitefoundation.bd / admin123",
         };
       }
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  // STEP 2 — verify OTP
+  const verifyOtp = useCallback(async (email: string, code: string) => {
+    setLoading(true);
+    try {
+      try {
+        const res = await api.post<{ token: string; user: AuthUser }>(
+          "/auth/verify-otp",
+          { email, code },
+          { auth: false },
+        );
+        auth.set(res.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+        setUser(res.user);
+        return { ok: true as const };
+      } catch (err) {
+        if (isNetworkErr(err)) {
+          const expected = sessionStorage.getItem(OTP_KEY);
+          if (expected && code.trim() === expected) {
+            sessionStorage.removeItem(OTP_KEY);
+            auth.set(DEMO_TOKEN);
+            localStorage.setItem(USER_KEY, JSON.stringify(DEMO_USER));
+            setUser(DEMO_USER);
+            return { ok: true as const, demo: true };
+          }
+          return { ok: false as const, message: "OTP সঠিক নয়" };
+        }
+        if (err instanceof ApiError) return { ok: false as const, message: err.message };
+        return { ok: false as const, message: "OTP যাচাই ব্যর্থ" };
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Forgot password — send email link
+  const forgotPassword = useCallback(async (email: string) => {
+    try {
+      await api.post("/auth/forgot-password", { email }, { auth: false });
+      return { ok: true as const };
+    } catch (err) {
+      if (isNetworkErr(err)) {
+        const token = Math.random().toString(36).slice(2, 12);
+        localStorage.setItem(RESET_KEY, JSON.stringify({ email, token, ts: Date.now() }));
+        // eslint-disable-next-line no-console
+        console.info(
+          `[DEMO] রিসেট লিংক: ${window.location.origin}/reset-password/${token}`,
+        );
+        return { ok: true as const, demo: true, demoLink: `/reset-password/${token}` };
+      }
+      if (err instanceof ApiError) return { ok: false as const, message: err.message };
+      return { ok: false as const, message: "অনুরোধ পাঠানো যায়নি" };
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (token: string, password: string) => {
+    try {
+      await api.post("/auth/reset-password", { token, password }, { auth: false });
+      return { ok: true as const };
+    } catch (err) {
+      if (isNetworkErr(err)) {
+        const raw = localStorage.getItem(RESET_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data.token === token) {
+            localStorage.removeItem(RESET_KEY);
+            return { ok: true as const, demo: true };
+          }
+        }
+        return { ok: false as const, message: "টোকেন অবৈধ বা মেয়াদোত্তীর্ণ" };
+      }
+      if (err instanceof ApiError) return { ok: false as const, message: err.message };
+      return { ok: false as const, message: "পাসওয়ার্ড রিসেট ব্যর্থ" };
     }
   }, []);
 
@@ -86,5 +191,14 @@ export function useAuth() {
     setUser(null);
   }, []);
 
-  return { user, loading, login, logout, isAuthenticated: !!user };
+  return {
+    user,
+    loading,
+    login,
+    verifyOtp,
+    forgotPassword,
+    resetPassword,
+    logout,
+    isAuthenticated: !!user,
+  };
 }
