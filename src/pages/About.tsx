@@ -176,26 +176,123 @@ const About = () => (
       </div>
     </section>
 
-    <section className="section-y">
-      <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">আমাদের যাত্রা</span>
-          <h2 className="heading-display mt-3">মাইলফলকসমূহ</h2>
+    <section className="section-y relative overflow-hidden bg-gradient-to-b from-background via-secondary/30 to-background">
+      {/* subtle Islamic pattern */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 25% 25%, hsl(var(--primary)) 1px, transparent 1px), radial-gradient(circle at 75% 75%, hsl(var(--primary)) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+      <div className="container-page relative">
+        <div className="text-center max-w-3xl mx-auto">
+          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> আমাদের যাত্রা</span>
+          <h2 className="heading-display mt-3">এক স্বপ্ন থেকে মহীরুহে</h2>
+          <p className="mt-5 text-muted-foreground leading-[1.95]">
+            ইউনাইট ফাউন্ডেশন-এর পথচলা শুরু হয়েছিল একটি সুন্দর স্বপ্ন ও মানবতার কল্যাণে
+            কিছু করার দৃঢ় প্রত্যয় নিয়ে। ২০১৭ সালের ক্ষুদ্র সেই সূচনা আজ এক বিশাল মানবিক
+            মহীরুহে পরিণত হয়েছে। নিচে আমাদের উল্লেখযোগ্য মাইলফলকগুলো তুলে ধরা হলো —
+          </p>
         </div>
-        <div className="mt-12 relative max-w-3xl mx-auto">
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2" aria-hidden />
-          <div className="space-y-8">
-            {milestones.map((m, i) => (
-              <div key={m.y} className={`relative pl-12 md:pl-0 md:grid md:grid-cols-2 md:gap-8 ${i % 2 === 0 ? "" : "md:[&>*:first-child]:order-2"}`}>
-                <div className="absolute left-2.5 md:left-1/2 top-1.5 h-3 w-3 rounded-full gradient-donate-bg md:-translate-x-1/2 ring-4 ring-background" />
-                <div className={`md:text-right ${i % 2 === 0 ? "" : "md:text-left"}`}>
-                  <div className="font-en text-sm font-bold gradient-donate-text">{m.y}</div>
-                  <h3 className="text-xl font-bold mt-1">{m.t}</h3>
-                  <p className="text-muted-foreground text-sm mt-1.5">{m.d}</p>
+
+        <div className="mt-16 relative max-w-5xl mx-auto">
+          {/* central vertical line with gradient */}
+          <div
+            className="absolute left-5 md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2"
+            aria-hidden
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent, hsl(var(--primary)/0.5) 8%, hsl(var(--primary)/0.5) 92%, transparent)",
+            }}
+          />
+          {/* start marker */}
+          <div className="absolute left-5 md:left-1/2 -top-2 md:-translate-x-1/2 h-9 w-9 rounded-full gradient-donate-bg text-white flex items-center justify-center shadow-card ring-4 ring-background z-10">
+            <Sprout className="h-4 w-4" />
+          </div>
+
+          <div className="space-y-10 pt-10">
+            {milestones.map((m, i) => {
+              const right = i % 2 === 1;
+              return (
+                <div key={m.y} className="relative pl-14 md:pl-0 md:grid md:grid-cols-9 md:gap-6 md:items-start">
+                  {/* dot */}
+                  <div
+                    className="absolute left-5 md:left-1/2 top-3 md:-translate-x-1/2 h-4 w-4 rounded-full gradient-donate-bg ring-4 ring-background shadow-[0_0_0_6px_hsl(var(--primary)/0.08)] z-10"
+                    aria-hidden
+                  />
+
+                  {/* left side (year on left cols) */}
+                  <div className={`hidden md:block md:col-span-4 ${right ? "md:invisible" : "md:text-right md:pr-8"}`}>
+                    {!right && (
+                      <div className="inline-flex flex-col items-end">
+                        <span className="font-en text-4xl font-extrabold gradient-donate-text leading-none">{m.y}</span>
+                        {m.t && <span className="mt-2 text-sm font-semibold text-foreground/80">{m.t}</span>}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="hidden md:block md:col-span-1" />
+
+                  {/* right side card */}
+                  <div className={`md:col-span-4 ${right ? "" : "md:hidden"}`}>
+                    <MilestoneCard m={m} />
+                  </div>
+
+                  {/* on left-side rows, the card goes on the LEFT col */}
+                  {!right && (
+                    <div className="hidden md:block md:col-span-4 md:col-start-1 md:row-start-1 md:pr-0 md:text-left" style={{ gridColumn: "1 / span 4", gridRow: 1 }}>
+                      {/* placeholder to keep grid; actual card rendered below via mobile stack */}
+                    </div>
+                  )}
+
+                  {/* mobile + left-row card */}
+                  <div className={`md:hidden`}>
+                    <div className="mb-1">
+                      <span className="font-en text-2xl font-extrabold gradient-donate-text">{m.y}</span>
+                      {m.t && <span className="ml-2 text-sm font-semibold text-foreground/80">— {m.t}</span>}
+                    </div>
+                    <MilestoneCard m={m} />
+                  </div>
+
+                  {/* desktop: render card on the LEFT column for even rows */}
+                  {!right && (
+                    <div className="hidden md:block absolute inset-y-0 left-0 w-[calc(50%-2rem)] pr-6">
+                      <div className="md:pl-0 md:pr-6">
+                        <MilestoneCard m={m} align="right" />
+                      </div>
+                    </div>
+                  )}
+                  {right && (
+                    <div className="hidden md:block absolute inset-y-0 right-0 w-[calc(50%-2rem)] pl-6">
+                      <div className="mb-2">
+                        <span className="font-en text-4xl font-extrabold gradient-donate-text leading-none">{m.y}</span>
+                        {m.t && <span className="ml-3 text-sm font-semibold text-foreground/80">{m.t}</span>}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div />
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          {/* end marker */}
+          <div className="relative mt-8 flex justify-center md:justify-start md:pl-5" style={{}}>
+            <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 h-11 w-11 rounded-full gradient-donate-bg text-white flex items-center justify-center shadow-card-hover ring-4 ring-background">
+              <TreeDeciduous className="h-5 w-5" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-20 max-w-3xl mx-auto text-center">
+          <div className="rounded-card border border-donate-highlight/30 bg-card p-8 md:p-10 shadow-card">
+            <p className="text-base md:text-lg leading-[1.95] text-foreground italic">
+              ২০১৭ সালে মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে যে ছোট চারাগাছটি রোপণ করা হয়েছিল,
+              ২০২৬ সালে এসে সেটি অসংখ্য মানুষের সেবার এক বিশাল{" "}
+              <span className="gradient-donate-text font-bold not-italic">‘মহীরুহে’</span> পরিণত হয়েছে।
+            </p>
           </div>
         </div>
       </div>
