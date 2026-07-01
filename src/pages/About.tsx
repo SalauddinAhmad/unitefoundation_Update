@@ -282,17 +282,82 @@ const About = () => (
       </div>
     </section>
 
-    <section className="section-y bg-secondary/40">
-      <div className="container-page">
+    <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white">
+      {/* Decorative background */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.07]" style={{
+        backgroundImage: "radial-gradient(circle at 20% 20%, #ffffff 1px, transparent 1px), radial-gradient(circle at 80% 60%, #ffffff 1px, transparent 1px)",
+        backgroundSize: "48px 48px, 72px 72px",
+      }} />
+      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-donate-red/10 blur-3xl" />
+
+      <div className="container-page relative">
         <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">প্রতিষ্ঠাতা</span>
-          <h2 className="heading-display mt-3">প্রতিষ্ঠাতা ও চেয়ারম্যান</h2>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-semibold tracking-widest uppercase text-white/80 backdrop-blur">
+            <Sparkles className="h-3.5 w-3.5" /> প্রতিষ্ঠাতা
+          </span>
+          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold leading-tight">
+            প্রতিষ্ঠাতা ও <span className="bg-gradient-to-r from-amber-300 to-amber-500 bg-clip-text text-transparent">চেয়ারম্যান</span>
+          </h2>
+          <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-amber-300 to-donate-red" />
         </div>
-        <div className="mt-12 flex justify-center">
-          <div className="card-base text-center p-6 max-w-xs w-full">
-            <img src={team[0].img} alt={team[0].name} loading="lazy" width={400} height={400} className="h-32 w-32 rounded-full object-cover mx-auto" />
-            <h3 className="mt-4 font-bold text-lg">{team[0].name}</h3>
-            <p className="text-sm text-primary font-semibold mt-1">{team[0].role}</p>
+
+        <div className="relative mt-14 mx-auto max-w-5xl">
+          <div className="grid md:grid-cols-[minmax(0,340px)_1fr] gap-8 md:gap-12 items-center rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-xl p-6 md:p-10 shadow-2xl">
+            {/* Portrait */}
+            <div className="relative mx-auto md:mx-0">
+              <div className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-amber-400/40 via-primary/30 to-donate-red/30 blur-xl" />
+              <div className="relative rounded-3xl p-[2px] bg-gradient-to-br from-amber-300 via-white/40 to-donate-red">
+                <div className="rounded-[22px] overflow-hidden bg-[#0C2B1D]">
+                  <img
+                    src={team[0].img}
+                    alt={team[0].name}
+                    loading="lazy"
+                    width={520}
+                    height={620}
+                    className="h-[360px] w-[300px] md:h-[420px] md:w-[340px] object-cover object-center"
+                  />
+                </div>
+              </div>
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-amber-400 to-amber-600 text-[#0C2B1D] text-xs font-bold px-4 py-1.5 shadow-lg">
+                Founder · Chairman
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="text-center md:text-left">
+              <p className="text-amber-300/90 text-sm font-semibold tracking-wide">প্রতিষ্ঠাতা ও চেয়ারম্যান</p>
+              <h3 className="mt-1 text-3xl md:text-4xl font-extrabold text-white">
+                {team[0].name}
+              </h3>
+              <div className="mt-3 mx-auto md:mx-0 h-px w-24 bg-gradient-to-r from-amber-300/80 to-transparent" />
+
+              <blockquote className="relative mt-6 text-white/85 text-base md:text-lg leading-relaxed italic">
+                <span className="absolute -left-2 -top-4 text-5xl text-amber-300/40 font-serif leading-none select-none">“</span>
+                সুন্নাহর অনুসরণে মানবতার কল্যাণই আমাদের পথ। একটি সুশৃঙ্খল, স্বচ্ছ ও দীর্ঘমেয়াদি ইসলামিক প্লাটফর্ম গড়ে তোলাই ইউনাইট ফাউন্ডেশনের স্বপ্ন — যা প্রজন্ম থেকে প্রজন্মে কল্যাণ পৌঁছে দেবে ইনশাআল্লাহ।
+              </blockquote>
+
+              <div className="mt-6 grid grid-cols-3 gap-3 max-w-md mx-auto md:mx-0">
+                {[
+                  { k: "২০১৭", v: "যাত্রা শুরু" },
+                  { k: "১০+", v: "বছরের নেতৃত্ব" },
+                  { k: "৫", v: "অঙ্গ প্রতিষ্ঠান" },
+                ].map((s) => (
+                  <div key={s.k} className="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-center">
+                    <div className="text-lg md:text-xl font-extrabold text-amber-300">{s.k}</div>
+                    <div className="mt-0.5 text-[11px] md:text-xs text-white/70 leading-tight">{s.v}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-2 justify-center md:justify-start">
+                {["দাওয়াহ", "শিক্ষা", "সমাজকল্যাণ", "নেতৃত্ব"].map((t) => (
+                  <span key={t} className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-200">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
