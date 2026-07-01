@@ -1,4 +1,4 @@
-import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous } from "lucide-react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -7,6 +7,67 @@ import about from "@/assets/about-mission.jpg";
 import t1 from "@/assets/team-founder.jpg";
 import t2 from "@/assets/team-2.jpg";
 import t3 from "@/assets/team-3.jpg";
+import { useTeam } from "@/hooks/api/useTeam";
+
+const TeamSection = () => {
+  const { data = [] } = useTeam();
+  const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  return (
+    <section className="section-y">
+      <div className="container-page">
+        <div className="text-center max-w-2xl mx-auto">
+          <span className="eyebrow">টিম</span>
+          <h2 className="heading-display mt-3">আমাদের টিম</h2>
+          {sorted.length === 0 && (
+            <p className="mt-4 text-muted-foreground">শীঘ্রই আসছে ইনশাআল্লাহ।</p>
+          )}
+        </div>
+        {sorted.length > 0 && (
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sorted.map((m) => (
+              <div key={m.id} className="group rounded-2xl bg-card border overflow-hidden shadow-sm hover:shadow-lg transition-all">
+                <div className="aspect-[4/5] bg-secondary overflow-hidden">
+                  {m.photo ? (
+                    <img src={m.photo} alt={m.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                      <Users className="h-12 w-12" />
+                    </div>
+                  )}
+                </div>
+                <div className="p-5">
+                  <div className="font-bold text-foreground">{m.name}</div>
+                  <div className="text-sm text-primary font-medium mt-1">{m.role}</div>
+                  {m.bio && <p className="text-sm text-muted-foreground mt-3 line-clamp-3">{m.bio}</p>}
+                  {(m.facebook || m.linkedin || m.email) && (
+                    <div className="mt-4 flex items-center gap-2">
+                      {m.facebook && (
+                        <a href={m.facebook} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+                          <Facebook className="h-4 w-4" />
+                        </a>
+                      )}
+                      {m.linkedin && (
+                        <a href={m.linkedin} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+                          <Linkedin className="h-4 w-4" />
+                        </a>
+                      )}
+                      {m.email && (
+                        <a href={`mailto:${m.email}`} className="h-8 w-8 rounded-lg bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+                          <Mail className="h-4 w-4" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
 
 const values = [
   { icon: Heart, t: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে", d: "কুরআন ও সহীহ হাদীছের আলোকে জীবন গঠনে নিবেদিত।" },
@@ -392,15 +453,9 @@ const About = () => (
       </div>
     </section>
 
-    <section className="section-y">
-      <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">টিম</span>
-          <h2 className="heading-display mt-3">আমাদের টিম</h2>
-          <p className="mt-4 text-muted-foreground">শীঘ্রই আসছে ইনশাআল্লাহ।</p>
-        </div>
-      </div>
-    </section>
+    <TeamSection />
+
+
 
 
     <section className="section-y">
