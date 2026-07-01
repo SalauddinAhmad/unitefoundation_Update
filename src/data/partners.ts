@@ -138,6 +138,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-academy",
+    theme: "green",
     name: "ইউনাইট একাডেমি",
     logo: uniteAcademy,
     tagline: "ইলম, আদব ও আধুনিক শিক্ষার সমন্বয়ে আদর্শ প্রজন্ম",
