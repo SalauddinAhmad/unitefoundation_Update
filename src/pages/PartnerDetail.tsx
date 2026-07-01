@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
-import { getPartner, partners } from "@/data/partners";
+import { getPartner, partners, partnerThemeTokens } from "@/data/partners";
 
 const PartnerDetail = () => {
   const { slug } = useParams<{ slug: string }>();
