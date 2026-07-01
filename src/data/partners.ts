@@ -33,22 +33,22 @@ export const partnerThemeTokens: Record<PartnerTheme, {
   highlightForeground: string;
 }> = {
   green: {
-    primary: "150 55% 18%",
-    primaryForeground: "40 30% 96%",
-    highlight: "0 75% 48%",
-    highlightForeground: "40 30% 98%",
+    primary: "142 56% 11%",
+    primaryForeground: "40 14% 96%",
+    highlight: "24 91% 54%",
+    highlightForeground: "0 0% 100%",
   },
   red: {
-    primary: "150 55% 18%",
-    primaryForeground: "40 30% 96%",
-    highlight: "0 75% 48%",
-    highlightForeground: "40 30% 98%",
+    primary: "142 56% 11%",
+    primaryForeground: "40 14% 96%",
+    highlight: "24 91% 54%",
+    highlightForeground: "0 0% 100%",
   },
   black: {
-    primary: "150 55% 18%",
-    primaryForeground: "40 30% 96%",
-    highlight: "0 75% 48%",
-    highlightForeground: "40 30% 98%",
+    primary: "142 56% 11%",
+    primaryForeground: "40 14% 96%",
+    highlight: "24 91% 54%",
+    highlightForeground: "0 0% 100%",
   },
 };
 
