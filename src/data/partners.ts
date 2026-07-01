@@ -58,7 +58,7 @@ export const partners: Partner[] = [
     name: "ইউনাইট ট্রেনিং সেন্টার",
     logo: uniteTrainingCenter,
     tagline: "দক্ষতা উন্নয়ন ও আত্ম-নির্ভরশীলতার শিক্ষায়",
-    established: "প্রতিষ্ঠাকাল: ২০২২",
+    established: "প্রতিষ্ঠাকাল: ২০২৬",
     license: "TRAD/DNCC/049900/2025",
     address: "",
     phone: "01614264901",
