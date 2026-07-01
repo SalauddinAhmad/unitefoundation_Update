@@ -155,6 +155,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-travel",
+    theme: "green",
     name: "ইউনাইট ট্রাভেল এজেন্সি",
     logo: uniteTravel,
     tagline: "নিরাপদ, নির্ভরযোগ্য ও শরীয়াহসম্মত ভ্রমণ সেবা",
