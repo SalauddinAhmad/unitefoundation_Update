@@ -3,17 +3,23 @@ import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/Dashb
 import { Application } from "@/data/dashboardMock";
 import {
   CheckCircle2, XCircle, Eye, Download, Phone, MapPin, Search, Filter,
-  Mail, Calendar, User, Copy, MessageSquare, Printer, X,
+  Mail, Calendar, User, Copy, MessageSquare, Printer, X, Plus,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { exportRowsAsCsv } from "@/lib/csv";
 import { toast } from "sonner";
+import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
+import { appendExtra } from "@/lib/localExtras";
 
 interface Props {
   title: string;
   subtitle: string;
   data: Application[];
   emptyHint?: string;
+  // Enables manual entry: which localStorage bucket to append to and ID prefix.
+  extrasBucket?: string;
+  idPrefix?: string; // e.g. "VOL", "MEM", "JOB"
+  typeOptions?: { value: string; label: string }[];
 }
 
 const STATUS_LABEL: Record<Application["status"], string> = {
