@@ -300,10 +300,13 @@ const About = () => (
           {/* Left: Card */}
           <div className="flex justify-center md:justify-start order-2 md:order-1">
             <article
-              className="group relative w-full max-w-sm rounded-[32px] bg-gradient-to-br from-[#F5EFE2] to-[#EADFC7] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-amber-900/10 transition-transform duration-500 hover:-translate-y-1"
+              className="group relative w-full max-w-sm rounded-[32px] bg-white p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1"
             >
+              {/* Gradient brand accent glow */}
+              <div aria-hidden className="pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-br from-donate-red/25 via-donate-orange/15 to-primary/25 opacity-60 blur-xl -z-10" />
+
               {/* Portrait */}
-              <div className="relative overflow-hidden rounded-[22px] bg-neutral-800">
+              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10">
                 <img
                   src={team[0].img}
                   alt={team[0].name}
@@ -312,15 +315,19 @@ const About = () => (
                   height={560}
                   className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                 />
+                {/* Brand ribbon */}
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
+                  <Sparkles className="h-3 w-3" /> Founder
+                </span>
               </div>
 
               {/* Name row */}
               <div className="mt-5 flex items-center gap-2 px-1">
-                <h3 className="text-xl md:text-2xl font-extrabold text-[#0C2B1D] leading-tight">
+                <h3 className="text-xl md:text-2xl font-extrabold text-primary leading-tight">
                   {team[0].name}
                 </h3>
                 <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-primary" fill="currentColor" aria-hidden>
+                  <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-donate-red" fill="currentColor" aria-hidden>
                     <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
                   </svg>
                   <svg viewBox="0 0 24 24" className="relative h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -330,27 +337,30 @@ const About = () => (
               </div>
 
               {/* Tagline */}
-              <p className="mt-2 px-1 text-sm text-[#0C2B1D]/70 leading-relaxed">
+              <p className="mt-2 px-1 text-sm text-foreground/70 leading-relaxed">
                 সুন্নাহর অনুসরণে মানবতার কল্যাণে নিবেদিত একজন দাঈ ও সংগঠক।
               </p>
 
+              {/* Divider */}
+              <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
+
               {/* Bottom row: stats */}
-              <div className="mt-5 flex items-center gap-5 px-1 pb-1 text-[#0C2B1D]/70 text-sm">
+              <div className="mt-4 flex items-center gap-5 px-1 pb-1 text-foreground/70 text-sm">
                 <span className="inline-flex items-center gap-1.5">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  <span className="font-semibold text-[#0C2B1D]">২০১৭</span>
-                  <span className="text-[#0C2B1D]/50">— যাত্রা শুরু</span>
+                  <span className="font-semibold text-primary">২০১৭</span>
+                  <span className="text-foreground/50">— যাত্রা শুরু</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5">
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <svg className="h-4 w-4 text-donate-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <rect x="3" y="3" width="14" height="14" rx="2" />
                     <path d="M7 7h10v10" />
                   </svg>
-                  <span className="font-semibold text-[#0C2B1D]">৫</span>
-                  <span className="text-[#0C2B1D]/50">প্রতিষ্ঠান</span>
+                  <span className="font-semibold text-primary">৫</span>
+                  <span className="text-foreground/50">প্রতিষ্ঠান</span>
                 </span>
               </div>
             </article>
