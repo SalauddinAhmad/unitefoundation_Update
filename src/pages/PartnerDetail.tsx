@@ -32,7 +32,7 @@ const PartnerDetail = () => {
         canonical={`/partners/${partner.slug}`}
       />
 
-      <div className="bg-background">
+      <div className="bg-background" style={themeStyle}>
         {/* ===== Branded Hero ===== */}
         <section className="relative overflow-hidden bg-primary text-primary-foreground pt-28 md:pt-32 pb-20 md:pb-28">
           {/* Decorative arabesque pattern */}
