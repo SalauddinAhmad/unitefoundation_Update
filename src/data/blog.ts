@@ -2,15 +2,28 @@ import ramadan from "@/assets/blog-ramadan.jpg";
 import field from "@/assets/blog-field.jpg";
 import finance from "@/assets/blog-finance.jpg";
 
+export type ContentBlock =
+  | { type: "paragraph"; text: string; lead?: boolean }
+  | { type: "heading"; text: string; level?: 2 | 3 }
+  | { type: "image"; src: string; caption?: string; alt?: string; float?: "left" | "right" | "full" }
+  | { type: "gallery"; images: { src: string; alt?: string }[] }
+  | { type: "quote"; text: string; author?: string }
+  | { type: "callout"; title?: string; text: string; variant?: "info" | "success" | "warn" }
+  | { type: "list"; ordered?: boolean; items: string[] }
+  | { type: "stats"; items: { value: string; label: string }[] }
+  | { type: "cta"; title: string; text?: string; buttonLabel: string; href: string }
+  | { type: "divider" };
+
 export interface BlogPost {
   slug: string;
   title: string;
   category: string;
   excerpt: string;
   cover: string;
+  banner?: string;
   date: string;
   readMin: number;
-  body: string[];
+  body: (string | ContentBlock)[];
 }
 
 export const posts: BlogPost[] = [
@@ -21,12 +34,31 @@ export const posts: BlogPost[] = [
     excerpt:
       "এই রমজানে আমাদের লক্ষ্য ৫০,০০০ পরিবারের কাছে ইফতার সামগ্রী ও সেহরির খাবার পৌঁছে দেওয়া।",
     cover: ramadan,
+    banner: ramadan,
     date: "১০ ফেব্রুয়ারি ২০২৬",
     readMin: 4,
     body: [
-      "রমজান শুধু সিয়াম-সাধনার মাস নয়, এটি সহমর্মিতার মাসও। নবী করীম (সা.) এই মাসে দান-সদকা সবচেয়ে বেশি করতেন। আমরা আপনাকে আহ্বান জানাচ্ছি — এই বরকতময় মাসে অসহায় মানুষের পাশে দাঁড়ান।",
-      "এ বছর আমাদের লক্ষ্য দেশের ৪০টি জেলার ৫০,০০০ পরিবারের ঘরে ইফতার ও সেহরি সামগ্রী পৌঁছে দেওয়া। প্রতিটি প্যাকেজের আনুমানিক খরচ ১,২০০ টাকা।",
-      "আপনার একটি দান একটি পরিবারের পুরো রমজান বদলে দিতে পারে। চলুন একসাথে এই কাজ সম্পন্ন করি।",
+      { type: "paragraph", lead: true, text: "রমজান শুধু সিয়াম-সাধনার মাস নয়, এটি সহমর্মিতার মাসও। নবী করীম (সা.) এই মাসে দান-সদকা সবচেয়ে বেশি করতেন। আমরা আপনাকে আহ্বান জানাচ্ছি — এই বরকতময় মাসে অসহায় মানুষের পাশে দাঁড়ান।" },
+      { type: "stats", items: [
+        { value: "৫০,০০০", label: "লক্ষ্য পরিবার" },
+        { value: "৪০+", label: "জেলা" },
+        { value: "১,২০০৳", label: "প্রতি প্যাকেজ" },
+        { value: "৩০ দিন", label: "সময়সীমা" },
+      ]},
+      { type: "heading", text: "আমাদের এই বছরের পরিকল্পনা" },
+      { type: "paragraph", text: "এ বছর আমাদের লক্ষ্য দেশের ৪০টি জেলার ৫০,০০০ পরিবারের ঘরে ইফতার ও সেহরি সামগ্রী পৌঁছে দেওয়া। প্রতিটি প্যাকেজের আনুমানিক খরচ ১,২০০ টাকা।" },
+      { type: "image", src: field, caption: "গত বছরের রমজানে কুড়িগ্রামে ইফতার প্যাকেজ বিতরণের মুহূর্ত।", alt: "ইফতার বিতরণ" },
+      { type: "quote", text: "যে ব্যক্তি কোনো রোজাদারকে ইফতার করাবে, তার জন্য ঐ রোজাদারের সমপরিমাণ সওয়াব রয়েছে।", author: "সহীহ তিরমিযী" },
+      { type: "heading", text: "প্রতিটি প্যাকেজে যা থাকবে" },
+      { type: "list", items: [
+        "চাল, ডাল, তেল ও ছোলা — ১০ কেজি",
+        "খেজুর, চিনি, দুধ ও সেমাই",
+        "মশলা ও প্রয়োজনীয় নিত্যপণ্য",
+        "সেহরির জন্য অতিরিক্ত সামগ্রী",
+      ]},
+      { type: "callout", variant: "info", title: "স্বচ্ছতা নিশ্চিত", text: "প্রতিটি বিতরণের ছবি ও রিপোর্ট আপনি আমাদের ড্যাশবোর্ডে দেখতে পারবেন।" },
+      { type: "paragraph", text: "আপনার একটি দান একটি পরিবারের পুরো রমজান বদলে দিতে পারে। চলুন একসাথে এই কাজ সম্পন্ন করি।" },
+      { type: "cta", title: "এখনই অংশ নিন এই বরকতে", text: "১টি প্যাকেজ = ১টি পরিবারের ৩০ দিনের হাসি।", buttonLabel: "এখনই দান করুন", href: "/donate" },
     ],
   },
   {
@@ -36,12 +68,15 @@ export const posts: BlogPost[] = [
     excerpt:
       "কুড়িগ্রামের চিলমারী উপজেলায় ১,২০০ পরিবারকে কম্বল ও শীতবস্ত্র বিতরণ সম্পন্ন।",
     cover: field,
+    banner: field,
     date: "২২ জানুয়ারি ২০২৬",
     readMin: 6,
     body: [
-      "তীব্র শীতে কাঁপতে থাকা চরাঞ্চলের মানুষের কাছে আমরা পৌঁছেছি — শুধু কম্বল নয়, পৌঁছেছে দোয়া, ভালোবাসা এবং একটি বার্তা: 'তুমি একা নও।'",
-      "চিলমারী, রৌমারী ও রাজীবপুরের ১৪টি গ্রামে মোট ১,২০০ পরিবার এবার শীতবস্ত্র পেয়েছেন। আমাদের ৩২ জন স্বেচ্ছাসেবক টানা ৫ দিন কাজ করেছেন।",
-      "এই কাজে অংশ নেওয়া প্রতিটি দাতার প্রতি আমরা কৃতজ্ঞ। আপনার দানের প্রতিটি টাকার হিসাব আমরা প্রকাশ করি — কারণ স্বচ্ছতা আমাদের সবচেয়ে বড় ওয়াদা।",
+      { type: "paragraph", lead: true, text: "তীব্র শীতে কাঁপতে থাকা চরাঞ্চলের মানুষের কাছে আমরা পৌঁছেছি — শুধু কম্বল নয়, পৌঁছেছে দোয়া, ভালোবাসা এবং একটি বার্তা: 'তুমি একা নও।'" },
+      { type: "image", src: field, caption: "চিলমারীর চরে কম্বল বিতরণের একটি মুহূর্ত।" },
+      { type: "paragraph", text: "চিলমারী, রৌমারী ও রাজীবপুরের ১৪টি গ্রামে মোট ১,২০০ পরিবার এবার শীতবস্ত্র পেয়েছেন। আমাদের ৩২ জন স্বেচ্ছাসেবক টানা ৫ দিন কাজ করেছেন।",
+      },
+      { type: "paragraph", text: "এই কাজে অংশ নেওয়া প্রতিটি দাতার প্রতি আমরা কৃতজ্ঞ। আপনার দানের প্রতিটি টাকার হিসাব আমরা প্রকাশ করি — কারণ স্বচ্ছতা আমাদের সবচেয়ে বড় ওয়াদা।" },
     ],
   },
   {

@@ -1,11 +1,119 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import { PageHero } from "@/components/layout/PageHero";
-import { getPost, posts } from "@/data/blog";
+import { getPost, posts, type ContentBlock } from "@/data/blog";
 import { toBnNum } from "@/data/projects";
 import NotFound from "./NotFound";
+
+const normalize = (b: string | ContentBlock): ContentBlock =>
+  typeof b === "string" ? { type: "paragraph", text: b } : b;
+
+const Block = ({ block }: { block: ContentBlock }) => {
+  switch (block.type) {
+    case "paragraph":
+      return block.lead ? (
+        <p className="text-xl md:text-2xl font-semibold text-foreground leading-[1.7] tracking-tight">
+          {block.text}
+        </p>
+      ) : (
+        <p className="text-foreground/90 leading-[1.95] text-[17px]">{block.text}</p>
+      );
+    case "heading": {
+      const Tag = (block.level === 3 ? "h3" : "h2") as "h2" | "h3";
+      return (
+        <Tag className={`${block.level === 3 ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"} font-bold text-foreground mt-4 flex items-center gap-3`}>
+          <span className="h-7 w-1.5 rounded-full bg-primary shrink-0" />
+          {block.text}
+        </Tag>
+      );
+    }
+    case "image":
+      return (
+        <figure className={`my-4 ${block.float === "left" ? "md:float-left md:mr-6 md:mb-3 md:w-1/2" : block.float === "right" ? "md:float-right md:ml-6 md:mb-3 md:w-1/2" : ""}`}>
+          <div className="overflow-hidden rounded-card shadow-card ring-1 ring-border">
+            <img src={block.src} alt={block.alt || block.caption || ""} loading="lazy" className="w-full h-auto object-cover" />
+          </div>
+          {block.caption && (
+            <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
+              {block.caption}
+            </figcaption>
+          )}
+        </figure>
+      );
+    case "gallery":
+      return (
+        <div className="my-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+          {block.images.map((im, i) => (
+            <div key={i} className="overflow-hidden rounded-card ring-1 ring-border">
+              <img src={im.src} alt={im.alt || ""} loading="lazy" className="w-full h-40 object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+          ))}
+        </div>
+      );
+    case "quote":
+      return (
+        <blockquote className="relative my-4 rounded-card bg-gradient-to-br from-primary/8 via-accent/40 to-transparent border-l-4 border-primary p-7 md:p-8">
+          <Quote className="absolute -top-3 left-6 h-8 w-8 text-primary bg-background rounded-full p-1.5 ring-1 ring-border" />
+          <p className="text-lg md:text-xl font-semibold text-foreground leading-relaxed">"{block.text}"</p>
+          {block.author && <footer className="mt-3 text-sm text-muted-foreground">— {block.author}</footer>}
+        </blockquote>
+      );
+    case "callout": {
+      const map = {
+        info: { Icon: Info, cls: "bg-primary/10 border-primary/30 text-primary" },
+        success: { Icon: CheckCircle2, cls: "bg-emerald-500/10 border-emerald-500/30 text-emerald-700 dark:text-emerald-400" },
+        warn: { Icon: AlertTriangle, cls: "bg-amber-500/10 border-amber-500/30 text-amber-700 dark:text-amber-400" },
+      } as const;
+      const { Icon, cls } = map[block.variant || "info"];
+      return (
+        <div className={`my-4 rounded-card border-l-4 p-5 flex gap-4 ${cls}`}>
+          <Icon className="h-5 w-5 shrink-0 mt-0.5" />
+          <div>
+            {block.title && <div className="font-bold text-foreground mb-1">{block.title}</div>}
+            <p className="text-foreground/90 text-[15px] leading-relaxed">{block.text}</p>
+          </div>
+        </div>
+      );
+    }
+    case "list": {
+      const Tag = (block.ordered ? "ol" : "ul") as "ul" | "ol";
+      return (
+        <Tag className={`my-2 space-y-2.5 ${block.ordered ? "list-decimal" : ""} pl-1`}>
+          {block.items.map((it, i) => (
+            <li key={i} className="flex items-start gap-3 text-foreground/90 leading-relaxed text-[16px]">
+              {!block.ordered && <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />}
+              <span>{it}</span>
+            </li>
+          ))}
+        </Tag>
+      );
+    }
+    case "stats":
+      return (
+        <div className="my-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          {block.items.map((s, i) => (
+            <div key={i} className="rounded-card border border-border bg-card p-5 text-center shadow-sm hover:shadow-card transition-shadow">
+              <div className="text-2xl md:text-3xl font-extrabold text-primary">{s.value}</div>
+              <div className="mt-1 text-xs md:text-sm text-muted-foreground">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      );
+    case "cta":
+      return (
+        <div className="my-6 rounded-card bg-primary text-primary-foreground p-8 text-center shadow-card-hover">
+          <h3 className="text-2xl md:text-3xl font-bold">{block.title}</h3>
+          {block.text && <p className="mt-2 text-primary-foreground/85">{block.text}</p>}
+          <Link to={block.href} className="mt-5 inline-flex items-center gap-2 rounded-full bg-donate-highlight text-donate-highlight-foreground font-bold px-7 py-3 hover:brightness-105 transition">
+            <Heart className="h-4 w-4" /> {block.buttonLabel}
+          </Link>
+        </div>
+      );
+    case "divider":
+      return <hr className="my-6 border-border" />;
+  }
+};
 
 const BlogPost = () => {
   const { slug = "" } = useParams();
@@ -24,46 +132,54 @@ const BlogPost = () => {
     <SiteLayout>
       <Seo title={`${post.title} | ব্লগ`} description={post.excerpt} canonical={`/blog/${post.slug}`} />
 
-      {/* Hero header */}
-      <PageHero
-        image={post.cover}
-        eyebrow={post.category || post.date}
-        title={post.title}
-        height="h-[340px] md:h-[440px]"
-      >
-        <Link
-          to="/blog"
-          className="mt-5 inline-flex items-center gap-1.5 text-sm text-primary-foreground/85 hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" /> সব পোস্ট
-        </Link>
-        <span className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary-foreground/85">
-          <Calendar className="h-4 w-4" /> {post.date}
-        </span>
-      </PageHero>
+      {/* Full-bleed banner */}
+      <section className="relative w-full h-[52vh] min-h-[380px] md:min-h-[520px] overflow-hidden">
+        <img src={post.banner || post.cover} alt={post.title} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/10" />
+        <div className="absolute inset-x-0 bottom-0">
+          <div className="container-page pb-10 md:pb-14">
+            <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary mb-4">
+              <ArrowLeft className="h-4 w-4" /> সব পোস্ট
+            </Link>
+            <div className="flex flex-wrap items-center gap-3 mb-3">
+              <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">{post.category}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" />{toBnNum(post.readMin)} মিনিট পড়ুন</span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl">{post.title}</h1>
+          </div>
+        </div>
+      </section>
 
       {/* Content + sidebar */}
-      <section className="py-12 md:py-16">
+      <section className="py-10 md:py-14">
         <div className="container-page grid lg:grid-cols-[1fr_320px] gap-10 md:gap-14">
-          {/* Article */}
           <article>
-            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5">{post.excerpt}</p>
+            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5 italic">
+              {post.excerpt}
+            </p>
 
-            <div className="prose-bn mt-10 space-y-6">
-              {post.body.map((para, i) => (
-                <p key={i} className="text-foreground leading-[1.95] text-[17px]">{para}</p>
+            <div className="prose-bn mt-8 space-y-6">
+              {post.body.map((raw, i) => (
+                <Block key={i} block={normalize(raw)} />
               ))}
             </div>
 
-            <div className="mt-10 flex items-center gap-4 flex-wrap text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5"><Clock className="h-4 w-4" />{toBnNum(post.readMin)} মিনিট পড়ুন</span>
+            <div className="mt-10 pt-6 border-t border-border flex items-center justify-between gap-4 flex-wrap">
               <span className="px-3 py-1 rounded-full bg-accent text-accent-foreground font-semibold text-xs">{post.category}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground mr-1">শেয়ার:</span>
+                {shareLinks.map(({ Icon, href, label }) => (
+                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="h-9 w-9 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground flex items-center justify-center transition-colors">
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
             </div>
           </article>
 
           {/* Sidebar */}
           <aside className="space-y-6 lg:sticky lg:top-28 self-start">
-            {/* Share */}
             <div className="rounded-card bg-accent/40 border border-border p-5">
               <div className="flex items-center justify-between gap-4">
                 <span className="font-semibold text-foreground">শেয়ার করুন</span>
@@ -77,7 +193,6 @@ const BlogPost = () => {
               </div>
             </div>
 
-            {/* CTA */}
             <div className="rounded-card bg-primary text-primary-foreground p-7 text-center shadow-card">
               <h3 className="text-2xl font-bold leading-snug">আসুন একসাথে পরিবর্তন আনি</h3>
               <p className="mt-2 text-primary-foreground/80 text-sm">আপনার দান আমাদের কাজের মূল চালিকাশক্তি।</p>
