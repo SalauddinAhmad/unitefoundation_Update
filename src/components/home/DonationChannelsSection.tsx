@@ -199,6 +199,54 @@ export const DonationChannelsSection = () => {
               ))}
             </div>
           </article>
+
+          {/* Bangla QR — placeholder, replace src with real QR image */}
+          <article
+            className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+            style={{
+              background:
+                "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
+            }}
+          >
+            <QrCode className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-white/[0.03]" strokeWidth={1} />
+
+            <div className="flex items-start justify-between mb-6">
+              <div>
+                <div className="text-[11px] font-bold tracking-[0.22em] text-white/50 uppercase">
+                  BANGLA QR
+                </div>
+                <h3 className="text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">
+                  স্ক্যান করে দান
+                </h3>
+                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">যেকোনো ব্যাংক/MFS অ্যাপ</div>
+              </div>
+              <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-[hsl(var(--donate-highlight))]/30 to-[hsl(var(--donate-highlight))]/10 border border-[hsl(var(--donate-highlight))]/30 flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
+              </div>
+            </div>
+
+            {/* QR image slot */}
+            <div className="rounded-2xl bg-white p-4 flex items-center justify-center aspect-square border border-white/10">
+              {site.payments.qrImage ? (
+                <img
+                  src={site.payments.qrImage}
+                  alt="Unite Foundation Bangla QR"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-emerald-900/20 rounded-xl">
+                  <QrCode className="h-14 w-14 text-emerald-900/40" strokeWidth={1.2} />
+                  <div className="text-emerald-900/70 text-xs font-semibold px-3">
+                    Bangla QR শীঘ্রই যুক্ত হবে
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <p className="text-center text-[11px] text-white/50 mt-4 leading-relaxed">
+              মোবাইল ব্যাংকিং/ব্যাংক অ্যাপ থেকে QR স্ক্যান করে সরাসরি দান করুন
+            </p>
+          </article>
         </div>
 
         <p className="text-center text-xs text-white/40 mt-10 italic max-w-xl mx-auto">
