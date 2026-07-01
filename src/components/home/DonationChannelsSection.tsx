@@ -2,17 +2,16 @@ import { Copy, CreditCard, ShieldCheck, Smartphone } from "lucide-react";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
-const bankCards = [
-  {
-    badge: "BANK TRANSFER",
-    title: "Islami Bank",
-    accountName: site.payments.bank.account,
-    accountNumber: site.payments.bank.number,
-    branch: site.payments.bank.branch,
-    routing: site.payments.bank.routing,
-    fundLabel: "সাধারণ ফান্ড",
-  },
-];
+const bankCards = site.payments.banks.map((b) => ({
+  badge: "BANK TRANSFER",
+  title: b.bank,
+  accountName: b.account,
+  accountNumber: b.number,
+  branch: b.branch,
+  routing: b.routing,
+  swift: b.swift,
+  fundLabel: "সাধারণ ফান্ড",
+}));
 
 const mobileNumbers = [
   { brand: "bKash", number: site.payments.bkash.number },
@@ -51,7 +50,7 @@ export const DonationChannelsSection = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-5 md:gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {/* Bank cards */}
           {bankCards.map((b, idx) => (
             <article
@@ -108,7 +107,7 @@ export const DonationChannelsSection = () => {
                 </button>
               </div>
 
-              {/* Branch + Routing */}
+              {/* Branch + Routing / SWIFT */}
               <div className="grid grid-cols-2 gap-4 mt-5">
                 <div>
                   <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
@@ -116,12 +115,22 @@ export const DonationChannelsSection = () => {
                   </div>
                   <div className="text-white/90 text-sm font-medium">{b.branch}</div>
                 </div>
-                <div>
-                  <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                    Routing
+                {b.routing ? (
+                  <div>
+                    <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                      Routing
+                    </div>
+                    <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
                   </div>
-                  <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
-                </div>
+                ) : null}
+                {b.swift ? (
+                  <div>
+                    <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                      SWIFT
+                    </div>
+                    <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.swift}</div>
+                  </div>
+                ) : null}
               </div>
             </article>
           ))}
