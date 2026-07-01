@@ -93,11 +93,62 @@ export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefi
         title={title}
         subtitle={subtitle}
         actions={
-          <Btn variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4" /> CSV এক্সপোর্ট
-          </Btn>
+          <>
+            <Btn variant="outline" onClick={handleExport}>
+              <Download className="h-4 w-4" /> CSV এক্সপোর্ট
+            </Btn>
+            {extrasBucket && (
+              <Btn onClick={() => setEntryOpen(true)}>
+                <Plus className="h-4 w-4" /> ম্যানুয়াল এন্ট্রি
+              </Btn>
+            )}
+          </>
         }
       />
+
+      {extrasBucket && (
+        <ManualEntryDialog
+          open={entryOpen}
+          onOpenChange={setEntryOpen}
+          title={`নতুন ${title} যোগ করুন`}
+          description="অফলাইনে সংগৃহীত আবেদন সিস্টেমে যুক্ত করুন।"
+          fields={[
+            { name: "name", label: "পূর্ণ নাম", required: true, half: true, placeholder: "যেমন: তানভীর হাসান" },
+            { name: "phone", label: "মোবাইল নম্বর", required: true, half: true, placeholder: "01XXXXXXXXX" },
+            { name: "email", label: "ইমেইল (ঐচ্ছিক)", half: true, placeholder: "example@mail.com" },
+            { name: "city", label: "শহর / জেলা", required: true, half: true, placeholder: "যেমন: ঢাকা" },
+            typeOptions && typeOptions.length > 0
+              ? { name: "type", label: "ধরন / ক্ষেত্র", type: "select" as const, required: true, options: typeOptions }
+              : { name: "type", label: "ধরন / ক্ষেত্র", required: true, placeholder: "যেমন: ত্রাণ বিতরণ" },
+            { name: "date", label: "তারিখ", type: "date", required: true, half: true, defaultValue: new Date().toISOString().slice(0, 10) },
+            { name: "status", label: "স্ট্যাটাস", type: "select", required: true, half: true, defaultValue: "new", options: [
+              { value: "new", label: "নতুন" },
+              { value: "reviewing", label: "পর্যালোচনা" },
+              { value: "approved", label: "অনুমোদিত" },
+              { value: "rejected", label: "প্রত্যাখ্যাত" },
+            ]},
+            { name: "note", label: "অতিরিক্ত নোট", type: "textarea", placeholder: "আবেদনকারী সম্পর্কে অতিরিক্ত তথ্য" },
+          ]}
+          onSubmit={(v) => {
+            const now = new Date();
+            const entry: Application = {
+              id: `${idPrefix}-M${Date.now().toString().slice(-6)}`,
+              name: v.name,
+              phone: v.phone,
+              email: v.email || undefined,
+              city: v.city,
+              type: v.type,
+              date: v.date,
+              status: v.status as Application["status"],
+              submittedAt: `${v.date} ${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`,
+              details: v.note?.trim()
+                ? [{ title: "নোট", fields: [{ label: "মন্তব্য", value: v.note, long: true }] }]
+                : undefined,
+            };
+            appendExtra<Application>(extrasBucket, entry);
+          }}
+        />
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
