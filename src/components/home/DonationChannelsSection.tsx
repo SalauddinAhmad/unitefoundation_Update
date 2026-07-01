@@ -107,7 +107,7 @@ export const DonationChannelsSection = () => {
                 </button>
               </div>
 
-              {/* Branch + Routing */}
+              {/* Branch + Routing / SWIFT */}
               <div className="grid grid-cols-2 gap-4 mt-5">
                 <div>
                   <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
@@ -115,12 +115,22 @@ export const DonationChannelsSection = () => {
                   </div>
                   <div className="text-white/90 text-sm font-medium">{b.branch}</div>
                 </div>
-                <div>
-                  <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                    Routing
+                {b.routing ? (
+                  <div>
+                    <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                      Routing
+                    </div>
+                    <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
                   </div>
-                  <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
-                </div>
+                ) : null}
+                {b.swift ? (
+                  <div>
+                    <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
+                      SWIFT
+                    </div>
+                    <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.swift}</div>
+                  </div>
+                ) : null}
               </div>
             </article>
           ))}
