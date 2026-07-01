@@ -29,10 +29,11 @@ const STATUS_LABEL: Record<Application["status"], string> = {
   rejected: "প্রত্যাখ্যাত",
 };
 
-export const ApplicationsTable = ({ title, subtitle, data }: Props) => {
+export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefix = "APP", typeOptions }: Props) => {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"all" | Application["status"]>("all");
   const [active, setActive] = useState<Application | null>(null);
+  const [entryOpen, setEntryOpen] = useState(false);
 
   const counts = {
     new: data.filter((d) => d.status === "new").length,
