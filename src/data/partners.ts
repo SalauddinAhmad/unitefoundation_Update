@@ -4,6 +4,8 @@ import uniteTrainingCenter from "@/assets/partner-unite-training-center.png";
 import uniteAcademy from "@/assets/partner-unite-academy.png";
 import uniteTravel from "@/assets/partner-unite-travel.png";
 
+export type PartnerTheme = "green" | "red" | "black";
+
 export type Partner = {
   slug: string;
   name: string;
@@ -19,6 +21,35 @@ export type Partner = {
   phone?: string;
   programs?: { category: string; items: string[] }[];
   goal?: string;
+  theme?: PartnerTheme;
+};
+
+// HSL tokens for each brand theme. Override --primary + --donate-highlight
+// on a wrapper so all Tailwind `primary/*` classes pick these up automatically.
+export const partnerThemeTokens: Record<PartnerTheme, {
+  primary: string;
+  primaryForeground: string;
+  highlight: string;
+  highlightForeground: string;
+}> = {
+  green: {
+    primary: "150 55% 18%",
+    primaryForeground: "40 30% 96%",
+    highlight: "42 88% 55%",
+    highlightForeground: "150 55% 12%",
+  },
+  red: {
+    primary: "0 72% 38%",
+    primaryForeground: "40 30% 96%",
+    highlight: "45 92% 58%",
+    highlightForeground: "0 60% 18%",
+  },
+  black: {
+    primary: "220 12% 10%",
+    primaryForeground: "40 30% 96%",
+    highlight: "42 90% 58%",
+    highlightForeground: "220 12% 8%",
+  },
 };
 
 export const partners: Partner[] = [
