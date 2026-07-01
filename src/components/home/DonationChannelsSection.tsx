@@ -1,4 +1,4 @@
-import { Copy, CreditCard, ShieldCheck, Smartphone } from "lucide-react";
+import { Copy, CreditCard, QrCode, ShieldCheck, Smartphone } from "lucide-react";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
