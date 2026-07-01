@@ -285,20 +285,29 @@ const About = () => (
     <section className="section-y bg-secondary/40">
       <div className="container-page">
         <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">আমাদের টিম</span>
-          <h2 className="heading-display mt-3">যারা এই যাত্রার নেতৃত্ব দিচ্ছেন</h2>
+          <span className="eyebrow">প্রতিষ্ঠাতা</span>
+          <h2 className="heading-display mt-3">প্রতিষ্ঠাতা ও চেয়ারম্যান</h2>
         </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {team.map((m) => (
-            <div key={m.name} className="card-base text-center p-6">
-              <img src={m.img} alt={m.name} loading="lazy" width={400} height={400} className="h-32 w-32 rounded-full object-cover mx-auto" />
-              <h3 className="mt-4 font-bold text-lg">{m.name}</h3>
-              <p className="text-sm text-primary font-semibold mt-1">{m.role}</p>
-            </div>
-          ))}
+        <div className="mt-12 flex justify-center">
+          <div className="card-base text-center p-6 max-w-xs w-full">
+            <img src={team[0].img} alt={team[0].name} loading="lazy" width={400} height={400} className="h-32 w-32 rounded-full object-cover mx-auto" />
+            <h3 className="mt-4 font-bold text-lg">{team[0].name}</h3>
+            <p className="text-sm text-primary font-semibold mt-1">{team[0].role}</p>
+          </div>
         </div>
       </div>
     </section>
+
+    <section className="section-y">
+      <div className="container-page">
+        <div className="text-center max-w-2xl mx-auto">
+          <span className="eyebrow">টিম</span>
+          <h2 className="heading-display mt-3">আমাদের টিম</h2>
+          <p className="mt-4 text-muted-foreground">শীঘ্রই আসছে ইনশাআল্লাহ।</p>
+        </div>
+      </div>
+    </section>
+
 
     <section className="section-y">
       <div className="container-page">
