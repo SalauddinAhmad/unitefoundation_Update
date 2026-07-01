@@ -196,9 +196,10 @@ const About = () => (
           />
         </div>
         <div>
-          <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center text-primary mb-4">
-            <Target className="h-6 w-6" />
+          <div className="h-11 w-11 rounded-full bg-accent flex items-center justify-center text-primary mb-4">
+            <Target className="h-5 w-5" />
           </div>
+
           <h2 className="heading-display">আমাদের লক্ষ্য</h2>
           <ul className="mt-6 space-y-4">
             {[
