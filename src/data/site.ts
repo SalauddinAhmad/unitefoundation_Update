@@ -5,8 +5,8 @@ export const site = {
   taglineEn: "Following the Sunnah, Serving Humanity.",
   email: "info@unitefoundation.bd",
   website: "https://unitefoundation.bd",
-  phone: "+৮৮০ ১৭৫৯-৭৫৪২৬৫",
-  whatsapp: "8801759754265", // E.164 without +
+  phone: "+৮৮০ ১৬১৪-২৬৪৯০১",
+  whatsapp: "8801614264901", // E.164 without +
   address: "উত্তরখান, উত্তরা, ঢাকা ১২৩০।",
   // Manual payment channels
   payments: {
