@@ -35,7 +35,26 @@ export const DonationChannelsSection = () => {
           "radial-gradient(1200px 600px at 50% -10%, hsl(var(--donate-highlight) / 0.18), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(var(--donate-orange) / 0.18), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(152 100% 14% / 0.55), transparent 55%), linear-gradient(180deg, hsl(152 80% 9%) 0%, hsl(152 100% 12%) 50%, hsl(152 80% 8%) 100%)",
       }}
     >
-      <div className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:radial-gradient(white_1px,transparent_1px)] [background-size:26px_26px]" />
+      {/* Islamic geometric pattern overlay */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%23FBB03B' stroke-width='1'><path d='M40 4l12 12-12 12-12-12z'/><path d='M40 40l12 12-12 12-12-12z'/><path d='M4 40l12 12-12 12-12-12z' transform='translate(-4)'/><path d='M76 40l12 12-12 12-12-12z' transform='translate(-12)'/><circle cx='40' cy='40' r='3'/></g></svg>")`,
+          backgroundSize: "80px 80px",
+        }}
+      />
+      {/* Subtle mosque silhouette accent */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-64 opacity-[0.05]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 240' preserveAspectRatio='xMidYEnd meet'><g fill='%23FBB03B'><rect x='140' y='170' width='6' height='70'/><rect x='1054' y='170' width='6' height='70'/><path d='M143 150c-6 0-10 6-10 12v8h20v-8c0-6-4-12-10-12z'/><path d='M1057 150c-6 0-10 6-10 12v8h20v-8c0-6-4-12-10-12z'/><path d='M600 90c-40 0-70 30-70 70v80h140v-80c0-40-30-70-70-70z'/><rect x='500' y='180' width='200' height='60'/><rect x='400' y='200' width='100' height='40'/><rect x='700' y='200' width='100' height='40'/><circle cx='600' cy='80' r='6'/></g></svg>")`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center bottom",
+          backgroundSize: "1400px auto",
+        }}
+      />
       <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/15 blur-3xl" />
 
