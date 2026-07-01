@@ -3,6 +3,8 @@ import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/Dashb
 import type { Donation } from "@/data/dashboardMock";
 import { useDonations } from "@/hooks/api/useDashboardData";
 import { useState } from "react";
+import { exportRowsAsCsv } from "@/lib/csv";
+import { toast } from "sonner";
 
 const Donations = () => {
   const { data = [], isLoading } = useDonations();
@@ -21,7 +23,20 @@ const Donations = () => {
         subtitle="সকল ট্রানজেকশন, রসিদ ও স্ট্যাটাস ম্যানেজ করুন"
         actions={
           <>
-            <Btn variant="outline"><Download className="h-4 w-4" /> CSV ডাউনলোড</Btn>
+            <Btn variant="outline" onClick={() => {
+              if (!filtered.length) { toast.error("এক্সপোর্টের জন্য কোনো রেকর্ড নেই"); return; }
+              exportRowsAsCsv(`দানসমূহ-${new Date().toISOString().slice(0,10)}.csv`, filtered, [
+                { header: "ট্রানজেকশন ID", accessor: (r) => r.id },
+                { header: "নাম", accessor: (r) => r.name },
+                { header: "ফোন", accessor: (r) => r.phone },
+                { header: "পরিমাণ (৳)", accessor: (r) => r.amount },
+                { header: "মাধ্যম", accessor: (r) => r.method },
+                { header: "ক্ষেত্র", accessor: (r) => r.area },
+                { header: "তারিখ", accessor: (r) => r.date },
+                { header: "স্ট্যাটাস", accessor: (r) => r.status === "completed" ? "সম্পন্ন" : r.status === "pending" ? "অপেক্ষমাণ" : "ব্যর্থ" },
+              ]);
+              toast.success(`${filtered.length}টি রেকর্ড এক্সপোর্ট করা হয়েছে`);
+            }}><Download className="h-4 w-4" /> CSV ডাউনলোড</Btn>
             <Btn><Plus className="h-4 w-4" /> ম্যানুয়াল এন্ট্রি</Btn>
           </>
         }

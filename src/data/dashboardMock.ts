@@ -41,13 +41,45 @@ export const donations: Donation[] = [
   { id: "TXN-10241", name: "মরিয়ম আক্তার", phone: "01822233344", amount: 3000, method: "Nagad", area: "শিক্ষা", date: "২০২৬-০৫-২২", status: "completed" },
 ];
 
+export type DetailField = { label: string; value: string; long?: boolean };
+export type DetailSection = { title: string; fields: DetailField[] };
+
 export type Application = {
   id: string; name: string; phone: string; city: string; type: string; date: string;
   status: "new" | "reviewing" | "approved" | "rejected";
+  email?: string;
+  submittedAt?: string;
+  details?: DetailSection[];
 };
 
 export const volunteerApps: Application[] = [
-  { id: "VOL-0420", name: "তানভীর হাসান", phone: "01711223344", city: "ঢাকা", type: "ত্রাণ বিতরণ", date: "২০২৬-০৫-২৫", status: "new" },
+  {
+    id: "VOL-0420", name: "তানভীর হাসান", phone: "01711223344", city: "ঢাকা",
+    type: "ত্রাণ বিতরণ", date: "২০২৬-০৫-২৫", status: "new",
+    email: "tanvir.hasan@example.com", submittedAt: "২০২৬-০৫-২৫ ১০:২৪",
+    details: [
+      { title: "ব্যক্তিগত তথ্য", fields: [
+        { label: "পূর্ণ নাম", value: "তানভীর হাসান" },
+        { label: "পিতার নাম", value: "মোঃ হাসান আলী" },
+        { label: "মাতার নাম", value: "রেহানা বেগম" },
+        { label: "জন্ম তারিখ", value: "১৫ মার্চ ২০০২" },
+        { label: "জাতীয় পরিচয়পত্র নং", value: "1234567890123" },
+        { label: "রক্তের গ্রুপ", value: "B+" },
+      ]},
+      { title: "যোগাযোগ", fields: [
+        { label: "মোবাইল", value: "01711223344" },
+        { label: "WhatsApp", value: "01711223344" },
+        { label: "ইমেইল", value: "tanvir.hasan@example.com" },
+        { label: "বর্তমান ঠিকানা", value: "১২৩/৪ মিরপুর-১০, ঢাকা", long: true },
+      ]},
+      { title: "আবেদনের বিবরণ", fields: [
+        { label: "আগ্রহের ক্ষেত্র", value: "ত্রাণ বিতরণ" },
+        { label: "প্রতিদিন সময় দিতে পারবেন", value: "৩-৪ ঘণ্টা" },
+        { label: "পূর্ব অভিজ্ঞতা", value: "স্থানীয় মসজিদ কমিটির স্বেচ্ছাসেবক (২ বছর)", long: true },
+        { label: "কেন যুক্ত হতে চান?", value: "দ্বীনের খেদমতে অবদান রাখা এবং প্রকৃত মানবসেবার প্রশিক্ষণ পাওয়া।", long: true },
+      ]},
+    ],
+  },
   { id: "VOL-0419", name: "সাদিয়া ইসলাম", phone: "01822334455", city: "চট্টগ্রাম", type: "শিক্ষা মেন্টরশিপ", date: "২০২৬-০৫-২৪", status: "reviewing" },
   { id: "VOL-0418", name: "রাকিবুল হাসান", phone: "01933445566", city: "সিলেট", type: "মিডিয়া ও কনটেন্ট", date: "২০২৬-০৫-২৩", status: "approved" },
   { id: "VOL-0417", name: "নুসরাত জাহান", phone: "01644556677", city: "রাজশাহী", type: "স্বাস্থ্যসেবা ক্যাম্প", date: "২০২৬-০৫-২২", status: "new" },
@@ -55,13 +87,47 @@ export const volunteerApps: Application[] = [
 ];
 
 export const memberApps: Application[] = [
-  { id: "MEM-0128", name: "আলহাজ্ব আব্দুল করিম", phone: "01711000111", city: "ঢাকা", type: "আজীবন সদস্য (৳৫০,০০০)", date: "২০২৬-০৫-২৫", status: "reviewing" },
+  {
+    id: "MEM-0128", name: "আলহাজ্ব আব্দুল করিম", phone: "01711000111", city: "ঢাকা",
+    type: "আজীবন সদস্য (৳৫০,০০০)", date: "২০২৬-০৫-২৫", status: "reviewing",
+    email: "abdul.karim@example.com", submittedAt: "২০২৬-০৫-২৫ ০৯:১২",
+    details: [
+      { title: "সদস্য তথ্য", fields: [
+        { label: "সদস্যপদের ধরন", value: "আজীবন সদস্য" },
+        { label: "চাঁদার পরিমাণ", value: "৳ ৫০,০০০" },
+        { label: "পেমেন্ট মাধ্যম", value: "bKash — ট্রানজেকশন 8HG9K2LM" },
+      ]},
+      { title: "ব্যক্তিগত তথ্য", fields: [
+        { label: "পূর্ণ নাম", value: "আলহাজ্ব আব্দুল করিম" },
+        { label: "পেশা", value: "ব্যবসায়ী" },
+        { label: "জন্ম তারিখ", value: "০৮ জানুয়ারি ১৯৬৫" },
+        { label: "ঠিকানা", value: "বাসা ৫, রোড ১২, ধানমন্ডি, ঢাকা", long: true },
+      ]},
+    ],
+  },
   { id: "MEM-0127", name: "হাজী ইউনুস আলী", phone: "01822111222", city: "চট্টগ্রাম", type: "দাতা সদস্য (৳২৫,০০০)", date: "২০২৬-০৫-২৩", status: "approved" },
   { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", date: "২০২৬-০৫-২০", status: "approved" },
 ];
 
 export const careerApps: Application[] = [
-  { id: "JOB-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "ঢাকা", type: "প্রোগ্রাম অফিসার", date: "২০২৬-০৫-২৫", status: "new" },
+  {
+    id: "JOB-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "ঢাকা",
+    type: "প্রোগ্রাম অফিসার", date: "২০২৬-০৫-২৫", status: "new",
+    email: "ariful.islam@example.com", submittedAt: "২০২৬-০৫-২৫ ১১:০২",
+    details: [
+      { title: "প্রার্থীর তথ্য", fields: [
+        { label: "নাম", value: "আরিফুল ইসলাম" },
+        { label: "শিক্ষাগত যোগ্যতা", value: "MBA (Marketing) — Dhaka University" },
+        { label: "মোট অভিজ্ঞতা", value: "৫ বছর" },
+        { label: "বর্তমান প্রতিষ্ঠান", value: "BRAC Bangladesh" },
+        { label: "প্রত্যাশিত বেতন", value: "৳ ৬০,০০০" },
+      ]},
+      { title: "অতিরিক্ত", fields: [
+        { label: "CV লিঙ্ক", value: "https://drive.example.com/ariful-cv.pdf" },
+        { label: "কেন এই পদে?", value: "সমাজকল্যাণমূলক কাজে দক্ষতা কাজে লাগাতে চাই।", long: true },
+      ]},
+    ],
+  },
   { id: "JOB-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "চট্টগ্রাম", type: "একাউন্টস / ফাইন্যান্স", date: "২০২৬-০৫-২৪", status: "reviewing" },
   { id: "JOB-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "ঢাকা", type: "সফটওয়্যার / আইটি", date: "২০২৬-০৫-২২", status: "approved" },
 ];
