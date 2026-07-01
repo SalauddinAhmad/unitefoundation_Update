@@ -39,10 +39,11 @@ export const partnerThemeTokens: Record<PartnerTheme, {
     highlightForeground: "150 55% 12%",
   },
   red: {
-    primary: "0 72% 38%",
+    // dark charcoal base, red used as the accent highlight
+    primary: "220 15% 12%",
     primaryForeground: "40 30% 96%",
-    highlight: "45 92% 58%",
-    highlightForeground: "0 60% 18%",
+    highlight: "0 78% 52%",
+    highlightForeground: "40 30% 98%",
   },
   black: {
     primary: "220 12% 10%",
