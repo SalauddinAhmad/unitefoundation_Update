@@ -24,7 +24,7 @@ const PartnerDetail = () => {
         canonical={`/partners/${partner.slug}`}
       />
 
-      <div className="bg-[#fcfaf2]">
+      <div className="bg-background">
         {/* ===== Branded Hero ===== */}
         <section className="relative overflow-hidden bg-primary text-primary-foreground pt-28 md:pt-32 pb-20 md:pb-28">
           {/* Decorative arabesque pattern */}
@@ -54,7 +54,7 @@ const PartnerDetail = () => {
                 <div className="absolute inset-0 rounded-full bg-[hsl(var(--donate-highlight))] blur-2xl opacity-40 scale-110" />
                 <div className="relative w-36 h-36 md:w-48 md:h-48 rounded-full p-[3px] bg-gradient-to-br from-[hsl(var(--donate-highlight))] via-[hsl(var(--donate-highlight))]/60 to-[hsl(var(--donate-highlight))]">
                   <div className="w-full h-full rounded-full bg-primary p-3 flex items-center justify-center">
-                    <div className="w-full h-full rounded-full bg-white/95 flex items-center justify-center overflow-hidden shadow-inner">
+                    <div className="w-full h-full rounded-full bg-card/95 flex items-center justify-center overflow-hidden shadow-inner">
                       <img
                         src={partner.logo}
                         alt={partner.name}
@@ -94,7 +94,7 @@ const PartnerDetail = () => {
                     {partner.phone && (
                       <a
                         href={`tel:${partner.phone}`}
-                        className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/10 hover:bg-white/15 text-primary-foreground border border-white/20 rounded-xl font-semibold backdrop-blur-sm transition-all"
+                        className="inline-flex items-center gap-2 px-6 py-3.5 bg-card/10 hover:bg-card/15 text-primary-foreground border border-white/20 rounded-xl font-semibold backdrop-blur-sm transition-all"
                       >
                         <Phone className="w-4 h-4" /> যোগাযোগ
                       </a>
@@ -106,7 +106,7 @@ const PartnerDetail = () => {
           </div>
 
           {/* Bottom wave separator */}
-          <svg className="absolute bottom-0 left-0 w-full h-12 text-[#fcfaf2]" viewBox="0 0 1440 60" preserveAspectRatio="none">
+          <svg className="absolute bottom-0 left-0 w-full h-12 text-background" viewBox="0 0 1440 60" preserveAspectRatio="none">
             <path d="M0,30 C360,60 720,0 1440,40 L1440,60 L0,60 Z" fill="currentColor" />
           </svg>
         </section>
@@ -153,9 +153,9 @@ const PartnerDetail = () => {
                     {partner.programs.map((g, i) => (
                       <div
                         key={i}
-                        className="group bg-white rounded-2xl border border-[#e2dfd5] hover:border-[hsl(var(--donate-highlight))]/60 p-6 md:p-7 shadow-sm hover:shadow-lg transition-all"
+                        className="group bg-card rounded-2xl border border-border hover:border-[hsl(var(--donate-highlight))]/60 p-6 md:p-7 shadow-sm hover:shadow-lg transition-all"
                       >
-                        <div className="flex items-center gap-4 mb-5 pb-4 border-b border-dashed border-[#e2dfd5]">
+                        <div className="flex items-center gap-4 mb-5 pb-4 border-b border-dashed border-border">
                           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center shadow-md">
                             <BookOpen className="w-5 h-5" />
                           </div>
@@ -188,7 +188,7 @@ const PartnerDetail = () => {
                     {partner.activities.map((a, i) => (
                       <div
                         key={i}
-                        className="group relative p-6 bg-white rounded-2xl border border-[#e2dfd5] hover:border-primary/40 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+                        className="group relative p-6 bg-card rounded-2xl border border-border hover:border-primary/40 transition-all shadow-sm hover:shadow-xl hover:-translate-y-1 overflow-hidden"
                       >
                         <div className="absolute top-0 right-0 w-24 h-24 bg-[hsl(var(--donate-highlight))]/0 group-hover:bg-[hsl(var(--donate-highlight))]/10 rounded-full blur-2xl transition-all" />
                         <div className="relative">
@@ -247,7 +247,7 @@ const PartnerDetail = () => {
                 </div>
 
                 {/* Contact card */}
-                <div className="p-6 border border-[#e2dfd5] rounded-3xl bg-white shadow-sm">
+                <div className="p-6 border border-border rounded-3xl bg-card shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <span className="w-6 h-[2px] bg-[hsl(var(--donate-highlight))]" />
                     <h3 className="font-bold text-primary">যোগাযোগ মাধ্যম</h3>
@@ -296,7 +296,7 @@ const PartnerDetail = () => {
         {others.length > 0 && (
           <section className="pb-24 md:pb-32">
             <div className="container-page">
-              <div className="flex items-end justify-between mb-8 border-t border-[#e2dfd5] pt-12">
+              <div className="flex items-end justify-between mb-8 border-t border-border pt-12">
                 <h2 className="text-2xl md:text-3xl font-bold text-primary flex items-center gap-3">
                   <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
                   অন্যান্য প্রতিষ্ঠান
@@ -310,10 +310,10 @@ const PartnerDetail = () => {
                   <Link
                     key={p.slug}
                     to={`/partners/${p.slug}`}
-                    className="group flex items-center gap-5 p-5 bg-white rounded-2xl border border-[#e2dfd5] hover:border-[hsl(var(--donate-highlight))] transition-all shadow-sm hover:shadow-lg hover:-translate-y-0.5"
+                    className="group flex items-center gap-5 p-5 bg-card rounded-2xl border border-border hover:border-[hsl(var(--donate-highlight))] transition-all shadow-sm hover:shadow-lg hover:-translate-y-0.5"
                   >
                     <div className="w-16 h-16 rounded-full bg-primary p-1 flex items-center justify-center shrink-0 overflow-hidden shadow-md">
-                      <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                      <div className="w-full h-full rounded-full bg-card flex items-center justify-center">
                         <img src={p.logo} alt={p.name} className="w-[78%] h-[78%] object-contain" />
                       </div>
                     </div>
