@@ -1,15 +1,30 @@
 name: Deploy to cPanel
 
 on:
-  push:
-    branches: [main]
+  # Auto-deploy on push is DISABLED — deploy runs only when you click
+  # "Run workflow" from the GitHub Actions tab.
+  # To re-enable auto-deploy, uncomment the push block below.
+  #
+  # push:
+  #   branches: [main]
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'কী deploy করবেন?'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - frontend
+          - backend
 
 jobs:
   # ────────────────────────────────────────────────────────────
   # 1. FRONTEND — React build → /public_html/
   # ────────────────────────────────────────────────────────────
   frontend:
+    if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +55,7 @@ jobs:
   # 2. BACKEND — server/ → /public_html/api-app/
   # ────────────────────────────────────────────────────────────
   backend:
+    if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
