@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+LOCAL_DIR="${1:-}"
+REMOTE_DIR="${2:-}"
+
+if [[ -z "$LOCAL_DIR" || -z "$REMOTE_DIR" ]]; then
+  echo "Usage: $0 <local-dir> <remote-dir>" >&2
+  exit 2
+fi
+
+if [[ ! -d "$LOCAL_DIR" ]]; then
+  echo "Local directory not found: $LOCAL_DIR" >&2
+  exit 2
+fi
+
+: "${CPANEL_HOST:?CPANEL_HOST is required}"
+: "${CPANEL_USER:?CPANEL_USER is required}"
+: "${CPANEL_HOME:?CPANEL_HOME is required, for example /home/username}"
+: "${CPANEL_API_TOKEN:?CPANEL_API_TOKEN GitHub secret is required}"
+
+CPANEL_PORT="${CPANEL_PORT:-2083}"
+API_BASE="https://${CPANEL_HOST}:${CPANEL_PORT}"
+AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_API_TOKEN}"
+
+urlencode() {
+  python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
+}
+
+check_json_status() {
+  python3 -c '
+import json, sys
+raw = sys.stdin.read()
+try:
+    data = json.loads(raw)
+except Exception:
+    print(raw)
+    sys.exit(1)
+status = data.get("status")
+if status is None:
+    status = data.get("result", {}).get("status")
+if status in (1, True):
+    sys.exit(0)
+print(json.dumps(data, ensure_ascii=False, indent=2))
+sys.exit(1)
+'
+}
+
+cpanel_api2_mkdir() {
+  local parent="$1"
+  local name="$2"
+  local response
+  local endpoint="${API_BASE}/json-api/cpanel?cpanel_jsonapi_user=$(urlencode "$CPANEL_USER")&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=mkdir&path=$(urlencode "$parent")&name=$(urlencode "$name")&permissions=0755"
+
+  response=$(curl --silent --show-error --location --connect-timeout 20 --max-time 90 --retry 3 --retry-delay 5 \
+    --header "$AUTH_HEADER" "$endpoint" || true)
+
+  # mkdir may report an error when the folder already exists; uploads will validate the final state.
+  if [[ "$response" == *"\"result\":0"* || "$response" == *"\"status\":0"* ]]; then
+    echo "mkdir notice: ${parent}/${name} may already exist or was not created by API2"
+  fi
+}
+
+ensure_remote_dir() {
+  local relative_dir="$1"
+  relative_dir="${relative_dir#/}"
+  relative_dir="${relative_dir%/}"
+  [[ -z "$relative_dir" ]] && return 0
+
+  local current="$CPANEL_HOME"
+  IFS='/' read -r -a parts <<< "$relative_dir"
+  for part in "${parts[@]}"; do
+    [[ -z "$part" || "$part" == "." ]] && continue
+    cpanel_api2_mkdir "$current" "$part"
+    current="${current}/${part}"
+  done
+}
+
+upload_file() {
+  local file="$1"
+  local rel="${file#${LOCAL_DIR%/}/}"
+  local dir
+  local base
+  dir="$(dirname "$rel")"
+  base="$(basename "$rel")"
+
+  local remote_subdir="$REMOTE_DIR"
+  if [[ "$dir" != "." ]]; then
+    remote_subdir="${REMOTE_DIR}/${dir}"
+  fi
+
+  ensure_remote_dir "$remote_subdir"
+
+  echo "Uploading ${rel} -> ${remote_subdir}/${base}"
+  curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
+    --header "$AUTH_HEADER" \
+    --form "dir=${remote_subdir}" \
+    --form "file-1=@${file};filename=${base}" \
+    "${API_BASE}/execute/Fileman/upload_files" | check_json_status
+}
+
+echo "Deploying ${LOCAL_DIR} to cPanel:${REMOTE_DIR} via HTTPS API"
+
+mapfile -d '' files < <(find "$LOCAL_DIR" -type f -print0 | sort -z)
+
+if [[ "${#files[@]}" -eq 0 ]]; then
+  echo "No files found in ${LOCAL_DIR}" >&2
+  exit 1
+fi
+
+ensure_remote_dir "$REMOTE_DIR"
+
+for file in "${files[@]}"; do
+  upload_file "$file"
+done
+
+echo "cPanel API deploy completed: ${#files[@]} files uploaded."
