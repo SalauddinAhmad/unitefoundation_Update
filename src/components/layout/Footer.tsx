@@ -28,7 +28,7 @@ export const Footer = () => {
               </p>
             </div>
             <Link to="/donate" className="btn-donate text-base whitespace-nowrap">
-              <Heart className="h-5 w-5" /> এখনই দান করুন
+              <Heart className="h-5 w-5" /> দান করুন
             </Link>
           </div>
         </div>
