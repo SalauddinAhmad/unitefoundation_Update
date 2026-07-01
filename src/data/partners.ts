@@ -72,6 +72,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "attayeba",
+    theme: "black",
     name: "আত-ত্বাইয়েবা প্রকাশনী",
     logo: attayeba,
     tagline: "বিশুদ্ধ ইলম, পরিশুদ্ধ পাঠ — একটি ইসলামিক প্রকাশনা",
