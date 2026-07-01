@@ -33,6 +33,7 @@ const menu = [
   { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি" },
   { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", badge: "৪" },
   { to: "/dashboard/careers", icon: Briefcase, label: "ক্যারিয়ার" },
+  { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম" },
 ];
 
 const generalMenu = [
