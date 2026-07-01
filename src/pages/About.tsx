@@ -197,12 +197,9 @@ const About = () => (
         </div>
         <div>
           <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center text-primary mb-4">
-            <Eye className="h-6 w-6" />
+            <Target className="h-6 w-6" />
           </div>
           <h2 className="heading-display">আমাদের লক্ষ্য</h2>
-          <p className="mt-4 text-muted-foreground leading-[1.9]">
-            কুরআন ও সহীহ হাদীছের আলোকে দাওয়াহ, তালীম ও সমাজকল্যাণ — এই তিনটি স্তম্ভের উপর দাঁড়িয়ে আমরা যে সুনির্দিষ্ট পথে হাঁটছি।
-          </p>
           <ul className="mt-6 space-y-4">
             {[
               "সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।",
@@ -212,13 +209,14 @@ const About = () => (
               "ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সহীহ অনুবাদ প্রকাশ।",
               "সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।",
             ].map((goal, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-1" />
-                <span className="text-foreground leading-[1.9]">{goal}</span>
+              <li key={i} className="flex items-start gap-2 text-muted-foreground leading-[1.9]">
+                <span className="text-primary mt-1">•</span>
+                <span>{goal}</span>
               </li>
             ))}
           </ul>
         </div>
+
       </div>
     </section>
 
