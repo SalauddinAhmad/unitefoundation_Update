@@ -296,69 +296,53 @@ const About = () => (
       <div className="pointer-events-none absolute -bottom-40 left-1/4 h-[26rem] w-[26rem] rounded-full bg-donate-red/10 blur-3xl" />
 
       <div className="container-page relative">
-        {/* Header */}
-        <div className="flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-white/70 backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Leadership
-          </span>
-          <h2 className="mt-5 text-3xl md:text-5xl font-extrabold leading-[1.1]">
-            প্রতিষ্ঠাতা ও{" "}
-            <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-donate-orange bg-clip-text text-transparent">
-              চেয়ারম্যান
-            </span>
-          </h2>
-          <p className="mt-4 max-w-xl text-white/60 text-sm md:text-base leading-relaxed">
-            এক স্বপ্ন থেকে শুরু হওয়া যাত্রার পথপ্রদর্শক — সুন্নাহর অনুসরণে মানবতার কল্যাণে।
-          </p>
-        </div>
+        <div className="grid gap-12 md:grid-cols-2 md:gap-16 items-center">
+          {/* Left: Card */}
+          <div className="flex justify-center md:justify-start order-2 md:order-1">
+            <article
+              className="group relative w-full max-w-sm rounded-[32px] bg-[#151515] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06] transition-transform duration-500 hover:-translate-y-1"
+            >
+              {/* Portrait */}
+              <div className="relative overflow-hidden rounded-[22px] bg-neutral-800">
+                <img
+                  src={team[0].img}
+                  alt={team[0].name}
+                  loading="lazy"
+                  width={520}
+                  height={560}
+                  className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
+                />
+              </div>
 
-        {/* Profile card — dribbble style */}
-        <div className="mt-14 flex justify-center">
-          <article
-            className="group relative w-full max-w-sm rounded-[32px] bg-[#151515] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06] transition-transform duration-500 hover:-translate-y-1"
-          >
-            {/* Portrait */}
-            <div className="relative overflow-hidden rounded-[22px] bg-neutral-800">
-              <img
-                src={team[0].img}
-                alt={team[0].name}
-                loading="lazy"
-                width={520}
-                height={560}
-                className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
-              />
-            </div>
+              {/* Name row */}
+              <div className="mt-5 flex items-center gap-2 px-1">
+                <h3 className="text-xl md:text-2xl font-extrabold text-white leading-tight">
+                  {team[0].name}
+                </h3>
+                <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-primary" fill="currentColor" aria-hidden>
+                    <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" className="relative h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <polyline points="5 12 10 17 19 8" />
+                  </svg>
+                </span>
+              </div>
 
-            {/* Name row */}
-            <div className="mt-5 flex items-center gap-2 px-1">
-              <h3 className="text-xl md:text-2xl font-extrabold text-white leading-tight">
-                {team[0].name}
-              </h3>
-              {/* Verified seal */}
-              <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
-                <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-primary" fill="currentColor" aria-hidden>
-                  <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
-                </svg>
-                <svg viewBox="0 0 24 24" className="relative h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <polyline points="5 12 10 17 19 8" />
-                </svg>
-              </span>
-            </div>
+              {/* Tagline */}
+              <p className="mt-2 px-1 text-sm text-white/55 leading-relaxed">
+                সুন্নাহর অনুসরণে মানবতার কল্যাণে নিবেদিত একজন দাঈ ও সংগঠক।
+              </p>
 
-            {/* Tagline */}
-            <p className="mt-2 px-1 text-sm text-white/55 leading-relaxed">
-              সুন্নাহর অনুসরণে মানবতার কল্যাণে নিবেদিত একজন দাঈ ও সংগঠক।
-            </p>
-
-            {/* Bottom row: stats + CTA */}
-            <div className="mt-5 flex items-center justify-between px-1">
-              <div className="flex items-center gap-4 text-white/70 text-sm">
+              {/* Bottom row: stats */}
+              <div className="mt-5 flex items-center gap-5 px-1 pb-1 text-white/70 text-sm">
                 <span className="inline-flex items-center gap-1.5">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
                   <span className="font-semibold text-white">২০১৭</span>
+                  <span className="text-white/50">— যাত্রা শুরু</span>
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -366,18 +350,34 @@ const About = () => (
                     <path d="M7 7h10v10" />
                   </svg>
                   <span className="font-semibold text-white">৫</span>
+                  <span className="text-white/50">প্রতিষ্ঠান</span>
                 </span>
               </div>
+            </article>
+          </div>
 
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0C2B1D] transition-all hover:bg-amber-200 hover:shadow-[0_10px_30px_-10px_rgba(251,191,36,0.6)]"
-              >
-                অনুসরণ
-                <span className="text-base leading-none">+</span>
-              </button>
+          {/* Right: Header text */}
+          <div className="order-1 md:order-2 text-center md:text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-white/70 backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Leadership
+            </span>
+            <h2 className="mt-5 text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
+              প্রতিষ্ঠাতা ও{" "}
+              <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-donate-orange bg-clip-text text-transparent">
+                চেয়ারম্যান
+              </span>
+            </h2>
+            <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
+              <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70 md:bg-gradient-to-l md:from-amber-300/70 md:to-transparent" />
+              <span className="h-2 w-2 rotate-45 bg-amber-300" />
+              <span className="h-px w-16 bg-gradient-to-l from-transparent to-amber-300/70 md:bg-gradient-to-r md:from-amber-300/70 md:to-transparent" />
             </div>
-          </article>
+            <p className="mt-6 max-w-xl mx-auto md:mx-0 text-white/70 text-base md:text-lg leading-[1.9]">
+              এক স্বপ্ন থেকে শুরু হওয়া যাত্রার পথপ্রদর্শক — সুন্নাহর অনুসরণে মানবতার
+              কল্যাণে নিবেদিত একটি সুশৃঙ্খল, স্বচ্ছ ও দীর্ঘমেয়াদি ইসলামিক প্লাটফর্ম
+              গড়ে তোলাই তাঁর স্বপ্ন।
+            </p>
+          </div>
         </div>
       </div>
     </section>
