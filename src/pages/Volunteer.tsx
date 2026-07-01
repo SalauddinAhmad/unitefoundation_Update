@@ -3,7 +3,7 @@ import {
   HandHeart,
   HeartHandshake,
   Users,
-  Briefcase,
+  UserPlus,
   Repeat,
   Send,
   ShieldCheck,
@@ -23,14 +23,15 @@ import volunteerImg from "@/assets/program-food.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
-type TabKey = "regular" | "member" | "volunteer" | "career";
+type TabKey = "regular" | "member" | "volunteer" | "representative";
 
 const tabs: { key: TabKey; label: string; icon: typeof HandHeart }[] = [
   { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
   { key: "member", label: "আজীবন ও দাতা সদস্য", icon: HeartHandshake },
   { key: "volunteer", label: "স্বেচ্ছাসেবক", icon: HandHeart },
-  { key: "career", label: "ক্যারিয়ার", icon: Briefcase },
+  { key: "representative", label: "জেলা প্রতিনিধি", icon: UserPlus },
 ];
+
 
 // ---------- Topic-specific options ----------
 const regularAreas = [
