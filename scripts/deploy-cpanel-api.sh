@@ -99,6 +99,8 @@ upload_file() {
   curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
     --header "$AUTH_HEADER" \
     --form "dir=${absolute_dir}" \
+    --form "overwrite=1" \
+    --form "permissions=0644" \
     --form "file-1=@${file};filename=${base}" \
     "${API_BASE}/execute/Fileman/upload_files" | check_json_status
 }
