@@ -283,7 +283,7 @@ const About = () => (
     </section>
 
     <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white">
-      {/* Layered ambience */}
+      {/* Subtle dotted texture */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -292,197 +292,101 @@ const About = () => (
           backgroundSize: "28px 28px",
         }}
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(45deg, transparent 48%, #ffffff 49%, #ffffff 51%, transparent 52%), linear-gradient(-45deg, transparent 48%, #ffffff 49%, #ffffff 51%, transparent 52%)",
-          backgroundSize: "64px 64px",
-        }}
-      />
-      <div className="pointer-events-none absolute -top-40 right-1/4 h-[26rem] w-[26rem] rounded-full bg-primary/25 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-40 left-1/4 h-[26rem] w-[26rem] rounded-full bg-donate-red/15 blur-3xl" />
-
-      {/* Giant watermark */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-6 md:-top-10 left-1/2 -translate-x-1/2 font-en font-black tracking-[-0.04em] text-white/[0.04] text-[22vw] leading-none select-none whitespace-nowrap"
-      >
-        FOUNDER
-      </div>
+      <div className="pointer-events-none absolute -top-40 right-1/4 h-[26rem] w-[26rem] rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/4 h-[26rem] w-[26rem] rounded-full bg-donate-red/10 blur-3xl" />
 
       <div className="container-page relative">
-        {/* Top meta row */}
-        <div className="flex items-center justify-between gap-4 mb-10 md:mb-14">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.05] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-white/80 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Leadership
-            </span>
-            <span className="hidden sm:inline-block h-px w-16 bg-gradient-to-r from-white/30 to-transparent" />
-          </div>
-          <span className="font-en text-[11px] tracking-[0.3em] text-white/50">No. 01 / চেয়ারম্যান</span>
-        </div>
+        <div className="grid gap-12 md:grid-cols-2 md:gap-16 items-center">
+          {/* Left: Card */}
+          <div className="flex justify-center md:justify-start order-2 md:order-1">
+            <article
+              className="group relative w-full max-w-sm rounded-[32px] bg-white p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1"
+            >
+              {/* Gradient brand accent glow */}
+              <div aria-hidden className="pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-br from-donate-red/25 via-donate-orange/15 to-primary/25 opacity-60 blur-xl -z-10" />
 
-        <div className="grid gap-14 md:gap-16 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] items-center">
-          {/* LEFT: Portrait composition */}
-          <div className="relative flex justify-center lg:justify-start order-2 lg:order-1">
-            {/* Vertical rotated label */}
-            <div className="hidden md:flex absolute -left-2 lg:-left-6 top-8 bottom-8 items-center">
-              <span className="font-en text-[10px] tracking-[0.5em] uppercase text-white/40 [writing-mode:vertical-rl] rotate-180">
-                Est. 2017 · Uttara, Dhaka
-              </span>
-            </div>
-
-            <article className="group relative w-full max-w-md">
-              {/* decorative offset frame */}
-              <div aria-hidden className="absolute -inset-3 md:-inset-4 rounded-[36px] border border-white/10" />
-              <div aria-hidden className="absolute -inset-6 md:-inset-8 rounded-[44px] border border-white/[0.06]" />
-
-              {/* Glow */}
-              <div aria-hidden className="pointer-events-none absolute -inset-10 rounded-[48px] bg-gradient-to-br from-donate-red/25 via-donate-orange/15 to-primary/30 opacity-70 blur-3xl -z-10" />
-
-              {/* Corner ornaments */}
-              {["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 left-0 -rotate-90", "bottom-0 right-0 rotate-180"].map((pos) => (
-                <span key={pos} aria-hidden className={`absolute ${pos} h-6 w-6 -translate-x-1 -translate-y-1`}>
-                  <span className="absolute top-0 left-0 h-full w-[2px] bg-donate-orange/70" />
-                  <span className="absolute top-0 left-0 h-[2px] w-full bg-donate-orange/70" />
-                </span>
-              ))}
-
-              {/* Portrait card */}
-              <div className="relative overflow-hidden rounded-[28px] bg-primary/10 ring-1 ring-white/10 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.7)]">
+              {/* Portrait */}
+              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10">
                 <img
                   src={team[0].img}
                   alt={team[0].name}
                   loading="lazy"
-                  width={640}
-                  height={720}
-                  className="h-[420px] md:h-[520px] w-full object-cover object-center transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+                  width={520}
+                  height={560}
+                  className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                 />
-                {/* Portrait gradient wash */}
-                <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0C2B1D]/85 via-[#0C2B1D]/10 to-transparent" />
-
-                {/* ﷽ seal */}
-                <span className="absolute top-4 right-4 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/20 text-amber-200 text-lg" aria-hidden>
-                  ﷽
+                {/* Brand ribbon */}
+                <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
+                  <Sparkles className="h-3 w-3" /> Founder
                 </span>
-
-                {/* Bottom identity plate */}
-                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                  <div className="flex items-end justify-between gap-3">
-                    <div>
-                      <span className="inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white shadow-donate">
-                        <Sparkles className="h-3 w-3" /> Founder
-                      </span>
-                      <h3 className="mt-3 text-2xl md:text-[26px] font-extrabold leading-tight text-white drop-shadow">
-                        {team[0].name}
-                      </h3>
-                      <p className="mt-1 text-[13px] text-white/75">প্রতিষ্ঠাতা ও চেয়ারম্যান</p>
-                    </div>
-                    <span className="relative inline-flex h-7 w-7 shrink-0 items-center justify-center" aria-hidden>
-                      <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-donate-red" fill="currentColor">
-                        <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
-                      </svg>
-                      <svg viewBox="0 0 24 24" className="relative h-4 w-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="5 12 10 17 19 8" />
-                      </svg>
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              {/* Signature ticket */}
-              <div className="relative mt-5 mx-2 md:mx-3 rounded-2xl bg-white/[0.04] backdrop-blur-sm border border-white/10 px-5 py-4 flex items-center justify-between">
-                <div>
-                  <p className="font-en text-[10px] tracking-[0.3em] uppercase text-white/50">Signature</p>
-                  <p className="mt-1 text-lg text-amber-200/90" style={{ fontFamily: '"Brush Script MT", cursive' }}>
-                    Abdullah Bin Ershad
-                  </p>
-                </div>
-                <span className="h-10 w-px bg-white/15" />
-                <div className="text-right">
-                  <p className="font-en text-[10px] tracking-[0.3em] uppercase text-white/50">Since</p>
-                  <p className="mt-1 font-en text-lg font-bold text-white">2017</p>
-                </div>
+              {/* Name row */}
+              <div className="mt-5 flex items-center gap-2 px-1">
+                <h3 className="text-xl md:text-2xl font-extrabold text-primary leading-tight">
+                  {team[0].name}
+                </h3>
+                <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-donate-red" fill="currentColor" aria-hidden>
+                    <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" className="relative h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <polyline points="5 12 10 17 19 8" />
+                  </svg>
+                </span>
+              </div>
+
+              {/* Tagline */}
+              <p className="mt-2 px-1 text-sm text-foreground/70 leading-relaxed">
+                সুন্নাহর অনুসরণে মানবতার কল্যাণে নিবেদিত একজন দাঈ ও সংগঠক।
+              </p>
+
+              {/* Divider */}
+              <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
+
+              {/* Bottom row: stats */}
+              <div className="mt-4 flex items-center gap-5 px-1 pb-1 text-foreground/70 text-sm">
+                <span className="inline-flex items-center gap-1.5">
+                  <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span className="font-semibold text-primary">২০১৭</span>
+                  <span className="text-foreground/50">— যাত্রা শুরু</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <svg className="h-4 w-4 text-donate-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="3" y="3" width="14" height="14" rx="2" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                  <span className="font-semibold text-primary">৫</span>
+                  <span className="text-foreground/50">প্রতিষ্ঠান</span>
+                </span>
               </div>
             </article>
           </div>
 
-          {/* RIGHT: Editorial content */}
-          <div className="order-1 lg:order-2 relative">
-            {/* Giant serial */}
-            <span aria-hidden className="absolute -top-10 -right-2 font-en text-[9rem] md:text-[12rem] leading-none font-black text-white/[0.05] select-none">
-              01
+          {/* Right: Header text */}
+          <div className="order-1 md:order-2 text-center md:text-left">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-white/70 backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Leadership
             </span>
-
-            <p className="font-en text-[11px] tracking-[0.4em] uppercase text-amber-300/80">
-              The Chairman · প্রতিষ্ঠাতা
-            </p>
-
-            <h2 className="mt-5 text-4xl md:text-5xl lg:text-[3.75rem] font-extrabold leading-[1.05]">
+            <h2 className="mt-5 text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
               প্রতিষ্ঠাতা ও{" "}
-              <span className="relative inline-block">
-                <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-donate-orange bg-clip-text text-transparent">
-                  চেয়ারম্যান
-                </span>
-                <span aria-hidden className="absolute -bottom-2 left-0 h-[3px] w-full bg-gradient-to-r from-donate-red via-donate-orange to-transparent rounded-full" />
+              <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-donate-orange bg-clip-text text-transparent">
+                চেয়ারম্যান
               </span>
             </h2>
-
-            {/* Ornament divider */}
-            <div className="mt-8 flex items-center gap-3">
-              <span className="h-px w-14 bg-gradient-to-r from-amber-300/70 to-transparent" />
-              <span className="h-1.5 w-1.5 rotate-45 bg-amber-300" />
-              <span className="h-px w-6 bg-amber-300/40" />
-              <span className="h-1 w-1 rounded-full bg-donate-orange" />
-              <span className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+            <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
+              <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70 md:bg-gradient-to-l md:from-amber-300/70 md:to-transparent" />
+              <span className="h-2 w-2 rotate-45 bg-amber-300" />
+              <span className="h-px w-16 bg-gradient-to-l from-transparent to-amber-300/70 md:bg-gradient-to-r md:from-amber-300/70 md:to-transparent" />
             </div>
-
-            {/* Pull-quote */}
-            <blockquote className="mt-8 relative pl-6 border-l-2 border-donate-orange/60">
-              <span aria-hidden className="absolute -left-3 -top-4 text-6xl leading-none text-donate-orange/40 font-serif">
-                “
-              </span>
-              <p className="text-white/85 text-lg md:text-xl leading-[1.9]">
-                এক স্বপ্ন থেকে শুরু হওয়া যাত্রার পথপ্রদর্শক — সুন্নাহর অনুসরণে মানবতার
-                কল্যাণে নিবেদিত একটি{" "}
-                <span className="text-amber-200 font-semibold">সুশৃঙ্খল, স্বচ্ছ ও দীর্ঘমেয়াদি</span>{" "}
-                ইসলামিক প্লাটফর্ম গড়ে তোলাই তাঁর স্বপ্ন।
-              </p>
-            </blockquote>
-
-            {/* Highlight tags */}
-            <div className="mt-8 flex flex-wrap gap-2">
-              {["দাঈ", "সংগঠক", "উদ্যোক্তা", "শিক্ষাবিদ"].map((t) => (
-                <span
-                  key={t}
-                  className="rounded-full border border-white/15 bg-white/[0.05] px-3.5 py-1.5 text-xs font-semibold text-white/85 backdrop-blur"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-
-            {/* Stats grid */}
-            <div className="mt-10 grid grid-cols-3 gap-3">
-              {[
-                { k: "২০১৭", v: "যাত্রা শুরু" },
-                { k: "১০+", v: "বছরের নেতৃত্ব" },
-                { k: "৫", v: "প্রতিষ্ঠান" },
-              ].map((s) => (
-                <div
-                  key={s.k}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm hover:bg-white/[0.07] transition-colors"
-                >
-                  <div aria-hidden className="absolute -top-8 -right-8 h-16 w-16 rounded-full bg-donate-orange/10 blur-2xl" />
-                  <p className="font-en text-2xl md:text-3xl font-black bg-gradient-to-br from-amber-200 to-donate-orange bg-clip-text text-transparent">
-                    {s.k}
-                  </p>
-                  <p className="mt-1 text-[12px] text-white/65">{s.v}</p>
-                </div>
-              ))}
-            </div>
+            <p className="mt-6 max-w-xl mx-auto md:mx-0 text-white/70 text-base md:text-lg leading-[1.9]">
+              এক স্বপ্ন থেকে শুরু হওয়া যাত্রার পথপ্রদর্শক — সুন্নাহর অনুসরণে মানবতার
+              কল্যাণে নিবেদিত একটি সুশৃঙ্খল, স্বচ্ছ ও দীর্ঘমেয়াদি ইসলামিক প্লাটফর্ম
+              গড়ে তোলাই তাঁর স্বপ্ন।
+            </p>
           </div>
         </div>
       </div>
