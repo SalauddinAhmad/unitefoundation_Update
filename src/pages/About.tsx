@@ -1,4 +1,4 @@
-import { CheckCircle2, Heart, Target, Eye, Users } from "lucide-react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -21,13 +21,95 @@ const team = [
   { img: t3, name: "তানভীর আহমেদ", role: "অপারেশনস প্রধান" },
 ];
 
-const milestones = [
-  { y: "২০১১", t: "যাত্রা শুরু", d: "৫ জন স্বেচ্ছাসেবক নিয়ে ঢাকায় কার্যক্রম শুরু।" },
-  { y: "২০১৪", t: "প্রথম এতিমখানা", d: "১২০ জন এতিম শিশুর স্থায়ী আবাসন চালু।" },
-  { y: "২০১৭", t: "সরকারি নিবন্ধন", d: "সমাজসেবা অধিদপ্তর কর্তৃক স্বীকৃতি।" },
-  { y: "২০২০", t: "করোনা সাড়া", d: "৫০,০০০ পরিবারে জরুরি ত্রাণ সহায়তা।" },
-  { y: "২০২৩", t: "১০০তম নলকূপ", d: "উপকূলীয় এলাকায় বিশুদ্ধ পানির মাইলফলক।" },
-  { y: "২০২৬", t: "১৫ বছর পূর্তি", d: "২.৫ লক্ষ মানুষের জীবনে পরিবর্তন।" },
+const milestones: { y: string; t?: string; items: string[] }[] = [
+  {
+    y: "২০১৭",
+    t: "যাত্রা শুরু",
+    items: [
+      "০৭ মার্চ ২০১৭ — মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে শিক্ষানগরী রাজশাহীর নওদাপাড়ায় ‘ইসলামিক রিসার্চ সেন্টার বাংলাদেশ’ নামে আনুষ্ঠানিক কার্যক্রমের শুভ সূচনা।",
+      "মানবতার কল্যাণে অনলাইন ভিত্তিক মিডিয়া ‘ইউনাইট টিভি’-এর কার্যক্রম শুরু।",
+    ],
+  },
+  {
+    y: "২০১৭–২০১৮",
+    t: "রোহিঙ্গা শরণার্থী সহায়তা",
+    items: [
+      "মিয়ানমার থেকে নির্যাতিত হয়ে বাংলাদেশে (বান্দরবান ও কক্সবাজার) আশ্রয় নেওয়া রোহিঙ্গা মুসলিমদের মাঝে প্রাথমিক খাদ্য, বস্ত্র ও আবাসন ব্যবস্থার সুনিপুণ আয়োজন।",
+    ],
+  },
+  {
+    y: "২০১৮",
+    t: "নিজস্ব ঠিকানার সূচনা",
+    items: ["রাজধানী ঢাকার উত্তরা-উত্তরখানে নিজস্ব অফিস ভবনের নির্মাণকাজ শুরু।"],
+  },
+  {
+    y: "২০১৯",
+    t: "ঈদ সামগ্রী বিতরণ",
+    items: [
+      "সুবিধাবঞ্চিত ইয়াতিম, বিধবা, গরিব, মিসকিন ও অসহায় মানুষদের মাঝে প্রতি ঈদে ‘ঈদ সামগ্রী বিতরণ’ কর্মসূচির সূচনা।",
+    ],
+  },
+  {
+    y: "২০২০",
+    t: "সম্প্রসারণ ও নবরূপ",
+    items: [
+      "উত্তরা-উত্তরখানে নিজস্ব অফিস ভবনের নির্মাণকাজ সফলভাবে সমাপ্ত।",
+      "প্রধান কার্যালয় রাজশাহী থেকে সফলভাবে রাজধানী ঢাকায় স্থানান্তর।",
+      "সেবার পরিধি বাড়াতে সংগঠনের নাম পরিবর্তন করে ‘ইসলামিক ফেইথ অ্যান্ড ওয়েলফেয়ার ফাউন্ডেশন’ নামকরণ।",
+    ],
+  },
+  {
+    y: "২০২১",
+    t: "মহামারীর পাশে",
+    items: [
+      "করোনা মহামারীর বৈশ্বিক সংকটে শত-শত কর্মহীন ও অসহায় পরিবারে জরুরি ত্রাণ সহায়তা প্রদান।",
+    ],
+  },
+  {
+    y: "২০২২",
+    t: "ইউনাইট কনফারেন্স ও সাবলম্বীকরণ",
+    items: [
+      "ইউনাইট টিভির আয়োজনে ‘ইউনাইট কনফারেন্স’-এর শুভ সূচনা; যা প্রতি বছর পবিত্র রামাযান মাসে রাজধানী ঢাকায় সফলভাবে আয়োজিত হয়ে আসছে।",
+      "সাবলম্বীকরণ প্রকল্প — নারীদের মাঝে উপকরণ হস্তান্তর।",
+    ],
+  },
+  {
+    y: "২০২৩",
+    t: "দুর্যোগে পাশে, নতুন উদ্যোগ",
+    items: [
+      "দেশজুড়ে তীব্র শীতে অসহায় শীতার্তদের মাঝে উন্নতমানের শীতবস্ত্র বিতরণ কর্মসূচির সূচনা।",
+      "বন্যা কবলিত এলাকায় জরুরি খাদ্য, বস্ত্র সরবরাহ এবং ক্ষতিগ্রস্ত বাসস্থানের পুনর্বাসন।",
+      "‘আত-ত্বাইয়্যেবা ট্রাভেল এজেন্সি’ ও ‘আত-ত্বাইয়্যেবা প্রকাশনী’-এর কার্যক্রম শুরু।",
+    ],
+  },
+  {
+    y: "২০২৪",
+    t: "ইউনাইট ফাউন্ডেশন",
+    items: [
+      "সংগঠনের নাম পুনর্নির্ধারণ করে চূড়ান্তভাবে ‘ইউনাইট ফাউন্ডেশন’ রূপান্তর ও নামকরণ।",
+      "আন্তর্জাতিক অঙ্গনে সেবার পরিধি বিস্তৃত করে ফিলিস্তিনে নির্যাতিত মুসলিম ভাই-বোনদের মাঝে খাদ্য ও আবাসন সহযোগিতা কার্যক্রমের সূচনা।",
+      "দেশজুড়ে বৃক্ষ রোপন কর্মসূচী শুরু।",
+    ],
+  },
+  {
+    y: "২০২৫",
+    t: "কর্জে হাসানাহ ও ইফতার",
+    items: [
+      "সম্পূর্ণ সুদমুক্ত ও আত্মনির্ভরশীল সমাজ গঠনে ‘কর্জে হাসানাহ’ প্রজেক্টের পথচলা শুরু।",
+      "পবিত্র রামাযান মাসব্যাপী অসহায় ও রোজাদারদের মাঝে ‘ইফতার বিতরণ’ কর্মসূচি শুরু।",
+    ],
+  },
+  {
+    y: "২০২৬",
+    t: "নতুন দিগন্ত",
+    items: [
+      "অসহায় ও ইয়াতিম শিশুদের মাঝে নতুন বস্ত্র বিতরণ।",
+      "পবিত্র ঈদুল আজহায় সুবিধাবঞ্চিতদের মাঝে ‘কুরবানী প্রজেক্ট’ সফলভাবে বাস্তবায়ন।",
+      "বিধবা, ইয়াতিম ও দরিদ্র পরিবারের জন্য ‘আবাসন প্রকল্প’-এর শুভ সূচনা।",
+      "দক্ষ জনশক্তি ও কর্মসংস্থান সৃষ্টির লক্ষ্যে ‘ইউনাইট ট্রেনিং সেন্টার’-এর কার্যক্রম শুরু।",
+      "মানসম্মত শিক্ষার প্রসারে ‘ইউনাইট একাডেমি’-এর গৌরবময় ঘোষণা।",
+    ],
+  },
 ];
 
 const About = () => (
@@ -94,26 +176,107 @@ const About = () => (
       </div>
     </section>
 
-    <section className="section-y">
-      <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">আমাদের যাত্রা</span>
-          <h2 className="heading-display mt-3">মাইলফলকসমূহ</h2>
+    <section className="section-y relative overflow-hidden bg-gradient-to-b from-background via-secondary/30 to-background">
+      {/* subtle Islamic pattern */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 25% 25%, hsl(var(--primary)) 1px, transparent 1px), radial-gradient(circle at 75% 75%, hsl(var(--primary)) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
+      <div className="container-page relative">
+        <div className="text-center max-w-3xl mx-auto">
+          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> আমাদের যাত্রা</span>
+          <h2 className="heading-display mt-3">এক স্বপ্ন থেকে মহীরুহে</h2>
+          <p className="mt-5 text-muted-foreground leading-[1.95]">
+            ইউনাইট ফাউন্ডেশন-এর পথচলা শুরু হয়েছিল একটি সুন্দর স্বপ্ন ও মানবতার কল্যাণে
+            কিছু করার দৃঢ় প্রত্যয় নিয়ে। ২০১৭ সালের ক্ষুদ্র সেই সূচনা আজ এক বিশাল মানবিক
+            মহীরুহে পরিণত হয়েছে। নিচে আমাদের উল্লেখযোগ্য মাইলফলকগুলো তুলে ধরা হলো —
+          </p>
         </div>
-        <div className="mt-12 relative max-w-3xl mx-auto">
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-1/2" aria-hidden />
-          <div className="space-y-8">
-            {milestones.map((m, i) => (
-              <div key={m.y} className={`relative pl-12 md:pl-0 md:grid md:grid-cols-2 md:gap-8 ${i % 2 === 0 ? "" : "md:[&>*:first-child]:order-2"}`}>
-                <div className="absolute left-2.5 md:left-1/2 top-1.5 h-3 w-3 rounded-full gradient-donate-bg md:-translate-x-1/2 ring-4 ring-background" />
-                <div className={`md:text-right ${i % 2 === 0 ? "" : "md:text-left"}`}>
-                  <div className="font-en text-sm font-bold gradient-donate-text">{m.y}</div>
-                  <h3 className="text-xl font-bold mt-1">{m.t}</h3>
-                  <p className="text-muted-foreground text-sm mt-1.5">{m.d}</p>
+
+        <div className="mt-16 relative max-w-5xl mx-auto">
+          {/* central vertical line with gradient */}
+          <div
+            className="absolute left-5 md:left-1/2 top-0 bottom-0 w-[2px] md:-translate-x-1/2"
+            aria-hidden
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent, hsl(var(--primary)/0.5) 6%, hsl(var(--primary)/0.5) 94%, transparent)",
+            }}
+          />
+          {/* start marker (sprout) */}
+          <div className="absolute left-5 md:left-1/2 -top-4 md:-translate-x-1/2 h-9 w-9 rounded-full gradient-donate-bg text-white flex items-center justify-center shadow-card ring-4 ring-background z-10">
+            <Sprout className="h-4 w-4" />
+          </div>
+
+          <div className="space-y-12 pt-12 pb-8">
+            {milestones.map((m, i) => {
+              const right = i % 2 === 1;
+              return (
+                <div key={m.y} className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-10 md:items-center">
+                  {/* connector dot */}
+                  <div
+                    className="absolute left-5 md:left-1/2 top-6 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 h-4 w-4 rounded-full gradient-donate-bg ring-4 ring-background z-10"
+                    style={{ boxShadow: "0 0 0 6px hsl(var(--primary) / 0.08)" }}
+                    aria-hidden
+                  />
+
+                  {/* Year label */}
+                  <div className={`${right ? "md:order-2 md:text-left md:pl-6" : "md:text-right md:pr-6"}`}>
+                    <div className="inline-flex flex-col">
+                      <span className="font-en text-3xl md:text-5xl font-extrabold gradient-donate-text leading-none tracking-tight">
+                        {m.y}
+                      </span>
+                      {m.t && (
+                        <span className="mt-2 text-sm md:text-base font-semibold text-foreground/80">
+                          {m.t}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card */}
+                  <div className={`mt-3 md:mt-0 ${right ? "md:order-1 md:pr-6" : "md:pl-6"}`}>
+                    <div className="group relative rounded-card border border-border bg-card p-5 md:p-6 shadow-card hover:shadow-card-hover transition-all">
+                      {/* accent bar */}
+                      <div
+                        className={`absolute top-4 bottom-4 w-1 rounded-full gradient-donate-bg opacity-70 ${
+                          right ? "left-0" : "right-0"
+                        }`}
+                        aria-hidden
+                      />
+                      <ul className="space-y-2.5">
+                        {m.items.map((it, k) => (
+                          <li key={k} className="flex items-start gap-2.5 text-sm md:text-[15px] leading-[1.75] text-foreground/85">
+                            <span className="mt-2 h-1.5 w-1.5 rounded-full gradient-donate-bg shrink-0" aria-hidden />
+                            <span>{it}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-                <div />
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          {/* end marker (tree) */}
+          <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 -bottom-4 h-11 w-11 rounded-full gradient-donate-bg text-white flex items-center justify-center shadow-card-hover ring-4 ring-background z-10">
+            <TreeDeciduous className="h-5 w-5" />
+          </div>
+        </div>
+
+        <div className="mt-20 max-w-3xl mx-auto text-center">
+          <div className="rounded-card border border-donate-highlight/30 bg-card p-8 md:p-10 shadow-card">
+            <p className="text-base md:text-lg leading-[1.95] text-foreground italic">
+              ২০১৭ সালে মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে যে ছোট চারাগাছটি রোপণ করা হয়েছিল,
+              ২০২৬ সালে এসে সেটি অসংখ্য মানুষের সেবার এক বিশাল{" "}
+              <span className="gradient-donate-text font-bold not-italic">‘মহীরুহে’</span> পরিণত হয়েছে।
+            </p>
           </div>
         </div>
       </div>
