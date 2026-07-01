@@ -24,6 +24,7 @@ jobs:
   # 1. FRONTEND — React build → /public_html/
   # ────────────────────────────────────────────────────────────
   frontend:
+    if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
