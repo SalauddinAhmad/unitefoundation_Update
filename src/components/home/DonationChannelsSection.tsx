@@ -2,17 +2,16 @@ import { Copy, CreditCard, ShieldCheck, Smartphone } from "lucide-react";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
-const bankCards = [
-  {
-    badge: "BANK TRANSFER",
-    title: "Islami Bank",
-    accountName: site.payments.bank.account,
-    accountNumber: site.payments.bank.number,
-    branch: site.payments.bank.branch,
-    routing: site.payments.bank.routing,
-    fundLabel: "সাধারণ ফান্ড",
-  },
-];
+const bankCards = site.payments.banks.map((b) => ({
+  badge: "BANK TRANSFER",
+  title: b.bank,
+  accountName: b.account,
+  accountNumber: b.number,
+  branch: b.branch,
+  routing: b.routing,
+  swift: b.swift,
+  fundLabel: "সাধারণ ফান্ড",
+}));
 
 const mobileNumbers = [
   { brand: "bKash", number: site.payments.bkash.number },
