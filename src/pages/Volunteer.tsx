@@ -732,59 +732,167 @@ const VolunteerForm = () => {
 };
 
 // ============================================================
-// 4) CAREER FORM
-const CareerForm = () => {
-  const init = { name: "", phone: "", email: "", city: "", position: "", experience: "", qualification: "", cv: "", cover: "" };
+// 4) DISTRICT REPRESENTATIVE FORM
+const RepresentativeForm = () => {
+  const init = {
+    fullName: "", guardianName: "", dob: "", nid: "",
+    currentAddress: "", permanentAddress: "", profession: "",
+    educationMediums: [] as string[], educationDetails: "",
+    whatsapp: "", email: "", socialLink: "", district: "",
+    experience: "", whyJoin: "",
+    emergencyName: "", emergencyPhone: "",
+    political: "না" as "না" | "হ্যাঁ", politicalDetails: "",
+    agree: false,
+  };
   const [f, setF] = useState(init);
   const [waUrl, setWaUrl] = useState<string | null>(null);
-  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((s) => ({ ...s, [k]: v }));
+  const onIn = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+    set(k, e.target.value as never);
+  const toggleMedium = (m: string) => {
+    const has = f.educationMediums.includes(m);
+    set("educationMediums", (has ? f.educationMediums.filter((x) => x !== m) : [...f.educationMediums, m]) as never);
+  };
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const r = careerSchema.safeParse(f);
+    if (!f.agree) return showError("গোপনীয়তা ও শর্তাবলিতে সম্মতি দিন");
+    const r = representativeSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
     setWaUrl(buildWhatsAppUrl(
-      "ক্যারিয়ার আবেদন",
-      `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nপদ: ${f.position}\nঅভিজ্ঞতা: ${f.experience}\nশিক্ষাগত যোগ্যতা: ${f.qualification}\nCV: ${f.cv || "—"}\n\nকভার লেটার:\n${f.cover}`,
+      "জেলা প্রতিনিধি আবেদন",
+      `— ব্যক্তিগত তথ্য —\nপুরো নাম: ${f.fullName}\nপিতা/অভিভাবক: ${f.guardianName}\nজন্ম তারিখ: ${f.dob}\nNID: ${f.nid}\nবর্তমান ঠিকানা: ${f.currentAddress}\nস্থায়ী ঠিকানা: ${f.permanentAddress}\nজেলা: ${f.district}\nপেশা: ${f.profession}\n\n— শিক্ষা —\nমাধ্যম: ${f.educationMediums.join(", ")}\nবিবরণ: ${f.educationDetails}\n\n— যোগাযোগ —\nWhatsApp: ${f.whatsapp}\nই-মেইল: ${f.email || "—"}\nসোশ্যাল লিংক: ${f.socialLink || "—"}\n\n— অভিজ্ঞতা ও আগ্রহ —\nপূর্ব অভিজ্ঞতা: ${f.experience || "—"}\nকেন যুক্ত হতে চান:\n${f.whyJoin}\n\n— জরুরি যোগাযোগ —\n${f.emergencyName} — ${f.emergencyPhone}\n\n— রাজনৈতিক ঘোষণা —\nসম্পৃক্ততা: ${f.political}${f.political === "হ্যাঁ" ? `\nবিবরণ: ${f.politicalDetails}` : ""}`,
     ));
   };
-  if (waUrl) return <SuccessCard topic="career" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
+  if (waUrl) return <SuccessCard topic="representative" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
   return (
     <>
-      <FormHeader title="ক্যারিয়ার আবেদন" sub="আপনার জন্য উপযুক্ত পদে আবেদন করুন — CV-সহ তথ্য পাঠান।" />
-      <form onSubmit={submit} className="mt-6 space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <FieldLight label="পূর্ণ নাম *"><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
-          <FieldLight label="মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-          <FieldLight label="ই-মেইল"><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
-          <FieldLight label="শহর / জেলা *"><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
-          <FieldLight label="আবেদনকৃত পদ *">
-            <select required value={f.position} onChange={u("position")} className="vol-input">
-              <option value="">— নির্বাচন করুন —</option>
-              {careerPositions.map((p) => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </FieldLight>
-          <FieldLight label="অভিজ্ঞতা *">
-            <select required value={f.experience} onChange={u("experience")} className="vol-input">
-              <option value="">— নির্বাচন করুন —</option>
-              <option>ফ্রেশার (০ বছর)</option>
-              <option>১-২ বছর</option>
-              <option>৩-৫ বছর</option>
-              <option>৫+ বছর</option>
-            </select>
-          </FieldLight>
+      <FormHeader
+        title="জেলা প্রতিনিধি আবেদন ফর্ম"
+        sub="বিশেষ দ্রষ্টব্য: প্রাথমিকভাবে প্রতিটি জেলা থেকে ১ জন করে প্রতিনিধি নেয়া হবে। তাই আবেদনটি অত্যন্ত গুরুত্বের সাথে সম্পন্ন করুন।"
+      />
+      <form onSubmit={submit} className="mt-6 space-y-5">
+        {/* 1. Personal */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">১. ব্যক্তিগত তথ্য</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <FieldLight label="পুরো নাম *"><input required maxLength={120} value={f.fullName} onChange={onIn("fullName")} className="vol-input" /></FieldLight>
+            <FieldLight label="পিতা/অভিভাবকের নাম *"><input required maxLength={120} value={f.guardianName} onChange={onIn("guardianName")} className="vol-input" /></FieldLight>
+            <FieldLight label="জন্ম তারিখ *"><input required type="date" value={f.dob} onChange={onIn("dob")} className="vol-input" /></FieldLight>
+            <FieldLight label="জাতীয় পরিচয়পত্র (NID) *"><input required inputMode="numeric" maxLength={17} value={f.nid} onChange={(e) => set("nid", e.target.value.replace(/\D/g, "") as never)} className="vol-input" /></FieldLight>
+            <FieldLight label="জেলা *"><input required maxLength={80} value={f.district} onChange={onIn("district")} className="vol-input" placeholder="যেমন: চট্টগ্রাম" /></FieldLight>
+            <FieldLight label="পেশা *">
+              <select required value={f.profession} onChange={onIn("profession")} className="vol-input">
+                <option value="">— নির্বাচন করুন —</option>
+                {professionOptions.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </FieldLight>
+          </div>
+          <div className="mt-3 grid sm:grid-cols-2 gap-3">
+            <FieldLight label="বর্তমান ঠিকানা *"><textarea required rows={2} maxLength={300} value={f.currentAddress} onChange={onIn("currentAddress")} className="vol-input resize-none" /></FieldLight>
+            <FieldLight label="স্থায়ী ঠিকানা *"><textarea required rows={2} maxLength={300} value={f.permanentAddress} onChange={onIn("permanentAddress")} className="vol-input resize-none" /></FieldLight>
+          </div>
         </div>
-        <FieldLight label="শিক্ষাগত যোগ্যতা *">
-          <input required maxLength={200} value={f.qualification} onChange={u("qualification")} className="vol-input" placeholder="যেমন: BBA, ঢাকা বিশ্ববিদ্যালয়" />
-        </FieldLight>
-        <FieldLight label="CV লিংক (Google Drive / Dropbox)">
-          <input type="url" value={f.cv} onChange={u("cv")} className="vol-input" placeholder="https://" />
-        </FieldLight>
-        <FieldLight label="কভার লেটার *">
-          <textarea required rows={4} maxLength={1000} value={f.cover} onChange={u("cover")} className="vol-input resize-none" placeholder="কেন এই পদে আবেদন করছেন তা সংক্ষেপে লিখুন" />
-        </FieldLight>
+
+        {/* 2. Education */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">২. শিক্ষাগত যোগ্যতা</div>
+          <div className="text-xs text-white/80 mb-2">শিক্ষামাধ্যম (একাধিক প্রযোজ্য) *</div>
+          <div className="grid sm:grid-cols-3 gap-2">
+            {educationMediums.map((m) => {
+              const checked = f.educationMediums.includes(m);
+              return (
+                <label key={m} className={`cursor-pointer flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm transition-colors ${checked ? "bg-white/25 border-white text-white" : "bg-white/10 border-white/25 text-white/85 hover:bg-white/15"}`}>
+                  <input type="checkbox" checked={checked} onChange={() => toggleMedium(m)} className="accent-white" />
+                  <span>{m}</span>
+                </label>
+              );
+            })}
+          </div>
+          <div className="mt-3">
+            <FieldLight label="শিক্ষাগত যোগ্যতার বিস্তারিত *">
+              <textarea required rows={2} maxLength={500} value={f.educationDetails} onChange={onIn("educationDetails")} className="vol-input resize-none" placeholder="সর্বশেষ ডিগ্রি, প্রতিষ্ঠান, বছর" />
+            </FieldLight>
+          </div>
+        </div>
+
+        {/* 3. Contact */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">৩. যোগাযোগ ও দক্ষতা</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <FieldLight label="WhatsApp নম্বর *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.whatsapp} onChange={(e) => set("whatsapp", e.target.value.replace(/\D/g, "") as never)} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+            <FieldLight label="ই-মেইল এড্রেস"><input type="email" maxLength={255} value={f.email} onChange={onIn("email")} className="vol-input" /></FieldLight>
+          </div>
+          <div className="mt-3">
+            <FieldLight label="ব্যক্তিগত সোশ্যাল মিডিয়া লিংক">
+              <input type="url" value={f.socialLink} onChange={onIn("socialLink")} className="vol-input" placeholder="Facebook / LinkedIn প্রোফাইল লিংক" />
+            </FieldLight>
+          </div>
+        </div>
+
+        {/* 4. Experience */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">৪. অভিজ্ঞতা ও আগ্রহ</div>
+          <FieldLight label="সামাজিক/স্বেচ্ছাসেবী কাজের পূর্ব অভিজ্ঞতা">
+            <textarea rows={3} maxLength={1000} value={f.experience} onChange={onIn("experience")} className="vol-input resize-none" placeholder="আগের সংগঠন, দায়িত্ব ও সময়কাল" />
+          </FieldLight>
+          <div className="mt-3">
+            <FieldLight label="কেন আপনি ইউনাইট ফাউন্ডেশনের সাথে যুক্ত হতে আগ্রহী? *">
+              <textarea required rows={4} maxLength={1000} value={f.whyJoin} onChange={onIn("whyJoin")} className="vol-input resize-none" />
+            </FieldLight>
+          </div>
+          <div className="mt-3 grid sm:grid-cols-2 gap-3">
+            <FieldLight label="জরুরি যোগাযোগ — নাম *"><input required maxLength={120} value={f.emergencyName} onChange={onIn("emergencyName")} className="vol-input" /></FieldLight>
+            <FieldLight label="জরুরি যোগাযোগ — মোবাইল *"><input required type="tel" inputMode="numeric" maxLength={11} value={f.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value.replace(/\D/g, "") as never)} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          </div>
+        </div>
+
+        {/* 5. Political */}
+        <div>
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">৫. রাজনৈতিক ঘোষণা</div>
+          <div className="text-xs text-white/80 mb-2">বর্তমানে কোনো রাজনৈতিক দল বা সংগঠনের সক্রিয় সদস্য? *</div>
+          <div className="grid grid-cols-2 gap-2">
+            {(["না", "হ্যাঁ"] as const).map((v) => (
+              <label key={v} className={`cursor-pointer flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${f.political === v ? "bg-white/25 border-white text-white" : "bg-white/10 border-white/25 text-white/85 hover:bg-white/15"}`}>
+                <input type="radio" name="political" checked={f.political === v} onChange={() => set("political", v)} className="accent-white" />
+                <span>{v}</span>
+              </label>
+            ))}
+          </div>
+          {f.political === "হ্যাঁ" && (
+            <div className="mt-3">
+              <FieldLight label="বিস্তারিত জানান *">
+                <textarea required rows={2} maxLength={500} value={f.politicalDetails} onChange={onIn("politicalDetails")} className="vol-input resize-none" placeholder="দল/সংগঠনের নাম ও দায়িত্ব" />
+              </FieldLight>
+            </div>
+          )}
+        </div>
+
+        {/* Terms */}
+        <div className="rounded-lg bg-white/10 border border-white/20 p-4 text-xs text-white/85 leading-relaxed">
+          <div className="font-bold text-white mb-1.5">প্রয়োজনীয় শর্তাবলী</div>
+          <ol className="list-decimal pl-4 space-y-1">
+            <li>দ্বীনি জ্ঞান: ইসলামের মৌলিক ইলম ও দ্বীনি বিষয়সমূহ সম্পর্কে মৌলিক জ্ঞান থাকা।</li>
+            <li>সমকালীন সচেতনতা: মিডিয়া ও প্রচারমাধ্যম সম্পর্কে স্বচ্ছ ধারণা।</li>
+            <li>আমল ও সুন্নাহ: ব্যক্তিগত জীবনে আমলী, মুত্তাকি এবং সুন্নাহর একনিষ্ঠ অনুসারী।</li>
+            <li>নিষ্ঠা: মুখলিস এবং আত্মপ্রচারণা ও পার্থিব মোহমুক্ত চারিত্রিক দৃঢ়তা।</li>
+          </ol>
+          <div className="mt-3 font-semibold text-white">তথ্য গোপনীয়তা:</div>
+          <p className="mt-1">আপনার প্রদানকৃত সকল তথ্য কেবল ইউনাইট ফাউন্ডেশনের অভ্যন্তরীণ কার্যক্রমে ব্যবহৃত হবে এবং আপনার অনুমতি ব্যতীত কোনো তৃতীয় পক্ষের কাছে প্রকাশ করা হবে না।</p>
+        </div>
+
+        <label className="flex items-start gap-2.5 text-sm text-white/90 cursor-pointer">
+          <input type="checkbox" checked={f.agree} onChange={(e) => set("agree", e.target.checked as never)} className="mt-1 accent-white" />
+          <span>আমি উপরের শর্তাবলী পড়েছি এবং তথ্য গোপনীয়তার সাথে সম্মত।</span>
+        </label>
+
         <SubmitButton>আবেদন জমা দিন</SubmitButton>
       </form>
     </>
+  );
+};
+
+export default Volunteer;
+
   );
 };
 
