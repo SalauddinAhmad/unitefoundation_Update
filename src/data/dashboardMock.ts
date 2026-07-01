@@ -109,27 +109,46 @@ export const memberApps: Application[] = [
   { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", date: "২০২৬-০৫-২০", status: "approved" },
 ];
 
+// জেলা প্রতিনিধি (District Representative) applications
 export const careerApps: Application[] = [
   {
-    id: "JOB-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "ঢাকা",
-    type: "প্রোগ্রাম অফিসার", date: "২০২৬-০৫-২৫", status: "new",
+    id: "DR-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "কুমিল্লা",
+    type: "চট্টগ্রাম", date: "২০২৬-০৫-২৫", status: "new",
     email: "ariful.islam@example.com", submittedAt: "২০২৬-০৫-২৫ ১১:০২",
     details: [
-      { title: "প্রার্থীর তথ্য", fields: [
-        { label: "নাম", value: "আরিফুল ইসলাম" },
-        { label: "শিক্ষাগত যোগ্যতা", value: "MBA (Marketing) — Dhaka University" },
-        { label: "মোট অভিজ্ঞতা", value: "৫ বছর" },
-        { label: "বর্তমান প্রতিষ্ঠান", value: "BRAC Bangladesh" },
-        { label: "প্রত্যাশিত বেতন", value: "৳ ৬০,০০০" },
+      { title: "ব্যক্তিগত তথ্য", fields: [
+        { label: "পূর্ণ নাম", value: "আরিফুল ইসলাম" },
+        { label: "পিতার নাম", value: "মোঃ ইসমাইল হোসেন" },
+        { label: "জন্ম তারিখ", value: "১২ ফেব্রুয়ারি ১৯৯৫" },
+        { label: "জাতীয় পরিচয়পত্র নং", value: "1987654321012" },
+        { label: "পেশা", value: "শিক্ষক (মাধ্যমিক বিদ্যালয়)" },
+        { label: "শিক্ষাগত যোগ্যতা", value: "M.A. (Islamic Studies) — Chittagong University" },
       ]},
-      { title: "অতিরিক্ত", fields: [
-        { label: "CV লিঙ্ক", value: "https://drive.example.com/ariful-cv.pdf" },
-        { label: "কেন এই পদে?", value: "সমাজকল্যাণমূলক কাজে দক্ষতা কাজে লাগাতে চাই।", long: true },
+      { title: "ঠিকানা", fields: [
+        { label: "বিভাগ", value: "চট্টগ্রাম" },
+        { label: "জেলা", value: "কুমিল্লা" },
+        { label: "উপজেলা", value: "দেবিদ্বার" },
+        { label: "গ্রাম / মহল্লা", value: "উত্তর দেবিদ্বার, ওয়ার্ড ০৩", long: true },
+      ]},
+      { title: "যোগাযোগ", fields: [
+        { label: "মোবাইল", value: "01711999888" },
+        { label: "WhatsApp", value: "01711999888" },
+        { label: "ইমেইল", value: "ariful.islam@example.com" },
+        { label: "ফেসবুক প্রোফাইল", value: "https://facebook.com/ariful.islam" },
+      ]},
+      { title: "প্রতিনিধিত্ব সংক্রান্ত", fields: [
+        { label: "কাঙ্ক্ষিত এলাকা", value: "কুমিল্লা জেলা" },
+        { label: "প্রতিদিন সময় দিতে পারবেন", value: "২-৩ ঘণ্টা" },
+        { label: "পূর্ব সাংগঠনিক অভিজ্ঞতা", value: "স্থানীয় ইসলামিক ফাউন্ডেশনে ৩ বছর সাধারণ সম্পাদক", long: true },
+        { label: "রেফারেন্স (নাম ও ফোন)", value: "মাওলানা আব্দুল হক — 01911223344", long: true },
+        { label: "কেন জেলা প্রতিনিধি হতে চান?", value: "নিজ এলাকায় ইউনাইট ফাউন্ডেশনের দাওয়াহ ও সমাজকল্যাণমূলক কার্যক্রম বিস্তারে অবদান রাখতে চাই।", long: true },
       ]},
     ],
   },
-  { id: "JOB-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "চট্টগ্রাম", type: "একাউন্টস / ফাইন্যান্স", date: "২০২৬-০৫-২৪", status: "reviewing" },
-  { id: "JOB-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "ঢাকা", type: "সফটওয়্যার / আইটি", date: "২০২৬-০৫-২২", status: "approved" },
+  { id: "DR-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "সিলেট", type: "সিলেট", date: "২০২৬-০৫-২৪", status: "reviewing" },
+  { id: "DR-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "রংপুর", type: "রংপুর", date: "২০২৬-০৫-২২", status: "approved" },
+  { id: "DR-0039", name: "মাহমুদুল হাসান", phone: "01611445566", city: "বগুড়া", type: "রাজশাহী", date: "২০২৬-০৫-২১", status: "new" },
+  { id: "DR-0038", name: "তাহমিনা বেগম", phone: "01555778899", city: "যশোর", type: "খুলনা", date: "২০২৬-০৫-২০", status: "reviewing" },
 ];
 
 export type Project = {

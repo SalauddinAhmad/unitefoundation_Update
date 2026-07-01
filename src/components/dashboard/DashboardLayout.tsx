@@ -32,7 +32,7 @@ const menu = [
   { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট" },
   { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি" },
   { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", badge: "৪" },
-  { to: "/dashboard/careers", icon: Briefcase, label: "ক্যারিয়ার" },
+  { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি" },
   { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম" },
 ];
 
