@@ -88,6 +88,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-training-center",
+    theme: "green",
     name: "ইউনাইট ট্রেনিং সেন্টার",
     logo: uniteTrainingCenter,
     tagline: "দক্ষতা উন্নয়ন ও আত্ম-নির্ভরশীলতার শিক্ষায়",
