@@ -16,10 +16,28 @@ export const site = {
     bank: {
       bank: "Islami Bank Bangladesh Ltd.",
       branch: "Uttara Branch",
-      account: "Abdullah Al Mujahid",
-      number: "20502070205708118",
+      account: "Unite Training Center",
+      number: "20502070100758906",
       routing: "IBBLBDDH207",
     },
+    banks: [
+      {
+        bank: "Islami Bank Bangladesh",
+        branch: "Uttara",
+        account: "Unite Training Center",
+        number: "20502070100758906",
+        routing: "",
+        swift: "",
+      },
+      {
+        bank: "City Bank",
+        branch: "Uttara",
+        account: "Unite Training Center",
+        number: "1254971392001",
+        routing: "225264634",
+        swift: "CIBLBDDH",
+      },
+    ],
   },
   socials: {
     facebook: "https://www.facebook.com/UniteFoundation.UniteTv",
