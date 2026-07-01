@@ -892,5 +892,3 @@ const RepresentativeForm = () => {
 };
 
 export default Volunteer;
-
-export default Volunteer;
