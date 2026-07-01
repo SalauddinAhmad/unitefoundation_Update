@@ -86,11 +86,8 @@ const Messages = () => {
         setSmtpError("");
       } catch (e: unknown) {
         setSmtpStatus("fail");
-        const msg =
-          e && typeof e === "object" && "data" in e
-            ? String((e as { data?: { error?: string; message?: string } }).data?.error || (e as { data?: { message?: string } }).data?.message || (e as Error).message)
-            : String((e as Error)?.message || e);
-        setSmtpError(msg);
+        const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+        setSmtpError(anyE?.data?.error || anyE?.data?.message || anyE?.message || String(e));
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
