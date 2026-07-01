@@ -204,17 +204,6 @@ const About = () => (
               <li>• সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।</li>
             </ul>
           </div>
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-card bg-accent flex items-center justify-center text-primary"><Eye className="h-5 w-5" /></div>
-              <h2 className="text-2xl font-bold">আমাদের ভিশন</h2>
-            </div>
-            <p className="text-muted-foreground leading-[1.85]">
-              মহান আল্লাহর সন্তুষ্টি অর্জন ও জান্নাতুল ফিরদাউস লাভের প্রত্যাশায় — এমন একটি
-              সমাজ গড়ে তোলা, যেখানে কুরআন-সুন্নাহর আলোকে মানুষ সচেতনভাবে জীবনযাপন করবে এবং
-              পারস্পরিক সহযোগিতার মাধ্যমে কেউ অভাবে কষ্ট পাবে না।
-            </p>
-          </div>
         </div>
       </div>
     </section>
