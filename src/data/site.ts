@@ -57,4 +57,5 @@ export const nav = [
   { label: "ব্লগ", href: "/blog" },
   { label: "স্বেচ্ছাসেবক", href: "/volunteer" },
   { label: "যোগাযোগ", href: "/contact" },
+  { label: "দান করুন", href: "/donate" },
 ];

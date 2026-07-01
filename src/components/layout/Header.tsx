@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Heart, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { nav, site } from "@/data/site";
 import logo from "@/assets/logo.svg";
@@ -80,14 +80,8 @@ export const Header = () => {
             ))}
           </nav>
 
-          {/* CTAs */}
+          {/* Mobile menu toggle */}
           <div className="relative flex items-center gap-2">
-            <Link
-              to="/donate"
-              className="btn-donate text-sm rounded-full px-5 py-2.5"
-            >
-              <Heart className="h-4 w-4" aria-hidden /> দান করুন
-            </Link>
             <button
               className="lg:hidden p-2 rounded-full text-foreground hover:bg-accent transition-colors"
               onClick={() => setOpen((v) => !v)}
@@ -117,12 +111,6 @@ export const Header = () => {
                   {item.label}
                 </NavLink>
               ))}
-              <Link
-                to="/donate"
-                className="mt-2 btn-donate text-sm rounded-full px-5 py-3"
-              >
-                <Heart className="h-4 w-4" /> দান করুন
-              </Link>
             </nav>
           </div>
         )}
