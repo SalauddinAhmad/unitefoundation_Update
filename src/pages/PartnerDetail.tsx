@@ -95,7 +95,7 @@ const PartnerDetail = () => {
                       href={partner.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-7 py-3.5 bg-[hsl(var(--donate-highlight))] text-primary rounded-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                      className="btn-donate inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
                     >
                       ওয়েবসাইট ভিজিট করুন <ArrowUpRight className="w-4 h-4" />
                     </a>
@@ -245,7 +245,7 @@ const PartnerDetail = () => {
                           href={partner.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 py-3.5 bg-[hsl(var(--donate-highlight))] hover:brightness-110 text-primary font-bold rounded-xl transition-all shadow-lg"
+                          className="btn-donate flex items-center justify-center gap-2 py-3.5 font-bold rounded-xl transition-all shadow-lg"
                         >
                           ওয়েবসাইট ভিজিট করুন <ArrowUpRight className="w-4 h-4" />
                         </a>
