@@ -28,16 +28,17 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SITE_URL: https://unitefoundation.bd
 
-      - name: Deploy frontend via FTP
+      - name: Deploy frontend via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.unitefoundation.bd
           username: deploy@unitefoundation.bd
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          protocol: ftp
+          protocol: ftps
           local-dir: ./dist/
           server-dir: /
+          timeout: 60000
           dangerous-clean-slate: false
           exclude: |
             **/.git*
@@ -46,9 +47,7 @@ jobs:
             **/.htaccess
 
   # ────────────────────────────────────────────────────────────
-  # 2. BACKEND — server/ → cPanel Node.js app root (../api/)
-  # cPanel Node.js App Manager: Application root = "api"
-  # Startup file = "app.js" ; Node version = 20
+  # 2. BACKEND — server/ → cPanel Node.js app root
   # ────────────────────────────────────────────────────────────
   backend:
     runs-on: ubuntu-latest
@@ -59,25 +58,20 @@ jobs:
         run: |
           mkdir -p out
           rsync -a --exclude 'node_modules' --exclude '.env' --exclude 'uploads' server/ out/
-          # touch restart trigger for Passenger / cPanel Node app
           mkdir -p out/tmp
           date > out/tmp/restart.txt
 
-      - name: Deploy backend via FTP
+      - name: Deploy backend via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.unitefoundation.bd
           username: deploy@unitefoundation.bd
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          protocol: ftp
+          protocol: ftps
           local-dir: ./out/
-          # NOTE: FTP account is chrooted to /public_html.
-          # In cPanel, set the Node.js App's Application root to a folder
-          # accessible from this FTP user — recommended: /public_html/api-app
-          # Then set the subdomain api.unitefoundation.bd to point to that
-          # same folder's `public` (or use the Node app URL directly).
           server-dir: /api-app/
+          timeout: 60000
           dangerous-clean-slate: false
           exclude: |
             **/.git*
