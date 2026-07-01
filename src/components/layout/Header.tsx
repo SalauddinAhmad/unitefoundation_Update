@@ -111,12 +111,6 @@ export const Header = () => {
                   {item.label}
                 </NavLink>
               ))}
-              <Link
-                to="/donate"
-                className="mt-2 btn-donate text-sm rounded-full px-5 py-3"
-              >
-                <Heart className="h-4 w-4" /> দান করুন
-              </Link>
             </nav>
           </div>
         )}
