@@ -464,17 +464,6 @@ const About = () => (
 
 
 
-    <section className="section-y">
-      <div className="container-page">
-        <div className="rounded-card gradient-donate-bg p-10 md:p-14 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold">আমাদের যাত্রায় অংশীদার হোন</h2>
-          <p className="mt-3 text-white/90 max-w-xl mx-auto">আপনার একটি দান আমাদের পরবর্তী মাইলফলকের সূচনা হতে পারে।</p>
-          <Link to="/donate" className="mt-6 inline-flex items-center gap-2 rounded-btn bg-white text-foreground font-bold px-6 py-3 hover:bg-white/90 transition-colors">
-            <Heart className="h-5 w-5 text-donate-red" /> এখনই দান করুন
-          </Link>
-        </div>
-      </div>
-    </section>
   </SiteLayout>
 );
 
