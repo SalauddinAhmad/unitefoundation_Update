@@ -101,14 +101,28 @@ const volunteerSchema = z.object({
   motivation: z.string().trim().min(10, "অন্তত ১০ অক্ষর লিখুন").max(1000),
 });
 
-const careerSchema = z.object({
-  ...baseContact,
-  position: z.string().min(1, "পদ নির্বাচন করুন"),
-  experience: z.string().min(1, "অভিজ্ঞতা নির্বাচন করুন"),
-  qualification: z.string().trim().min(2, "শিক্ষাগত যোগ্যতা দিন").max(200),
-  cv: z.string().trim().url("CV লিংক দিন (Google Drive/Dropbox)").or(z.literal("")),
-  cover: z.string().trim().min(10, "অন্তত ১০ অক্ষর লিখুন").max(1000),
+const representativeSchema = z.object({
+  fullName: z.string().trim().min(2, "পুরো নাম লিখুন").max(120),
+  guardianName: z.string().trim().min(2, "পিতা/অভিভাবকের নাম লিখুন").max(120),
+  dob: z.string().trim().min(1, "জন্ম তারিখ দিন"),
+  nid: z.string().trim().regex(/^\d{10,17}$/, "সঠিক NID নম্বর দিন"),
+  currentAddress: z.string().trim().min(5, "বর্তমান ঠিকানা দিন").max(300),
+  permanentAddress: z.string().trim().min(5, "স্থায়ী ঠিকানা দিন").max(300),
+  profession: z.string().min(1, "পেশা নির্বাচন করুন"),
+  educationMediums: z.array(z.string()).min(1, "অন্তত একটি শিক্ষামাধ্যম নির্বাচন করুন"),
+  educationDetails: z.string().trim().min(2, "শিক্ষাগত যোগ্যতার বিস্তারিত দিন").max(500),
+  whatsapp: z.string().trim().regex(/^01[3-9]\d{8}$/, "সঠিক WhatsApp নম্বর দিন"),
+  email: z.string().trim().email("সঠিক ই-মেইল দিন").max(255).or(z.literal("")),
+  socialLink: z.string().trim().url("সঠিক সোশ্যাল মিডিয়া লিংক দিন").or(z.literal("")),
+  district: z.string().trim().min(2, "জেলা লিখুন").max(80),
+  experience: z.string().trim().max(1000).or(z.literal("")),
+  whyJoin: z.string().trim().min(10, "অন্তত ১০ অক্ষর লিখুন").max(1000),
+  emergencyName: z.string().trim().min(2, "নাম লিখুন").max(120),
+  emergencyPhone: z.string().trim().regex(/^01[3-9]\d{8}$/, "সঠিক মোবাইল নম্বর দিন"),
+  political: z.enum(["না", "হ্যাঁ"], { message: "নির্বাচন করুন" }),
+  politicalDetails: z.string().trim().max(500).or(z.literal("")),
 });
+
 
 // ---------- Helpers ----------
 const buildWhatsAppUrl = (title: string, body: string) => {
