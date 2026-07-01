@@ -15,6 +15,14 @@ const PartnerDetail = () => {
 
   const others = partners.filter((p) => p.slug !== partner.slug);
   const year = partner.established?.match(/\d{4}|[০-৯]{4}/)?.[0] || "—";
+  const tokens = partnerThemeTokens[partner.theme ?? "green"];
+  const themeStyle = {
+    ["--primary" as any]: tokens.primary,
+    ["--primary-foreground" as any]: tokens.primaryForeground,
+    ["--donate-highlight" as any]: tokens.highlight,
+    ["--donate-highlight-foreground" as any]: tokens.highlightForeground,
+    ["--ring" as any]: tokens.primary,
+  } as React.CSSProperties;
 
   return (
     <SiteLayout>
