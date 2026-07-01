@@ -300,7 +300,7 @@ const About = () => (
           {/* Left: Card */}
           <div className="flex justify-center md:justify-start order-2 md:order-1">
             <article
-              className="group relative w-full max-w-sm rounded-[32px] bg-[#151515] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06] transition-transform duration-500 hover:-translate-y-1"
+              className="group relative w-full max-w-sm rounded-[32px] bg-gradient-to-br from-[#F5EFE2] to-[#EADFC7] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-amber-900/10 transition-transform duration-500 hover:-translate-y-1"
             >
               {/* Portrait */}
               <div className="relative overflow-hidden rounded-[22px] bg-neutral-800">
