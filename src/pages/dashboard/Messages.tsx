@@ -127,7 +127,6 @@ const Messages = () => {
   };
 
   const sendReply = async () => {
-  const sendReply = async () => {
     if (!active || !replyText.trim()) return;
     setSending(true);
     try {
