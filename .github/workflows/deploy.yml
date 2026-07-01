@@ -55,6 +55,7 @@ jobs:
   # 2. BACKEND — server/ → /public_html/api-app/
   # ────────────────────────────────────────────────────────────
   backend:
+    if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
