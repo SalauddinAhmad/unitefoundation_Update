@@ -184,29 +184,61 @@ const About = () => (
       subtitle="ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম — কুরআন ও সহীহ হাদীছের আলোকে দাওয়াহ, তালীম ও সমাজকল্যাণে নিবেদিত।"
     />
 
-    <section className="section-y">
-      <div className="container-page grid lg:grid-cols-2 gap-12 items-center">
-        <div className="rounded-card overflow-hidden shadow-card">
-          <img src={about} alt="স্বেচ্ছাসেবকদের কাজ" loading="lazy" width={1200} height={900} className="w-full h-auto" />
+    <section className="section-y relative overflow-hidden">
+      {/* subtle background flourish */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-accent/40 blur-3xl" />
+      </div>
+
+      <div className="container-page">
+        <div className="max-w-3xl">
+          <span className="eyebrow inline-flex items-center gap-2">
+            <Target className="h-3.5 w-3.5" /> আমাদের লক্ষ্য
+          </span>
+          <h2 className="heading-display mt-3">
+            যে ছয়টি লক্ষ্য নিয়ে <span className="text-primary">আমরা এগিয়ে চলি</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground leading-[1.9]">
+            কুরআন ও সহীহ হাদীছের আলোকে দাওয়াহ, তালীম ও সমাজকল্যাণ — এই তিনটি স্তম্ভের উপর
+            দাঁড়িয়ে আমরা যে সুনির্দিষ্ট পথে হাঁটছি।
+          </p>
         </div>
-        <div className="space-y-6">
-          <div>
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-card bg-accent flex items-center justify-center text-primary"><Target className="h-5 w-5" /></div>
-              <h2 className="text-2xl font-bold">আমাদের লক্ষ্য</h2>
-            </div>
-            <ul className="space-y-2 text-muted-foreground leading-[1.85] text-sm">
-              <li>• সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।</li>
-              <li>• তরুণ ও ছাত্র সমাজকে যোগ্য ও তাক্বওয়াশীল দাঈ ইলাল্লাহ হিসেবে গঠন করা।</li>
-              <li>• বিশুদ্ধ আক্বীদা ও আমল সম্পর্কে সমাজে সচেতনতা সৃষ্টি করা।</li>
-              <li>• ইসলামী শিক্ষা ও সংস্কৃতির নীতি প্রণয়ন ও বাস্তবায়ন।</li>
-              <li>• ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সটিক অনুবাদ প্রকাশ।</li>
-              <li>• সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।</li>
-            </ul>
-          </div>
+
+        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[
+            "সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।",
+            "তরুণ ও ছাত্র সমাজকে যোগ্য ও তাক্বওয়াশীল দাঈ ইলাল্লাহ হিসেবে গঠন করা।",
+            "বিশুদ্ধ আক্বীদা ও আমল সম্পর্কে সমাজে সচেতনতা সৃষ্টি করা।",
+            "ইসলামী শিক্ষা ও সংস্কৃতির নীতি প্রণয়ন ও বাস্তবায়ন।",
+            "ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সহীহ অনুবাদ প্রকাশ।",
+            "সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।",
+          ].map((goal, i) => (
+            <article
+              key={i}
+              className="group relative rounded-2xl border border-border/70 bg-card p-7 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-primary/40 transition-all duration-300"
+            >
+              {/* accent top bar */}
+              <div className="absolute inset-x-7 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              <div className="flex items-start justify-between gap-4">
+                <span className="font-serif text-5xl leading-none text-primary/15 group-hover:text-primary/30 transition-colors tracking-tight">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="h-10 w-10 rounded-xl bg-accent flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <CheckCircle2 className="h-5 w-5" />
+                </div>
+              </div>
+
+              <p className="mt-5 text-foreground leading-[1.85] text-[15px]">
+                {goal}
+              </p>
+            </article>
+          ))}
         </div>
       </div>
     </section>
+
 
     <section className="section-y bg-secondary/40">
       <div className="container-page">
