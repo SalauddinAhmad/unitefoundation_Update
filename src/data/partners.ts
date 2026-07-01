@@ -55,6 +55,7 @@ export const partnerThemeTokens: Record<PartnerTheme, {
 export const partners: Partner[] = [
   {
     slug: "unite-tv",
+    theme: "red",
     name: "Unite TV",
     logo: uniteTv,
     tagline: "মানবতার কণ্ঠস্বর — সত্য, সচেতনতা ও সেবার মিডিয়া",
