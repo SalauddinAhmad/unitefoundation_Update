@@ -1,4 +1,4 @@
-import { CheckCircle2, Heart, Target, Eye, Users } from "lucide-react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
