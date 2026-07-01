@@ -37,7 +37,7 @@ jobs:
         run: bash scripts/deploy-cpanel-api.sh dist public_html
 
   # ────────────────────────────────────────────────────────────
-  # 2. BACKEND — server/ → /api-app/
+  # 2. BACKEND — server/ → /public_html/api-app/
   # ────────────────────────────────────────────────────────────
   backend:
     runs-on: ubuntu-latest
@@ -58,4 +58,4 @@ jobs:
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-        run: bash scripts/deploy-cpanel-api.sh out api-app
+        run: bash scripts/deploy-cpanel-api.sh out public_html/api-app

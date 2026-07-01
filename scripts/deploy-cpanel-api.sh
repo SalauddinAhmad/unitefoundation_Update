@@ -106,6 +106,7 @@ upload_file() {
 }
 
 echo "Deploying ${LOCAL_DIR} to cPanel:${REMOTE_DIR} via HTTPS API"
+echo "Remote absolute path: ${CPANEL_HOME%/}/${REMOTE_DIR#/}"
 
 mapfile -d '' files < <(find "$LOCAL_DIR" -type f -print0 | sort -z)
 
