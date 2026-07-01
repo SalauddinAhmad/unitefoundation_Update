@@ -27,26 +27,33 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SITE_URL: https://unitefoundation.bd
 
-      - name: Deploy frontend via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.unitefoundation.bd
-          username: deploy@unitefoundation.bd
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftps
-          local-dir: ./dist/
-          server-dir: /
-          timeout: 60000
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.htaccess
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy frontend via lftp
+        env:
+          FTP_HOST: ftp.unitefoundation.bd
+          FTP_USER: deploy@unitefoundation.bd
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+            set ftp:ssl-allow no;
+            set ssl:verify-certificate no;
+            set net:timeout 20;
+            set net:max-retries 3;
+            set net:reconnect-interval-base 5;
+            set ftp:passive-mode on;
+            set ftp:use-feat no;
+            open -u \"$FTP_USER\",\"$FTP_PASS\" ftp://$FTP_HOST;
+            mirror -R --parallel=2 --verbose \
+              --exclude-glob .git* \
+              --exclude-glob node_modules/ \
+              --exclude-glob .htaccess \
+              ./dist/ /;
+          "
 
   # ────────────────────────────────────────────────────────────
-  # 2. BACKEND — server/ → cPanel Node.js app root
+  # 2. BACKEND — server/ → /api-app/
   # ────────────────────────────────────────────────────────────
   backend:
     runs-on: ubuntu-latest
@@ -60,21 +67,29 @@ jobs:
           mkdir -p out/tmp
           date > out/tmp/restart.txt
 
-      - name: Deploy backend via FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.unitefoundation.bd
-          username: deploy@unitefoundation.bd
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftps
-          local-dir: ./out/
-          server-dir: /api-app/
-          timeout: 60000
-          dangerous-clean-slate: false
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.env
-            **/uploads/**
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy backend via lftp
+        env:
+          FTP_HOST: ftp.unitefoundation.bd
+          FTP_USER: deploy@unitefoundation.bd
+          FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp -c "
+            set ftp:ssl-allow no;
+            set ssl:verify-certificate no;
+            set net:timeout 20;
+            set net:max-retries 3;
+            set net:reconnect-interval-base 5;
+            set ftp:passive-mode on;
+            set ftp:use-feat no;
+            open -u \"$FTP_USER\",\"$FTP_PASS\" ftp://$FTP_HOST;
+            mkdir -p -f /api-app;
+            mirror -R --parallel=2 --verbose \
+              --exclude-glob .git* \
+              --exclude-glob node_modules/ \
+              --exclude-glob .env \
+              --exclude-glob uploads/ \
+              ./out/ /api-app/;
+          "
