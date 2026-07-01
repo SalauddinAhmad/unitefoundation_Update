@@ -60,6 +60,41 @@ const Messages = () => {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
+  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "checking">("idle");
+  const [smtpError, setSmtpError] = useState<string>("");
+
+  // Load messages from backend + SMTP health check
+  useEffect(() => {
+    (async () => {
+      try {
+        const rows = await api.get<MessageEx[]>("/messages");
+        if (Array.isArray(rows) && rows.length) {
+          setList(rows);
+          persist(rows);
+          if (!selected) setSelected(rows[0]?.id);
+        }
+      } catch (e) {
+        // Backend unreachable — keep local seed
+        console.warn("[messages] backend fetch failed", e);
+      }
+    })();
+    (async () => {
+      setSmtpStatus("checking");
+      try {
+        await api.get("/messages/smtp/test");
+        setSmtpStatus("ok");
+        setSmtpError("");
+      } catch (e: unknown) {
+        setSmtpStatus("fail");
+        const msg =
+          e && typeof e === "object" && "data" in e
+            ? String((e as { data?: { error?: string; message?: string } }).data?.error || (e as { data?: { message?: string } }).data?.message || (e as Error).message)
+            : String((e as Error)?.message || e);
+        setSmtpError(msg);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const active = useMemo(
     () => list.find((m) => m.id === selected) || list[0],
