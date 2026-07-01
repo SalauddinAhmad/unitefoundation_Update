@@ -212,6 +212,38 @@ const Messages = () => {
         }
       />
 
+      {/* SMTP status banner */}
+      {smtpStatus !== "idle" && smtpStatus !== "ok" && (
+        <div
+          className={
+            "mb-4 rounded-lg border px-4 py-3 text-sm flex items-start gap-3 " +
+            (smtpStatus === "fail"
+              ? "border-destructive/30 bg-destructive/5 text-destructive"
+              : "border-border bg-secondary/40 text-muted-foreground")
+          }
+        >
+          <Mail className="h-4 w-4 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            {smtpStatus === "checking" && <span>SMTP সার্ভার যাচাই করা হচ্ছে...</span>}
+            {smtpStatus === "fail" && (
+              <>
+                <div className="font-semibold">SMTP সার্ভার কাজ করছে না — মেসেজ পাঠানো যাবে না</div>
+                <div className="text-xs mt-1 break-all opacity-90">{smtpError}</div>
+                <div className="text-xs mt-2 text-foreground/70">
+                  cPanel → Setup Node.js App → Environment Variables-এ যোগ করুন:{" "}
+                  <code className="font-mono">SMTP_HOST</code>,{" "}
+                  <code className="font-mono">SMTP_PORT</code>,{" "}
+                  <code className="font-mono">SMTP_USER</code>,{" "}
+                  <code className="font-mono">SMTP_PASS</code>,{" "}
+                  <code className="font-mono">SMTP_FROM</code> → তারপর app <b>Restart</b> করুন।
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+
       <Card pad={false} className="overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] min-h-[600px]">
           {/* List */}
