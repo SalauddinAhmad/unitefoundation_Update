@@ -283,178 +283,101 @@ const About = () => (
     </section>
 
     <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white">
-      {/* Layered decorative background */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 20%, #ffffff 1px, transparent 1px), radial-gradient(circle at 80% 60%, #ffffff 1px, transparent 1px)",
-          backgroundSize: "48px 48px, 72px 72px",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, transparent 46%, #ffffff 47%, #ffffff 53%, transparent 54%), linear-gradient(45deg, transparent 46%, #ffffff 47%, #ffffff 53%, transparent 54%)",
-          backgroundSize: "80px 80px",
-        }}
-      />
-      <div className="pointer-events-none absolute -top-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-primary/25 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-24 h-[28rem] w-[28rem] rounded-full bg-donate-red/15 blur-3xl" />
-
-      {/* Huge editorial watermark */}
+      {/* Subtle dotted texture */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-16 -translate-x-1/2 select-none font-en text-[16rem] md:text-[22rem] font-black leading-none tracking-tighter text-white/[0.03]"
-      >
-        Founder
-      </div>
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage: "radial-gradient(circle at 50% 50%, #ffffff 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+      <div className="pointer-events-none absolute -top-40 right-1/4 h-[26rem] w-[26rem] rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 left-1/4 h-[26rem] w-[26rem] rounded-full bg-donate-red/10 blur-3xl" />
 
       <div className="container-page relative">
         {/* Header */}
         <div className="flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-amber-200 backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5" /> Est. 2017 · প্রতিষ্ঠাতা
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-white/70 backdrop-blur">
+            <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Leadership
           </span>
-          <h2 className="mt-5 text-4xl md:text-6xl font-extrabold leading-[1.05]">
+          <h2 className="mt-5 text-3xl md:text-5xl font-extrabold leading-[1.1]">
             প্রতিষ্ঠাতা ও{" "}
             <span className="bg-gradient-to-r from-amber-200 via-amber-400 to-donate-orange bg-clip-text text-transparent">
               চেয়ারম্যান
             </span>
           </h2>
-          <div className="mt-5 flex items-center gap-3">
-            <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70" />
-            <span className="h-2 w-2 rotate-45 bg-amber-300" />
-            <span className="h-px w-16 bg-gradient-to-l from-transparent to-amber-300/70" />
-          </div>
+          <p className="mt-4 max-w-xl text-white/60 text-sm md:text-base leading-relaxed">
+            এক স্বপ্ন থেকে শুরু হওয়া যাত্রার পথপ্রদর্শক — সুন্নাহর অনুসরণে মানবতার কল্যাণে।
+          </p>
         </div>
 
-        {/* Editorial card */}
-        <div className="relative mt-16 mx-auto max-w-6xl">
-          {/* corner ornaments */}
-          <div className="pointer-events-none absolute -top-3 -left-3 h-10 w-10 border-t-2 border-l-2 border-amber-300/60 rounded-tl-2xl" />
-          <div className="pointer-events-none absolute -top-3 -right-3 h-10 w-10 border-t-2 border-r-2 border-amber-300/60 rounded-tr-2xl" />
-          <div className="pointer-events-none absolute -bottom-3 -left-3 h-10 w-10 border-b-2 border-l-2 border-amber-300/60 rounded-bl-2xl" />
-          <div className="pointer-events-none absolute -bottom-3 -right-3 h-10 w-10 border-b-2 border-r-2 border-amber-300/60 rounded-br-2xl" />
-
-          <div className="relative grid md:grid-cols-[minmax(0,380px)_1fr] gap-10 md:gap-14 items-stretch rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent backdrop-blur-xl p-6 md:p-12 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
-            {/* Portrait column */}
-            <div className="relative">
-              {/* Serial number */}
-              <div className="absolute -top-2 -left-2 z-20 flex flex-col items-center rounded-xl bg-[#0C2B1D] border border-amber-300/40 px-2.5 py-1.5 shadow-lg">
-                <span className="text-[9px] font-bold tracking-widest text-amber-300/80">NO.</span>
-                <span className="text-lg font-extrabold text-amber-300 leading-none">০১</span>
-              </div>
-
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-[28px] bg-gradient-to-br from-amber-400/40 via-primary/25 to-donate-red/30 blur-2xl" />
-                <div className="relative rounded-[24px] p-[2px] bg-gradient-to-br from-amber-200 via-amber-400/50 to-donate-red">
-                  <div className="rounded-[22px] overflow-hidden bg-[#0C2B1D] relative">
-                    <img
-                      src={team[0].img}
-                      alt={team[0].name}
-                      loading="lazy"
-                      width={520}
-                      height={640}
-                      className="h-[420px] w-full md:h-[500px] object-cover object-center"
-                    />
-                    {/* bottom gradient overlay */}
-                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#0C2B1D] via-[#0C2B1D]/40 to-transparent" />
-                    {/* Arabic seal */}
-                    <div className="absolute bottom-3 right-3 flex h-14 w-14 items-center justify-center rounded-full border border-amber-300/60 bg-[#0C2B1D]/70 backdrop-blur-sm">
-                      <span className="text-amber-300 text-xl font-bold" style={{ fontFamily: "serif" }}>
-                        ﷽
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Badge */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-600 text-[#0C2B1D] text-[11px] font-extrabold tracking-widest uppercase px-5 py-2 shadow-xl ring-1 ring-amber-200/50">
-                  Founder · Chairman
-                </div>
-              </div>
+        {/* Profile card — dribbble style */}
+        <div className="mt-14 flex justify-center">
+          <article
+            className="group relative w-full max-w-sm rounded-[32px] bg-[#151515] p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.06] transition-transform duration-500 hover:-translate-y-1"
+          >
+            {/* Portrait */}
+            <div className="relative overflow-hidden rounded-[22px] bg-neutral-800">
+              <img
+                src={team[0].img}
+                alt={team[0].name}
+                loading="lazy"
+                width={520}
+                height={560}
+                className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
+              />
             </div>
 
-            {/* Content column */}
-            <div className="relative flex flex-col justify-center text-center md:text-left">
-              <p className="text-amber-300 text-[11px] font-bold tracking-[0.28em] uppercase">
-                প্রতিষ্ঠাতা ও চেয়ারম্যান
-              </p>
-              <h3 className="mt-2 text-4xl md:text-5xl font-extrabold text-white leading-[1.05]">
+            {/* Name row */}
+            <div className="mt-5 flex items-center gap-2 px-1">
+              <h3 className="text-xl md:text-2xl font-extrabold text-white leading-tight">
                 {team[0].name}
               </h3>
-              <p className="mt-2 font-en text-sm text-white/50 tracking-wide">
-                Abdullah Bin Ershad — Unite Foundation
-              </p>
-
-              <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
-                <span className="h-px w-10 bg-amber-300/60" />
-                <span className="text-[10px] tracking-[0.3em] font-bold text-amber-300/80 uppercase">
-                  Vision Statement
-                </span>
-                <span className="h-px w-10 bg-amber-300/60" />
-              </div>
-
-              <blockquote className="relative mt-5 text-white/90 text-base md:text-lg leading-[1.9] italic pl-6 border-l-2 border-amber-300/40">
-                <span className="absolute -left-1 -top-6 text-6xl text-amber-300/50 font-serif leading-none select-none">
-                  “
-                </span>
-                সুন্নাহর অনুসরণে মানবতার কল্যাণই আমাদের পথ। একটি সুশৃঙ্খল, স্বচ্ছ ও
-                দীর্ঘমেয়াদি ইসলামিক প্লাটফর্ম গড়ে তোলাই ইউনাইট ফাউন্ডেশনের স্বপ্ন — যা
-                প্রজন্ম থেকে প্রজন্মে কল্যাণ পৌঁছে দেবে ইনশাআল্লাহ।
-              </blockquote>
-
-              {/* Stats */}
-              <div className="mt-8 grid grid-cols-3 gap-3 max-w-lg mx-auto md:mx-0">
-                {[
-                  { k: "২০১৭", v: "যাত্রা শুরু" },
-                  { k: "১০+", v: "বছরের নেতৃত্ব" },
-                  { k: "৫", v: "অঙ্গ প্রতিষ্ঠান" },
-                ].map((s) => (
-                  <div
-                    key={s.k}
-                    className="group relative rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-4 text-center transition-all hover:border-amber-300/40 hover:bg-white/[0.07]"
-                  >
-                    <div className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/60 to-transparent" />
-                    <div className="text-xl md:text-2xl font-extrabold bg-gradient-to-b from-amber-200 to-amber-500 bg-clip-text text-transparent">
-                      {s.k}
-                    </div>
-                    <div className="mt-1 text-[11px] md:text-xs text-white/70 leading-tight">
-                      {s.v}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Tags */}
-              <div className="mt-6 flex flex-wrap gap-2 justify-center md:justify-start">
-                {["দাওয়াহ", "শিক্ষা", "সমাজকল্যাণ", "নেতৃত্ব", "স্বচ্ছতা"].map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-200"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              {/* Signature line */}
-              <div className="mt-8 flex items-center gap-4 justify-center md:justify-start">
-                <div
-                  className="text-2xl md:text-3xl text-amber-200/90"
-                  style={{ fontFamily: "'Brush Script MT', cursive", transform: "rotate(-4deg)" }}
-                >
-                  Abdullah
-                </div>
-                <div className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-amber-300/50 to-transparent" />
-                <span className="text-[10px] tracking-[0.28em] font-bold text-white/50 uppercase">
-                  Signature
-                </span>
-              </div>
+              {/* Verified seal */}
+              <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center">
+                <svg viewBox="0 0 24 24" className="absolute inset-0 h-full w-full text-primary" fill="currentColor" aria-hidden>
+                  <path d="M12 1.5l2.5 2.2 3.3-.4.9 3.2 3 1.4-.9 3.2 1.7 2.9-2.4 2.3.4 3.3-3.2.9-1.4 3-3.2-.9L12 22.5 9.5 20.3l-3.3.4-.9-3.2-3-1.4.9-3.2L1.5 10l2.4-2.3-.4-3.3 3.2-.9 1.4-3 3.2.9L12 1.5z" />
+                </svg>
+                <svg viewBox="0 0 24 24" className="relative h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <polyline points="5 12 10 17 19 8" />
+                </svg>
+              </span>
             </div>
-          </div>
+
+            {/* Tagline */}
+            <p className="mt-2 px-1 text-sm text-white/55 leading-relaxed">
+              সুন্নাহর অনুসরণে মানবতার কল্যাণে নিবেদিত একজন দাঈ ও সংগঠক।
+            </p>
+
+            {/* Bottom row: stats + CTA */}
+            <div className="mt-5 flex items-center justify-between px-1">
+              <div className="flex items-center gap-4 text-white/70 text-sm">
+                <span className="inline-flex items-center gap-1.5">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                  <span className="font-semibold text-white">২০১৭</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="3" y="3" width="14" height="14" rx="2" />
+                    <path d="M7 7h10v10" />
+                  </svg>
+                  <span className="font-semibold text-white">৫</span>
+                </span>
+              </div>
+
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0C2B1D] transition-all hover:bg-amber-200 hover:shadow-[0_10px_30px_-10px_rgba(251,191,36,0.6)]"
+              >
+                অনুসরণ
+                <span className="text-base leading-none">+</span>
+              </button>
+            </div>
+          </article>
         </div>
       </div>
     </section>
