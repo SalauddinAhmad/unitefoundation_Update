@@ -190,7 +190,7 @@ const About = () => (
       <div className="container-page relative">
         <div className="text-center max-w-3xl mx-auto">
           <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> আমাদের যাত্রা</span>
-          <h2 className="heading-display mt-3">এক স্বপ্ন থেকে মহীরুহে</h2>
+          <h2 className="heading-display mt-3">মাইলফলকসমূহ</h2>
           <p className="mt-5 text-muted-foreground leading-[1.95]">
             ইউনাইট ফাউন্ডেশন-এর পথচলা শুরু হয়েছিল একটি সুন্দর স্বপ্ন ও মানবতার কল্যাণে
             কিছু করার দৃঢ় প্রত্যয় নিয়ে। ২০১৭ সালের ক্ষুদ্র সেই সূচনা আজ এক বিশাল মানবিক
