@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
-import { getPartner, partners } from "@/data/partners";
+import { getPartner, partners, partnerThemeTokens } from "@/data/partners";
 
 const PartnerDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -15,6 +15,14 @@ const PartnerDetail = () => {
 
   const others = partners.filter((p) => p.slug !== partner.slug);
   const year = partner.established?.match(/\d{4}|[০-৯]{4}/)?.[0] || "—";
+  const tokens = partnerThemeTokens[partner.theme ?? "green"];
+  const themeStyle = {
+    ["--primary" as any]: tokens.primary,
+    ["--primary-foreground" as any]: tokens.primaryForeground,
+    ["--donate-highlight" as any]: tokens.highlight,
+    ["--donate-highlight-foreground" as any]: tokens.highlightForeground,
+    ["--ring" as any]: tokens.primary,
+  } as React.CSSProperties;
 
   return (
     <SiteLayout>
@@ -24,7 +32,7 @@ const PartnerDetail = () => {
         canonical={`/partners/${partner.slug}`}
       />
 
-      <div className="bg-background">
+      <div className="bg-background" style={themeStyle}>
         {/* ===== Branded Hero ===== */}
         <section className="relative overflow-hidden bg-primary text-primary-foreground pt-28 md:pt-32 pb-20 md:pb-28">
           {/* Decorative arabesque pattern */}

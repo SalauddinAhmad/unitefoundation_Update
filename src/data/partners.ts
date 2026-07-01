@@ -4,6 +4,8 @@ import uniteTrainingCenter from "@/assets/partner-unite-training-center.png";
 import uniteAcademy from "@/assets/partner-unite-academy.png";
 import uniteTravel from "@/assets/partner-unite-travel.png";
 
+export type PartnerTheme = "green" | "red" | "black";
+
 export type Partner = {
   slug: string;
   name: string;
@@ -19,11 +21,41 @@ export type Partner = {
   phone?: string;
   programs?: { category: string; items: string[] }[];
   goal?: string;
+  theme?: PartnerTheme;
+};
+
+// HSL tokens for each brand theme. Override --primary + --donate-highlight
+// on a wrapper so all Tailwind `primary/*` classes pick these up automatically.
+export const partnerThemeTokens: Record<PartnerTheme, {
+  primary: string;
+  primaryForeground: string;
+  highlight: string;
+  highlightForeground: string;
+}> = {
+  green: {
+    primary: "150 55% 18%",
+    primaryForeground: "40 30% 96%",
+    highlight: "42 88% 55%",
+    highlightForeground: "150 55% 12%",
+  },
+  red: {
+    primary: "0 72% 38%",
+    primaryForeground: "40 30% 96%",
+    highlight: "45 92% 58%",
+    highlightForeground: "0 60% 18%",
+  },
+  black: {
+    primary: "220 12% 10%",
+    primaryForeground: "40 30% 96%",
+    highlight: "42 90% 58%",
+    highlightForeground: "220 12% 8%",
+  },
 };
 
 export const partners: Partner[] = [
   {
     slug: "unite-tv",
+    theme: "red",
     name: "Unite TV",
     logo: uniteTv,
     tagline: "মানবতার কণ্ঠস্বর — সত্য, সচেতনতা ও সেবার মিডিয়া",
@@ -40,6 +72,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "attayeba",
+    theme: "black",
     name: "আত-ত্বাইয়েবা প্রকাশনী",
     logo: attayeba,
     tagline: "বিশুদ্ধ ইলম, পরিশুদ্ধ পাঠ — একটি ইসলামিক প্রকাশনা",
@@ -55,6 +88,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-training-center",
+    theme: "green",
     name: "ইউনাইট ট্রেনিং সেন্টার",
     logo: uniteTrainingCenter,
     tagline: "দক্ষতা উন্নয়ন ও আত্ম-নির্ভরশীলতার শিক্ষায়",
@@ -104,6 +138,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-academy",
+    theme: "green",
     name: "ইউনাইট একাডেমি",
     logo: uniteAcademy,
     tagline: "ইলম, আদব ও আধুনিক শিক্ষার সমন্বয়ে আদর্শ প্রজন্ম",
@@ -120,6 +155,7 @@ export const partners: Partner[] = [
   },
   {
     slug: "unite-travel",
+    theme: "green",
     name: "ইউনাইট ট্রাভেল এজেন্সি",
     logo: uniteTravel,
     tagline: "নিরাপদ, নির্ভরযোগ্য ও শরীয়াহসম্মত ভ্রমণ সেবা",
