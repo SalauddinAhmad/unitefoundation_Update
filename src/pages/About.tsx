@@ -185,7 +185,16 @@ const About = () => (
     />
 
     <section className="section-y">
-      <div className="container-page grid lg:grid-cols-2 gap-12 items-start">
+      <div className="container-page grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative">
+          <div className="absolute -inset-4 rounded-3xl bg-accent/40 -z-10" />
+          <img
+            src={about}
+            alt="আমাদের লক্ষ্য"
+            className="w-full h-full rounded-2xl object-cover shadow-lg"
+            loading="lazy"
+          />
+        </div>
         <div>
           <div className="h-12 w-12 rounded-xl bg-accent flex items-center justify-center text-primary mb-4">
             <Eye className="h-6 w-6" />
@@ -194,29 +203,25 @@ const About = () => (
           <p className="mt-4 text-muted-foreground leading-[1.9]">
             কুরআন ও সহীহ হাদীছের আলোকে দাওয়াহ, তালীম ও সমাজকল্যাণ — এই তিনটি স্তম্ভের উপর দাঁড়িয়ে আমরা যে সুনির্দিষ্ট পথে হাঁটছি।
           </p>
-        </div>
-        <ul className="space-y-5">
-          {[
-            "সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।",
-            "তরুণ ও ছাত্র সমাজকে যোগ্য ও তাক্বওয়াশীল দাঈ ইলাল্লাহ হিসেবে গঠন করা।",
-            "বিশুদ্ধ আক্বীদা ও আমল সম্পর্কে সমাজে সচেতনতা সৃষ্টি করা।",
-            "ইসলামী শিক্ষা ও সংস্কৃতির নীতি প্রণয়ন ও বাস্তবায়ন।",
-            "ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সহীহ অনুবাদ প্রকাশ।",
-            "সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।",
-          ].map((goal, i) => (
-            <li key={i} className="flex items-start gap-4">
-              <span className="font-serif text-2xl text-primary/70 leading-none shrink-0 w-8">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div className="flex items-start gap-3">
+          <ul className="mt-6 space-y-4">
+            {[
+              "সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।",
+              "তরুণ ও ছাত্র সমাজকে যোগ্য ও তাক্বওয়াশীল দাঈ ইলাল্লাহ হিসেবে গঠন করা।",
+              "বিশুদ্ধ আক্বীদা ও আমল সম্পর্কে সমাজে সচেতনতা সৃষ্টি করা।",
+              "ইসলামী শিক্ষা ও সংস্কৃতির নীতি প্রণয়ন ও বাস্তবায়ন।",
+              "ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সহীহ অনুবাদ প্রকাশ।",
+              "সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।",
+            ].map((goal, i) => (
+              <li key={i} className="flex items-start gap-3">
                 <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-1" />
                 <span className="text-foreground leading-[1.9]">{goal}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
+
 
 
 
