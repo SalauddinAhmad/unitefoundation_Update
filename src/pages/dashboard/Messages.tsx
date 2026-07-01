@@ -127,16 +127,15 @@ const Messages = () => {
   };
 
   const sendReply = async () => {
+  const sendReply = async () => {
     if (!active || !replyText.trim()) return;
     setSending(true);
     try {
-      try {
-        await api.post(`/messages/${active.id}/reply`, {
-          to: active.email,
-          subject: `Re: ${active.subject}`,
-          body: replyText,
-        });
-      } catch {}
+      await api.post(`/messages/${active.id}/reply`, {
+        to: active.email,
+        subject: `Re: ${active.subject}`,
+        body: replyText,
+      });
       const reply: ReplyItem = {
         id: `R-${Date.now()}`,
         body: replyText,
@@ -149,7 +148,11 @@ const Messages = () => {
       );
       update(next);
       setReplyText("");
-      toast.success("উত্তর পাঠানো হয়েছে");
+      toast.success("SMTP এর মাধ্যমে উত্তর পাঠানো হয়েছে ✅");
+    } catch (e: unknown) {
+      const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+      const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "উত্তর পাঠানো যায়নি";
+      toast.error(`SMTP ব্যর্থ: ${msg}`);
     } finally {
       setSending(false);
     }
@@ -164,8 +167,19 @@ const Messages = () => {
     attachments: { name: string; size: number }[];
   }) => {
     try {
-      await api.post(`/messages`, data);
-    } catch {}
+      await api.post(`/messages/compose`, {
+        to: data.to,
+        cc: data.cc,
+        bcc: data.bcc,
+        subject: data.subject,
+        html: data.html,
+      });
+    } catch (e: unknown) {
+      const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+      const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "মেসেজ পাঠানো যায়নি";
+      toast.error(`SMTP ব্যর্থ: ${msg}`);
+      return;
+    }
     const newMsg: MessageEx = {
       id: `M-${Math.floor(Math.random() * 9000) + 1000}`,
       name: data.to[0] || "প্রাপক",
@@ -180,8 +194,9 @@ const Messages = () => {
     update(next);
     setSelected(newMsg.id);
     setComposeOpen(false);
-    toast.success(`${data.to.join(", ")} ঠিকানায় মেসেজ পাঠানো হয়েছে`);
+    toast.success(`${data.to.join(", ")} ঠিকানায় মেসেজ পাঠানো হয়েছে ✅`);
   };
+
 
   return (
     <>
