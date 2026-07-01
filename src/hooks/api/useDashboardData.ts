@@ -7,7 +7,9 @@
 // automatically — no component changes needed.
 // ============================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { api } from "@/lib/api";
+import { EXTRAS, mergeExtras } from "@/lib/localExtras";
 import {
   donations as mockDonations,
   volunteerApps as mockVolunteers,
@@ -35,33 +37,57 @@ async function tryApi<T>(path: string, fallback: T): Promise<T> {
 
 const STALE = 60_000; // 1 min
 
-export const useDonations = () =>
-  useQuery({
+// Re-fetch a bucket when a manual entry is added elsewhere in the app.
+function useExtrasInvalidator(bucket: string, queryKey: readonly unknown[]) {
+  const qc = useQueryClient();
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (!detail || detail.bucket === bucket) qc.invalidateQueries({ queryKey: [...queryKey] });
+    };
+    window.addEventListener("uf-extras-changed", handler);
+    return () => window.removeEventListener("uf-extras-changed", handler);
+  }, [bucket, qc, queryKey]);
+}
+
+export const useDonations = () => {
+  useExtrasInvalidator(EXTRAS.donations, ["donations"]);
+  return useQuery({
     queryKey: ["donations"],
-    queryFn: () => tryApi("/donations", mockDonations),
+    queryFn: async () => mergeExtras(EXTRAS.donations, await tryApi("/donations", mockDonations)),
     staleTime: STALE,
   });
+};
 
-export const useVolunteerApps = () =>
-  useQuery({
+export const useVolunteerApps = () => {
+  useExtrasInvalidator(EXTRAS.volunteers, ["applications", "volunteers"]);
+  return useQuery({
     queryKey: ["applications", "volunteers"],
-    queryFn: () => tryApi("/applications/volunteers", mockVolunteers),
+    queryFn: async () =>
+      mergeExtras(EXTRAS.volunteers, await tryApi("/applications/volunteers", mockVolunteers)),
     staleTime: STALE,
   });
+};
 
-export const useMemberApps = () =>
-  useQuery({
+export const useMemberApps = () => {
+  useExtrasInvalidator(EXTRAS.members, ["applications", "members"]);
+  return useQuery({
     queryKey: ["applications", "members"],
-    queryFn: () => tryApi("/applications/members", mockMembers),
+    queryFn: async () =>
+      mergeExtras(EXTRAS.members, await tryApi("/applications/members", mockMembers)),
     staleTime: STALE,
   });
+};
 
-export const useCareerApps = () =>
-  useQuery({
+export const useCareerApps = () => {
+  useExtrasInvalidator(EXTRAS.careers, ["applications", "careers"]);
+  return useQuery({
     queryKey: ["applications", "careers"],
-    queryFn: () => tryApi("/applications/careers", mockCareers),
+    queryFn: async () =>
+      mergeExtras(EXTRAS.careers, await tryApi("/applications/careers", mockCareers)),
     staleTime: STALE,
   });
+};
 
 export const useProjects = () =>
   useQuery({

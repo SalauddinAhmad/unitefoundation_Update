@@ -5,11 +5,14 @@ import { useDonations } from "@/hooks/api/useDashboardData";
 import { useState } from "react";
 import { exportRowsAsCsv } from "@/lib/csv";
 import { toast } from "sonner";
+import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
+import { appendExtra, EXTRAS } from "@/lib/localExtras";
 
 const Donations = () => {
   const { data = [], isLoading } = useDonations();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
+  const [entryOpen, setEntryOpen] = useState(false);
   const filtered = (data as Donation[]).filter((d) =>
     (status === "all" || d.status === status) &&
     (q === "" || d.name.includes(q) || d.id.toLowerCase().includes(q.toLowerCase()) || d.phone.includes(q))
@@ -37,9 +40,58 @@ const Donations = () => {
               ]);
               toast.success(`${filtered.length}টি রেকর্ড এক্সপোর্ট করা হয়েছে`);
             }}><Download className="h-4 w-4" /> CSV ডাউনলোড</Btn>
-            <Btn><Plus className="h-4 w-4" /> ম্যানুয়াল এন্ট্রি</Btn>
+            <Btn onClick={() => setEntryOpen(true)}><Plus className="h-4 w-4" /> ম্যানুয়াল এন্ট্রি</Btn>
           </>
         }
+      />
+
+      <ManualEntryDialog
+        open={entryOpen}
+        onOpenChange={setEntryOpen}
+        title="নতুন দান যোগ করুন"
+        description="অফলাইনে সংগৃহীত বা ব্যাংক থেকে সরাসরি প্রাপ্ত দান রেকর্ড করুন।"
+        fields={[
+          { name: "name", label: "দাতার নাম", required: true, half: true, placeholder: "যেমন: আব্দুর রহমান" },
+          { name: "phone", label: "মোবাইল নম্বর", required: true, half: true, placeholder: "01XXXXXXXXX" },
+          { name: "amount", label: "পরিমাণ (৳)", type: "number", required: true, half: true, placeholder: "5000" },
+          { name: "method", label: "মাধ্যম", type: "select", required: true, half: true, options: [
+            { value: "bKash", label: "bKash" },
+            { value: "Nagad", label: "Nagad" },
+            { value: "Rocket", label: "Rocket" },
+            { value: "ব্যাংক", label: "ব্যাংক ট্রান্সফার" },
+            { value: "নগদ", label: "নগদ (হাতে হাতে)" },
+            { value: "কার্ড", label: "কার্ড / SSLCommerz" },
+          ]},
+          { name: "area", label: "দানের ক্ষেত্র", type: "select", required: true, half: true, options: [
+            { value: "এতিম শিশু", label: "এতিম শিশু" },
+            { value: "শিক্ষা", label: "শিক্ষা" },
+            { value: "মসজিদ নির্মাণ", label: "মসজিদ নির্মাণ" },
+            { value: "খাদ্য সহায়তা", label: "খাদ্য সহায়তা" },
+            { value: "চিকিৎসা", label: "চিকিৎসা" },
+            { value: "যেখানে প্রয়োজন", label: "যেখানে প্রয়োজন" },
+          ]},
+          { name: "date", label: "তারিখ", type: "date", required: true, half: true,
+            defaultValue: new Date().toISOString().slice(0, 10) },
+          { name: "status", label: "স্ট্যাটাস", type: "select", required: true, half: true, defaultValue: "completed", options: [
+            { value: "completed", label: "সম্পন্ন" },
+            { value: "pending", label: "অপেক্ষমাণ" },
+            { value: "failed", label: "ব্যর্থ" },
+          ]},
+          { name: "note", label: "নোট (ঐচ্ছিক)", type: "textarea", placeholder: "যেমন: ট্রানজেকশন রেফারেন্স, রসিদ নং ইত্যাদি" },
+        ]}
+        onSubmit={(v) => {
+          const entry: Donation = {
+            id: `TXN-M${Date.now().toString().slice(-6)}`,
+            name: v.name,
+            phone: v.phone,
+            amount: Number(v.amount) || 0,
+            method: v.method,
+            area: v.area,
+            date: v.date,
+            status: v.status as Donation["status"],
+          };
+          appendExtra<Donation>(EXTRAS.donations, entry);
+        }}
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
