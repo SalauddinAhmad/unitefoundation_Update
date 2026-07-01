@@ -38,6 +38,7 @@ export const site = {
         swift: "CIBLBDDH",
       },
     ],
+    qrImage: "", // Bangla QR — এখানে QR image path বসাও (e.g. "/qr/unite-bangla-qr.png")
   },
   socials: {
     facebook: "https://www.facebook.com/UniteFoundation.UniteTv",
