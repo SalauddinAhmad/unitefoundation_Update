@@ -6,27 +6,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  # ────────────────────────────────────────────────────────────
+  # 1. FRONTEND — React build → /public_html/
+  # ────────────────────────────────────────────────────────────
+  frontend:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install
         run: npm ci
 
-      - name: Build project
+      - name: Build
         run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_SITE_URL: https://unitefoundation.bd
 
-      - name: Deploy to cPanel via FTP
+      - name: Deploy frontend via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.unitefoundation.bd
@@ -42,3 +44,44 @@ jobs:
             **/.git*/**
             **/node_modules/**
             **/.htaccess
+
+  # ────────────────────────────────────────────────────────────
+  # 2. BACKEND — server/ → cPanel Node.js app root (../api/)
+  # cPanel Node.js App Manager: Application root = "api"
+  # Startup file = "app.js" ; Node version = 20
+  # ────────────────────────────────────────────────────────────
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare backend package
+        run: |
+          mkdir -p out
+          rsync -a --exclude 'node_modules' --exclude '.env' --exclude 'uploads' server/ out/
+          # touch restart trigger for Passenger / cPanel Node app
+          mkdir -p out/tmp
+          date > out/tmp/restart.txt
+
+      - name: Deploy backend via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.unitefoundation.bd
+          username: deploy@unitefoundation.bd
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+          local-dir: ./out/
+          # NOTE: FTP account is chrooted to /public_html.
+          # In cPanel, set the Node.js App's Application root to a folder
+          # accessible from this FTP user — recommended: /public_html/api-app
+          # Then set the subdomain api.unitefoundation.bd to point to that
+          # same folder's `public` (or use the Node app URL directly).
+          server-dir: /api-app/
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            **/uploads/**
