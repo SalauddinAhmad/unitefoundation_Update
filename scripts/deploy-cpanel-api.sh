@@ -91,10 +91,14 @@ upload_file() {
 
   ensure_remote_dir "$remote_subdir"
 
-  echo "Uploading ${rel} -> ${remote_subdir}/${base}"
+  # cPanel Fileman/upload_files requires an ABSOLUTE dir path, otherwise the
+  # upload silently succeeds with an empty result and no file is written.
+  local absolute_dir="${CPANEL_HOME%/}/${remote_subdir#/}"
+
+  echo "Uploading ${rel} -> ${absolute_dir}/${base}"
   curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
     --header "$AUTH_HEADER" \
-    --form "dir=${remote_subdir}" \
+    --form "dir=${absolute_dir}" \
     --form "file-1=@${file};filename=${base}" \
     "${API_BASE}/execute/Fileman/upload_files" | check_json_status
 }
