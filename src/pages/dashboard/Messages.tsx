@@ -60,6 +60,38 @@ const Messages = () => {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
+  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "checking">("idle");
+  const [smtpError, setSmtpError] = useState<string>("");
+
+  // Load messages from backend + SMTP health check
+  useEffect(() => {
+    (async () => {
+      try {
+        const rows = await api.get<MessageEx[]>("/messages");
+        if (Array.isArray(rows) && rows.length) {
+          setList(rows);
+          persist(rows);
+          if (!selected) setSelected(rows[0]?.id);
+        }
+      } catch (e) {
+        // Backend unreachable — keep local seed
+        console.warn("[messages] backend fetch failed", e);
+      }
+    })();
+    (async () => {
+      setSmtpStatus("checking");
+      try {
+        await api.get("/messages/smtp/test");
+        setSmtpStatus("ok");
+        setSmtpError("");
+      } catch (e: unknown) {
+        setSmtpStatus("fail");
+        const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+        setSmtpError(anyE?.data?.error || anyE?.data?.message || anyE?.message || String(e));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const active = useMemo(
     () => list.find((m) => m.id === selected) || list[0],
@@ -98,13 +130,11 @@ const Messages = () => {
     if (!active || !replyText.trim()) return;
     setSending(true);
     try {
-      try {
-        await api.post(`/messages/${active.id}/reply`, {
-          to: active.email,
-          subject: `Re: ${active.subject}`,
-          body: replyText,
-        });
-      } catch {}
+      await api.post(`/messages/${active.id}/reply`, {
+        to: active.email,
+        subject: `Re: ${active.subject}`,
+        body: replyText,
+      });
       const reply: ReplyItem = {
         id: `R-${Date.now()}`,
         body: replyText,
@@ -117,7 +147,11 @@ const Messages = () => {
       );
       update(next);
       setReplyText("");
-      toast.success("উত্তর পাঠানো হয়েছে");
+      toast.success("SMTP এর মাধ্যমে উত্তর পাঠানো হয়েছে ✅");
+    } catch (e: unknown) {
+      const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+      const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "উত্তর পাঠানো যায়নি";
+      toast.error(`SMTP ব্যর্থ: ${msg}`);
     } finally {
       setSending(false);
     }
@@ -132,8 +166,19 @@ const Messages = () => {
     attachments: { name: string; size: number }[];
   }) => {
     try {
-      await api.post(`/messages`, data);
-    } catch {}
+      await api.post(`/messages/compose`, {
+        to: data.to,
+        cc: data.cc,
+        bcc: data.bcc,
+        subject: data.subject,
+        html: data.html,
+      });
+    } catch (e: unknown) {
+      const anyE = e as { data?: { error?: string; message?: string }; message?: string };
+      const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "মেসেজ পাঠানো যায়নি";
+      toast.error(`SMTP ব্যর্থ: ${msg}`);
+      return;
+    }
     const newMsg: MessageEx = {
       id: `M-${Math.floor(Math.random() * 9000) + 1000}`,
       name: data.to[0] || "প্রাপক",
@@ -148,8 +193,9 @@ const Messages = () => {
     update(next);
     setSelected(newMsg.id);
     setComposeOpen(false);
-    toast.success(`${data.to.join(", ")} ঠিকানায় মেসেজ পাঠানো হয়েছে`);
+    toast.success(`${data.to.join(", ")} ঠিকানায় মেসেজ পাঠানো হয়েছে ✅`);
   };
+
 
   return (
     <>
@@ -165,6 +211,38 @@ const Messages = () => {
           </button>
         }
       />
+
+      {/* SMTP status banner */}
+      {smtpStatus !== "idle" && smtpStatus !== "ok" && (
+        <div
+          className={
+            "mb-4 rounded-lg border px-4 py-3 text-sm flex items-start gap-3 " +
+            (smtpStatus === "fail"
+              ? "border-destructive/30 bg-destructive/5 text-destructive"
+              : "border-border bg-secondary/40 text-muted-foreground")
+          }
+        >
+          <Mail className="h-4 w-4 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            {smtpStatus === "checking" && <span>SMTP সার্ভার যাচাই করা হচ্ছে...</span>}
+            {smtpStatus === "fail" && (
+              <>
+                <div className="font-semibold">SMTP সার্ভার কাজ করছে না — মেসেজ পাঠানো যাবে না</div>
+                <div className="text-xs mt-1 break-all opacity-90">{smtpError}</div>
+                <div className="text-xs mt-2 text-foreground/70">
+                  cPanel → Setup Node.js App → Environment Variables-এ যোগ করুন:{" "}
+                  <code className="font-mono">SMTP_HOST</code>,{" "}
+                  <code className="font-mono">SMTP_PORT</code>,{" "}
+                  <code className="font-mono">SMTP_USER</code>,{" "}
+                  <code className="font-mono">SMTP_PASS</code>,{" "}
+                  <code className="font-mono">SMTP_FROM</code> → তারপর app <b>Restart</b> করুন।
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
 
       <Card pad={false} className="overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] min-h-[600px]">
