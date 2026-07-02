@@ -3,7 +3,7 @@
 // Writes to the activity_logs table. Never throws — logging
 // failures must not break the underlying request.
 // ============================================================
-const db = require('../db');
+const db = require('../db/pool');
 
 /**
  * Persist one activity row.
