@@ -718,6 +718,11 @@ const VolunteerForm = () => {
     e.preventDefault();
     const r = volunteerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("volunteer", {
+      name: f.name, phone: f.phone, email: f.email,
+      profession: f.profession, message: f.motivation,
+      extra: { age: f.age, city: f.city, area: f.area, type: f.area, availability: f.availability },
+    });
     setWaUrl(buildWhatsAppUrl(
       "স্বেচ্ছাসেবক আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nবয়স: ${f.age}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nআগ্রহের ক্ষেত্র: ${f.area}\nসময়: ${f.availability}\n\nকেন যুক্ত হতে চান:\n${f.motivation}`,
