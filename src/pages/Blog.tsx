@@ -65,6 +65,12 @@ const Blog = () => {
         </div>
       </section>
 
+      {isLoading && (
+        <div className="py-16 flex justify-center text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </div>
+      )}
+
       {/* Featured */}
       {featured && (
         <section className="py-10 md:py-14">
