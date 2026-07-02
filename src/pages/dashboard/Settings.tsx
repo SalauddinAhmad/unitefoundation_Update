@@ -375,10 +375,22 @@ const AdminsPanel = () => {
     setCreating(true);
     const password = genPassword();
     try {
+      let emailSent = false;
+      let emailError: string | null = null;
+      let apiOk = false;
       try {
-        await api.post("/admin/users", { name, email, role, password, sendEmail: true });
-      } catch {
-        // backend offline — proceed in demo mode, creds shown on-screen
+        const res = await api.post("/admin/users", { name, email, role, password, sendEmail: true });
+        apiOk = true;
+        emailSent = Boolean(res.data?.emailSent);
+        emailError = res.data?.emailError ?? null;
+      } catch (err: unknown) {
+        const msg = (err as { response?: { data?: { message?: string } }; message?: string });
+        toast({
+          title: "অ্যাডমিন তৈরি ব্যর্থ",
+          description: msg?.response?.data?.message || msg?.message || "সার্ভারে সংযোগ করা যায়নি।",
+          variant: "destructive",
+        });
+        return;
       }
       const newUser: AdminUser = {
         id: `U-${Math.floor(Math.random() * 9000) + 100}`,
@@ -390,10 +402,18 @@ const AdminsPanel = () => {
       refresh([newUser, ...list]);
       setLastCreds({ email: newUser.email, password });
       setName(""); setEmail(""); setRole("editor");
-      toast({
-        title: "অ্যাডমিন তৈরি হয়েছে",
-        description: `${newUser.email} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
-      });
+      if (apiOk && emailSent) {
+        toast({
+          title: "অ্যাডমিন তৈরি হয়েছে",
+          description: `${newUser.email} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
+        });
+      } else {
+        toast({
+          title: "অ্যাডমিন তৈরি হয়েছে, কিন্তু ইমেইল যায়নি",
+          description: emailError ? `SMTP error: ${emailError}` : "ইমেইল পাঠানো যায়নি — নিচে দেখানো পাসওয়ার্ডটি কপি করে ম্যানুয়ালি দিন।",
+          variant: "destructive",
+        });
+      }
     } finally {
       setCreating(false);
     }
@@ -409,10 +429,25 @@ const AdminsPanel = () => {
   const resend = async (u: AdminUser) => {
     const password = genPassword();
     try {
-      await api.post(`/admin/users/${u.id}/reset-credentials`, { password, sendEmail: true });
-    } catch {}
-    setLastCreds({ email: u.email, password });
-    toast({ title: "নতুন পাসওয়ার্ড পাঠানো হয়েছে", description: u.email });
+      const res = await api.post(`/admin/users/${u.id}/reset-credentials`, { password, sendEmail: true });
+      setLastCreds({ email: u.email, password });
+      if (res.data?.emailSent) {
+        toast({ title: "নতুন পাসওয়ার্ড পাঠানো হয়েছে", description: u.email });
+      } else {
+        toast({
+          title: "পাসওয়ার্ড রিসেট হয়েছে, কিন্তু ইমেইল যায়নি",
+          description: res.data?.emailError ? `SMTP error: ${res.data.emailError}` : "নিচের পাসওয়ার্ডটি ম্যানুয়ালি পাঠান।",
+          variant: "destructive",
+        });
+      }
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } }; message?: string });
+      toast({
+        title: "রিসেট ব্যর্থ",
+        description: msg?.response?.data?.message || msg?.message || "সার্ভারে সংযোগ করা যায়নি।",
+        variant: "destructive",
+      });
+    }
   };
 
   const copy = (text: string) => {
