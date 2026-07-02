@@ -22,6 +22,28 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import volunteerImg from "@/assets/program-food.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+
+// Best-effort submit to backend so entries appear in the dashboard.
+// WhatsApp handoff continues regardless of network outcome.
+const saveApplication = (
+  kind: "volunteer" | "member" | "career" | "donor",
+  payload: {
+    name: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    profession?: string;
+    message?: string;
+    extra?: Record<string, unknown>;
+  },
+) => {
+  api
+    .post(`/applications/${kind}`, { body: payload, auth: false })
+    .catch(() => {
+      /* silent — user already gets WhatsApp confirmation */
+    });
+};
 
 type TabKey = "regular" | "member" | "volunteer" | "representative";
 
