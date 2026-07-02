@@ -437,12 +437,14 @@ const IconBtn = ({ icon: Icon, onClick, title }: { icon: any; onClick: () => voi
 
 /* ============================ Editor ============================ */
 
-function PostEditor({ post, onClose, onSave }: { post?: Post; onClose: () => void; onSave: (p: Post) => void }) {
+function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post?: Post; onClose: () => void; onSave: (p: Post) => void; categories: string[]; onAddCategory: (c: string) => void }) {
   const isNew = !post;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(post?.title || "");
   const [author, setAuthor] = useState(post?.author || "এডিটোরিয়াল টিম");
-  const [category, setCategory] = useState(post?.category || CATEGORIES[0]);
+  const [category, setCategory] = useState(post?.category || categories[0] || DEFAULT_CATEGORIES[0]);
+  const [newCatInput, setNewCatInput] = useState("");
+
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [cover, setCover] = useState(post?.cover || "");
   const [tags, setTags] = useState<string[]>(post?.tags || []);
