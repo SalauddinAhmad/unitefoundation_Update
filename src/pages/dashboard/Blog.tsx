@@ -5,7 +5,7 @@ import {
   Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon, Quote,
   AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Code as CodeIcon,
   FileText, Calendar, Clock, BarChart3, FolderTree, Loader2, Filter,
-  ChevronDown, Globe, Archive, Copy, Sparkles,
+  ChevronDown, Globe, Archive, Copy, Sparkles, Tags, Check,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -24,7 +24,21 @@ type Post = BlogPost & {
   slug?: string;
 };
 
-const CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
+const DEFAULT_CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
+const CAT_STORAGE_KEY = "blog:custom-categories:v1";
+
+function loadCustomCategories(): string[] {
+  try {
+    const raw = localStorage.getItem(CAT_STORAGE_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveCustomCategories(list: string[]) {
+  try { localStorage.setItem(CAT_STORAGE_KEY, JSON.stringify(list)); } catch {}
+}
+
 
 // ---- API ↔ UI mappers ----
 function apiToUi(row: ApiPost): Post {
@@ -33,7 +47,7 @@ function apiToUi(row: ApiPost): Post {
     id: row.id,
     title: row.title,
     author: "এডিটোরিয়াল টিম",
-    category: row.category || CATEGORIES[0],
+    category: row.category || DEFAULT_CATEGORIES[0],
     views: 0,
     date: dateStr || new Date().toISOString().slice(0, 10),
     status: (row.status as Post["status"]) || "draft",
@@ -67,11 +81,25 @@ export default function Blog() {
 
   const list = useMemo<Post[]>(() => (rows as ApiPost[]).map(apiToUi), [rows]);
 
+  const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const [catManagerOpen, setCatManagerOpen] = useState(false);
+  const categories = useMemo(() => {
+    const fromPosts = list.map((p) => p.category).filter(Boolean) as string[];
+    const merged = [...DEFAULT_CATEGORIES, ...customCats, ...fromPosts];
+    return Array.from(new Set(merged.map((s) => s.trim()).filter(Boolean)));
+  }, [list, customCats]);
+  const updateCats = (next: string[]) => {
+    const clean = Array.from(new Set(next.map((s) => s.trim()).filter(Boolean)));
+    setCustomCats(clean);
+    saveCustomCategories(clean);
+  };
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "draft" | "scheduled">("all");
   const [category, setCategory] = useState<string>("all");
   const [editor, setEditor] = useState<{ open: boolean; post?: Post }>({ open: false });
   const [viewer, setViewer] = useState<Post | null>(null);
+
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -278,10 +306,17 @@ export default function Blog() {
               className="appearance-none pl-9 pr-9 py-2 rounded-lg bg-secondary text-xs font-semibold focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer"
             >
               <option value="all">সকল ক্যাটাগরি</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none" />
           </div>
+          <button
+            onClick={() => setCatManagerOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary hover:bg-muted text-xs font-semibold"
+            title="ক্যাটাগরি ব্যবস্থাপনা"
+          >
+            <Tags className="h-3.5 w-3.5" /> ক্যাটাগরি
+          </button>
         </div>
 
         {/* Table */}
@@ -348,14 +383,27 @@ export default function Blog() {
       {editor.open && (
         <PostEditor
           post={editor.post}
+          categories={categories}
+          onAddCategory={(c) => updateCats([...customCats, c])}
           onClose={() => setEditor({ open: false })}
           onSave={save}
         />
       )}
       {viewer && <PostViewer post={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, post: viewer }); setViewer(null); }} />}
+      {catManagerOpen && (
+        <CategoryManager
+          categories={categories}
+          customCategories={customCats}
+          defaults={DEFAULT_CATEGORIES}
+          usage={list.reduce<Record<string, number>>((acc, p) => { const c = p.category; if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {})}
+          onChange={updateCats}
+          onClose={() => setCatManagerOpen(false)}
+        />
+      )}
     </>
   );
 }
+
 
 /* ============================ Helpers ============================ */
 
@@ -389,12 +437,14 @@ const IconBtn = ({ icon: Icon, onClick, title }: { icon: any; onClick: () => voi
 
 /* ============================ Editor ============================ */
 
-function PostEditor({ post, onClose, onSave }: { post?: Post; onClose: () => void; onSave: (p: Post) => void }) {
+function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post?: Post; onClose: () => void; onSave: (p: Post) => void; categories: string[]; onAddCategory: (c: string) => void }) {
   const isNew = !post;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(post?.title || "");
   const [author, setAuthor] = useState(post?.author || "এডিটোরিয়াল টিম");
-  const [category, setCategory] = useState(post?.category || CATEGORIES[0]);
+  const [category, setCategory] = useState(post?.category || categories[0] || DEFAULT_CATEGORIES[0]);
+  const [newCatInput, setNewCatInput] = useState("");
+
   const [excerpt, setExcerpt] = useState(post?.excerpt || "");
   const [cover, setCover] = useState(post?.cover || "");
   const [tags, setTags] = useState<string[]>(post?.tags || []);
@@ -586,9 +636,42 @@ function PostEditor({ post, onClose, onSave }: { post?: Post; onClose: () => voi
               </Field>
               <Field label="ক্যাটাগরি">
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <input
+                    value={newCatInput}
+                    onChange={(e) => setNewCatInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const v = newCatInput.trim();
+                        if (!v) return;
+                        onAddCategory(v);
+                        setCategory(v);
+                        setNewCatInput("");
+                      }
+                    }}
+                    placeholder="নতুন ক্যাটাগরি যোগ করুন..."
+                    className="flex-1 px-2.5 py-1.5 rounded-md bg-card border border-border text-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const v = newCatInput.trim();
+                      if (!v) return;
+                      onAddCategory(v);
+                      setCategory(v);
+                      setNewCatInput("");
+                    }}
+                    className="p-1.5 rounded-md bg-primary text-primary-foreground"
+                    title="যোগ করুন"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </Field>
+
               <Field label="ট্যাগ">
                 <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-card border border-border">
                   {tags.map((t) => (
@@ -696,3 +779,143 @@ function PostViewer({ post, onClose, onEdit }: { post: Post; onClose: () => void
     </div>
   );
 }
+
+/* ============================ Category Manager ============================ */
+
+function CategoryManager({
+  categories, customCategories, defaults, usage, onChange, onClose,
+}: {
+  categories: string[];
+  customCategories: string[];
+  defaults: string[];
+  usage: Record<string, number>;
+  onChange: (next: string[]) => void;
+  onClose: () => void;
+}) {
+  const [input, setInput] = useState("");
+  const [editing, setEditing] = useState<{ old: string; val: string } | null>(null);
+
+  const add = () => {
+    const v = input.trim();
+    if (!v) return;
+    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
+      toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে");
+      return;
+    }
+    onChange([...customCategories, v]);
+    setInput("");
+    toast.success("যোগ করা হয়েছে");
+  };
+  const removeCat = (c: string) => {
+    if (defaults.includes(c)) return toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না");
+    if ((usage[c] || 0) > 0 && !confirm(`"${c}" ব্যবহারে আছে (${usage[c]}টি পোস্ট)। তবুও ডিলিট করবেন?`)) return;
+    onChange(customCategories.filter((x) => x !== c));
+  };
+  const saveEdit = () => {
+    if (!editing) return;
+    const v = editing.val.trim();
+    if (!v || v === editing.old) { setEditing(null); return; }
+    if (defaults.includes(editing.old)) { toast.error("ডিফল্ট ক্যাটাগরি রিনেম করা যাবে না"); setEditing(null); return; }
+    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
+      toast.error("একই নামে ক্যাটাগরি আছে");
+      return;
+    }
+    onChange(customCategories.map((x) => (x === editing.old ? v : x)));
+    setEditing(null);
+    toast.success("আপডেট হয়েছে");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-foreground/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Tags className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="font-bold text-sm">ক্যাটাগরি ব্যবস্থাপনা</div>
+              <div className="text-[11px] text-muted-foreground">ব্লগ পোস্টের জন্য কাস্টম ক্যাটাগরি তৈরি করুন</div>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+        </div>
+
+        <div className="p-5 space-y-4 overflow-y-auto">
+          <div className="flex items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+              placeholder="নতুন ক্যাটাগরি নাম..."
+              className="flex-1 px-3 py-2 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none"
+            />
+            <button onClick={add} className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-semibold px-3.5 py-2 rounded-lg text-sm">
+              <Plus className="h-4 w-4" /> যোগ
+            </button>
+          </div>
+
+          <div className="rounded-xl border border-border divide-y divide-border">
+            {categories.map((c) => {
+              const isDefault = defaults.includes(c);
+              const count = usage[c] || 0;
+              const isEditing = editing?.old === c;
+              return (
+                <div key={c} className="flex items-center gap-2 px-3 py-2.5">
+                  <div className="flex-1 min-w-0">
+                    {isEditing ? (
+                      <input
+                        autoFocus
+                        value={editing!.val}
+                        onChange={(e) => setEditing({ old: c, val: e.target.value })}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditing(null); }}
+                        className="w-full px-2 py-1 rounded-md bg-card border border-border text-sm"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold truncate">{c}</span>
+                        {isDefault && <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">ডিফল্ট</span>}
+                        <span className="text-[11px] text-muted-foreground">{count} পোস্ট</span>
+                      </div>
+                    )}
+                  </div>
+                  {isEditing ? (
+                    <>
+                      <button onClick={saveEdit} className="p-1.5 rounded-md hover:bg-secondary text-emerald-600"><Check className="h-4 w-4" /></button>
+                      <button onClick={() => setEditing(null)} className="p-1.5 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+                    </>
+                  ) : (
+                    <>
+                      {!isDefault && (
+                        <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
+                          <Edit3 className="h-4 w-4" />
+                        </button>
+                      )}
+                      {!isDefault && (
+                        <button onClick={() => removeCat(c)} className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive" title="ডিলিট">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+            {categories.length === 0 && (
+              <div className="p-6 text-center text-sm text-muted-foreground">এখনও কোনো ক্যাটাগরি নেই</div>
+            )}
+          </div>
+
+          <p className="text-[11px] text-muted-foreground">
+            টিপ: ডিফল্ট ক্যাটাগরি ({defaults.join(", ")}) রিনেম বা ডিলিট করা যাবে না। কাস্টম ক্যাটাগরি এই ব্রাউজারে সংরক্ষিত হয়।
+          </p>
+        </div>
+
+        <div className="px-5 py-3 border-t border-border flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground">সম্পন্ন</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
