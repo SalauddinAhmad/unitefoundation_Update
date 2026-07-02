@@ -19,7 +19,7 @@ const Index = () => {
       />
       <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — সুন্নাহর অনুসরণে, মানবতার কল্যাণে</h1>
       <Hero />
-      <TrustStrip />
+      
       <AboutSection />
       <ProgramsSection />
 
