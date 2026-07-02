@@ -786,7 +786,7 @@ const AdminsPanel = () => {
   useEffect(() => { fetchList(); }, []);
 
 
-  const refresh = (next: AdminUser[]) => { setList(next); persistAdmins(next); };
+  const refresh = () => { fetchList(); };
 
   const createAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -818,17 +818,11 @@ const AdminsPanel = () => {
         });
         return;
       }
-      const newUser: AdminUser = {
-        id: newId || `U-${Math.floor(Math.random() * 9000) + 100}`,
-        name: name || email.split("@")[0],
-        email: email.trim(),
-        role,
-        created_at: new Date().toISOString().slice(0, 10),
-      };
-      refresh([newUser, ...list]);
-
-      setLastCreds({ email: newUser.email, password });
+      const newEmail = email.trim();
+      refresh();
+      setLastCreds({ email: newEmail, password });
       setName(""); setEmail(""); setRole("editor");
+
       if (apiOk && emailSent) {
         toast({
           title: "অ্যাডমিন তৈরি হয়েছে",
