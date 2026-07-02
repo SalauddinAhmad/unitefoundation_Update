@@ -600,6 +600,12 @@ const RegularForm = () => {
     e.preventDefault();
     const r = regularSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("donor", {
+      name: f.name, phone: f.phone, email: f.email,
+      profession: f.area,
+      message: f.note,
+      extra: { city: f.city, area: f.area, amount: f.amount, method: f.method },
+    });
     setWaUrl(buildWhatsAppUrl(
       "নিয়মিত দাতা আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nদানের ক্ষেত্র: ${f.area}\nমাসিক পরিমাণ: ৳${f.amount}\nপেমেন্ট: ${f.method}\n\nবার্তা: ${f.note || "—"}`,
