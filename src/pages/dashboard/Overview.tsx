@@ -1,7 +1,63 @@
-import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, Calendar, TrendingUp, Activity, FileText, Inbox, Briefcase } from "lucide-react";
+import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, Calendar, TrendingUp, Activity, FileText, Inbox, Briefcase, Eye, CalendarDays } from "lucide-react";
 import { Card, KpiCard, PageHeader, SectionHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
 import { kpis, donationTrend, channelSplit, donations, volunteerApps, recentActivity, projects } from "@/data/dashboardMock";
 import { AreaChart, Area, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from "recharts";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+
+type VisitorTotals = { total: number; today: number; week: number; month: number };
+const bn = (n: number) => n.toLocaleString("bn-BD");
+
+const VisitorStrip = () => {
+  const [t, setT] = useState<VisitorTotals | null>(null);
+  const [trend, setTrend] = useState<{ day: string; visits: number }[]>([]);
+  useEffect(() => {
+    api.get<VisitorTotals>("/stats/visits", { auth: false }).then(setT).catch(() => {});
+    api.get<{ day: string; visits: number }[]>("/stats/visits-trend").then((r) =>
+      setTrend(r.map((x) => ({ day: String(x.day).slice(5), visits: Number(x.visits) })))
+    ).catch(() => {});
+  }, []);
+  const items = [
+    { icon: Eye, label: "মোট ভিজিটর", value: t?.total ?? 0 },
+    { icon: Users2, label: "আজ", value: t?.today ?? 0 },
+    { icon: CalendarDays, label: "গত ৭ দিন", value: t?.week ?? 0 },
+    { icon: TrendingUp, label: "গত ৩০ দিন", value: t?.month ?? 0 },
+  ];
+  return (
+    <Card className="mb-6">
+      <SectionHeader title="ভিজিটর পরিসংখ্যান" action={<span className="text-xs text-muted-foreground">Live</span>} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+        {items.map((it) => (
+          <div key={it.label} className="rounded-xl bg-secondary/60 px-4 py-3 flex items-center gap-3">
+            <div className="h-9 w-9 rounded-lg bg-card text-primary flex items-center justify-center">
+              <it.icon className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{it.label}</div>
+              <div className="text-lg font-black tabular-nums">{t ? bn(it.value) : "—"}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="h-[120px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={trend} margin={{ left: -20, right: 8, top: 4, bottom: 0 }}>
+            <defs>
+              <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
+                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
+            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} width={30} />
+            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
+            <Area type="monotone" dataKey="visits" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#gv)" />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
+  );
+};
 
 const icons = { donations: HandCoins, donors: Users2, volunteers: HeartHandshake, projects: FolderKanban };
 
