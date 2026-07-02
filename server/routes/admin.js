@@ -28,6 +28,7 @@ router.post('/users', asyncH(async (req, res) => {
     'INSERT INTO users (id,name,email,password_hash,role) VALUES (?,?,?,?,?)',
     [id, d.name, d.email, hash, d.role]
   );
+  let emailSent = false, emailError = null;
   if (d.sendEmail) {
     try {
       await sendMail({
@@ -35,15 +36,20 @@ router.post('/users', asyncH(async (req, res) => {
         subject: 'Unite Foundation — Account created',
         html: `<p>আপনার অ্যাকাউন্ট তৈরি হয়েছে।</p><p>Email: <b>${d.email}</b><br/>Password: <b>${d.password}</b></p><p>প্রথম লগইনের পর পাসওয়ার্ড পরিবর্তন করুন।</p>`,
       });
-    } catch (e) { console.error(e); }
+      emailSent = true;
+    } catch (e) {
+      console.error('[admin create] email failed:', e);
+      emailError = String((e && e.message) || e);
+    }
   }
-  res.status(201).json({ id });
+  res.status(201).json({ id, emailSent, emailError });
 }));
 
 router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
   const d = z.object({ password: z.string().min(8), sendEmail: z.boolean().optional() }).parse(req.body);
   const hash = await bcrypt.hash(d.password, 12);
   await pool.execute('UPDATE users SET password_hash=? WHERE id=?', [hash, req.params.id]);
+  let emailSent = false, emailError = null;
   if (d.sendEmail) {
     const [rows] = await pool.execute('SELECT email FROM users WHERE id=?', [req.params.id]);
     if (rows[0]) {
@@ -53,10 +59,16 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
           subject: 'Unite Foundation — Password reset',
           html: `<p>আপনার নতুন password: <b>${d.password}</b></p>`,
         });
-      } catch (e) { console.error(e); }
+        emailSent = true;
+      } catch (e) {
+        console.error('[admin reset] email failed:', e);
+        emailError = String((e && e.message) || e);
+      }
+    } else {
+      emailError = 'User not found';
     }
   }
-  res.json({ ok: true });
+  res.json({ ok: true, emailSent, emailError });
 }));
 
 router.delete('/users/:id', asyncH(async (req, res) => {
