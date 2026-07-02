@@ -296,30 +296,31 @@ const Overview = () => {
       value: kpisData ? bnCurrency(kpisData.total_donations) : "—",
       delta: weeklyDelta != null ? `${weeklyDelta >= 0 ? "+" : ""}${bn(weeklyDelta)}%` : undefined,
       trend: (weeklyDelta ?? 0) >= 0 ? "up" : "down",
-      note: "গত ৩০ দিনের ট্রেন্ড",
+      note: range.label,
       icon: HandCoins,
     },
     {
       key: "donors",
       label: "মোট দাতা",
       value: kpisData ? bn(kpisData.unique_donors) : "—",
-      note: kpisData ? `${bn(kpisData.donation_count)} ট্রানজেকশন` : "",
+      note: kpisData ? `${bn(kpisData.donation_count)} ট্রানজেকশন · ${range.label}` : range.label,
       icon: Users2,
     },
     {
       key: "volunteers",
-      label: "স্বেচ্ছাসেবক",
+      label: "স্বেচ্ছাসেবক আবেদন",
       value: kpisData ? bn(kpisData.volunteers) : "—",
-      note: "আবেদন গৃহীত",
+      note: range.label,
       icon: HeartHandshake,
     },
     {
       key: "projects",
       label: "চলমান প্রকল্প",
       value: kpisData ? bn(kpisData.active_projects) : "—",
-      note: `${bn(kpisData?.new_messages || 0)} নতুন মেসেজ`,
+      note: `${bn(kpisData?.new_messages || 0)} নতুন মেসেজ · ${range.label}`,
       icon: FolderKanban,
     },
+
   ];
 
   return (
