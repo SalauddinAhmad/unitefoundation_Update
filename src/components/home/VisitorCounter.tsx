@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+
 import { Eye, Users, CalendarDays, TrendingUp } from "lucide-react";
 import { api } from "@/lib/api";
 
