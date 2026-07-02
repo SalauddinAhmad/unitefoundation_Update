@@ -379,10 +379,13 @@ const AdminsPanel = () => {
       let emailError: string | null = null;
       let apiOk = false;
       try {
-        const res = await api.post("/admin/users", { name, email, role, password, sendEmail: true });
+        const res = await api.post<{ id: string; emailSent?: boolean; emailError?: string | null }>(
+          "/admin/users",
+          { name, email, role, password, sendEmail: true },
+        );
         apiOk = true;
-        emailSent = Boolean(res.data?.emailSent);
-        emailError = res.data?.emailError ?? null;
+        emailSent = Boolean(res?.emailSent);
+        emailError = res?.emailError ?? null;
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } }; message?: string });
         toast({
@@ -429,14 +432,17 @@ const AdminsPanel = () => {
   const resend = async (u: AdminUser) => {
     const password = genPassword();
     try {
-      const res = await api.post(`/admin/users/${u.id}/reset-credentials`, { password, sendEmail: true });
+      const res = await api.post<{ ok: boolean; emailSent?: boolean; emailError?: string | null }>(
+        `/admin/users/${u.id}/reset-credentials`,
+        { password, sendEmail: true },
+      );
       setLastCreds({ email: u.email, password });
-      if (res.data?.emailSent) {
+      if (res?.emailSent) {
         toast({ title: "নতুন পাসওয়ার্ড পাঠানো হয়েছে", description: u.email });
       } else {
         toast({
           title: "পাসওয়ার্ড রিসেট হয়েছে, কিন্তু ইমেইল যায়নি",
-          description: res.data?.emailError ? `SMTP error: ${res.data.emailError}` : "নিচের পাসওয়ার্ডটি ম্যানুয়ালি পাঠান।",
+          description: res?.emailError ? `SMTP error: ${res.emailError}` : "নিচের পাসওয়ার্ডটি ম্যানুয়ালি পাঠান।",
           variant: "destructive",
         });
       }
