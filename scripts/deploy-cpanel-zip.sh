@@ -93,24 +93,61 @@ if s not in (1, True):
 ' || fallback "upload returned error"
 echo "   ✅ Upload complete"
 
-# 4. Extract ZIP into destination (Fileman/extract)
+# 4. Extract ZIP into destination
+# Try UAPI Fileman::extract first (newer cPanel), fall back to API2 Fileman::fileop op=extract (older cPanel)
 echo "📂 Extracting ZIP into ${REMOTE_ABS}..."
+
+extract_ok() {
+  python3 -c '
+import json, sys
+raw = sys.stdin.read()
+try:
+    d = json.loads(raw)
+except Exception:
+    sys.exit(1)
+s = d.get("status")
+if s is None:
+    s = d.get("result", {}).get("status")
+errors = d.get("errors") or (d.get("result", {}) or {}).get("errors") or []
+cpanelresult = d.get("cpanelresult", {})
+if cpanelresult:
+    data = cpanelresult.get("data", [{}])
+    if data and isinstance(data, list):
+        r = data[0].get("result")
+        if r in (1, "1", True):
+            sys.exit(0)
+    if cpanelresult.get("error"):
+        sys.exit(1)
+if s in (1, True) and not errors:
+    sys.exit(0)
+sys.exit(1)
+'
+}
+
 EXTRACT_RES=$(curl --silent --show-error --location \
   --connect-timeout 30 --max-time 120 --header "$AUTH_HEADER" \
   --data-urlencode "sourcefiles=${STAGING_ABS}/${ZIP_NAME}" \
   --data-urlencode "destfiles=${REMOTE_ABS}" \
-  "${API_BASE}/execute/Fileman/extract") || fallback "extract request failed"
+  "${API_BASE}/execute/Fileman/extract" 2>/dev/null || echo '{}')
 
-echo "$EXTRACT_RES" | python3 -c '
-import json, sys
-try:
-    d = json.loads(sys.stdin.read())
-except Exception as e:
-    print("bad JSON:", e); sys.exit(1)
-s = d.get("status") or d.get("result", {}).get("status")
-errors = d.get("errors") or []
-if s not in (1, True) or errors:
-    print(json.dumps(d, indent=2)); sys.exit(1)
-' || fallback "extract returned error"
+if ! echo "$EXTRACT_RES" | extract_ok; then
+  echo "   UAPI extract unavailable, trying API2 fileop..."
+  EXTRACT_RES=$(curl --silent --show-error --location \
+    --connect-timeout 30 --max-time 120 --header "$AUTH_HEADER" \
+    --data-urlencode "cpanel_jsonapi_user=${CPANEL_USER}" \
+    --data-urlencode "cpanel_jsonapi_apiversion=2" \
+    --data-urlencode "cpanel_jsonapi_module=Fileman" \
+    --data-urlencode "cpanel_jsonapi_func=fileop" \
+    --data-urlencode "op=extract" \
+    --data-urlencode "sourcefiles=${STAGING_ABS}/${ZIP_NAME}" \
+    --data-urlencode "destfiles=${REMOTE_ABS}" \
+    --data-urlencode "doubledecode=0" \
+    "${API_BASE}/json-api/cpanel") || fallback "extract request failed"
+
+  echo "$EXTRACT_RES" | extract_ok || {
+    echo "$EXTRACT_RES" | head -c 2000
+    fallback "extract returned error"
+  }
+fi
 
 echo "✅ ZIP deploy complete in $SECONDS seconds."
