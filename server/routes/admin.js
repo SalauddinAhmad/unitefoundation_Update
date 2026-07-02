@@ -74,8 +74,20 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
 }));
 
 router.delete('/users/:id', asyncH(async (req, res) => {
+  if (req.params.id === req.user.sub) {
+    return res.status(400).json({ message: 'নিজের অ্যাকাউন্ট মুছতে পারবেন না' });
+  }
+  // Prevent deleting the last super_admin.
+  const [target] = await pool.execute('SELECT role FROM users WHERE id=?', [req.params.id]);
+  if (target[0]?.role === 'super_admin') {
+    const [cnt] = await pool.execute("SELECT COUNT(*) AS c FROM users WHERE role='super_admin'");
+    if ((cnt[0]?.c || 0) <= 1) {
+      return res.status(400).json({ message: 'সর্বশেষ Super Admin মুছে ফেলা যাবে না' });
+    }
+  }
   await pool.execute('DELETE FROM users WHERE id=?', [req.params.id]);
   res.json({ ok: true });
 }));
+
 
 module.exports = router;
