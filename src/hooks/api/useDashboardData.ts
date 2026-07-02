@@ -203,6 +203,9 @@ export type SiteSettings = {
     notify_email: string;
   };
   impact_stats: ImpactStat[];
+  hero_slides: HeroSlide[];
+  about: AboutContent;
+  trust: TrustItem[];
 };
 
 const defaultSettings: SiteSettings = {
