@@ -6,6 +6,7 @@ import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { GallerySection } from "@/components/home/GallerySection";
 import { ImpactStats } from "@/components/home/ImpactStats";
 import { PartnersSection } from "@/components/home/PartnersSection";
+import { VisitorCounter } from "@/components/home/VisitorCounter";
 import { DonationChannelsSection } from "@/components/home/DonationChannelsSection";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 
