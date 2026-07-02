@@ -873,6 +873,23 @@ const AdminsPanel = () => {
     }
   };
 
+  const changeRole = async (u: AdminUser, newRole: Role) => {
+    if (newRole === u.role) return;
+    const prev = list;
+    setList((rows) => rows.map((r) => (r.id === u.id ? { ...r, role: newRole } : r)));
+    try {
+      await api.patch(`/admin/users/${u.id}/role`, { role: newRole });
+      toast({ title: "রোল আপডেট হয়েছে", description: `${u.email} → ${ROLE_LABEL[newRole]}` });
+    } catch (err: unknown) {
+      setList(prev);
+      toast({
+        title: "রোল পরিবর্তন ব্যর্থ",
+        description: err instanceof Error ? err.message : "সার্ভারে সংযোগ করা যায়নি।",
+        variant: "destructive",
+      });
+    }
+  };
+
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: "কপি করা হয়েছে" });
