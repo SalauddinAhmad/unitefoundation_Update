@@ -138,7 +138,8 @@ const Toggle = ({
   </div>
 );
 
-const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[] = [
+const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[] = [
+  { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
