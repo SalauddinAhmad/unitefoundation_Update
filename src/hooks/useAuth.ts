@@ -54,6 +54,19 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(() => readUser());
   const [loading, setLoading] = useState(false);
 
+  // Safety: if a stale demo token is stored while we're pointed at the real
+  // production API, purge it so the dashboard forces a proper re-login.
+  useEffect(() => {
+    const isProdApi = /unitefoundation\.bd/i.test(
+      (import.meta.env.VITE_API_BASE_URL as string | undefined) || "https://api.unitefoundation.bd",
+    );
+    if (isProdApi && auth.token === DEMO_TOKEN) {
+      auth.clear();
+      localStorage.removeItem(USER_KEY);
+      setUser(null);
+    }
+  }, []);
+
   useEffect(() => {
     const onStorage = () => setUser(readUser());
     window.addEventListener("storage", onStorage);
@@ -82,7 +95,15 @@ export function useAuth() {
         }
         return { ok: false as const, message: "অপ্রত্যাশিত প্রতিক্রিয়া" };
       } catch (err) {
+        // Demo fallback ONLY when the real backend is truly unreachable
+        // (network/CORS) AND we're not talking to the production API.
+        // This prevents a stale `demo.local.token` from being sent to the
+        // real server and getting rejected as "Invalid or expired token".
+        const isProdApi = /unitefoundation\.bd/i.test(
+          (import.meta.env.VITE_API_BASE_URL as string | undefined) || "https://api.unitefoundation.bd",
+        );
         if (
+          !isProdApi &&
           isNetworkErr(err) &&
           email === DEMO_USER.email &&
           password === DEMO_PASSWORD
@@ -102,7 +123,7 @@ export function useAuth() {
         if (err instanceof ApiError) return { ok: false as const, message: err.message };
         return {
           ok: false as const,
-          message: "সার্ভারে সংযোগ করা যায়নি। ডেমো: admin@unitefoundation.bd / admin123",
+          message: "সার্ভারে সংযোগ করা যায়নি — CORS/নেটওয়ার্ক সমস্যা। কিছুক্ষণ পর আবার চেষ্টা করুন।",
         };
       }
     } finally {
