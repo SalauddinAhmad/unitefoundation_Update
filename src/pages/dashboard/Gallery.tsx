@@ -34,73 +34,23 @@ type Album = {
   items: MediaItem[];
 };
 
-const LS_KEY = "uf_gallery_state";
+import {
+  useGalleryAdmin,
+  useSaveAlbum,
+  useDeleteAlbum,
+  useSaveGalleryItem,
+  useDeleteGalleryItem,
+  type ApiGalleryAlbum,
+  type ApiGalleryItem,
+} from "@/hooks/api/usePublic";
+
 const CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
-
-const SEED: Album[] = [
-  {
-    id: crypto.randomUUID(),
-    title: "বন্যা কবলিত এলাকায় ত্রাণ অভিযান",
-    slug: "bonna-tran-2025",
-    description: "নেত্রকোণা ও সিলেট জেলায় বন্যা দুর্গতদের পাশে দাঁড়ানোর সংক্ষিপ্ত প্রতিবেদন।",
-    cover: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200",
-    category: "ত্রাণ",
-    status: "published",
-    date: new Date().toISOString().slice(0, 10),
-    location: "নেত্রকোণা, বাংলাদেশ",
-    tags: ["বন্যা", "জরুরি সহায়তা"],
-    featured: true,
-    items: [
-      { id: crypto.randomUUID(), type: "image", url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200", caption: "বন্যা পরিদর্শন" },
-      { id: crypto.randomUUID(), type: "image", url: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=1200", caption: "ত্রাণ বিতরণ" },
-      { id: crypto.randomUUID(), type: "video", url: "", youtubeId: "dQw4w9WgXcQ", duration: "৩:২৪", caption: "মাঠ পর্যায়ের ভিডিও" },
-    ],
-  },
-  {
-    id: crypto.randomUUID(),
-    title: "রমজানে ইফতার প্রোগ্রাম",
-    slug: "iftar-program",
-    description: "৩টি জেলায় ইফতার বিতরণ কার্যক্রমের ছবি।",
-    cover: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=1200",
-    category: "ইফতার",
-    status: "published",
-    date: new Date().toISOString().slice(0, 10),
-    location: "ঢাকা, খুলনা, দিনাজপুর",
-    tags: ["রমজান", "ইফতার"],
-    items: [
-      { id: crypto.randomUUID(), type: "image", url: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d?w=1200" },
-      { id: crypto.randomUUID(), type: "image", url: "https://images.unsplash.com/photo-1500673922987-e212871fec22?w=1200" },
-    ],
-  },
-  {
-    id: crypto.randomUUID(),
-    title: "শীতবস্ত্র বিতরণ — উত্তরাঞ্চল",
-    slug: "winter-2024",
-    description: "ড্রাফট অ্যালবাম — ছবি যুক্ত করার অপেক্ষায়।",
-    cover: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200",
-    category: "মৌসুমি সহায়তা",
-    status: "draft",
-    date: new Date().toISOString().slice(0, 10),
-    location: "রংপুর",
-    tags: ["শীত"],
-    items: [],
-  },
-];
-
-function load(): Album[] {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return SEED;
-}
-function persist(list: Album[]) { try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {} }
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^\w\u0980-\u09FF]+/g, "-").replace(/^-|-$/g, "") || `album-${Date.now()}`;
 
 const empty = (): Album => ({
-  id: crypto.randomUUID(),
+  id: `new-${crypto.randomUUID()}`,
   title: "",
   slug: "",
   description: "",
@@ -113,8 +63,75 @@ const empty = (): Album => ({
   items: [],
 });
 
+const extractYT = (url: string) => {
+  const m = url.match(/(?:youtube\.com\/(?:.*v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : url && url.length === 11 ? url : "";
+};
+
+// ---- API ↔ UI mappers ----
+function albumFromApi(row: ApiGalleryAlbum, items: ApiGalleryItem[]): Album {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug || "",
+    description: row.description || "",
+    cover: row.cover_url || "",
+    category: row.category || CATEGORIES[0],
+    status: (row.status as AlbumStatus) || "published",
+    date: (row.date || "").slice(0, 10) || new Date().toISOString().slice(0, 10),
+    location: row.location || "",
+    tags: Array.isArray(row.tags) ? row.tags : [],
+    featured: Boolean(row.featured),
+    items: items
+      .filter((it) => it.album_id === row.id)
+      .map((it) => ({
+        id: it.id,
+        type: it.kind,
+        url: it.url || "",
+        caption: it.caption || it.title || "",
+        youtubeId: it.youtube_id || undefined,
+        duration: it.duration || undefined,
+      })),
+  };
+}
+function albumToApi(a: Album): Partial<ApiGalleryAlbum> {
+  return {
+    title: a.title,
+    slug: a.slug || slugify(a.title),
+    description: a.description || null,
+    cover_url: a.cover || null,
+    category: a.category || null,
+    status: a.status,
+    date: a.date || null,
+    location: a.location || null,
+    tags: a.tags || [],
+    featured: a.featured ? 1 : 0,
+  };
+}
+function itemToApi(albumId: string, it: MediaItem): Partial<ApiGalleryItem> {
+  return {
+    album_id: albumId,
+    kind: it.type,
+    url: it.type === "video" ? (it.url || `https://youtube.com/watch?v=${it.youtubeId || ""}`) : it.url,
+    caption: it.caption || null,
+    youtube_id: it.youtubeId || null,
+    duration: it.duration || null,
+  };
+}
+
 export default function Gallery() {
-  const [list, setList] = useState<Album[]>(() => load());
+  const { data } = useGalleryAdmin();
+  const saveAlbumMut = useSaveAlbum();
+  const deleteAlbumMut = useDeleteAlbum();
+  const saveItemMut = useSaveGalleryItem();
+  const deleteItemMut = useDeleteGalleryItem();
+
+  const list = useMemo<Album[]>(() => {
+    const albums = data?.albums || [];
+    const items = data?.items || [];
+    return albums.map((a) => albumFromApi(a, items));
+  }, [data]);
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | AlbumStatus>("all");
   const [category, setCategory] = useState("all");
@@ -122,8 +139,6 @@ export default function Gallery() {
   const [editor, setEditor] = useState<{ open: boolean; a?: Album }>({ open: false });
   const [viewer, setViewer] = useState<Album | null>(null);
   const [lightbox, setLightbox] = useState<{ album: Album; idx: number } | null>(null);
-
-  const update = (next: Album[]) => { setList(next); persist(next); };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -145,40 +160,92 @@ export default function Gallery() {
     };
   }, [list]);
 
-  const save = (a: Album) => {
-    const fixed = { ...a, slug: a.slug || slugify(a.title), cover: a.cover || a.items.find((i) => i.type === "image")?.url || "" };
-    const exists = list.some((x) => x.id === fixed.id);
-    update(exists ? list.map((x) => (x.id === fixed.id ? fixed : x)) : [fixed, ...list]);
-    toast.success(exists ? "অ্যালবাম আপডেট হয়েছে" : "নতুন অ্যালবাম তৈরি হয়েছে");
-    setEditor({ open: false });
+  const save = async (a: Album) => {
+    try {
+      const isNew = a.id.startsWith("new-");
+      const original = isNew ? null : list.find((x) => x.id === a.id);
+      const meta = albumToApi(a);
+
+      let albumId = a.id;
+      if (isNew) {
+        const res: any = await saveAlbumMut.mutateAsync({ data: meta });
+        albumId = res?.id || albumId;
+      } else {
+        await saveAlbumMut.mutateAsync({ id: a.id, data: meta });
+      }
+
+      // Sync items — add new, delete removed
+      const originalItemIds = new Set((original?.items || []).map((it) => it.id));
+      const currentItemIds = new Set(a.items.map((it) => it.id));
+
+      // Deletions
+      const toDelete = (original?.items || []).filter((it) => !currentItemIds.has(it.id));
+      // New (temp id or not in original)
+      const toAdd = a.items.filter((it) => !originalItemIds.has(it.id));
+
+      await Promise.all([
+        ...toDelete.map((it) => deleteItemMut.mutateAsync(it.id)),
+        ...toAdd.map((it) => saveItemMut.mutateAsync({ data: itemToApi(albumId, it) })),
+      ]);
+
+      toast.success(isNew ? "নতুন অ্যালবাম তৈরি হয়েছে" : "অ্যালবাম আপডেট হয়েছে");
+      setEditor({ open: false });
+    } catch (e: any) {
+      toast.error(e?.message || "সেভ করা যায়নি");
+    }
   };
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (!confirm("এই অ্যালবাম মুছে ফেলতে চান?")) return;
-    update(list.filter((x) => x.id !== id));
-    toast.success("মুছে ফেলা হয়েছে");
+    try {
+      await deleteAlbumMut.mutateAsync(id);
+      toast.success("মুছে ফেলা হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "ডিলিট ব্যর্থ");
+    }
   };
 
-  const duplicate = (a: Album) => {
-    const copy: Album = { ...a, id: crypto.randomUUID(), title: `${a.title} (কপি)`, slug: `${a.slug}-copy`, status: "draft", featured: false };
-    update([copy, ...list]);
-    toast.success("ডুপ্লিকেট তৈরি হয়েছে");
+  const duplicate = async (a: Album) => {
+    try {
+      const meta = albumToApi({ ...a, title: `${a.title} (কপি)`, slug: `${a.slug || slugify(a.title)}-copy`, status: "draft", featured: false });
+      const res: any = await saveAlbumMut.mutateAsync({ data: meta });
+      const newId = res?.id;
+      if (newId) {
+        await Promise.all(a.items.map((it) => saveItemMut.mutateAsync({ data: itemToApi(newId, it) })));
+      }
+      toast.success("ডুপ্লিকেট তৈরি হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "কপি ব্যর্থ");
+    }
   };
 
-  const toggleStatus = (a: Album) => {
+  const toggleStatus = async (a: Album) => {
     const next: AlbumStatus = a.status === "published" ? "draft" : "published";
-    update(list.map((x) => (x.id === a.id ? { ...x, status: next } : x)));
-    toast.success(next === "published" ? "প্রকাশিত হয়েছে" : "ড্রাফটে নেয়া হয়েছে");
+    try {
+      await saveAlbumMut.mutateAsync({ id: a.id, data: { status: next } });
+      toast.success(next === "published" ? "প্রকাশিত হয়েছে" : "ড্রাফটে নেয়া হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "আপডেট ব্যর্থ");
+    }
   };
 
-  const toggleFeatured = (a: Album) => {
-    update(list.map((x) => (x.id === a.id ? { ...x, featured: !x.featured } : x)));
+  const toggleFeatured = async (a: Album) => {
+    try {
+      await saveAlbumMut.mutateAsync({ id: a.id, data: { featured: a.featured ? 0 : 1 } });
+    } catch (e: any) {
+      toast.error(e?.message || "আপডেট ব্যর্থ");
+    }
   };
 
-  const archive = (a: Album) => {
-    update(list.map((x) => (x.id === a.id ? { ...x, status: "archived" } : x)));
-    toast.success("আর্কাইভ হয়েছে");
+  const archive = async (a: Album) => {
+    try {
+      await saveAlbumMut.mutateAsync({ id: a.id, data: { status: "archived" } });
+      toast.success("আর্কাইভ হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "আপডেট ব্যর্থ");
+    }
   };
+
 
   return (
     <>
