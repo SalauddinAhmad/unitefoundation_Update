@@ -342,7 +342,7 @@ function PostEditor({ post, onClose, onSave }: { post?: Post; onClose: () => voi
 
   const insertLink = () => { const u = prompt("লিংক URL দিন:", "https://"); if (u) cmd("createLink", u); };
   const insertImage = () => { const u = prompt("ছবির URL দিন:", "https://"); if (u) cmd("insertHTML", `<img src="${u}" alt="" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
-  const onImage = (f?: File) => { if (!f) return; const url = URL.createObjectURL(f); cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
+  const onImage = async (f?: File) => { if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.82 }); cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
 
   const addTag = (v: string) => {
     const t = v.trim().replace(/,$/, "");
@@ -444,7 +444,7 @@ function PostEditor({ post, onClose, onSave }: { post?: Post; onClose: () => voi
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => { const f = e.target.files?.[0]; if (f) setCover(URL.createObjectURL(f)); }}
+                        onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1920, quality: 0.85 }); setCover(url); }}
                       />
                     </label>
                   </div>

@@ -446,13 +446,17 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
     setA((p) => ({ ...p, items: [...p.items, { id: crypto.randomUUID(), type: "image", url }], cover: p.cover || url }));
   };
 
-  const onFiles = (files: FileList | null) => {
+  const onFiles = async (files: FileList | null) => {
     if (!files) return;
-    Array.from(files).forEach((f) => {
-      const r = new FileReader();
-      r.onload = () => addImageUrl(String(r.result));
-      r.readAsDataURL(f);
-    });
+    const { compressImageToDataURL } = await import("@/lib/imageCompress");
+    for (const f of Array.from(files)) {
+      try {
+        const url = await compressImageToDataURL(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.82 });
+        addImageUrl(url);
+      } catch {
+        /* skip */
+      }
+    }
   };
 
   const extractYT = (url: string) => {

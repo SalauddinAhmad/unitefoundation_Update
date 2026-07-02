@@ -547,18 +547,26 @@ const ComposeModal = ({
     if (url && /^https?:\/\//.test(url)) cmd("createLink", url);
   };
 
-  const onFiles = (files: FileList | null) => {
+  const onFiles = async (files: FileList | null) => {
     if (!files) return;
+    const { compressImageToDataURL } = await import("@/lib/imageCompress");
     const arr: { name: string; size: number; url?: string }[] = [];
-    Array.from(files).forEach((f) => {
+    for (const f of Array.from(files)) {
       const item: { name: string; size: number; url?: string } = { name: f.name, size: f.size };
       if (f.type.startsWith("image/")) {
-        const url = URL.createObjectURL(f);
-        item.url = url;
-        cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
+        try {
+          const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.82 });
+          item.url = url;
+          item.size = Math.round((url.length * 3) / 4);
+          cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
+        } catch {
+          const url = URL.createObjectURL(f);
+          item.url = url;
+          cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
+        }
       }
       arr.push(item);
-    });
+    }
     setAttachments((p) => [...p, ...arr]);
   };
 
