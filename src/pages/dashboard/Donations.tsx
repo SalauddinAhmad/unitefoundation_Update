@@ -19,6 +19,18 @@ const Donations = () => {
   );
   const total = filtered.reduce((s, d) => s + (d.status === "completed" ? d.amount : 0), 0);
 
+  const all = data as Donation[];
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const monthStr = todayStr.slice(0, 7);
+  const isSameDay = (s: string) => (s || "").slice(0, 10) === todayStr;
+  const isSameMonth = (s: string) => (s || "").slice(0, 7) === monthStr;
+  const todaySum = all.filter((d) => d.status === "completed" && isSameDay(d.date)).reduce((s, d) => s + d.amount, 0);
+  const monthSum = all.filter((d) => d.status === "completed" && isSameMonth(d.date)).reduce((s, d) => s + d.amount, 0);
+  const pendingSum = all.filter((d) => d.status === "pending").reduce((s, d) => s + d.amount, 0);
+  const completedCount = all.filter((d) => d.status === "completed").length;
+  const avgDonation = completedCount ? Math.round(all.filter((d) => d.status === "completed").reduce((s, d) => s + d.amount, 0) / completedCount) : 0;
+  const fmt = (n: number) => "৳ " + n.toLocaleString("bn-BD");
+
   return (
     <>
       <PageHeader
@@ -97,19 +109,19 @@ const Donations = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card>
           <div className="text-xs text-muted-foreground font-medium">আজকের দান</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ৮৯,০০০</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(todaySum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">এই মাসে</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ১৮.৪L</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(monthSum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">অপেক্ষমাণ</div>
-          <div className="text-2xl font-extrabold mt-2 text-amber-600">৳ ২৫,০০০</div>
+          <div className="text-2xl font-extrabold mt-2 text-amber-600">{isLoading ? "—" : fmt(pendingSum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">গড় দান</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ৩,৮৫০</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(avgDonation)}</div>
         </Card>
       </div>
 
