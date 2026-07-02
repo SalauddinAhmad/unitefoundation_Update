@@ -60,7 +60,7 @@ const Messages = () => {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
-  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "checking">("idle");
+  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "network" | "checking">("idle");
   const [smtpError, setSmtpError] = useState<string>("");
 
   // Load messages from backend + SMTP health check
@@ -89,6 +89,12 @@ const Messages = () => {
           // Session expired — not an SMTP problem
           setSmtpStatus("auth");
           setSmtpError("লগইন সেশনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন");
+          return;
+        }
+        if (!(e instanceof ApiError)) {
+          // fetch itself failed (CORS / network) — not an SMTP problem
+          setSmtpStatus("network");
+          setSmtpError((e as Error)?.message || String(e));
           return;
         }
         setSmtpStatus("fail");
