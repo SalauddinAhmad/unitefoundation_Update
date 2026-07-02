@@ -3,12 +3,32 @@ const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { requireAuth } = require('../middleware/auth');
 
-router.get('/overview', requireAuth, asyncH(async (_req, res) => {
-  const [[donationSum]] = await pool.execute("SELECT COALESCE(SUM(amount),0) total, COUNT(*) count FROM donations WHERE status='completed'");
-  const [[donors]] = await pool.execute("SELECT COUNT(DISTINCT COALESCE(NULLIF(phone,''), NULLIF(email,''), CAST(id AS CHAR))) c FROM donations WHERE status='completed'");
-  const [[volCount]] = await pool.execute("SELECT COUNT(*) c FROM applications WHERE kind='volunteers'");
+// Build a "created_at BETWEEN ..." WHERE fragment from ?from & ?to (YYYY-MM-DD).
+// Both inclusive. Missing values are ignored (no filter on that side).
+function dateWhere(req, column = 'created_at') {
+  const from = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from) ? req.query.from : null;
+  const to = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to) ? req.query.to : null;
+  const parts = [];
+  const args = [];
+  if (from) { parts.push(`${column} >= ?`); args.push(`${from} 00:00:00`); }
+  if (to)   { parts.push(`${column} <= ?`); args.push(`${to} 23:59:59`); }
+  return { sql: parts.length ? ` AND ${parts.join(' AND ')}` : '', args };
+}
+
+router.get('/overview', requireAuth, asyncH(async (req, res) => {
+  const w = dateWhere(req);
+  const [[donationSum]] = await pool.execute(
+    `SELECT COALESCE(SUM(amount),0) total, COUNT(*) count
+     FROM donations WHERE status='completed'${w.sql}`, w.args);
+  const [[donors]] = await pool.execute(
+    `SELECT COUNT(DISTINCT COALESCE(NULLIF(phone,''), NULLIF(email,''), CAST(id AS CHAR))) c
+     FROM donations WHERE status='completed'${w.sql}`, w.args);
+  const wApps = dateWhere(req);
+  const [[volCount]] = await pool.execute(
+    `SELECT COUNT(*) c FROM applications WHERE kind='volunteers'${wApps.sql}`, wApps.args);
   const [[projCount]] = await pool.execute("SELECT COUNT(*) c FROM projects WHERE status='active'");
-  const [[msgCount]] = await pool.execute("SELECT COUNT(*) c FROM messages WHERE status='new'");
+  const [[msgCount]] = await pool.execute(
+    `SELECT COUNT(*) c FROM messages WHERE status='new'${wApps.sql}`, wApps.args);
   res.json({
     kpis: {
       total_donations: Number(donationSum.total),
@@ -21,18 +41,23 @@ router.get('/overview', requireAuth, asyncH(async (_req, res) => {
   });
 }));
 
-
-router.get('/donations-trend', requireAuth, asyncH(async (_req, res) => {
+router.get('/donations-trend', requireAuth, asyncH(async (req, res) => {
+  const w = dateWhere(req);
+  // When no range is provided, keep the old "last 30 days" behaviour.
+  const defaultWindow = w.sql ? '' : " AND created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)";
   const [rows] = await pool.execute(`
     SELECT DATE(created_at) d, SUM(amount) total
-    FROM donations WHERE status='completed' AND created_at > DATE_SUB(NOW(), INTERVAL 30 DAY)
+    FROM donations WHERE status='completed'${w.sql}${defaultWindow}
     GROUP BY DATE(created_at) ORDER BY d
-  `);
+  `, w.args);
   res.json(rows);
 }));
 
-router.get('/channels', requireAuth, asyncH(async (_req, res) => {
-  const [rows] = await pool.execute(`SELECT method, SUM(amount) total FROM donations WHERE status='completed' GROUP BY method`);
+router.get('/channels', requireAuth, asyncH(async (req, res) => {
+  const w = dateWhere(req);
+  const [rows] = await pool.execute(
+    `SELECT method, SUM(amount) total FROM donations WHERE status='completed'${w.sql} GROUP BY method`,
+    w.args);
   res.json(rows);
 }));
 
