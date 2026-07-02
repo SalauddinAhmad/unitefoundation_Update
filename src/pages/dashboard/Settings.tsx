@@ -901,11 +901,12 @@ const AdminsPanel = () => {
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">রোল</span>
-            <select value={role} onChange={(e) => setRole(e.target.value as AdminUser["role"])} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition">
-              <option value="admin">Admin — সম্পূর্ণ অ্যাক্সেস</option>
-              <option value="editor">Editor — কন্টেন্ট সম্পাদনা</option>
-              <option value="viewer">Viewer — শুধু দেখা</option>
+            <select value={role} onChange={(e) => setRole(e.target.value as Role)} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition">
+              {ASSIGNABLE_ROLES.map((r) => (
+                <option key={r} value={r}>{ROLE_LABEL[r]} — {ROLE_DESCRIPTION[r]}</option>
+              ))}
             </select>
+
           </label>
           <div className="flex items-end">
             <button type="submit" disabled={creating} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-primary/90 disabled:opacity-60">
@@ -953,27 +954,38 @@ const AdminsPanel = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {list.map((u) => (
-                <tr key={u.id} className="hover:bg-muted/40">
-                  <td className="py-3 font-semibold">{u.name}</td>
-                  <td className="py-3 text-muted-foreground">{u.email}</td>
-                  <td className="py-3">
-                    <span className={
-                      "px-2 py-0.5 rounded-full text-[11px] font-bold " +
-                      (u.role === "admin" ? "bg-primary/10 text-primary" :
-                       u.role === "editor" ? "bg-amber-500/10 text-amber-600" :
-                       "bg-secondary text-muted-foreground")
-                    }>
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="py-3 text-muted-foreground text-xs">{u.created_at}</td>
-                  <td className="py-3 text-right">
-                    <button onClick={() => resend(u)} className="text-xs text-primary hover:underline mr-3 font-semibold">নতুন পাসওয়ার্ড পাঠান</button>
-                    <button onClick={() => removeAdmin(u)} className="text-destructive hover:text-destructive/80 inline-flex"><Trash2 className="h-4 w-4" /></button>
-                  </td>
-                </tr>
-              ))}
+              {loadingList && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground text-xs">লোড হচ্ছে...</td></tr>}
+              {!loadingList && list.length === 0 && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground text-xs">কোনো অ্যাডমিন পাওয়া যায়নি</td></tr>}
+              {list.map((u) => {
+                const isSelf = currentUser?.id === u.id;
+                return (
+                  <tr key={u.id} className="hover:bg-muted/40">
+                    <td className="py-3 font-semibold">
+                      {u.name}
+                      {isSelf && <span className="ml-2 text-[10px] font-bold text-primary">আপনি</span>}
+                    </td>
+                    <td className="py-3 text-muted-foreground">{u.email}</td>
+                    <td className="py-3">
+                      <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
+                        {ROLE_LABEL[u.role] || u.role}
+                      </span>
+                    </td>
+                    <td className="py-3 text-muted-foreground text-xs">{String(u.created_at).slice(0, 10)}</td>
+                    <td className="py-3 text-right">
+                      <button onClick={() => resend(u)} className="text-xs text-primary hover:underline mr-3 font-semibold">নতুন পাসওয়ার্ড</button>
+                      <button
+                        onClick={() => removeAdmin(u)}
+                        disabled={isSelf}
+                        title={isSelf ? "নিজেকে মুছতে পারবেন না" : "মুছুন"}
+                        className="text-destructive hover:text-destructive/80 inline-flex disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+
             </tbody>
           </table>
         </div>
