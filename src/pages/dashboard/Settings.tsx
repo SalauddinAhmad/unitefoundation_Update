@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, BadgeCheck } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info } from "lucide-react";
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -72,7 +72,7 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[]
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
-  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ", perm: "settings" },
+  
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
   { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
@@ -598,82 +598,6 @@ const Settings = () => {
             </Card>
           )}
 
-          {active === "trust" && (
-            <Card>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h3 className="font-bold">Trust ব্যাজ</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    হোম পেজের ৪টি ট্রাস্ট ব্যাজ (সরকার-নিবন্ধিত, অডিট, ইত্যাদি)
-                  </p>
-                </div>
-                <SaveBar />
-              </div>
-              <div className="space-y-3">
-                {(form.trust || []).map((it, idx) => (
-                  <div key={idx} className="grid grid-cols-[140px_1fr_1fr_40px] gap-3 items-end rounded-lg border border-border p-3">
-                    <label className="block">
-                      <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">আইকন</span>
-                      <select
-                        value={it.icon}
-                        onChange={(e) => {
-                          const next = [...form.trust];
-                          next[idx] = { ...next[idx], icon: e.target.value as typeof it.icon };
-                          setForm({ ...form, trust: next });
-                        }}
-                        className="w-full px-3 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm"
-                      >
-                        <option value="shield">🛡️ Shield</option>
-                        <option value="file">📄 File</option>
-                        <option value="award">🏆 Award</option>
-                        <option value="users">👥 Users</option>
-                      </select>
-                    </label>
-                    <Field
-                      label="টাইটেল"
-                      value={it.title}
-                      onChange={(v) => {
-                        const next = [...form.trust];
-                        next[idx] = { ...next[idx], title: v };
-                        setForm({ ...form, trust: next });
-                      }}
-                    />
-                    <Field
-                      label="বর্ণনা"
-                      value={it.note}
-                      onChange={(v) => {
-                        const next = [...form.trust];
-                        next[idx] = { ...next[idx], note: v };
-                        setForm({ ...form, trust: next });
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const next = form.trust.filter((_, i) => i !== idx);
-                        setForm({ ...form, trust: next });
-                      }}
-                      className="p-2.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setForm({
-                    ...form,
-                    trust: [...(form.trust || []), { icon: "shield", title: "নতুন ব্যাজ", note: "বর্ণনা" }],
-                  })
-                }
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-              >
-                <Plus className="h-4 w-4" /> নতুন ব্যাজ যোগ করুন
-              </button>
-            </Card>
-          )}
 
 
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Edit3, Trash2, Search, X, Save, Loader2, ExternalLink, GripVertical } from "lucide-react";
+import { Plus, Edit3, Trash2, Search, X, Save, Loader2, ExternalLink, GripVertical, Download } from "lucide-react";
+import { partners as DEFAULT_PARTNERS } from "@/data/partners";
 import { toast } from "sonner";
 import { Card, PageHeader } from "@/components/dashboard/DashboardUI";
 import {
@@ -124,18 +125,78 @@ export default function DashboardPartners() {
     }
   };
 
+  const [importing, setImporting] = useState(false);
+  const importDefaults = async () => {
+    if (!confirm(`ওয়েবসাইটে থাকা ডিফল্ট ${DEFAULT_PARTNERS.length}টি প্রতিষ্ঠান ইমপোর্ট করবেন? (একই slug থাকলে স্কিপ হবে)`)) return;
+    setImporting(true);
+    try {
+      const { compressImageToDataURL } = await import("@/lib/imageCompress");
+      const existing = new Set(partners.map((p) => p.slug));
+      let ok = 0;
+      for (let i = 0; i < DEFAULT_PARTNERS.length; i++) {
+        const p = DEFAULT_PARTNERS[i];
+        if (existing.has(p.slug)) continue;
+        let logo_url = "";
+        try {
+          const res = await fetch(p.logo);
+          const blob = await res.blob();
+          const file = new File([blob], `${p.slug}.png`, { type: blob.type || "image/png" });
+          logo_url = await compressImageToDataURL(file, { maxWidth: 512, quality: 0.9 });
+        } catch { /* skip logo */ }
+        await save.mutateAsync({
+          data: {
+            name: p.name,
+            slug: p.slug,
+            logo_url,
+            tagline: p.tagline || "",
+            description: p.description || "",
+            website: p.website || "",
+            category: "",
+            theme: p.theme || "green",
+            established: p.established || "",
+            address: p.address || "",
+            phone: p.phone || "",
+            sort_order: i,
+            status: "active",
+            content: {
+              activities: p.activities || [],
+              gallery: p.gallery || [],
+              programs: p.programs || [],
+            },
+          } as any,
+        });
+        ok++;
+      }
+      toast.success(`${ok}টি প্রতিষ্ঠান ইমপোর্ট হয়েছে`);
+      refetch();
+    } catch (e: any) {
+      toast.error(e?.message || "ইমপোর্ট ব্যর্থ");
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <>
       <PageHeader
         title="আমাদের প্রতিষ্ঠান"
         subtitle="সহযোগী প্রতিষ্ঠানসমূহ ব্যবস্থাপনা"
         actions={
-          <button
-            onClick={() => setEditor({ open: true, draft: emptyDraft() })}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition"
-          >
-            <Plus className="h-4 w-4" /> নতুন প্রতিষ্ঠান
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={importDefaults}
+              disabled={importing}
+              className="inline-flex items-center gap-2 border border-border bg-card text-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-secondary transition disabled:opacity-60"
+            >
+              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট প্রতিষ্ঠান ইমপোর্ট"}
+            </button>
+            <button
+              onClick={() => setEditor({ open: true, draft: emptyDraft() })}
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition"
+            >
+              <Plus className="h-4 w-4" /> নতুন প্রতিষ্ঠান
+            </button>
+          </div>
         }
       />
 
