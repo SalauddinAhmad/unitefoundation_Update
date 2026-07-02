@@ -75,24 +75,42 @@ function extractYouTubeId(url: string): string | null {
 const Gallery = () => {
   const { data } = useGalleryPublic();
 
+  // Build a map: album_id -> album for category lookup
+  const albumMap = useMemo(() => {
+    const m = new Map<string, { category: string; title: string }>();
+    (data?.albums || []).forEach((a) => m.set(a.id, { category: a.category || "অন্যান্য", title: a.title }));
+    return m;
+  }, [data]);
+
   // Merge API items with static fallback (API takes priority)
   const items: ImageItem[] = useMemo(() => {
     const apiImgs = (data?.items || [])
       .filter((it) => it.kind === "image")
-      .map((it) => ({ src: it.url, alt: it.title || "গ্যালারি", cat: "সকল" }));
+      .map((it) => ({
+        src: it.url,
+        alt: it.caption || it.title || albumMap.get(it.album_id || "")?.title || "গ্যালারি",
+        cat: albumMap.get(it.album_id || "")?.category || "অন্যান্য",
+      }));
     return apiImgs.length ? apiImgs : fallbackImages;
-  }, [data]);
+  }, [data, albumMap]);
 
   const videos: VideoItem[] = useMemo(() => {
     const apiVids = (data?.items || [])
       .filter((it) => it.kind === "video")
       .map((it) => {
-        const id = extractYouTubeId(it.url) || "";
-        return { thumb: it.thumb_url || `https://img.youtube.com/vi/${id}/hqdefault.jpg`, title: it.title || "ভিডিও", cat: "সকল", youtubeId: id };
+        const id = it.youtube_id || extractYouTubeId(it.url) || "";
+        return {
+          thumb: it.thumb_url || `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+          title: it.caption || it.title || "ভিডিও",
+          cat: albumMap.get(it.album_id || "")?.category || "অন্যান্য",
+          youtubeId: id,
+          duration: it.duration || undefined,
+        };
       })
       .filter((v) => v.youtubeId);
     return apiVids.length ? apiVids : fallbackVideos;
-  }, [data]);
+  }, [data, albumMap]);
+
 
   const cats = useMemo(() => ["সকল", ...Array.from(new Set(items.map((i) => i.cat)))], [items]);
   const videoCats = useMemo(() => ["সকল", ...Array.from(new Set(videos.map((v) => v.cat)))], [videos]);
