@@ -1,5 +1,5 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
-import { posts as seedPosts, type BlogPost } from "@/data/dashboardMock";
+import type { BlogPost } from "@/data/dashboardMock";
 import {
   Plus, Edit3, Eye, Trash2, Search, X, Save, Image as ImageIcon,
   Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon, Quote,
@@ -9,6 +9,12 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  usePostsAdmin,
+  useSavePost,
+  useDeletePost,
+  type ApiPost,
+} from "@/hooks/api/usePublic";
 
 type Post = BlogPost & {
   excerpt?: string;
@@ -18,35 +24,54 @@ type Post = BlogPost & {
   slug?: string;
 };
 
-const LS_KEY = "uf_blog_state";
-
-function loadPosts(): Post[] {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedPosts.map((p) => ({
-    ...p,
-    excerpt: "ছোট সারাংশ এখানে দেখানো হবে — এডিট করে আসল বিষয়বস্তু দিন।",
-    tags: [p.category],
-    html: `<p>${p.title} সম্পর্কে বিস্তারিত লেখা এখানে যুক্ত করুন।</p>`,
-  }));
-}
-function persist(list: Post[]) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
-}
-
 const CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
 
+// ---- API ↔ UI mappers ----
+function apiToUi(row: ApiPost): Post {
+  const dateStr = (row.published_at || row.created_at || "").slice(0, 10);
+  return {
+    id: row.id,
+    title: row.title,
+    author: "এডিটোরিয়াল টিম",
+    category: row.category || CATEGORIES[0],
+    views: 0,
+    date: dateStr || new Date().toISOString().slice(0, 10),
+    status: (row.status as Post["status"]) || "draft",
+    excerpt: row.excerpt || "",
+    cover: row.cover_image_url || "",
+    tags: row.category ? [row.category] : [],
+    html: row.content || "",
+    slug: row.slug || row.id,
+  };
+}
+function uiToApi(p: Post): Partial<ApiPost> {
+  const slug =
+    p.slug ||
+    p.title.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]+/gu, "").slice(0, 80) ||
+    `post-${Date.now()}`;
+  return {
+    title: p.title,
+    slug,
+    excerpt: p.excerpt || "",
+    content: p.html || "",
+    cover_image_url: p.cover || "",
+    category: p.category,
+    status: p.status === "published" ? "published" : "draft",
+  };
+}
+
 export default function Blog() {
-  const [list, setList] = useState<Post[]>(() => loadPosts());
+  const { data: rows = [], isLoading } = usePostsAdmin();
+  const saveMut = useSavePost();
+  const delMut = useDeletePost();
+
+  const list = useMemo<Post[]>(() => (rows as ApiPost[]).map(apiToUi), [rows]);
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "draft" | "scheduled">("all");
   const [category, setCategory] = useState<string>("all");
   const [editor, setEditor] = useState<{ open: boolean; post?: Post }>({ open: false });
   const [viewer, setViewer] = useState<Post | null>(null);
-
-  const update = (next: Post[]) => { setList(next); persist(next); };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -66,39 +91,59 @@ export default function Blog() {
     views: list.reduce((s, p) => s + (p.views || 0), 0),
   }), [list]);
 
-  const save = (p: Post) => {
+  const save = async (p: Post) => {
     const exists = list.some((x) => x.id === p.id);
-    const next = exists ? list.map((x) => (x.id === p.id ? p : x)) : [p, ...list];
-    update(next);
-    setEditor({ open: false });
-    toast.success(exists ? "পোস্ট আপডেট হয়েছে" : "নতুন পোস্ট তৈরি হয়েছে");
+    const data = uiToApi(p);
+    try {
+      if (exists) {
+        await saveMut.mutateAsync({ id: p.id, data });
+        toast.success("পোস্ট আপডেট হয়েছে");
+      } else {
+        await saveMut.mutateAsync({ data });
+        toast.success("নতুন পোস্ট তৈরি হয়েছে");
+      }
+      setEditor({ open: false });
+    } catch (e: any) {
+      toast.error(e?.message || "সেভ করা যায়নি — লগইন যাচাই করুন");
+    }
   };
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (!confirm("এই পোস্টটি ডিলিট করবেন?")) return;
-    update(list.filter((p) => p.id !== id));
-    toast.success("পোস্ট ডিলিট করা হয়েছে");
+    try {
+      await delMut.mutateAsync(id);
+      toast.success("পোস্ট ডিলিট করা হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "ডিলিট করা যায়নি");
+    }
   };
 
-  const duplicate = (p: Post) => {
+  const duplicate = async (p: Post) => {
     const copy: Post = {
       ...p,
-      id: `B-${Math.floor(Math.random() * 900) + 100}`,
+      id: "",
       title: p.title + " (কপি)",
       status: "draft",
       views: 0,
+      slug: "",
       date: new Date().toISOString().slice(0, 10),
     };
-    update([copy, ...list]);
-    toast.success("পোস্ট কপি করা হয়েছে");
+    try {
+      await saveMut.mutateAsync({ data: uiToApi(copy) });
+      toast.success("পোস্ট কপি করা হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "কপি করা যায়নি");
+    }
   };
 
-  const togglePublish = (p: Post) => {
-    const next = list.map((x) =>
-      x.id === p.id ? { ...x, status: x.status === "published" ? ("draft" as const) : ("published" as const) } : x,
-    );
-    update(next);
-    toast.success(p.status === "published" ? "ড্রাফট-এ পাঠানো হয়েছে" : "পাবলিশ করা হয়েছে");
+  const togglePublish = async (p: Post) => {
+    const next = p.status === "published" ? "draft" : "published";
+    try {
+      await saveMut.mutateAsync({ id: p.id, data: { status: next } });
+      toast.success(next === "published" ? "পাবলিশ করা হয়েছে" : "ড্রাফট-এ পাঠানো হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "স্ট্যাটাস বদলানো যায়নি");
+    }
   };
 
   return (
