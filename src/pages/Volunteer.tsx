@@ -667,6 +667,11 @@ const MemberForm = () => {
     const r = memberSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
     const typeLabel = membershipTypes.find((t) => t.value === f.type)?.label || f.type;
+    saveApplication("member", {
+      name: f.name, phone: f.phone, email: f.email,
+      address: f.address, profession: f.profession, message: f.note,
+      extra: { city: f.city, membershipType: typeLabel, type: typeLabel },
+    });
     setWaUrl(buildWhatsAppUrl(
       "সদস্যপদ আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nসদস্যপদ: ${typeLabel}\nঠিকানা: ${f.address}\n\nবার্তা: ${f.note || "—"}`,
