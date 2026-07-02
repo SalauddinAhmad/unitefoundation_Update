@@ -1,6 +1,6 @@
 import { Seo } from "@/components/Seo";
 import { Hero } from "@/components/home/Hero";
-import { TrustStrip } from "@/components/home/TrustStrip";
+
 import { AboutSection } from "@/components/home/AboutSection";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { GallerySection } from "@/components/home/GallerySection";
