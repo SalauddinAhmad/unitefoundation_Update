@@ -231,6 +231,18 @@ const Messages = () => {
           <Mail className="h-4 w-4 mt-0.5 shrink-0" />
           <div className="min-w-0">
             {smtpStatus === "checking" && <span>SMTP সার্ভার যাচাই করা হচ্ছে...</span>}
+            {smtpStatus === "auth" && (
+              <>
+                <div className="font-semibold">সেশনের মেয়াদ শেষ — আবার লগইন করুন</div>
+                <div className="text-xs mt-1 opacity-90">
+                  এটি SMTP-এর সমস্যা নয়। লগইন টোকেন মেয়াদোত্তীর্ণ বা অবৈধ হওয়ায় সার্ভার
+                  &quot;Unauthorized&quot; দিচ্ছে।{" "}
+                  <a href="/login" className="underline font-semibold">
+                    লগইন পেজে যান
+                  </a>
+                </div>
+              </>
+            )}
             {smtpStatus === "fail" && (
               <>
                 <div className="font-semibold">SMTP সার্ভার কাজ করছে না — মেসেজ পাঠানো যাবে না</div>
