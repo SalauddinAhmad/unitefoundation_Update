@@ -4,6 +4,9 @@ import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/u
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { ASSIGNABLE_ROLES, ROLE_LABEL, ROLE_DESCRIPTION, type Role, type Permission } from "@/lib/permissions";
+
 
 const Field = ({
   label,
@@ -65,25 +68,29 @@ const Toggle = ({
   </div>
 );
 
-const TABS = [
-  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
-  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার" },
-  { k: "about", icon: Info, l: "About সেকশন" },
-  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ" },
-  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
-  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
-  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
-  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল" },
-  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা" },
-  { k: "notifications", icon: Bell, l: "নোটিফিকেশন" },
-] as const;
+const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[] = [
+  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
+  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
+  { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
+  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ", perm: "settings" },
+  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
+  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
+  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
+  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
+  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
+  { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+];
+
 
 const Settings = () => {
   const { data } = useSettings();
   const update = useUpdateSettings();
   const { toast } = useToast();
+  const { can } = useAuth();
+  const visibleTabs = TABS.filter((t) => can(t.perm));
   const [form, setForm] = useState<SiteSettings | null>(null);
-  const [active, setActive] = useState<(typeof TABS)[number]["k"]>("organization");
+  const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
+
 
   useEffect(() => {
     if (data && !form) setForm(data);
@@ -121,7 +128,7 @@ const Settings = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
         <nav className="space-y-1">
-          {TABS.map((i) => (
+          {visibleTabs.map((i) => (
             <button
               key={i.k}
               onClick={() => setActive(i.k)}
@@ -737,46 +744,49 @@ type AdminUser = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "editor" | "viewer";
+  role: Role;
   created_at: string;
 };
 
-const ADMINS_KEY = "uf_admins_state";
-const seedAdmins: AdminUser[] = [
-  {
-    id: "U-001",
-    name: "প্রধান অ্যাডমিন",
-    email: "admin@unitefoundation.bd",
-    role: "admin",
-    created_at: new Date().toISOString().slice(0, 10),
-  },
-];
-
-function loadAdmins(): AdminUser[] {
-  try {
-    const raw = localStorage.getItem(ADMINS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedAdmins;
-}
-function persistAdmins(list: AdminUser[]) {
-  try { localStorage.setItem(ADMINS_KEY, JSON.stringify(list)); } catch {}
-}
 function genPassword() {
   const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789@#$";
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
+const roleBadgeClass = (r: Role) =>
+  r === "super_admin" ? "bg-destructive/10 text-destructive"
+  : r === "admin" ? "bg-primary/10 text-primary"
+  : r === "editor" ? "bg-amber-500/10 text-amber-600"
+  : r === "moderator" ? "bg-blue-500/10 text-blue-600"
+  : "bg-secondary text-muted-foreground";
+
 const AdminsPanel = () => {
   const { toast } = useToast();
-  const [list, setList] = useState<AdminUser[]>(() => loadAdmins());
+  const { user: currentUser } = useAuth();
+  const [list, setList] = useState<AdminUser[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<AdminUser["role"]>("editor");
+  const [role, setRole] = useState<Role>("editor");
   const [creating, setCreating] = useState(false);
   const [lastCreds, setLastCreds] = useState<{ email: string; password: string } | null>(null);
 
-  const refresh = (next: AdminUser[]) => { setList(next); persistAdmins(next); };
+  const fetchList = async () => {
+    setLoadingList(true);
+    try {
+      const rows = await api.get<AdminUser[]>("/admin/users");
+      setList(Array.isArray(rows) ? rows : []);
+    } catch {
+      /* keep empty */
+    } finally {
+      setLoadingList(false);
+    }
+  };
+
+  useEffect(() => { fetchList(); }, []);
+
+
+  const refresh = () => { fetchList(); };
 
   const createAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -808,21 +818,15 @@ const AdminsPanel = () => {
         });
         return;
       }
-      const newUser: AdminUser = {
-        id: newId || `U-${Math.floor(Math.random() * 9000) + 100}`,
-        name: name || email.split("@")[0],
-        email: email.trim(),
-        role,
-        created_at: new Date().toISOString().slice(0, 10),
-      };
-      refresh([newUser, ...list]);
-
-      setLastCreds({ email: newUser.email, password });
+      const newEmail = email.trim();
+      refresh();
+      setLastCreds({ email: newEmail, password });
       setName(""); setEmail(""); setRole("editor");
+
       if (apiOk && emailSent) {
         toast({
           title: "অ্যাডমিন তৈরি হয়েছে",
-          description: `${newUser.email} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
+          description: `${newEmail} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
         });
       } else {
         toast({
@@ -839,7 +843,7 @@ const AdminsPanel = () => {
   const removeAdmin = async (u: AdminUser) => {
     if (!confirm(`${u.email} মুছে ফেলবেন?`)) return;
     try { await api.delete(`/admin/users/${u.id}`); } catch {}
-    refresh(list.filter((x) => x.id !== u.id));
+    refresh();
     toast({ title: "মুছে ফেলা হয়েছে" });
   };
 
@@ -897,11 +901,12 @@ const AdminsPanel = () => {
           </label>
           <label className="block">
             <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">রোল</span>
-            <select value={role} onChange={(e) => setRole(e.target.value as AdminUser["role"])} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition">
-              <option value="admin">Admin — সম্পূর্ণ অ্যাক্সেস</option>
-              <option value="editor">Editor — কন্টেন্ট সম্পাদনা</option>
-              <option value="viewer">Viewer — শুধু দেখা</option>
+            <select value={role} onChange={(e) => setRole(e.target.value as Role)} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition">
+              {ASSIGNABLE_ROLES.map((r) => (
+                <option key={r} value={r}>{ROLE_LABEL[r]} — {ROLE_DESCRIPTION[r]}</option>
+              ))}
             </select>
+
           </label>
           <div className="flex items-end">
             <button type="submit" disabled={creating} className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-2.5 rounded-lg text-sm hover:bg-primary/90 disabled:opacity-60">
@@ -949,27 +954,38 @@ const AdminsPanel = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {list.map((u) => (
-                <tr key={u.id} className="hover:bg-muted/40">
-                  <td className="py-3 font-semibold">{u.name}</td>
-                  <td className="py-3 text-muted-foreground">{u.email}</td>
-                  <td className="py-3">
-                    <span className={
-                      "px-2 py-0.5 rounded-full text-[11px] font-bold " +
-                      (u.role === "admin" ? "bg-primary/10 text-primary" :
-                       u.role === "editor" ? "bg-amber-500/10 text-amber-600" :
-                       "bg-secondary text-muted-foreground")
-                    }>
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="py-3 text-muted-foreground text-xs">{u.created_at}</td>
-                  <td className="py-3 text-right">
-                    <button onClick={() => resend(u)} className="text-xs text-primary hover:underline mr-3 font-semibold">নতুন পাসওয়ার্ড পাঠান</button>
-                    <button onClick={() => removeAdmin(u)} className="text-destructive hover:text-destructive/80 inline-flex"><Trash2 className="h-4 w-4" /></button>
-                  </td>
-                </tr>
-              ))}
+              {loadingList && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground text-xs">লোড হচ্ছে...</td></tr>}
+              {!loadingList && list.length === 0 && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground text-xs">কোনো অ্যাডমিন পাওয়া যায়নি</td></tr>}
+              {list.map((u) => {
+                const isSelf = currentUser?.id === u.id;
+                return (
+                  <tr key={u.id} className="hover:bg-muted/40">
+                    <td className="py-3 font-semibold">
+                      {u.name}
+                      {isSelf && <span className="ml-2 text-[10px] font-bold text-primary">আপনি</span>}
+                    </td>
+                    <td className="py-3 text-muted-foreground">{u.email}</td>
+                    <td className="py-3">
+                      <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
+                        {ROLE_LABEL[u.role] || u.role}
+                      </span>
+                    </td>
+                    <td className="py-3 text-muted-foreground text-xs">{String(u.created_at).slice(0, 10)}</td>
+                    <td className="py-3 text-right">
+                      <button onClick={() => resend(u)} className="text-xs text-primary hover:underline mr-3 font-semibold">নতুন পাসওয়ার্ড</button>
+                      <button
+                        onClick={() => removeAdmin(u)}
+                        disabled={isSelf}
+                        title={isSelf ? "নিজেকে মুছতে পারবেন না" : "মুছুন"}
+                        className="text-destructive hover:text-destructive/80 inline-flex disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+
             </tbody>
           </table>
         </div>

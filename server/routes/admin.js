@@ -4,10 +4,11 @@ const { z } = require('zod');
 const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 
-router.use(requireAuth, requireRole('admin'));
+// Every /admin/* endpoint is super-admin only.
+router.use(requireAuth, requireSuperAdmin);
 
 router.get('/users', asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT id,name,email,role,two_factor_enabled,created_at FROM users ORDER BY created_at DESC');
@@ -18,7 +19,7 @@ router.post('/users', asyncH(async (req, res) => {
   const d = z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    role: z.enum(['admin','editor','viewer']),
+    role: z.enum(['super_admin','admin','editor','moderator','viewer']),
     password: z.string().min(8),
     sendEmail: z.boolean().optional(),
   }).parse(req.body);
@@ -28,6 +29,7 @@ router.post('/users', asyncH(async (req, res) => {
     'INSERT INTO users (id,name,email,password_hash,role) VALUES (?,?,?,?,?)',
     [id, d.name, d.email, hash, d.role]
   );
+
   let emailSent = false, emailError = null;
   if (d.sendEmail) {
     try {
@@ -72,8 +74,20 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
 }));
 
 router.delete('/users/:id', asyncH(async (req, res) => {
+  if (req.params.id === req.user.sub) {
+    return res.status(400).json({ message: 'নিজের অ্যাকাউন্ট মুছতে পারবেন না' });
+  }
+  // Prevent deleting the last super_admin.
+  const [target] = await pool.execute('SELECT role FROM users WHERE id=?', [req.params.id]);
+  if (target[0]?.role === 'super_admin') {
+    const [cnt] = await pool.execute("SELECT COUNT(*) AS c FROM users WHERE role='super_admin'");
+    if ((cnt[0]?.c || 0) <= 1) {
+      return res.status(400).json({ message: 'সর্বশেষ Super Admin মুছে ফেলা যাবে না' });
+    }
+  }
   await pool.execute('DELETE FROM users WHERE id=?', [req.params.id]);
   res.json({ ok: true });
 }));
+
 
 module.exports = router;
