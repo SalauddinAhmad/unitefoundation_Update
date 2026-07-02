@@ -744,44 +744,47 @@ type AdminUser = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "editor" | "viewer";
+  role: Role;
   created_at: string;
 };
 
-const ADMINS_KEY = "uf_admins_state";
-const seedAdmins: AdminUser[] = [
-  {
-    id: "U-001",
-    name: "প্রধান অ্যাডমিন",
-    email: "admin@unitefoundation.bd",
-    role: "admin",
-    created_at: new Date().toISOString().slice(0, 10),
-  },
-];
-
-function loadAdmins(): AdminUser[] {
-  try {
-    const raw = localStorage.getItem(ADMINS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedAdmins;
-}
-function persistAdmins(list: AdminUser[]) {
-  try { localStorage.setItem(ADMINS_KEY, JSON.stringify(list)); } catch {}
-}
 function genPassword() {
   const chars = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789@#$";
   return Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
+const roleBadgeClass = (r: Role) =>
+  r === "super_admin" ? "bg-destructive/10 text-destructive"
+  : r === "admin" ? "bg-primary/10 text-primary"
+  : r === "editor" ? "bg-amber-500/10 text-amber-600"
+  : r === "moderator" ? "bg-blue-500/10 text-blue-600"
+  : "bg-secondary text-muted-foreground";
+
 const AdminsPanel = () => {
   const { toast } = useToast();
-  const [list, setList] = useState<AdminUser[]>(() => loadAdmins());
+  const { user: currentUser } = useAuth();
+  const [list, setList] = useState<AdminUser[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<AdminUser["role"]>("editor");
+  const [role, setRole] = useState<Role>("editor");
   const [creating, setCreating] = useState(false);
   const [lastCreds, setLastCreds] = useState<{ email: string; password: string } | null>(null);
+
+  const fetchList = async () => {
+    setLoadingList(true);
+    try {
+      const rows = await api.get<AdminUser[]>("/admin/users");
+      setList(Array.isArray(rows) ? rows : []);
+    } catch {
+      /* keep empty */
+    } finally {
+      setLoadingList(false);
+    }
+  };
+
+  useEffect(() => { fetchList(); }, []);
+
 
   const refresh = (next: AdminUser[]) => { setList(next); persistAdmins(next); };
 
