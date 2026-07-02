@@ -106,4 +106,27 @@ router.post('/reset-password', authLimiter, asyncH(async (req, res) => {
   res.json({ ok: true });
 }));
 
+// POST /auth/change-password  (self-service, requires current password)
+router.post('/change-password', requireAuth, asyncH(async (req, res) => {
+  const { currentPassword, newPassword } = z.object({
+    currentPassword: z.string().min(1),
+    newPassword: z.string().min(8, 'নতুন পাসওয়ার্ড কমপক্ষে ৮ অক্ষর হতে হবে'),
+  }).parse(req.body);
+
+  const [rows] = await pool.execute('SELECT * FROM users WHERE id=? LIMIT 1', [req.user.sub]);
+  const user = rows[0];
+  if (!user) return res.status(404).json({ message: 'User not found' });
+
+  const ok = await bcrypt.compare(currentPassword, user.password_hash);
+  if (!ok) return res.status(401).json({ message: 'বর্তমান পাসওয়ার্ড সঠিক নয়' });
+
+  if (currentPassword === newPassword) {
+    return res.status(400).json({ message: 'নতুন পাসওয়ার্ড পুরনো পাসওয়ার্ড থেকে আলাদা হতে হবে' });
+  }
+
+  const hash = await bcrypt.hash(newPassword, 12);
+  await pool.execute('UPDATE users SET password_hash=? WHERE id=?', [hash, user.id]);
+  res.json({ ok: true });
+}));
+
 module.exports = router;

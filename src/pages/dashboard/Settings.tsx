@@ -138,7 +138,8 @@ const Toggle = ({
   </div>
 );
 
-const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[] = [
+const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[] = [
+  { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
@@ -157,7 +158,7 @@ const Settings = () => {
   const update = useUpdateSettings();
   const { toast } = useToast();
   const { can } = useAuth();
-  const visibleTabs = TABS.filter((t) => can(t.perm));
+  const visibleTabs = TABS.filter((t) => !t.perm || can(t.perm));
   const [form, setForm] = useState<SiteSettings | null>(null);
   const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
 
@@ -216,6 +217,8 @@ const Settings = () => {
         </nav>
 
         <div className="space-y-4">
+          {active === "profile" && <ProfilePanel />}
+
           {active === "organization" && (
             <Card>
               <div className="flex items-center justify-between mb-5">
@@ -1012,6 +1015,76 @@ const AdminsPanel = () => {
             </tbody>
           </table>
         </div>
+      </Card>
+    </>
+  );
+};
+
+const ProfilePanel = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [currentPassword, setCurrent] = useState("");
+  const [newPassword, setNew] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 8) {
+      toast({ title: "দুর্বল পাসওয়ার্ড", description: "কমপক্ষে ৮ অক্ষর দিন।", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== confirm) {
+      toast({ title: "মিলছে না", description: "নতুন পাসওয়ার্ড ও কনফার্ম আলাদা।", variant: "destructive" });
+      return;
+    }
+    setBusy(true);
+    try {
+      await api.post("/auth/change-password", { currentPassword, newPassword });
+      toast({ title: "পাসওয়ার্ড পরিবর্তিত হয়েছে", description: "পরবর্তী লগইনে নতুন পাসওয়ার্ড ব্যবহার করুন।" });
+      setCurrent(""); setNew(""); setConfirm("");
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || "পরিবর্তন ব্যর্থ হয়েছে";
+      toast({ title: "ত্রুটি", description: msg, variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <>
+      <Card>
+        <h3 className="font-bold mb-1">আপনার প্রোফাইল</h3>
+        <p className="text-xs text-muted-foreground mb-4">লগইন অ্যাকাউন্টের তথ্য</p>
+        <div className="grid sm:grid-cols-2 gap-4 text-sm">
+          <div>
+            <div className="text-xs text-muted-foreground mb-1">নাম</div>
+            <div className="font-semibold">{user?.name || "—"}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground mb-1">ইমেইল</div>
+            <div className="font-semibold">{user?.email || "—"}</div>
+          </div>
+          <div>
+            <div className="text-xs text-muted-foreground mb-1">রোল</div>
+            <div className="font-semibold">{user?.role || "—"}</div>
+          </div>
+        </div>
+      </Card>
+
+      <Card>
+        <h3 className="font-bold mb-1">পাসওয়ার্ড পরিবর্তন</h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          নিরাপত্তার জন্য প্রথম লগইনের পর অবশ্যই পাসওয়ার্ড পরিবর্তন করুন।
+        </p>
+        <form onSubmit={submit} className="space-y-4 max-w-md">
+          <Field label="বর্তমান পাসওয়ার্ড" type="password" value={currentPassword} onChange={setCurrent} />
+          <Field label="নতুন পাসওয়ার্ড" type="password" value={newPassword} onChange={setNew} hint="কমপক্ষে ৮ অক্ষর" />
+          <Field label="নতুন পাসওয়ার্ড কনফার্ম করুন" type="password" value={confirm} onChange={setConfirm} />
+          <button type="submit" disabled={busy} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-60 transition">
+            {busy ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
+          </button>
+        </form>
       </Card>
     </>
   );
