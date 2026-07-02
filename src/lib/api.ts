@@ -73,7 +73,16 @@ async function request<T = unknown>(path: string, opts: Options = {}): Promise<T
   const payload = isJson ? await res.json().catch(() => null) : await res.text();
 
   if (!res.ok) {
-    if (res.status === 401) auth.clear();
+    if (res.status === 401 && useAuth) {
+      // Token expired / invalid — clear session and send back to login
+      auth.clear();
+      try {
+        localStorage.removeItem("uf_auth_user");
+      } catch {}
+      if (window.location.pathname.startsWith("/dashboard")) {
+        window.location.replace("/login");
+      }
+    }
     const msg =
       (isJson && payload && (payload as { message?: string }).message) ||
       `Request failed (${res.status})`;
