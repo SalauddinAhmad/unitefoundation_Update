@@ -217,6 +217,8 @@ const Settings = () => {
         </nav>
 
         <div className="space-y-4">
+          {active === "profile" && <ProfilePanel />}
+
           {active === "organization" && (
             <Card>
               <div className="flex items-center justify-between mb-5">
