@@ -44,6 +44,51 @@ import {
   type ApiGalleryItem,
 } from "@/hooks/api/usePublic";
 
+// Fallback images bundled with the app (same set that renders publicly)
+import g1 from "@/assets/gallery/01.jpg";
+import g2 from "@/assets/gallery/02.jpg";
+import g3 from "@/assets/gallery/03.jpg";
+import g4 from "@/assets/gallery/04.jpg";
+import g5 from "@/assets/gallery/05.jpg";
+import g6 from "@/assets/gallery/06.jpg";
+import g7 from "@/assets/gallery/07.jpg";
+import g8 from "@/assets/gallery/08.jpg";
+import g9 from "@/assets/gallery/09.jpg";
+import g10 from "@/assets/gallery/10.jpg";
+import g11 from "@/assets/gallery/11.jpg";
+import g12 from "@/assets/gallery/12.jpg";
+import g13 from "@/assets/gallery/13.jpg";
+import g14 from "@/assets/gallery/14.jpg";
+import g15 from "@/assets/gallery/15.jpg";
+import g16 from "@/assets/gallery/16.jpg";
+import g17 from "@/assets/gallery/17.jpg";
+import g18 from "@/assets/gallery/18.jpg";
+import g19 from "@/assets/gallery/19.jpg";
+import g20 from "@/assets/gallery/20.jpg";
+
+const DEFAULT_LIBRARY: { src: string; alt: string; cat: string }[] = [
+  { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন", cat: "ত্রাণ" },
+  { src: g2, alt: "নদীর তীরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ" },
+  { src: g4, alt: "বন্যায় ত্রাণ পৌঁছে দেওয়া", cat: "ত্রাণ" },
+  { src: g5, alt: "ত্রাণ প্যাকেজ প্রস্তুতি", cat: "খাদ্য বিতরণ" },
+  { src: g6, alt: "শিশুদের সহায়তা", cat: "ত্রাণ" },
+  { src: g7, alt: "ইফতার প্রোগ্রাম — নেত্রকোণা", cat: "ইফতার" },
+  { src: g8, alt: "ইফতার প্রোগ্রাম — খুলনা", cat: "ইফতার" },
+  { src: g9, alt: "ইফতার প্রোগ্রাম — দিনাজপুর", cat: "ইফতার" },
+  { src: g10, alt: "বন্যায় ত্রাণ বহন", cat: "ত্রাণ" },
+  { src: g11, alt: "ত্রাণ সামগ্রী বিতরণ", cat: "ত্রাণ" },
+  { src: g12, alt: "স্বেচ্ছাসেবক দল — মাঠে", cat: "ত্রাণ" },
+  { src: g13, alt: "নদীপথে ত্রাণ অভিযান", cat: "ত্রাণ" },
+  { src: g14, alt: "খাদ্য প্যাকেট হস্তান্তর", cat: "খাদ্য বিতরণ" },
+  { src: g15, alt: "বন্যা পেরিয়ে ত্রাণ পৌঁছানো", cat: "ত্রাণ" },
+  { src: g16, alt: "জলাবদ্ধ এলাকায় ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g17, alt: "ত্রাণ সামগ্রী প্রস্তুত", cat: "খাদ্য বিতরণ" },
+  { src: g18, alt: "ক্ষতিগ্রস্ত পরিবারে ত্রাণ", cat: "ত্রাণ" },
+  { src: g19, alt: "ঘরে ঘরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g20, alt: "নৌকায় ত্রাণ অভিযান — সূর্যাস্ত", cat: "ত্রাণ" },
+];
+
 const CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
 
 const slugify = (s: string) =>
