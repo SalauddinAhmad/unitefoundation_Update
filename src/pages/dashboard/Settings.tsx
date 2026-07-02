@@ -983,9 +983,21 @@ const AdminsPanel = () => {
                     </td>
                     <td className="py-3 text-muted-foreground">{u.email}</td>
                     <td className="py-3">
-                      <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
-                        {ROLE_LABEL[u.role] || u.role}
-                      </span>
+                      <div className="inline-flex items-center gap-2">
+                        <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
+                          {ROLE_LABEL[u.role] || u.role}
+                        </span>
+                        <select
+                          value={u.role}
+                          onChange={(e) => changeRole(u, e.target.value as Role)}
+                          className="text-[11px] px-2 py-1 rounded-md bg-secondary border border-border focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                          title="রোল পরিবর্তন করুন"
+                        >
+                          {ASSIGNABLE_ROLES.map((r) => (
+                            <option key={r} value={r}>{ROLE_LABEL[r]}</option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
                     <td className="py-3 text-muted-foreground text-xs">{String(u.created_at).slice(0, 10)}</td>
                     <td className="py-3 text-right">
