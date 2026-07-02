@@ -4,6 +4,9 @@ import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/u
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { ASSIGNABLE_ROLES, ROLE_LABEL, ROLE_DESCRIPTION, type Role, type Permission } from "@/lib/permissions";
+
 
 const Field = ({
   label,
@@ -65,25 +68,29 @@ const Toggle = ({
   </div>
 );
 
-const TABS = [
-  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
-  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার" },
-  { k: "about", icon: Info, l: "About সেকশন" },
-  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ" },
-  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
-  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
-  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
-  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল" },
-  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা" },
-  { k: "notifications", icon: Bell, l: "নোটিফিকেশন" },
-] as const;
+const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[] = [
+  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
+  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
+  { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
+  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ", perm: "settings" },
+  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
+  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
+  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
+  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
+  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
+  { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+];
+
 
 const Settings = () => {
   const { data } = useSettings();
   const update = useUpdateSettings();
   const { toast } = useToast();
+  const { can } = useAuth();
+  const visibleTabs = TABS.filter((t) => can(t.perm));
   const [form, setForm] = useState<SiteSettings | null>(null);
-  const [active, setActive] = useState<(typeof TABS)[number]["k"]>("organization");
+  const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
+
 
   useEffect(() => {
     if (data && !form) setForm(data);
@@ -121,7 +128,7 @@ const Settings = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
         <nav className="space-y-1">
-          {TABS.map((i) => (
+          {visibleTabs.map((i) => (
             <button
               key={i.k}
               onClick={() => setActive(i.k)}
