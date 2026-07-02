@@ -73,6 +73,29 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
   res.json({ ok: true, emailSent, emailError });
 }));
 
+router.patch('/users/:id/role', asyncH(async (req, res) => {
+  const d = z.object({
+    role: z.enum(['super_admin','admin','editor','moderator','viewer']),
+  }).parse(req.body);
+
+  const [target] = await pool.execute('SELECT role FROM users WHERE id=?', [req.params.id]);
+  if (!target[0]) return res.status(404).json({ message: 'User not found' });
+
+  // Prevent demoting yourself out of super_admin.
+  if (req.params.id === req.user.sub && target[0].role === 'super_admin' && d.role !== 'super_admin') {
+    return res.status(400).json({ message: 'নিজের Super Admin রোল পরিবর্তন করা যাবে না' });
+  }
+  // Prevent demoting the last super_admin.
+  if (target[0].role === 'super_admin' && d.role !== 'super_admin') {
+    const [cnt] = await pool.execute("SELECT COUNT(*) AS c FROM users WHERE role='super_admin'");
+    if ((cnt[0]?.c || 0) <= 1) {
+      return res.status(400).json({ message: 'সর্বশেষ Super Admin এর রোল পরিবর্তন করা যাবে না' });
+    }
+  }
+  await pool.execute('UPDATE users SET role=? WHERE id=?', [d.role, req.params.id]);
+  res.json({ ok: true });
+}));
+
 router.delete('/users/:id', asyncH(async (req, res) => {
   if (req.params.id === req.user.sub) {
     return res.status(400).json({ message: 'নিজের অ্যাকাউন্ট মুছতে পারবেন না' });
