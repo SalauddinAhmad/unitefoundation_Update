@@ -44,17 +44,13 @@ export const VisitorCounter = () => {
             <h3 className="text-lg sm:text-xl font-black mt-1">আমাদের সাইটে ভিজিটর পরিসংখ্যান</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {items.map((it, i) => (
-              <motion.div
+            {items.map((it) => (
+              <div
                 key={it.label}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="rounded-xl bg-card border border-border px-4 py-3.5 flex items-center gap-3 shadow-sm"
               >
                 <div className={`h-9 w-9 rounded-lg bg-secondary flex items-center justify-center ${it.tone}`}>
-                  <it.icon className="h-4.5 w-4.5" />
+                  <it.icon className="h-4 w-4" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider truncate">
@@ -64,7 +60,7 @@ export const VisitorCounter = () => {
                     {t ? bn(it.value) : "—"}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
