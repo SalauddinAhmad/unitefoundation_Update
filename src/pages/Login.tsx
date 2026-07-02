@@ -172,10 +172,6 @@ const Login = () => {
                     <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition-transform duration-700" />
                   </button>
 
-                  <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-muted-foreground">
-                    <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                    JWT‑সুরক্ষিত · এনক্রিপ্টেড সেশন
-                  </div>
 
                 </form>
               </>
