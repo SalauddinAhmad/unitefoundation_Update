@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useGalleryPublic } from "@/hooks/api/usePublic";
 import g1 from "@/assets/gallery/01.jpg";
 import g2 from "@/assets/gallery/02.jpg";
 import g3 from "@/assets/gallery/03.jpg";
@@ -8,7 +9,7 @@ import g4 from "@/assets/gallery/04.jpg";
 import g5 from "@/assets/gallery/05.jpg";
 import g6 from "@/assets/gallery/06.jpg";
 
-const galleryImages = [
+const fallback = [
   { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন" },
   { src: g2, alt: "নৌকায় ত্রাণ বিতরণ" },
   { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম" },
@@ -18,6 +19,13 @@ const galleryImages = [
 ];
 
 export const GallerySection = () => {
+  const { data } = useGalleryPublic();
+  const apiImages = (data?.items || [])
+    .filter((it) => it.kind === "image")
+    .slice(0, 6)
+    .map((it) => ({ src: it.url, alt: it.title || "গ্যালারি" }));
+  const galleryImages = apiImages.length ? apiImages : fallback;
+
   const [open, setOpen] = useState<number | null>(null);
   const next = () => setOpen((o) => (o === null ? o : (o + 1) % galleryImages.length));
   const prev = () => setOpen((o) => (o === null ? o : (o - 1 + galleryImages.length) % galleryImages.length));

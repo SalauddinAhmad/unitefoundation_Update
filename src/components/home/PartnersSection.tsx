@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
-import { partners } from "@/data/partners";
+import { usePartnersPublic } from "@/hooks/api/usePublic";
 
 export const PartnersSection = () => {
+  const { data: partners = [] } = usePartnersPublic();
+
   return (
     <section className="section-y bg-muted/30">
       <div className="container-page">
@@ -25,12 +27,16 @@ export const PartnersSection = () => {
               className="group relative bg-card border border-border/60 rounded-2xl p-4 md:p-5 flex flex-col items-center justify-center text-center shadow-sm hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 hover:border-primary/50"
             >
               <div className="h-16 md:h-20 w-full flex items-center justify-center">
-                <img
-                  src={p.logo}
-                  alt={p.name}
-                  className="max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-110"
-                  loading="lazy"
-                />
+                {p.logo ? (
+                  <img
+                    src={p.logo}
+                    alt={p.name}
+                    className="max-h-full w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="text-2xl font-extrabold text-primary/60">{p.name.slice(0, 2)}</div>
+                )}
               </div>
               <span className="mt-3 text-xs md:text-sm font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                 {p.name}
@@ -39,7 +45,6 @@ export const PartnersSection = () => {
             </Link>
           ))}
         </div>
-
       </div>
     </section>
   );
