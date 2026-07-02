@@ -636,9 +636,42 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
               </Field>
               <Field label="ক্যাটাগরি">
                 <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
+                <div className="mt-2 flex items-center gap-1.5">
+                  <input
+                    value={newCatInput}
+                    onChange={(e) => setNewCatInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const v = newCatInput.trim();
+                        if (!v) return;
+                        onAddCategory(v);
+                        setCategory(v);
+                        setNewCatInput("");
+                      }
+                    }}
+                    placeholder="নতুন ক্যাটাগরি যোগ করুন..."
+                    className="flex-1 px-2.5 py-1.5 rounded-md bg-card border border-border text-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const v = newCatInput.trim();
+                      if (!v) return;
+                      onAddCategory(v);
+                      setCategory(v);
+                      setNewCatInput("");
+                    }}
+                    className="p-1.5 rounded-md bg-primary text-primary-foreground"
+                    title="যোগ করুন"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </Field>
+
               <Field label="ট্যাগ">
                 <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-card border border-border">
                   {tags.map((t) => (
