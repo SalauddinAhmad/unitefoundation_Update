@@ -8,6 +8,7 @@ const { uuid, token } = require('../utils/uid');
 const { authLimiter } = require('../middleware/rateLimit');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
+const { tplLoginOtp, tplForgotPassword } = require('../services/emailTemplate');
 
 const signToken = (u) => jwt.sign(
   { sub: u.id, role: u.role, email: u.email, name: u.name },
@@ -36,8 +37,8 @@ router.post('/login', authLimiter, asyncH(async (req, res) => {
     try {
       await sendMail({
         to: user.email,
-        subject: 'Unite Foundation — Login OTP',
-        html: `<p>আপনার লগইন OTP: <b style="font-size:20px">${code}</b></p><p>৫ মিনিটে মেয়াদ শেষ।</p>`,
+        subject: `Unite Foundation — লগইন কোড ${code}`,
+        html: tplLoginOtp({ code }),
       });
     } catch (e) { console.error('OTP mail failed', e); }
     return res.json({ requiresOtp: true });
@@ -83,8 +84,8 @@ router.post('/forgot-password', authLimiter, asyncH(async (req, res) => {
     try {
       await sendMail({
         to: email,
-        subject: 'Password reset — Unite Foundation',
-        html: `<p>পাসওয়ার্ড রিসেট করতে <a href="${link}">এখানে ক্লিক করুন</a>। লিংকটি ১ ঘণ্টায় মেয়াদ শেষ হবে।</p>`,
+        subject: 'Unite Foundation — পাসওয়ার্ড রিসেট লিংক',
+        html: tplForgotPassword({ resetUrl: link }),
       });
     } catch (e) { console.error('Reset mail failed', e); }
   }

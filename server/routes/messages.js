@@ -5,6 +5,7 @@ const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
+const { tplWrapContent } = require('../services/emailTemplate');
 
 router.get('/', requireAuth, asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM messages ORDER BY created_at DESC');
@@ -41,7 +42,7 @@ router.delete('/:id', requireAuth, asyncH(async (req, res) => {
 router.post('/:id/reply', requireAuth, asyncH(async (req, res) => {
   const d = z.object({ to: z.string().email(), subject: z.string(), body: z.string().min(1) }).parse(req.body);
   try {
-    await sendMail({ to: d.to, subject: d.subject, html: d.body });
+    await sendMail({ to: d.to, subject: d.subject, html: tplWrapContent({ subject: d.subject, bodyHtml: d.body }) });
   } catch (err) {
     return res.status(502).json({ message: 'SMTP পাঠাতে ব্যর্থ', error: String(err && err.message || err) });
   }
@@ -68,7 +69,7 @@ router.post('/compose', requireAuth, asyncH(async (req, res) => {
       cc: d.cc.join(','),
       bcc: d.bcc.join(','),
       subject: d.subject,
-      html: d.html,
+      html: tplWrapContent({ subject: d.subject, bodyHtml: d.html }),
     });
   } catch (err) {
     return res.status(502).json({ message: 'SMTP পাঠাতে ব্যর্থ', error: String(err && err.message || err) });
