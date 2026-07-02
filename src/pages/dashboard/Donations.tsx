@@ -109,19 +109,19 @@ const Donations = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card>
           <div className="text-xs text-muted-foreground font-medium">আজকের দান</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ৮৯,০০০</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(todaySum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">এই মাসে</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ১৮.৪L</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(monthSum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">অপেক্ষমাণ</div>
-          <div className="text-2xl font-extrabold mt-2 text-amber-600">৳ ২৫,০০০</div>
+          <div className="text-2xl font-extrabold mt-2 text-amber-600">{isLoading ? "—" : fmt(pendingSum)}</div>
         </Card>
         <Card>
           <div className="text-xs text-muted-foreground font-medium">গড় দান</div>
-          <div className="text-2xl font-extrabold mt-2">৳ ৩,৮৫০</div>
+          <div className="text-2xl font-extrabold mt-2">{isLoading ? "—" : fmt(avgDonation)}</div>
         </Card>
       </div>
 
