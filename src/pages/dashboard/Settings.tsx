@@ -442,15 +442,15 @@ const Settings = () => {
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
-                    <Field
-                      label="ব্যানার ইমেজ URL"
+                    <ImageField
+                      label="ব্যানার ইমেজ"
                       value={slide.image}
                       onChange={(v) => {
                         const next = [...form.hero_slides];
                         next[idx] = { ...next[idx], image: v };
                         setForm({ ...form, hero_slides: next });
                       }}
-                      hint="1920x1080 রেকমেন্ডেড। খালি রাখলে ডিফল্ট"
+                      hint="1920x1080 রেকমেন্ডেড। আপলোড করলে অটো কমপ্রেস হবে।"
                     />
                     <Field
                       label="ছোট টাইটেল (Eyebrow)"
