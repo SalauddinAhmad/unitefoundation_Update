@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
+import { useGalleryPublic } from "@/hooks/api/usePublic";
 import g1 from "@/assets/gallery/01.jpg";
 import g2 from "@/assets/gallery/02.jpg";
 import g3 from "@/assets/gallery/03.jpg";
@@ -25,32 +26,12 @@ import g19 from "@/assets/gallery/19.jpg";
 import g20 from "@/assets/gallery/20.jpg";
 
 type Tab = "ছবি" | "ভিডিও";
-type Cat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "ইফতার";
-type VideoCat = "সকল" | "ত্রাণ" | "খাদ্য বিতরণ" | "ইফতার" | "প্রতিবেদন";
 
-type VideoItem = {
-  thumb: string;
-  title: string;
-  cat: VideoCat;
-  youtubeId: string;
-  duration?: string;
-};
+type ImageItem = { src: string; alt: string; cat: string };
+type VideoItem = { thumb: string; title: string; cat: string; youtubeId: string; duration?: string };
 
-const videos: VideoItem[] = [
-  { thumb: g4, title: "বন্যা কবলিত এলাকায় ত্রাণ অভিযান", cat: "ত্রাণ", youtubeId: "dQw4w9WgXcQ", duration: "৩:২৪" },
-  { thumb: g2, title: "নৌকায় ত্রাণ বিতরণ — নেত্রকোণা", cat: "ত্রাণ", youtubeId: "dQw4w9WgXcQ", duration: "৫:১২" },
-  { thumb: g13, title: "নদীপথে ত্রাণ — সরাসরি প্রতিবেদন", cat: "প্রতিবেদন", youtubeId: "dQw4w9WgXcQ", duration: "৭:৪৫" },
-  { thumb: g3, title: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ", youtubeId: "dQw4w9WgXcQ", duration: "৪:১০" },
-  { thumb: g5, title: "ত্রাণ প্যাকেজ প্রস্তুতি — বিহাইন্ড দ্য সিন", cat: "খাদ্য বিতরণ", youtubeId: "dQw4w9WgXcQ", duration: "২:৫০" },
-  { thumb: g7, title: "ইফতার প্রোগ্রাম — নেত্রকোণা", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৬:০২" },
-  { thumb: g8, title: "ইফতার প্রোগ্রাম — খুলনা", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৪:৩৮" },
-  { thumb: g9, title: "ইফতার প্রোগ্রাম — দিনাজপুর", cat: "ইফতার", youtubeId: "dQw4w9WgXcQ", duration: "৫:২০" },
-  { thumb: g20, title: "ত্রাণ অভিযান — সূর্যাস্তের মুহূর্ত", cat: "প্রতিবেদন", youtubeId: "dQw4w9WgXcQ", duration: "৩:১৫" },
-];
-
-const videoCats: VideoCat[] = ["সকল", "ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "প্রতিবেদন"];
-
-const items: { src: string; alt: string; cat: Cat }[] = [
+// Static fallback (used only if DB is empty)
+const fallbackImages: ImageItem[] = [
   { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন", cat: "ত্রাণ" },
   { src: g2, alt: "নদীর তীরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
   { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ" },
@@ -73,12 +54,52 @@ const items: { src: string; alt: string; cat: Cat }[] = [
   { src: g20, alt: "নৌকায় ত্রাণ অভিযান — সূর্যাস্ত", cat: "ত্রাণ" },
 ];
 
-const cats: Cat[] = ["সকল", "ত্রাণ", "খাদ্য বিতরণ", "ইফতার"];
+const fallbackVideos: VideoItem[] = [
+  { thumb: g4, title: "বন্যা কবলিত এলাকায় ত্রাণ অভিযান", cat: "ত্রাণ", youtubeId: "dQw4w9WgXcQ" },
+];
+
+// Extract YouTube ID from any common URL format
+function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/,
+    /^([\w-]{11})$/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
 
 const Gallery = () => {
+  const { data } = useGalleryPublic();
+
+  // Merge API items with static fallback (API takes priority)
+  const items: ImageItem[] = useMemo(() => {
+    const apiImgs = (data?.items || [])
+      .filter((it) => it.kind === "image")
+      .map((it) => ({ src: it.url, alt: it.title || "গ্যালারি", cat: "সকল" }));
+    return apiImgs.length ? apiImgs : fallbackImages;
+  }, [data]);
+
+  const videos: VideoItem[] = useMemo(() => {
+    const apiVids = (data?.items || [])
+      .filter((it) => it.kind === "video")
+      .map((it) => {
+        const id = extractYouTubeId(it.url) || "";
+        return { thumb: it.thumb_url || `https://img.youtube.com/vi/${id}/hqdefault.jpg`, title: it.title || "ভিডিও", cat: "সকল", youtubeId: id };
+      })
+      .filter((v) => v.youtubeId);
+    return apiVids.length ? apiVids : fallbackVideos;
+  }, [data]);
+
+  const cats = useMemo(() => ["সকল", ...Array.from(new Set(items.map((i) => i.cat)))], [items]);
+  const videoCats = useMemo(() => ["সকল", ...Array.from(new Set(videos.map((v) => v.cat)))], [videos]);
+
   const [tab, setTab] = useState<Tab>("ছবি");
-  const [active, setActive] = useState<Cat>("সকল");
-  const [activeVideoCat, setActiveVideoCat] = useState<VideoCat>("সকল");
+  const [active, setActive] = useState<string>("সকল");
+  const [activeVideoCat, setActiveVideoCat] = useState<string>("সকল");
   const [open, setOpen] = useState<number | null>(null);
   const [openVideo, setOpenVideo] = useState<number | null>(null);
 
@@ -94,8 +115,8 @@ const Gallery = () => {
   const sidebarCats: string[] = tab === "ছবি" ? cats : videoCats;
   const activeCat: string = tab === "ছবি" ? active : activeVideoCat;
   const setActiveCat = (c: string) => {
-    if (tab === "ছবি") setActive(c as Cat);
-    else setActiveVideoCat(c as VideoCat);
+    if (tab === "ছবি") setActive(c);
+    else setActiveVideoCat(c);
   };
 
   return (
