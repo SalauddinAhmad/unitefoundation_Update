@@ -48,7 +48,7 @@ const generalMenu: MenuItem[] = [
 ];
 
 
-const SidebarContent = ({ onNav, onLogout }: { onNav?: () => void; onLogout?: () => void }) => (
+const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout?: () => void; can: (p: Permission) => boolean }) => (
   <div className="flex h-full flex-col">
     {/* Logo */}
     <div className="px-6 pt-6 pb-8 flex items-center gap-3">
@@ -65,7 +65,8 @@ const SidebarContent = ({ onNav, onLogout }: { onNav?: () => void; onLogout?: ()
         মেনু
       </div>
       <nav className="space-y-1">
-        {menu.map(({ to, icon: Icon, label, end, badge }) => (
+        {menu.filter((m) => can(m.perm)).map(({ to, icon: Icon, label, end, badge }) => (
+
           <NavLink
             key={to}
             to={to}
