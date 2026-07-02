@@ -72,18 +72,19 @@ const App = () => (
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
               <Route index element={<DashOverview />} />
-              <Route path="donations" element={<DashDonations />} />
-              <Route path="volunteers" element={<DashVolunteers />} />
-              <Route path="members" element={<DashMembers />} />
-              <Route path="projects" element={<DashProjects />} />
-              <Route path="blog" element={<DashBlog />} />
-              <Route path="gallery" element={<DashGallery />} />
-              <Route path="messages" element={<DashMessages />} />
-              <Route path="careers" element={<DashCareers />} />
-              <Route path="team" element={<DashTeam />} />
-              <Route path="partners" element={<DashPartners />} />
-              <Route path="settings" element={<DashSettings />} />
-              <Route path="help" element={<DashHelp />} />
+              <Route path="donations" element={<RequireAuth permission="donations"><DashDonations /></RequireAuth>} />
+              <Route path="volunteers" element={<RequireAuth permission="volunteers"><DashVolunteers /></RequireAuth>} />
+              <Route path="members" element={<RequireAuth permission="members"><DashMembers /></RequireAuth>} />
+              <Route path="projects" element={<RequireAuth permission="projects"><DashProjects /></RequireAuth>} />
+              <Route path="blog" element={<RequireAuth permission="blog"><DashBlog /></RequireAuth>} />
+              <Route path="gallery" element={<RequireAuth permission="gallery"><DashGallery /></RequireAuth>} />
+              <Route path="messages" element={<RequireAuth permission="messages"><DashMessages /></RequireAuth>} />
+              <Route path="careers" element={<RequireAuth permission="careers"><DashCareers /></RequireAuth>} />
+              <Route path="team" element={<RequireAuth permission="team"><DashTeam /></RequireAuth>} />
+              <Route path="partners" element={<RequireAuth permission="partners"><DashPartners /></RequireAuth>} />
+              <Route path="settings" element={<RequireAuth permission="settings"><DashSettings /></RequireAuth>} />
+              <Route path="help" element={<RequireAuth permission="help"><DashHelp /></RequireAuth>} />
+
             </Route>
 
             <Route path="*" element={<NotFound />} />
