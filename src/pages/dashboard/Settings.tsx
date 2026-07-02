@@ -67,6 +67,9 @@ const Toggle = ({
 
 const TABS = [
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
+  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার" },
+  { k: "about", icon: Info, l: "About সেকশন" },
+  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ" },
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
   { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
