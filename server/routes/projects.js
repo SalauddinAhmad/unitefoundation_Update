@@ -7,14 +7,21 @@ const { requireAuth } = require('../middleware/auth');
 
 router.get('/', asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
-  res.json(rows);
+  res.json(rows.map(parseGallery));
 }));
 
 router.get('/:id', asyncH(async (req, res) => {
   const [rows] = await pool.execute('SELECT * FROM projects WHERE id=? OR slug=?', [req.params.id, req.params.id]);
   if (!rows[0]) return res.status(404).json({ message: 'Not found' });
-  res.json(rows[0]);
+  res.json(parseGallery(rows[0]));
 }));
+
+function parseGallery(row) {
+  if (row && row.gallery && typeof row.gallery === 'string') {
+    try { row.gallery = JSON.parse(row.gallery); } catch { /* keep as-is */ }
+  }
+  return row;
+}
 
 const schema = z.object({
   title: z.string().min(1),
@@ -46,7 +53,12 @@ router.patch('/:id', requireAuth, asyncH(async (req, res) => {
   const keys = Object.keys(d);
   if (!keys.length) return res.json({ ok: true });
   const set = keys.map(k => `\`${k}\`=?`).join(',');
-  await pool.execute(`UPDATE projects SET ${set} WHERE id=?`, [...keys.map(k => d[k]), req.params.id]);
+  const vals = keys.map(k => {
+    if (k === 'gallery' && d[k] != null) return JSON.stringify(d[k]);
+    if (k === 'urgent') return d[k] ? 1 : 0;
+    return d[k];
+  });
+  await pool.execute(`UPDATE projects SET ${set} WHERE id=?`, [...vals, req.params.id]);
   res.json({ ok: true });
 }));
 
