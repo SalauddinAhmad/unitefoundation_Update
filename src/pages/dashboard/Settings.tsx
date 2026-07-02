@@ -446,10 +446,9 @@ const AdminsPanel = () => {
         });
       }
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } }; message?: string });
       toast({
         title: "রিসেট ব্যর্থ",
-        description: msg?.response?.data?.message || msg?.message || "সার্ভারে সংযোগ করা যায়নি।",
+        description: err instanceof Error ? err.message : "সার্ভারে সংযোগ করা যায়নি।",
         variant: "destructive",
       });
     }
