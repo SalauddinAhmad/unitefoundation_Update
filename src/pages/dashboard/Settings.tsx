@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, BadgeCheck } from "lucide-react";
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -67,6 +67,9 @@ const Toggle = ({
 
 const TABS = [
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
+  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার" },
+  { k: "about", icon: Info, l: "About সেকশন" },
+  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ" },
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
   { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
@@ -331,6 +334,336 @@ const Settings = () => {
                 className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
               >
                 <Plus className="h-4 w-4" /> নতুন পরিসংখ্যান যোগ করুন
+              </button>
+            </Card>
+          )}
+
+          {active === "hero" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="font-bold">হোম পেজের স্লাইডার</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    যতগুলো স্লাইড দরকার যোগ করুন। ইমেজ URL খালি রাখলে ডিফল্ট ইমেজ দেখাবে।
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
+              <div className="space-y-4">
+                {(form.hero_slides || []).map((slide, idx) => (
+                  <div key={idx} className="rounded-xl border border-border p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-bold">স্লাইড #{idx + 1}</div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = form.hero_slides.filter((_, i) => i !== idx);
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                        className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <Field
+                      label="ব্যানার ইমেজ URL"
+                      value={slide.image}
+                      onChange={(v) => {
+                        const next = [...form.hero_slides];
+                        next[idx] = { ...next[idx], image: v };
+                        setForm({ ...form, hero_slides: next });
+                      }}
+                      hint="1920x1080 রেকমেন্ডেড। খালি রাখলে ডিফল্ট"
+                    />
+                    <Field
+                      label="ছোট টাইটেল (Eyebrow)"
+                      value={slide.eyebrow}
+                      onChange={(v) => {
+                        const next = [...form.hero_slides];
+                        next[idx] = { ...next[idx], eyebrow: v };
+                        setForm({ ...form, hero_slides: next });
+                      }}
+                    />
+                    <Field
+                      label="মূল টাইটেল"
+                      value={slide.title}
+                      onChange={(v) => {
+                        const next = [...form.hero_slides];
+                        next[idx] = { ...next[idx], title: v };
+                        setForm({ ...form, hero_slides: next });
+                      }}
+                    />
+                    <label className="block">
+                      <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">সাবটাইটেল</span>
+                      <textarea
+                        value={slide.subtitle}
+                        onChange={(e) => {
+                          const next = [...form.hero_slides];
+                          next[idx] = { ...next[idx], subtitle: e.target.value };
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                        rows={2}
+                        className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                      />
+                    </label>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <Field
+                        label="Primary বাটন লেবেল"
+                        value={slide.primaryCtaLabel}
+                        onChange={(v) => {
+                          const next = [...form.hero_slides];
+                          next[idx] = { ...next[idx], primaryCtaLabel: v };
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                      />
+                      <Field
+                        label="Primary বাটন লিংক"
+                        value={slide.primaryCtaTo}
+                        onChange={(v) => {
+                          const next = [...form.hero_slides];
+                          next[idx] = { ...next[idx], primaryCtaTo: v };
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                        hint="উদাহরণ: /donate"
+                      />
+                      <Field
+                        label="Secondary বাটন লেবেল"
+                        value={slide.secondaryCtaLabel}
+                        onChange={(v) => {
+                          const next = [...form.hero_slides];
+                          next[idx] = { ...next[idx], secondaryCtaLabel: v };
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                      />
+                      <Field
+                        label="Secondary বাটন লিংক"
+                        value={slide.secondaryCtaTo}
+                        onChange={(v) => {
+                          const next = [...form.hero_slides];
+                          next[idx] = { ...next[idx], secondaryCtaTo: v };
+                          setForm({ ...form, hero_slides: next });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    hero_slides: [
+                      ...(form.hero_slides || []),
+                      {
+                        image: "",
+                        eyebrow: "নতুন ক্যাম্পেইন",
+                        title: "নতুন স্লাইডের টাইটেল",
+                        subtitle: "সংক্ষিপ্ত বর্ণনা এখানে লিখুন",
+                        primaryCtaLabel: "এখনই দান করুন",
+                        primaryCtaTo: "/donate",
+                        secondaryCtaLabel: "বিস্তারিত",
+                        secondaryCtaTo: "/projects",
+                      },
+                    ],
+                  })
+                }
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <Plus className="h-4 w-4" /> নতুন স্লাইড যোগ করুন
+              </button>
+            </Card>
+          )}
+
+          {active === "about" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="font-bold">About সেকশন</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    হোম পেজের "সুন্নাহর অনুসরণে..." সেকশনের সব টেক্সট
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <Field
+                  label="হেডিং"
+                  value={form.about.heading}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, heading: v } })}
+                />
+                <Field
+                  label="হাইলাইট শব্দ (কমলা রঙে দেখাবে)"
+                  value={form.about.highlight}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, highlight: v } })}
+                />
+              </div>
+
+              <label className="block mt-4">
+                <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">মূল প্যারাগ্রাফ</span>
+                <textarea
+                  value={form.about.body}
+                  onChange={(e) => setForm({ ...form, about: { ...form.about, body: e.target.value } })}
+                  rows={5}
+                  className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                />
+              </label>
+
+              <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                <label className="block">
+                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">উক্তি / হাদীছ</span>
+                  <textarea
+                    value={form.about.quoteText}
+                    onChange={(e) => setForm({ ...form, about: { ...form.about, quoteText: e.target.value } })}
+                    rows={3}
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                  />
+                </label>
+                <Field
+                  label="উক্তির সূত্র"
+                  value={form.about.quoteSource}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, quoteSource: v } })}
+                  hint="উদাহরণ: — তিরমিযী, হা/২৯৫৩"
+                />
+              </div>
+
+              <div className="grid sm:grid-cols-[1fr_140px_1fr] gap-4 mt-4 items-end">
+                <Field
+                  label="সাইড ইমেজ URL"
+                  value={form.about.sideImage}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, sideImage: v } })}
+                  hint="খালি রাখলে ডিফল্ট"
+                />
+                <Field
+                  label="ব্যাজ সংখ্যা"
+                  value={form.about.expNumber}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, expNumber: v } })}
+                  hint="যেমন: ১৫+"
+                />
+                <Field
+                  label="ব্যাজ লেবেল"
+                  value={form.about.expLabel}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, expLabel: v } })}
+                />
+              </div>
+
+              <div className="mt-6">
+                <div className="text-sm font-bold mb-2">চেকমার্ক পয়েন্ট (নিচে গ্রিডে দেখাবে)</div>
+                <div className="space-y-2">
+                  {(form.about.points || []).map((p, idx) => (
+                    <div key={idx} className="flex gap-2 items-start">
+                      <input
+                        value={p}
+                        onChange={(e) => {
+                          const next = [...form.about.points];
+                          next[idx] = e.target.value;
+                          setForm({ ...form, about: { ...form.about, points: next } });
+                        }}
+                        className="flex-1 px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = form.about.points.filter((_, i) => i !== idx);
+                          setForm({ ...form, about: { ...form.about, points: next } });
+                        }}
+                        className="p-2.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      about: { ...form.about, points: [...(form.about.points || []), "নতুন পয়েন্ট"] },
+                    })
+                  }
+                  className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  <Plus className="h-4 w-4" /> পয়েন্ট যোগ করুন
+                </button>
+              </div>
+            </Card>
+          )}
+
+          {active === "trust" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="font-bold">Trust ব্যাজ</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    হোম পেজের ৪টি ট্রাস্ট ব্যাজ (সরকার-নিবন্ধিত, অডিট, ইত্যাদি)
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
+              <div className="space-y-3">
+                {(form.trust || []).map((it, idx) => (
+                  <div key={idx} className="grid grid-cols-[140px_1fr_1fr_40px] gap-3 items-end rounded-lg border border-border p-3">
+                    <label className="block">
+                      <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">আইকন</span>
+                      <select
+                        value={it.icon}
+                        onChange={(e) => {
+                          const next = [...form.trust];
+                          next[idx] = { ...next[idx], icon: e.target.value as typeof it.icon };
+                          setForm({ ...form, trust: next });
+                        }}
+                        className="w-full px-3 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm"
+                      >
+                        <option value="shield">🛡️ Shield</option>
+                        <option value="file">📄 File</option>
+                        <option value="award">🏆 Award</option>
+                        <option value="users">👥 Users</option>
+                      </select>
+                    </label>
+                    <Field
+                      label="টাইটেল"
+                      value={it.title}
+                      onChange={(v) => {
+                        const next = [...form.trust];
+                        next[idx] = { ...next[idx], title: v };
+                        setForm({ ...form, trust: next });
+                      }}
+                    />
+                    <Field
+                      label="বর্ণনা"
+                      value={it.note}
+                      onChange={(v) => {
+                        const next = [...form.trust];
+                        next[idx] = { ...next[idx], note: v };
+                        setForm({ ...form, trust: next });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = form.trust.filter((_, i) => i !== idx);
+                        setForm({ ...form, trust: next });
+                      }}
+                      className="p-2.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    trust: [...(form.trust || []), { icon: "shield", title: "নতুন ব্যাজ", note: "বর্ণনা" }],
+                  })
+                }
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <Plus className="h-4 w-4" /> নতুন ব্যাজ যোগ করুন
               </button>
             </Card>
           )}

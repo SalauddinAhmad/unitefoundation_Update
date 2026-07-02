@@ -133,6 +133,35 @@ export const useOverviewStats = () =>
 // ---------- Settings (dashboard editable) ----------
 export type ImpactStat = { value: number; label: string; suffix?: string };
 
+export type HeroSlide = {
+  image: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  primaryCtaLabel: string;
+  primaryCtaTo: string;
+  secondaryCtaLabel: string;
+  secondaryCtaTo: string;
+};
+
+export type AboutContent = {
+  heading: string;
+  highlight: string;
+  body: string;
+  quoteText: string;
+  quoteSource: string;
+  points: string[];
+  sideImage: string;
+  expNumber: string;
+  expLabel: string;
+};
+
+export type TrustItem = {
+  icon: "shield" | "award" | "file" | "users";
+  title: string;
+  note: string;
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
@@ -174,6 +203,9 @@ export type SiteSettings = {
     notify_email: string;
   };
   impact_stats: ImpactStat[];
+  hero_slides: HeroSlide[];
+  about: AboutContent;
+  trust: TrustItem[];
 };
 
 const defaultSettings: SiteSettings = {
@@ -222,6 +254,41 @@ const defaultSettings: SiteSettings = {
     { value: 3450, label: "স্বেচ্ছাসেবক", suffix: "" },
     { value: 14, label: "দেশে কার্যক্রম", suffix: "" },
   ],
+  hero_slides: [
+    {
+      image: "",
+      eyebrow: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
+      title: "ইউনাইট ফাউন্ডেশন — কুরআন ও সহীহ হাদীছের আলোকে",
+      subtitle:
+        "দাওয়াহ, তালীম, সমাজকল্যাণ ও জরুরি ত্রাণে আপনার পাশে। একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম — স্বচ্ছ, দায়িত্বশীল ও নিবেদিত।",
+      primaryCtaLabel: "এখনই দান করুন",
+      primaryCtaTo: "/donate",
+      secondaryCtaLabel: "প্রকল্পসমূহ দেখুন",
+      secondaryCtaTo: "/projects",
+    },
+  ],
+  about: {
+    heading: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
+    highlight: "ইউনাইট ফাউন্ডেশন",
+    body: "ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম। পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছে দেওয়া, তরুণ সমাজকে তাক্বওয়াশীল দাঈ হিসেবে গড়ে তোলা, বিশুদ্ধ আক্বীদা ও আমলের সচেতনতা সৃষ্টি এবং সমাজকল্যাণমূলক কার্যক্রম পরিচালনাই আমাদের প্রধান লক্ষ্য।",
+    quoteText: "তোমরা একটি খেজুরের টুকরা দান করে হলেও জাহান্নামের আগুন থেকে বাঁচো।",
+    quoteSource: "— তিরমিযী, হা/২৯৫৩",
+    points: [
+      "পবিত্র কুরআন ও সহীহ হাদীছের আলোকে পরিচালিত",
+      "দাওয়াহ, তালীম, সমাজকল্যাণ ও জরুরি ত্রাণে নিবেদিত",
+      "শতভাগ স্বচ্ছ ও শরীয়াহ-সম্মত আর্থিক ব্যবস্থাপনা",
+      "প্রতিটি দানের জন্য বিস্তারিত প্রভাব প্রতিবেদন",
+    ],
+    sideImage: "",
+    expNumber: "১৫+",
+    expLabel: "বছরের অভিজ্ঞতা ও বিশ্বাস",
+  },
+  trust: [
+    { icon: "shield", title: "সরকার-নিবন্ধিত", note: "সমাজসেবা অধিদপ্তর কর্তৃক স্বীকৃত" },
+    { icon: "file", title: "বার্ষিক অডিট", note: "স্বাধীন চার্টার্ড অ্যাকাউন্ট্যান্ট দ্বারা" },
+    { icon: "award", title: "শরীয়াহ-অনুমোদিত", note: "শরীয়াহ বোর্ড দ্বারা যাচাইকৃত" },
+    { icon: "users", title: "৫০,০০০+ দাতা", note: "বিশ্বব্যাপী বিশ্বস্ত পরিবার" },
+  ],
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -235,6 +302,13 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       Array.isArray(s?.impact_stats) && s!.impact_stats!.length
         ? s!.impact_stats!
         : defaultSettings.impact_stats,
+    hero_slides:
+      Array.isArray(s?.hero_slides) && s!.hero_slides!.length
+        ? s!.hero_slides!
+        : defaultSettings.hero_slides,
+    about: { ...defaultSettings.about, ...(s?.about || {}), points: (s?.about?.points && s.about.points.length ? s.about.points : defaultSettings.about.points) },
+    trust:
+      Array.isArray(s?.trust) && s!.trust!.length ? s!.trust! : defaultSettings.trust,
   };
 }
 
