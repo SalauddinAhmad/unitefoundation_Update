@@ -1,16 +1,23 @@
 import { useParams, Link, Navigate } from "react-router-dom";
 import {
   ArrowLeft, ArrowUpRight, BadgeCheck, Globe2, Phone, MapPin,
-  Target, BookOpen, CheckCircle2, Sparkles, Mail, Star,
+  Target, BookOpen, CheckCircle2, Sparkles, Mail, Star, Loader2,
 } from "lucide-react";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
-import { getPartner, partners, partnerThemeTokens } from "@/data/partners";
+import { partnerThemeTokens } from "@/data/partners";
+import { usePartnerPublic, usePartnersPublic } from "@/hooks/api/usePublic";
 
 const PartnerDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const partner = slug ? getPartner(slug) : undefined;
+  const { data: partner, isLoading } = usePartnerPublic(slug || "");
+  const { data: partners = [] } = usePartnersPublic();
 
+  if (isLoading) return (
+    <SiteLayout>
+      <div className="py-32 flex justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>
+    </SiteLayout>
+  );
   if (!partner) return <Navigate to="/" replace />;
 
   const others = partners.filter((p) => p.slug !== partner.slug);
