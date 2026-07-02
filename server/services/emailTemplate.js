@@ -4,9 +4,10 @@
 const BRAND = {
   name: 'Unite Foundation',
   tagline: 'একসাথে গড়ি, একসাথে বদলাই',
-  primary: '#0F766E',      // deep teal
-  primaryDark: '#134E4A',
-  accent: '#C9A44C',       // gold
+  primary: '#ED2324',      // brand red
+  primaryDark: '#B71C1D',
+  accent: '#F57E20',       // brand orange
+  success: '#00A651',      // brand green (underline in logo)
   text: '#0F172A',
   muted: '#64748B',
   bg: '#F1F5F9',
