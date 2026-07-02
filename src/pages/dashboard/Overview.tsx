@@ -24,40 +24,67 @@ const VisitorStrip = () => {
     { icon: TrendingUp, label: "গত ৩০ দিন", value: t?.month ?? 0 },
   ];
   return (
-    <Card className="mb-6">
-      <SectionHeader title="ভিজিটর পরিসংখ্যান" action={<span className="text-xs text-muted-foreground">Live</span>} />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-        {items.map((it) => (
-          <div key={it.label} className="rounded-xl bg-secondary/60 px-4 py-3 flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-card text-primary flex items-center justify-center">
-              <it.icon className="h-4 w-4" />
+    <Card className="mb-6 relative overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-[0.5] pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 15% 10%, hsl(var(--primary) / 0.10), transparent 45%), radial-gradient(circle at 90% 90%, hsl(var(--primary) / 0.08), transparent 45%)",
+        }}
+      />
+      <div className="relative">
+        <SectionHeader
+          title="ভিজিটর পরিসংখ্যান"
+          action={
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.18em] uppercase text-primary">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+              </span>
+              Live
+            </span>
+          }
+        />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          {items.map((it) => (
+            <div
+              key={it.label}
+              className="group relative rounded-xl border border-border/70 bg-card/70 backdrop-blur-sm px-4 py-3.5 flex items-center gap-3 shadow-[0_1px_0_hsl(var(--foreground)/0.02),0_8px_24px_-16px_hsl(var(--primary)/0.4)] hover:-translate-y-0.5 hover:shadow-[0_1px_0_hsl(var(--foreground)/0.02),0_14px_32px_-16px_hsl(var(--primary)/0.55)] transition-all duration-300 overflow-hidden"
+            >
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+              <div className="relative h-10 w-10 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/15 text-primary flex items-center justify-center shrink-0">
+                <it.icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.14em]">{it.label}</div>
+                <div className="text-xl font-black tabular-nums tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  {t ? bn(it.value) : "—"}
+                </div>
+              </div>
             </div>
-            <div className="min-w-0">
-              <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">{it.label}</div>
-              <div className="text-lg font-black tabular-nums">{t ? bn(it.value) : "—"}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="h-[120px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={trend} margin={{ left: -20, right: 8, top: 4, bottom: 0 }}>
-            <defs>
-              <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
-            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} width={30} />
-            <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} />
-            <Area type="monotone" dataKey="visits" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#gv)" />
-          </AreaChart>
-        </ResponsiveContainer>
+          ))}
+        </div>
+        <div className="h-[130px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trend} margin={{ left: -20, right: 8, top: 4, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="day" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} axisLine={false} width={30} />
+              <Tooltip contentStyle={{ borderRadius: 10, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
+              <Area type="monotone" dataKey="visits" stroke="hsl(var(--primary))" strokeWidth={2.5} fill="url(#gv)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </Card>
   );
 };
+
 
 const icons = { donations: HandCoins, donors: Users2, volunteers: HeartHandshake, projects: FolderKanban };
 
