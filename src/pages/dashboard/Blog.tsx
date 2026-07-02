@@ -47,7 +47,7 @@ function apiToUi(row: ApiPost): Post {
     id: row.id,
     title: row.title,
     author: "এডিটোরিয়াল টিম",
-    category: row.category || CATEGORIES[0],
+    category: row.category || DEFAULT_CATEGORIES[0],
     views: 0,
     date: dateStr || new Date().toISOString().slice(0, 10),
     status: (row.status as Post["status"]) || "draft",
