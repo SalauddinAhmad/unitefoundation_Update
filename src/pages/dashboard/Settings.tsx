@@ -72,7 +72,7 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm: Permission }[]
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
-  { k: "trust", icon: BadgeCheck, l: "Trust ব্যাজ", perm: "settings" },
+  
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
   { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
