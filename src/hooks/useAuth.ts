@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ApiError, api, auth, authApi } from "@/lib/api";
+import { can as canPerm, type Permission, type Role } from "@/lib/permissions";
 
 const USER_KEY = "uf_auth_user";
 const OTP_KEY = "uf_auth_otp_demo";
@@ -14,15 +15,16 @@ export type AuthUser = {
   id: string;
   name: string;
   email: string;
-  role: "admin" | "editor" | "viewer";
+  role: Role;
 };
 
 const DEMO_USER: AuthUser = {
   id: "demo-admin",
   name: "Demo Admin",
   email: "admin@unitefoundation.bd",
-  role: "admin",
+  role: "super_admin",
 };
+
 const DEMO_TOKEN = "demo.local.token";
 const DEMO_PASSWORD = "admin123";
 
@@ -212,6 +214,11 @@ export function useAuth() {
     setUser(null);
   }, []);
 
+  const can = useCallback(
+    (perm: Permission) => canPerm(user?.role, perm),
+    [user?.role],
+  );
+
   return {
     user,
     loading,
@@ -221,5 +228,8 @@ export function useAuth() {
     resetPassword,
     logout,
     isAuthenticated: !!user,
+    role: user?.role,
+    can,
   };
 }
+
