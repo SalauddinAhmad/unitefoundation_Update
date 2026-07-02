@@ -60,7 +60,7 @@ const Messages = () => {
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
-  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "checking">("idle");
+  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "network" | "checking">("idle");
   const [smtpError, setSmtpError] = useState<string>("");
 
   // Load messages from backend + SMTP health check
@@ -89,6 +89,12 @@ const Messages = () => {
           // Session expired — not an SMTP problem
           setSmtpStatus("auth");
           setSmtpError("লগইন সেশনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন");
+          return;
+        }
+        if (!(e instanceof ApiError)) {
+          // fetch itself failed (CORS / network) — not an SMTP problem
+          setSmtpStatus("network");
+          setSmtpError((e as Error)?.message || String(e));
           return;
         }
         setSmtpStatus("fail");
@@ -240,6 +246,18 @@ const Messages = () => {
                   <a href="/login" className="underline font-semibold">
                     লগইন পেজে যান
                   </a>
+                </div>
+              </>
+            )}
+            {smtpStatus === "network" && (
+              <>
+                <div className="font-semibold">API সার্ভারে সংযোগ করা যায়নি</div>
+                <div className="text-xs mt-1 break-all opacity-90">{smtpError}</div>
+                <div className="text-xs mt-2 text-foreground/70">
+                  এটি SMTP-এর সমস্যা নয় — সার্ভার request block করছে (CORS) অথবা নেটওয়ার্ক
+                  সমস্যা। cPanel → Setup Node.js App → Environment Variables-এ{" "}
+                  <code className="font-mono">CORS_ORIGINS</code> ঠিক আছে কিনা দেখুন এবং
+                  নতুন backend deploy করে app <b>Restart</b> করুন।
                 </div>
               </>
             )}

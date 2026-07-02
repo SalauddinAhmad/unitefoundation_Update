@@ -23,12 +23,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // --- CORS ---
-const origins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+// Built-in safe defaults so the site keeps working even if CORS_ORIGINS
+// env var is missing on the server (e.g. after re-creating the Node.js app).
+const DEFAULT_ORIGINS = [
+  'https://unitefoundation.bd',
+  'https://www.unitefoundation.bd',
+  'http://localhost:8080',
+];
+const envOrigins = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const origins = [...new Set([...DEFAULT_ORIGINS, ...envOrigins])];
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
     if (origins.includes(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
+    // Allow Lovable preview/staging origins
+    if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin)) return cb(null, true);
+    return cb(null, false); // respond without CORS headers instead of 500
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
