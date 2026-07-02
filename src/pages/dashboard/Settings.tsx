@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus } from "lucide-react";
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -69,6 +69,7 @@ const TABS = [
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
+  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
   { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল" },
   { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা" },
   { k: "notifications", icon: Bell, l: "নোটিফিকেশন" },
