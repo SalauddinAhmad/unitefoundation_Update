@@ -794,6 +794,19 @@ const RepresentativeForm = () => {
     if (!f.agree) return showError("গোপনীয়তা ও শর্তাবলিতে সম্মতি দিন");
     const r = representativeSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("career", {
+      name: f.fullName, phone: f.whatsapp, email: f.email,
+      address: f.currentAddress, profession: f.profession, message: f.whyJoin,
+      extra: {
+        type: f.district, district: f.district, city: f.district,
+        guardianName: f.guardianName, dob: f.dob, nid: f.nid,
+        permanentAddress: f.permanentAddress,
+        educationMediums: f.educationMediums, educationDetails: f.educationDetails,
+        socialLink: f.socialLink, experience: f.experience,
+        emergencyName: f.emergencyName, emergencyPhone: f.emergencyPhone,
+        political: f.political, politicalDetails: f.politicalDetails,
+      },
+    });
     setWaUrl(buildWhatsAppUrl(
       "জেলা প্রতিনিধি আবেদন",
       `— ব্যক্তিগত তথ্য —\nপুরো নাম: ${f.fullName}\nপিতা/অভিভাবক: ${f.guardianName}\nজন্ম তারিখ: ${f.dob}\nNID: ${f.nid}\nবর্তমান ঠিকানা: ${f.currentAddress}\nস্থায়ী ঠিকানা: ${f.permanentAddress}\nজেলা: ${f.district}\nপেশা: ${f.profession}\n\n— শিক্ষা —\nমাধ্যম: ${f.educationMediums.join(", ")}\nবিবরণ: ${f.educationDetails}\n\n— যোগাযোগ —\nWhatsApp: ${f.whatsapp}\nই-মেইল: ${f.email || "—"}\nসোশ্যাল লিংক: ${f.socialLink || "—"}\n\n— অভিজ্ঞতা ও আগ্রহ —\nপূর্ব অভিজ্ঞতা: ${f.experience || "—"}\nকেন যুক্ত হতে চান:\n${f.whyJoin}\n\n— জরুরি যোগাযোগ —\n${f.emergencyName} — ${f.emergencyPhone}\n\n— রাজনৈতিক ঘোষণা —\nসম্পৃক্ততা: ${f.political}${f.political === "হ্যাঁ" ? `\nবিবরণ: ${f.politicalDetails}` : ""}`,
