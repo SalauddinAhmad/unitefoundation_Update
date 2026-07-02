@@ -1,125 +1,99 @@
-# Unite Foundation — Full-Stack Production Deployment Plan
 
-## 🎯 লক্ষ্য
-Frontend (React) + Backend (Express + MySQL) — দুটোই cPanel-এ automatic deploy, secure এবং professional।
+# সব কিছু Dynamic করার Plan (৫টি Module)
 
-## 🏗️ Architecture
+## লক্ষ্য
+পাবলিক পেজে যা দেখা যায় — সব DB থেকে load হবে; dashboard থেকে CRUD; static demo data সরানো হবে। **UI/ডিজাইন অপরিবর্তিত থাকবে** — শুধু data source পাল্টাবে।
 
-```text
-┌────────────────────────────────────────────────────────┐
-│         GitHub Repository (main branch)                │
-│  ┌──────────────┐          ┌──────────────────┐        │
-│  │  /  (React)  │          │  /server (API)   │        │
-│  └──────┬───────┘          └────────┬─────────┘        │
-└─────────┼───────────────────────────┼──────────────────┘
-          │ push → GitHub Actions     │
-          ▼                           ▼
-    ┌─────────────┐          ┌──────────────────┐
-    │ Build Vite  │          │  Zip /server     │
-    │  → dist/    │          │  → FTP upload    │
-    └─────┬───────┘          └────────┬─────────┘
-          │ FTP                       │ FTP
-          ▼                           ▼
-  /public_html/               /home/unitefdn/api/
-  (unitefoundation.bd)        (Node.js App via cPanel)
-                                       │
-                                       ▼
-                              MySQL: unitefdn_main
-                                       │
-                                       ▼
-                         https://api.unitefoundation.bd
+---
+
+## Module 1: Projects (Public → Dynamic)
+- ✅ Backend/dashboard/DB আগে থেকেই আছে
+- 🔨 `src/pages/Projects.tsx` — `GET /projects` fetch, category filter DB data থেকে
+- 🔨 `src/pages/ProjectDetail.tsx` — `GET /projects/:slug` fetch
+- 🔨 `src/data/projects.ts` — শুধু helper (`formatBDT`, `toBnNum`) রাখব, `projects` array remove
+- 🔨 `ProjectCard.tsx` — API shape এর সাথে সঙ্গতিপূর্ণ (cover_image_url ইত্যাদি)
+- ⚠️ Field mapping: existing DB tag `raised/budget/beneficiaries` ↔ UI `raised/target/donors` — schema এ minor addition (`donors`, `location`, `urgent`, `gallery` JSON)
+
+## Module 2: Blog (Public → Dynamic)
+- ✅ Backend/dashboard CRUD আছে
+- 🔨 `src/pages/Blog.tsx` — `GET /posts?status=published` fetch
+- 🔨 `src/pages/BlogPost.tsx` — `GET /posts/:slug`; `content` column এ JSON stringified `ContentBlock[]` store; parse করে render
+- 🔨 Dashboard Blog editor — rich ContentBlock builder সহ (heading/paragraph/image/quote/list/stats/callout/cta)
+- 🔨 `src/data/blog.ts` — শুধু `ContentBlock` type export
+
+## Module 3: Gallery (Public → Dynamic)
+- ✅ Backend আছে
+- 🔨 `src/pages/Gallery.tsx` — `GET /gallery` fetch (albums + items)
+- 🔨 `src/components/home/GallerySection.tsx` — DB items দেখাবে
+- 🔨 Video support — `kind='video'` items এ YouTube URL
+
+## Module 4: Partners (নতুন — Full stack)
+- 🆕 DB table `partners` (name, slug, logo_url, cover_url, tagline, description, website, category, sort_order)
+- 🆕 `server/routes/partners.js` — GET/POST/PATCH/DELETE
+- 🆕 `src/pages/dashboard/Partners.tsx` — CRUD UI
+- 🔨 `src/pages/PartnerDetail.tsx` — DB থেকে fetch
+- 🔨 `src/components/home/PartnersSection.tsx` — DB থেকে load
+- 🔨 `src/data/partners.ts` — remove (or type-only)
+
+## Module 5: Impact Stats (নতুন — DB-editable)
+- 🆕 settings JSON এ `impact_stats` field (array of `{label, value, icon}`)
+- 🔨 Settings page এ editor
+- 🔨 `src/components/home/ImpactStats.tsx` — settings থেকে load
+- 🔨 `src/data/impact.ts` — remove
+
+---
+
+## Backend পরিবর্তনসমূহ (Schema)
+
+`server/db/schema.sql` এ **CREATE TABLE IF NOT EXISTS** + **ALTER TABLE** যোগ করব। User দুইভাবে apply করতে পারবেন:
+
+**Option A (আপনার জন্য সহজ):** নতুন SQL statements আমি আলাদা file `server/db/migrations/002_dynamic_modules.sql` এ দেব — phpMyAdmin এ import করলেই হবে। কোনো data হারাবে না।
+
+New tables/columns:
+```sql
+CREATE TABLE partners (id, name, slug, logo_url, cover_url, tagline, description, website, category, sort_order, created_at);
+ALTER TABLE projects ADD COLUMN donors INT DEFAULT 0, ADD COLUMN location VARCHAR(150), 
+  ADD COLUMN urgent TINYINT(1) DEFAULT 0, ADD COLUMN gallery JSON, ADD COLUMN target DECIMAL(14,2);
+-- posts.content ইতিমধ্যে LONGTEXT — JSON store করবে, no change
 ```
 
-## 📦 কী কী তৈরি হবে
+---
 
-### ১. Backend (`server/` directory in repo)
-- **Express + MySQL2** — production-grade REST API
-- **Security**: helmet, cors (whitelist), rate-limit, bcrypt, JWT
-- **Auth**: login, forgot/reset password, 2FA OTP (nodemailer)
-- **Routes**: donations, applications, projects, posts, gallery, messages, settings, team, admin/users, stats
-- **DB**: migration file (`server/db/schema.sql`) — সব tables + seeds
-- **Env**: `server/.env.example` — DB, JWT, SMTP, CORS origins
-- **Entry**: `server/app.js` (cPanel Node.js App Manager compatible)
-- **Logger**: winston with daily rotation
-- **Validation**: zod schemas per route
+## নতুন API Endpoints
+- `GET /partners`, `GET /partners/:slug`, `POST/PATCH/DELETE /partners/:id`
+- `GET /settings` (public — impact_stats দিতে)
 
-### ২. Deployment Workflow
-- `.github/workflows/deploy.yml` update:
-  - Job 1: Build frontend → FTP to `/public_html/`
-  - Job 2: Package backend → FTP to `/api/` (outside public_html)
-  - Trigger cPanel Node.js restart via touch file (`restart.txt`)
-- `.htaccess`-এ SPA fallback + security headers
+---
 
-### ৩. Documentation (`DEPLOY.md`)
-আপনার জন্য step-by-step গাইড:
-1. cPanel-এ subdomain `api.unitefoundation.bd` তৈরি
-2. Node.js App Manager-এ app registration (Application root: `/api`, startup file: `app.js`, Node 20)
-3. MySQL Database Wizard-এ user `unitefdn_admin` → `unitefdn_main`-এ ALL PRIVILEGES
-4. phpMyAdmin-এ `schema.sql` import
-5. cPanel Node.js App → Environment variables set
-6. GitHub Secrets (5টা) add — নীচে
+## Files Affected (আনুমানিক)
+- **Backend (add/edit):** 3 route files + 1 SQL migration + `app.js`
+- **Frontend (edit):** 8 public pages/components + 5 dashboard pages
+- **Frontend (new):** 1 dashboard page (Partners) + rich blog editor components
 
-## 🔐 GitHub Secrets (যা add করতে হবে)
+---
 
-| নাম | কী |
-|---|---|
-| `FTP_PASSWORD` | cPanel FTP password |
-| `VITE_API_BASE_URL` | `https://api.unitefoundation.bd` |
-| `BACKEND_ENV` | Backend `.env` content (একবারে) |
+## Execution Order (5 ধাপে, প্রতি ধাপে test)
+1. **Backend**: SQL migration + partners route + settings expansion → deploy
+2. **Projects public**: API fetch conversion + card mapping
+3. **Gallery public + home**: API fetch conversion
+4. **Partners**: Dashboard CRUD + public pages fetch
+5. **Blog + Impact Stats**: Rich editor + settings-driven stats
 
-## 🔒 Security Checklist
-- Password hash: bcrypt (12 rounds)
-- JWT: 24h expiry, HS256, strong secret (auto-generate)
-- Rate limit: 100 req / 15 min per IP, login: 5 / 15 min
-- CORS: only `https://unitefoundation.bd`
-- SQL: prepared statements everywhere (mysql2)
-- Secrets: never committed — cPanel env + GitHub Secrets only
-- HTTPS enforced via `.htaccess`
-- Helmet CSP headers
+প্রতি ধাপ শেষে আপনি preview এ check করবেন — কোথাও ভুল হলে সেখানেই fix করে পরবর্তী step এ যাব।
 
-## 📁 File Structure (তৈরি হবে)
+---
 
-```text
-server/
-├── app.js                  # cPanel entry point
-├── package.json
-├── .env.example
-├── db/
-│   ├── pool.js             # mysql2 connection pool
-│   └── schema.sql          # tables + seeds
-├── middleware/
-│   ├── auth.js             # JWT verify
-│   ├── rateLimit.js
-│   └── errorHandler.js
-├── routes/
-│   ├── auth.js
-│   ├── donations.js
-│   ├── applications.js
-│   ├── projects.js
-│   ├── posts.js
-│   ├── gallery.js
-│   ├── messages.js
-│   ├── settings.js
-│   ├── team.js
-│   ├── admin.js
-│   └── stats.js
-├── services/
-│   └── mailer.js           # nodemailer SMTP
-└── utils/
-    ├── validate.js         # zod schemas
-    └── logger.js
+## ঝুঁকি ও Safety
+- ✅ কোনো existing data delete হবে না (শুধু `ADD COLUMN` / new tables)
+- ✅ Migration fail হলেও পুরনো site কাজ করবে
+- ✅ প্রথম deploy এর পর যদি DB empty থাকে (partners/projects), আমি seed data script দিব যাতে current static data DB তে চলে যায়
 
-.github/workflows/deploy.yml (updated — 2 jobs)
-DEPLOY.md                   # আপনার জন্য cPanel setup guide
-```
+---
 
-## ⏭️ পরবর্তী ধাপ (approve করলে)
+## Deploy সংখ্যা
+- **1 বার backend deploy** (SQL migration + new routes)
+- **1 বার frontend deploy** সব হয়ে গেলে (আপনি চাইলে ধাপে ধাপেও দিতে পারেন)
 
-1. আমি **সব backend code + workflow + docs** তৈরি করবো (এই session-এ)
-2. তারপর দুটো জিনিস চাইবো secure form-এ:
-   - **`FTP_PASSWORD`** (cPanel FTP password)
-   - **MySQL password** (backend `.env`-এর জন্য) — cPanel-এ set করবেন
-3. আপনি **DEPLOY.md** follow করে cPanel-এ ১০-১৫ মিনিটে setup শেষ করবেন
-4. GitHub-এ push → automatic deploy শুরু ইনশাআল্লাহ
+---
 
-**Plan-টি approve করলেই কাজ শুরু করছি।**
+**Approve করলে Module 1 (Backend SQL + partners route + settings expansion) দিয়ে শুরু করব। প্রথমে backend, তারপর frontend — কারণ frontend আগে deploy করলে API missing হয়ে সাইট break হতে পারে।**
