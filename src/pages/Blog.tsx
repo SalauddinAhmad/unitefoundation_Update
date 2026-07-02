@@ -1,17 +1,21 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Search } from "lucide-react";
+import { ArrowRight, Calendar, Search, Loader2 } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
-import { posts } from "@/data/blog";
+import { usePostsPublic } from "@/hooks/api/usePublic";
 import relief from "@/assets/hero-relief.jpg";
 
 const Blog = () => {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("সকল");
+  const { data: posts = [], isLoading } = usePostsPublic();
 
-  const cats = useMemo(() => ["সকল", ...Array.from(new Set(posts.map((p) => p.category)))], []);
+  const cats = useMemo(
+    () => ["সকল", ...Array.from(new Set(posts.map((p) => p.category)))],
+    [posts]
+  );
   const filtered = posts.filter(
     (p) =>
       (cat === "সকল" || p.category === cat) &&

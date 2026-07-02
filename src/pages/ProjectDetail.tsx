@@ -1,18 +1,25 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2 } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import { getProject, formatBDT, projects, toBnNum } from "@/data/projects";
+import { formatBDT, toBnNum } from "@/data/projects";
 import { ProgressBar } from "@/components/project/ProgressBar";
 import { ProjectCard } from "@/components/project/ProjectCard";
+import { useProjectPublic, useProjectsPublic } from "@/hooks/api/usePublic";
 import NotFound from "./NotFound";
 
 const ProjectDetail = () => {
   const { slug = "" } = useParams();
-  const project = getProject(slug);
+  const { data: project, isLoading } = useProjectPublic(slug);
+  const { data: allProjects = [] } = useProjectsPublic();
+  if (isLoading) return (
+    <SiteLayout>
+      <div className="py-32 flex justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>
+    </SiteLayout>
+  );
   if (!project) return <NotFound />;
 
-  const related = projects.filter((p) => p.id !== project.id && p.category === project.category).slice(0, 3);
+  const related = allProjects.filter((p) => p.id !== project.id && p.category === project.category).slice(0, 3);
 
   return (
     <SiteLayout>
