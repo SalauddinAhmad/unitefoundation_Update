@@ -54,6 +54,19 @@ export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(() => readUser());
   const [loading, setLoading] = useState(false);
 
+  // Safety: if a stale demo token is stored while we're pointed at the real
+  // production API, purge it so the dashboard forces a proper re-login.
+  useEffect(() => {
+    const isProdApi = /unitefoundation\.bd/i.test(
+      (import.meta.env.VITE_API_BASE_URL as string | undefined) || "https://api.unitefoundation.bd",
+    );
+    if (isProdApi && auth.token === DEMO_TOKEN) {
+      auth.clear();
+      localStorage.removeItem(USER_KEY);
+      setUser(null);
+    }
+  }, []);
+
   useEffect(() => {
     const onStorage = () => setUser(readUser());
     window.addEventListener("storage", onStorage);
