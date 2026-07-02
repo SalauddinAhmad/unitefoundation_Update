@@ -38,6 +38,7 @@ export type Permission =
   | "settings.security"  // sensitive: 2FA, session, allowed emails
   | "settings.payment"   // sensitive: bank / gateway credentials
   | "admins"             // create/delete admins, reset passwords
+  | "logs"               // activity / audit log — super admin only
   | "help";
 
 // Which roles are allowed for each permission.
@@ -58,6 +59,7 @@ const MATRIX: Record<Permission, Role[]> = {
   "settings.security": [],   // super_admin only
   "settings.payment":  [],   // super_admin only
   admins:              [],   // super_admin only
+  logs:                [],   // super_admin only
   help:                ["admin", "editor", "moderator", "viewer"],
 };
 

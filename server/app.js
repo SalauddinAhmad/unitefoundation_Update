@@ -158,6 +158,25 @@ app.get('/health/auth', (req, res) => {
   res.json(out);
 });
 
+// --- Auto-audit (records mutating requests from authenticated users) ---
+const { autoAuditMiddleware, logActivity } = require('./services/audit');
+app.use(autoAuditMiddleware);
+
+// Log successful/failed logins explicitly (auto-audit needs req.user which is not set on /auth/login)
+app.use((req, res, next) => {
+  if (req.method === 'POST' && (req.path === '/auth/login' || req.path === '/login')) {
+    res.on('finish', () => {
+      const email = req.body && req.body.email;
+      if (res.statusCode === 200) {
+        logActivity({ req, action: 'login', entity: 'auth', summary: `Login: ${email}`, status: 200, meta: { email } });
+      } else if (res.statusCode === 401) {
+        logActivity({ req, action: 'login_failed', entity: 'auth', summary: `Failed login: ${email}`, status: 401, meta: { email } });
+      }
+    });
+  }
+  next();
+});
+
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));
 app.use('/donations', require('./routes/donations'));
@@ -171,6 +190,7 @@ app.use('/team', require('./routes/team'));
 app.use('/partners', require('./routes/partners'));
 app.use('/admin', require('./routes/admin'));
 app.use('/stats', require('./routes/stats'));
+app.use('/logs', require('./routes/logs'));
 
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
