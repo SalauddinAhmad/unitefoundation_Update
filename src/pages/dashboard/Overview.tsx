@@ -1,11 +1,74 @@
-import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, Calendar, TrendingUp, FileText, Inbox, Eye, CalendarDays } from "lucide-react";
+import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, TrendingUp, FileText, Inbox, Eye, CalendarDays, ChevronDown } from "lucide-react";
 import { Card, KpiCard, PageHeader, SectionHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
+import { exportRowsAsCsv } from "@/lib/csv";
 
 const bn = (n: number) => Number(n || 0).toLocaleString("bn-BD");
 const bnCurrency = (n: number) => `৳ ${bn(Math.round(n))}`;
+
+// ============ Date range helpers ============
+const BN_MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+const pad = (n: number) => String(n).padStart(2, "0");
+const bnDigit = (s: string | number) => String(s).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
+
+type Range = { from: string | null; to: string | null; key: string; label: string };
+
+function monthRange(year: number, month0: number): Range {
+  const last = new Date(year, month0 + 1, 0).getDate();
+  return {
+    from: `${year}-${pad(month0 + 1)}-01`,
+    to: `${year}-${pad(month0 + 1)}-${pad(last)}`,
+    key: `${year}-${pad(month0 + 1)}`,
+    label: `${BN_MONTHS[month0]} ${bnDigit(year)}`,
+  };
+}
+function buildRanges(): Range[] {
+  const now = new Date();
+  const list: Range[] = [];
+  const cur = monthRange(now.getFullYear(), now.getMonth());
+  list.push({ ...cur, key: "this", label: `এই মাস (${cur.label})` });
+  const prevD = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prev = monthRange(prevD.getFullYear(), prevD.getMonth());
+  list.push({ ...prev, key: "last", label: `গত মাস (${prev.label})` });
+  for (let i = 2; i < 14; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    list.push(monthRange(d.getFullYear(), d.getMonth()));
+  }
+  list.push({ from: null, to: null, key: "all", label: "সব সময়" });
+  return list;
+}
+
+// Compact dropdown for range picking (no extra deps)
+const RangePicker = ({ value, onChange }: { value: Range; onChange: (r: Range) => void }) => {
+  const [open, setOpen] = useState(false);
+  const ranges = useMemo(() => buildRanges(), []);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold border border-border bg-card hover:bg-secondary transition-colors"
+      >
+        <CalendarDays className="h-4 w-4" /> {value.label} <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1.5 z-30 w-64 max-h-80 overflow-auto rounded-xl border border-border bg-card shadow-lg p-1">
+          {ranges.map((r) => (
+            <button
+              key={r.key}
+              onMouseDown={(e) => { e.preventDefault(); onChange(r); setOpen(false); }}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-secondary ${value.key === r.key ? "bg-secondary font-bold text-primary" : ""}`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ============ Types matching backend ============
 type VisitorTotals = { total: number; today: number; week: number; month: number };
