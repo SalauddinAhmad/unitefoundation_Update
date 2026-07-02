@@ -141,12 +141,12 @@ CREATE TABLE IF NOT EXISTS messages (
 
 CREATE TABLE IF NOT EXISTS message_replies (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  message_id CHAR(36) NOT NULL,
+  message_id CHAR(36) NULL,
   to_email VARCHAR(190) NOT NULL,
   subject VARCHAR(255),
   body TEXT,
   sent_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+  FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Team
