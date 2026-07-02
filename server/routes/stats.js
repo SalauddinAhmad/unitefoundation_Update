@@ -33,4 +33,48 @@ router.get('/channels', requireAuth, asyncH(async (_req, res) => {
   res.json(rows);
 }));
 
+// -------- Visitor counter (public) --------
+async function ensureVisitorTable() {
+  await pool.execute(`
+    CREATE TABLE IF NOT EXISTS visitor_stats (
+      day DATE PRIMARY KEY,
+      visits INT UNSIGNED NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+}
+
+async function readTotals() {
+  const [[t]] = await pool.execute('SELECT COALESCE(SUM(visits),0) total FROM visitor_stats');
+  const [[today]] = await pool.execute('SELECT COALESCE(visits,0) visits FROM visitor_stats WHERE day = CURRENT_DATE()');
+  const [[week]] = await pool.execute('SELECT COALESCE(SUM(visits),0) total FROM visitor_stats WHERE day >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)');
+  const [[month]] = await pool.execute('SELECT COALESCE(SUM(visits),0) total FROM visitor_stats WHERE day >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)');
+  return {
+    total: Number(t.total),
+    today: Number(today?.visits || 0),
+    week: Number(week?.total || 0),
+    month: Number(month?.total || 0),
+  };
+}
+
+router.post('/visit', asyncH(async (_req, res) => {
+  await ensureVisitorTable();
+  await pool.execute(
+    'INSERT INTO visitor_stats (day, visits) VALUES (CURRENT_DATE(), 1) ON DUPLICATE KEY UPDATE visits = visits + 1'
+  );
+  res.json(await readTotals());
+}));
+
+router.get('/visits', asyncH(async (_req, res) => {
+  await ensureVisitorTable();
+  res.json(await readTotals());
+}));
+
+router.get('/visits-trend', requireAuth, asyncH(async (_req, res) => {
+  await ensureVisitorTable();
+  const [rows] = await pool.execute(
+    'SELECT day, visits FROM visitor_stats WHERE day >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) ORDER BY day'
+  );
+  res.json(rows);
+}));
+
 module.exports = router;
