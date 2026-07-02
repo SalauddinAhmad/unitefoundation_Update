@@ -142,7 +142,50 @@ export default function Projects() {
     catch (e: any) { toast.error(e?.message || "আপডেট ব্যর্থ"); }
   };
 
-
+  const [importing, setImporting] = useState(false);
+  const importDefaults = async () => {
+    if (!confirm("ওয়েবসাইটের ডিফল্ট ১২টি প্রকল্প DB-তে ইমপোর্ট করবেন?")) return;
+    setImporting(true);
+    try {
+      const { projects: defaults } = await import("@/data/projects");
+      const { compressImageToDataURL } = await import("@/lib/imageCompress");
+      let ok = 0;
+      for (const p of defaults) {
+        // skip if already imported by slug
+        if (list.some((x) => x.slug === p.slug || x.title === p.title)) continue;
+        let cover = "";
+        try {
+          const res = await fetch(p.image);
+          const blob = await res.blob();
+          const file = new File([blob], `${p.slug}.jpg`, { type: blob.type || "image/jpeg" });
+          cover = await compressImageToDataURL(file, { maxWidth: 1400, quality: 0.8 });
+        } catch { /* skip cover */ }
+        await saveMut.mutateAsync({
+          data: {
+            title: p.title,
+            slug: p.slug,
+            category: p.category as any,
+            short_description: p.shortDescription,
+            description: p.description,
+            content: JSON.stringify({ html: `<p>${p.description}</p>`, tags: [p.category], goals: [] }),
+            budget: p.target,
+            target: p.target,
+            raised: p.raised,
+            beneficiaries: p.donors,
+            location: p.location,
+            status: "active" as any,
+            cover_image_url: cover,
+          } as any,
+        });
+        ok++;
+      }
+      toast.success(`ইমপোর্ট সম্পন্ন — ${ok}টি প্রকল্প যুক্ত হয়েছে`);
+    } catch (e: any) {
+      toast.error(e?.message || "ইমপোর্ট ব্যর্থ");
+    } finally {
+      setImporting(false);
+    }
+  };
 
   return (
     <>
@@ -151,8 +194,12 @@ export default function Projects() {
         subtitle="চলমান ও সমাপ্ত সকল প্রকল্প — সম্পূর্ণ নিয়ন্ত্রণে ম্যানেজ করুন"
         actions={
           <>
-            <button className="inline-flex items-center gap-2 border border-border bg-card font-semibold px-3.5 py-2 rounded-lg text-sm hover:bg-secondary">
-              <Download className="h-4 w-4" /> রিপোর্ট
+            <button
+              onClick={importDefaults}
+              disabled={importing}
+              className="inline-flex items-center gap-2 border border-border bg-card font-semibold px-3.5 py-2 rounded-lg text-sm hover:bg-secondary disabled:opacity-60"
+            >
+              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট প্রকল্প ইমপোর্ট"}
             </button>
             <button
               onClick={() => setEditor({ open: true })}
