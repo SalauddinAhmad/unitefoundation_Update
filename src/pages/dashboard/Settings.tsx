@@ -873,6 +873,23 @@ const AdminsPanel = () => {
     }
   };
 
+  const changeRole = async (u: AdminUser, newRole: Role) => {
+    if (newRole === u.role) return;
+    const prev = list;
+    setList((rows) => rows.map((r) => (r.id === u.id ? { ...r, role: newRole } : r)));
+    try {
+      await api.patch(`/admin/users/${u.id}/role`, { role: newRole });
+      toast({ title: "রোল আপডেট হয়েছে", description: `${u.email} → ${ROLE_LABEL[newRole]}` });
+    } catch (err: unknown) {
+      setList(prev);
+      toast({
+        title: "রোল পরিবর্তন ব্যর্থ",
+        description: err instanceof Error ? err.message : "সার্ভারে সংযোগ করা যায়নি।",
+        variant: "destructive",
+      });
+    }
+  };
+
   const copy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: "কপি করা হয়েছে" });
@@ -966,9 +983,21 @@ const AdminsPanel = () => {
                     </td>
                     <td className="py-3 text-muted-foreground">{u.email}</td>
                     <td className="py-3">
-                      <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
-                        {ROLE_LABEL[u.role] || u.role}
-                      </span>
+                      <div className="inline-flex items-center gap-2">
+                        <span className={"px-2 py-0.5 rounded-full text-[11px] font-bold " + roleBadgeClass(u.role)}>
+                          {ROLE_LABEL[u.role] || u.role}
+                        </span>
+                        <select
+                          value={u.role}
+                          onChange={(e) => changeRole(u, e.target.value as Role)}
+                          className="text-[11px] px-2 py-1 rounded-md bg-secondary border border-border focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                          title="রোল পরিবর্তন করুন"
+                        >
+                          {ASSIGNABLE_ROLES.map((r) => (
+                            <option key={r} value={r}>{ROLE_LABEL[r]}</option>
+                          ))}
+                        </select>
+                      </div>
                     </td>
                     <td className="py-3 text-muted-foreground text-xs">{String(u.created_at).slice(0, 10)}</td>
                     <td className="py-3 text-right">
