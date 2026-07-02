@@ -81,11 +81,25 @@ export default function Blog() {
 
   const list = useMemo<Post[]>(() => (rows as ApiPost[]).map(apiToUi), [rows]);
 
+  const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const [catManagerOpen, setCatManagerOpen] = useState(false);
+  const categories = useMemo(() => {
+    const fromPosts = list.map((p) => p.category).filter(Boolean) as string[];
+    const merged = [...DEFAULT_CATEGORIES, ...customCats, ...fromPosts];
+    return Array.from(new Set(merged.map((s) => s.trim()).filter(Boolean)));
+  }, [list, customCats]);
+  const updateCats = (next: string[]) => {
+    const clean = Array.from(new Set(next.map((s) => s.trim()).filter(Boolean)));
+    setCustomCats(clean);
+    saveCustomCategories(clean);
+  };
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "draft" | "scheduled">("all");
   const [category, setCategory] = useState<string>("all");
   const [editor, setEditor] = useState<{ open: boolean; post?: Post }>({ open: false });
   const [viewer, setViewer] = useState<Post | null>(null);
+
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
