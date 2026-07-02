@@ -179,14 +179,32 @@ export const usePostPublic = (slug: string) =>
 // ============================================================
 // GALLERY
 // ============================================================
-export type ApiGalleryAlbum = { id: string; title: string; slug?: string; cover_url?: string };
+export type ApiGalleryAlbum = {
+  id: string;
+  title: string;
+  slug?: string;
+  description?: string | null;
+  cover_url?: string | null;
+  category?: string | null;
+  status?: "published" | "draft" | "archived";
+  date?: string | null;
+  location?: string | null;
+  tags?: string[] | null;
+  featured?: number | boolean;
+  sort_order?: number;
+  created_at?: string;
+};
 export type ApiGalleryItem = {
   id: string;
   album_id?: string | null;
   kind: "image" | "video";
-  title?: string;
+  title?: string | null;
   url: string;
-  thumb_url?: string;
+  thumb_url?: string | null;
+  caption?: string | null;
+  youtube_id?: string | null;
+  duration?: string | null;
+  sort_order?: number;
 };
 
 export const useGalleryPublic = () =>
@@ -208,6 +226,63 @@ export const useGalleryPublic = () =>
     },
     staleTime: STALE,
   });
+
+// ---------- GALLERY — admin CRUD ----------
+export const useGalleryAdmin = () =>
+  useQuery({
+    queryKey: ["admin", "gallery"],
+    queryFn: async () => {
+      try {
+        return await api.get<{ albums: ApiGalleryAlbum[]; items: ApiGalleryItem[] }>("/gallery");
+      } catch {
+        return { albums: [] as ApiGalleryAlbum[], items: [] as ApiGalleryItem[] };
+      }
+    },
+    staleTime: 15_000,
+  });
+
+const invalidateGallery = (qc: ReturnType<typeof useQueryClient>) => {
+  qc.invalidateQueries({ queryKey: ["admin", "gallery"] });
+  qc.invalidateQueries({ queryKey: ["public", "gallery"] });
+};
+
+export const useSaveAlbum = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id?: string; data: Partial<ApiGalleryAlbum> }) => {
+      if (id) return api.patch(`/gallery/albums/${id}`, data);
+      return api.post<{ id: string }>("/gallery/albums", data);
+    },
+    onSuccess: () => invalidateGallery(qc),
+  });
+};
+
+export const useDeleteAlbum = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/gallery/albums/${id}`),
+    onSuccess: () => invalidateGallery(qc),
+  });
+};
+
+export const useSaveGalleryItem = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, data }: { id?: string; data: Partial<ApiGalleryItem> }) => {
+      if (id) return api.patch(`/gallery/items/${id}`, data);
+      return api.post<{ id: string }>("/gallery/items", data);
+    },
+    onSuccess: () => invalidateGallery(qc),
+  });
+};
+
+export const useDeleteGalleryItem = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/gallery/${id}`),
+    onSuccess: () => invalidateGallery(qc),
+  });
+};
 
 // ============================================================
 // PARTNERS
