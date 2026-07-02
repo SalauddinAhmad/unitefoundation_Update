@@ -162,6 +162,21 @@ app.get('/health/auth', (req, res) => {
 const { autoAuditMiddleware, logActivity } = require('./services/audit');
 app.use(autoAuditMiddleware);
 
+// Log successful/failed logins explicitly (auto-audit needs req.user which is not set on /auth/login)
+app.use((req, res, next) => {
+  if (req.method === 'POST' && (req.path === '/auth/login' || req.path === '/login')) {
+    res.on('finish', () => {
+      const email = req.body && req.body.email;
+      if (res.statusCode === 200) {
+        logActivity({ req, action: 'login', entity: 'auth', summary: `Login: ${email}`, status: 200, meta: { email } });
+      } else if (res.statusCode === 401) {
+        logActivity({ req, action: 'login_failed', entity: 'auth', summary: `Failed login: ${email}`, status: 401, meta: { email } });
+      }
+    });
+  }
+  next();
+});
+
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));
 app.use('/donations', require('./routes/donations'));
@@ -176,20 +191,6 @@ app.use('/partners', require('./routes/partners'));
 app.use('/admin', require('./routes/admin'));
 app.use('/stats', require('./routes/stats'));
 app.use('/logs', require('./routes/logs'));
-
-// Log successful logins explicitly (auto-audit uses req.user, which is not set on /auth/login)
-app.use((req, res, next) => {
-  if (req.method === 'POST' && req.path === '/auth/login') {
-    res.on('finish', () => {
-      if (res.statusCode === 200) {
-        logActivity({ req, action: 'login', entity: 'auth', summary: `Login: ${req.body && req.body.email}`, status: 200 });
-      } else if (res.statusCode === 401) {
-        logActivity({ req, action: 'login_failed', entity: 'auth', summary: `Failed login: ${req.body && req.body.email}`, status: 401 });
-      }
-    });
-  }
-  next();
-});
 
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
