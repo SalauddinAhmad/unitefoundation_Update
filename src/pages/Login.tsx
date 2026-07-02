@@ -177,10 +177,6 @@ const Login = () => {
                     JWT‑সুরক্ষিত · এনক্রিপ্টেড সেশন
                   </div>
 
-                  <div className="mt-2 rounded-xl border border-dashed border-primary/25 bg-accent/40 p-3 text-[11px] text-foreground/75">
-                    <div className="font-semibold text-foreground mb-0.5">ডেমো অ্যাক্সেস</div>
-                    ইমেইল: <code className="text-primary font-semibold">admin@unitefoundation.bd</code> · পাসওয়ার্ড: <code className="text-primary font-semibold">admin123</code>
-                  </div>
                 </form>
               </>
             ) : (
