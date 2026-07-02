@@ -249,6 +249,18 @@ const Messages = () => {
                 </div>
               </>
             )}
+            {smtpStatus === "network" && (
+              <>
+                <div className="font-semibold">API সার্ভারে সংযোগ করা যায়নি</div>
+                <div className="text-xs mt-1 break-all opacity-90">{smtpError}</div>
+                <div className="text-xs mt-2 text-foreground/70">
+                  এটি SMTP-এর সমস্যা নয় — সার্ভার request block করছে (CORS) অথবা নেটওয়ার্ক
+                  সমস্যা। cPanel → Setup Node.js App → Environment Variables-এ{" "}
+                  <code className="font-mono">CORS_ORIGINS</code> ঠিক আছে কিনা দেখুন এবং
+                  নতুন backend deploy করে app <b>Restart</b> করুন।
+                </div>
+              </>
+            )}
             {smtpStatus === "fail" && (
               <>
                 <div className="font-semibold">SMTP সার্ভার কাজ করছে না — মেসেজ পাঠানো যাবে না</div>
