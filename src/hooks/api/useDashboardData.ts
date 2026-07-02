@@ -131,6 +131,8 @@ export const useOverviewStats = () =>
   });
 
 // ---------- Settings (dashboard editable) ----------
+export type ImpactStat = { value: number; label: string; suffix?: string };
+
 export type SiteSettings = {
   organization: {
     name: string;
@@ -171,6 +173,7 @@ export type SiteSettings = {
     sms_alerts: boolean;
     notify_email: string;
   };
+  impact_stats: ImpactStat[];
 };
 
 const defaultSettings: SiteSettings = {
@@ -213,6 +216,12 @@ const defaultSettings: SiteSettings = {
     sms_alerts: false,
     notify_email: "admin@unitefoundation.bd",
   },
+  impact_stats: [
+    { value: 248000, label: "মানুষকে সাহায্য", suffix: "+" },
+    { value: 1280, label: "প্রকল্প সম্পন্ন", suffix: "+" },
+    { value: 3450, label: "স্বেচ্ছাসেবক", suffix: "" },
+    { value: 14, label: "দেশে কার্যক্রম", suffix: "" },
+  ],
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -222,6 +231,10 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     socials: { ...defaultSettings.socials, ...(s?.socials || {}) },
     security: { ...defaultSettings.security, ...(s?.security || {}) },
     notifications: { ...defaultSettings.notifications, ...(s?.notifications || {}) },
+    impact_stats:
+      Array.isArray(s?.impact_stats) && s!.impact_stats!.length
+        ? s!.impact_stats!
+        : defaultSettings.impact_stats,
   };
 }
 
