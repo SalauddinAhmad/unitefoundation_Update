@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   Building2,
+  ScrollText,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -40,6 +41,7 @@ const menu: MenuItem[] = [
   { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
   { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
   { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },
+  { to: "/dashboard/logs", icon: ScrollText, label: "অ্যাক্টিভিটি লগ", perm: "logs" },
 ];
 
 const generalMenu: MenuItem[] = [

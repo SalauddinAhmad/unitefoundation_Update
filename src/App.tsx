@@ -36,6 +36,7 @@ const DashCareers = lazy(() => import("./pages/dashboard/Careers.tsx"));
 const DashTeam = lazy(() => import("./pages/dashboard/Team.tsx"));
 const DashPartners = lazy(() => import("./pages/dashboard/Partners.tsx"));
 const DashSettings = lazy(() => import("./pages/dashboard/Settings.tsx"));
+const DashLogs = lazy(() => import("./pages/dashboard/ActivityLog.tsx"));
 const DashHelp = lazy(() => import("./pages/dashboard/Help.tsx"));
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="team" element={<RequireAuth permission="team"><DashTeam /></RequireAuth>} />
               <Route path="partners" element={<RequireAuth permission="partners"><DashPartners /></RequireAuth>} />
               <Route path="settings" element={<RequireAuth permission="settings"><DashSettings /></RequireAuth>} />
+              <Route path="logs" element={<RequireAuth permission="logs"><DashLogs /></RequireAuth>} />
               <Route path="help" element={<RequireAuth permission="help"><DashHelp /></RequireAuth>} />
 
             </Route>
