@@ -779,3 +779,143 @@ function PostViewer({ post, onClose, onEdit }: { post: Post; onClose: () => void
     </div>
   );
 }
+
+/* ============================ Category Manager ============================ */
+
+function CategoryManager({
+  categories, customCategories, defaults, usage, onChange, onClose,
+}: {
+  categories: string[];
+  customCategories: string[];
+  defaults: string[];
+  usage: Record<string, number>;
+  onChange: (next: string[]) => void;
+  onClose: () => void;
+}) {
+  const [input, setInput] = useState("");
+  const [editing, setEditing] = useState<{ old: string; val: string } | null>(null);
+
+  const add = () => {
+    const v = input.trim();
+    if (!v) return;
+    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
+      toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে");
+      return;
+    }
+    onChange([...customCategories, v]);
+    setInput("");
+    toast.success("যোগ করা হয়েছে");
+  };
+  const removeCat = (c: string) => {
+    if (defaults.includes(c)) return toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না");
+    if ((usage[c] || 0) > 0 && !confirm(`"${c}" ব্যবহারে আছে (${usage[c]}টি পোস্ট)। তবুও ডিলিট করবেন?`)) return;
+    onChange(customCategories.filter((x) => x !== c));
+  };
+  const saveEdit = () => {
+    if (!editing) return;
+    const v = editing.val.trim();
+    if (!v || v === editing.old) { setEditing(null); return; }
+    if (defaults.includes(editing.old)) { toast.error("ডিফল্ট ক্যাটাগরি রিনেম করা যাবে না"); setEditing(null); return; }
+    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
+      toast.error("একই নামে ক্যাটাগরি আছে");
+      return;
+    }
+    onChange(customCategories.map((x) => (x === editing.old ? v : x)));
+    setEditing(null);
+    toast.success("আপডেট হয়েছে");
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-foreground/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
+          <div className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Tags className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="font-bold text-sm">ক্যাটাগরি ব্যবস্থাপনা</div>
+              <div className="text-[11px] text-muted-foreground">ব্লগ পোস্টের জন্য কাস্টম ক্যাটাগরি তৈরি করুন</div>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+        </div>
+
+        <div className="p-5 space-y-4 overflow-y-auto">
+          <div className="flex items-center gap-2">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+              placeholder="নতুন ক্যাটাগরি নাম..."
+              className="flex-1 px-3 py-2 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none"
+            />
+            <button onClick={add} className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground font-semibold px-3.5 py-2 rounded-lg text-sm">
+              <Plus className="h-4 w-4" /> যোগ
+            </button>
+          </div>
+
+          <div className="rounded-xl border border-border divide-y divide-border">
+            {categories.map((c) => {
+              const isDefault = defaults.includes(c);
+              const count = usage[c] || 0;
+              const isEditing = editing?.old === c;
+              return (
+                <div key={c} className="flex items-center gap-2 px-3 py-2.5">
+                  <div className="flex-1 min-w-0">
+                    {isEditing ? (
+                      <input
+                        autoFocus
+                        value={editing!.val}
+                        onChange={(e) => setEditing({ old: c, val: e.target.value })}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditing(null); }}
+                        className="w-full px-2 py-1 rounded-md bg-card border border-border text-sm"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold truncate">{c}</span>
+                        {isDefault && <span className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground">ডিফল্ট</span>}
+                        <span className="text-[11px] text-muted-foreground">{count} পোস্ট</span>
+                      </div>
+                    )}
+                  </div>
+                  {isEditing ? (
+                    <>
+                      <button onClick={saveEdit} className="p-1.5 rounded-md hover:bg-secondary text-emerald-600"><Check className="h-4 w-4" /></button>
+                      <button onClick={() => setEditing(null)} className="p-1.5 rounded-md hover:bg-secondary"><X className="h-4 w-4" /></button>
+                    </>
+                  ) : (
+                    <>
+                      {!isDefault && (
+                        <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
+                          <Edit3 className="h-4 w-4" />
+                        </button>
+                      )}
+                      {!isDefault && (
+                        <button onClick={() => removeCat(c)} className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive" title="ডিলিট">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+            {categories.length === 0 && (
+              <div className="p-6 text-center text-sm text-muted-foreground">এখনও কোনো ক্যাটাগরি নেই</div>
+            )}
+          </div>
+
+          <p className="text-[11px] text-muted-foreground">
+            টিপ: ডিফল্ট ক্যাটাগরি ({defaults.join(", ")}) রিনেম বা ডিলিট করা যাবে না। কাস্টম ক্যাটাগরি এই ব্রাউজারে সংরক্ষিত হয়।
+          </p>
+        </div>
+
+        <div className="px-5 py-3 border-t border-border flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground">সম্পন্ন</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
