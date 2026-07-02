@@ -118,16 +118,25 @@ const Block = ({ block }: { block: ContentBlock }) => {
 
 const BlogPost = () => {
   const { slug = "" } = useParams();
-  const post = getPost(slug);
+  const { data: post, isLoading } = usePostPublic(slug);
+  const { data: allPosts = [] } = usePostsPublic();
+  if (isLoading) return (
+    <SiteLayout>
+      <div className="py-32 flex justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>
+    </SiteLayout>
+  );
   if (!post) return <NotFound />;
 
-  const related = posts.filter((p) => p.slug !== slug).slice(0, 3);
+  const related = allPosts.filter((p) => p.slug !== slug).slice(0, 3);
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareLinks = [
     { Icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, label: "Facebook" },
     { Icon: Linkedin, href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, label: "LinkedIn" },
     { Icon: Twitter, href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`, label: "Twitter" },
   ];
+
+  // post may have `html` (rich-text editor output) OR `body` (ContentBlock array)
+  const hasHtml = "html" in post && !!(post as any).html;
 
   return (
     <SiteLayout>
@@ -160,11 +169,18 @@ const BlogPost = () => {
               {post.excerpt}
             </p>
 
-            <div className="prose-bn mt-8 space-y-6">
-              {post.body.map((raw, i) => (
-                <Block key={i} block={normalize(raw)} />
-              ))}
-            </div>
+            {hasHtml ? (
+              <div
+                className="prose-bn mt-8 max-w-none [&_img]:rounded-card [&_img]:my-4 [&_h2]:mt-6 [&_h3]:mt-5 [&_p]:leading-[1.9] [&_p]:text-[17px] [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline"
+                dangerouslySetInnerHTML={{ __html: (post as any).html }}
+              />
+            ) : (
+              <div className="prose-bn mt-8 space-y-6">
+                {post.body.map((raw, i) => (
+                  <Block key={i} block={normalize(raw)} />
+                ))}
+              </div>
+            )}
 
             <div className="mt-10 pt-6 border-t border-border flex items-center justify-between gap-4 flex-wrap">
               <span className="px-3 py-1 rounded-full bg-accent text-accent-foreground font-semibold text-xs">{post.category}</span>
