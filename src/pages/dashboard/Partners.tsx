@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Edit3, Trash2, Search, X, Save, Loader2, ExternalLink, GripVertical, Download } from "lucide-react";
+import { Plus, Edit3, Trash2, Search, X, Save, Loader2, ExternalLink, GripVertical, Download, Upload, Image as ImageIcon } from "lucide-react";
 import { partners as DEFAULT_PARTNERS } from "@/data/partners";
 import { toast } from "sonner";
 import { Card, PageHeader } from "@/components/dashboard/DashboardUI";
