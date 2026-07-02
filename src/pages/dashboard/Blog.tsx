@@ -383,14 +383,27 @@ export default function Blog() {
       {editor.open && (
         <PostEditor
           post={editor.post}
+          categories={categories}
+          onAddCategory={(c) => updateCats([...customCats, c])}
           onClose={() => setEditor({ open: false })}
           onSave={save}
         />
       )}
       {viewer && <PostViewer post={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, post: viewer }); setViewer(null); }} />}
+      {catManagerOpen && (
+        <CategoryManager
+          categories={categories}
+          customCategories={customCats}
+          defaults={DEFAULT_CATEGORIES}
+          usage={list.reduce<Record<string, number>>((acc, p) => { const c = p.category; if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {})}
+          onChange={updateCats}
+          onClose={() => setCatManagerOpen(false)}
+        />
+      )}
     </>
   );
 }
+
 
 /* ============================ Helpers ============================ */
 
