@@ -132,6 +132,7 @@ app.use('/gallery', require('./routes/gallery'));
 app.use('/messages', require('./routes/messages'));
 app.use('/settings', require('./routes/settings'));
 app.use('/team', require('./routes/team'));
+app.use('/partners', require('./routes/partners'));
 app.use('/admin', require('./routes/admin'));
 app.use('/stats', require('./routes/stats'));
 

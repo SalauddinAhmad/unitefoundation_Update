@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus } from "lucide-react";
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -69,6 +69,7 @@ const TABS = [
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান" },
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক" },
+  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান" },
   { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল" },
   { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা" },
   { k: "notifications", icon: Bell, l: "নোটিফিকেশন" },
@@ -257,6 +258,84 @@ const Settings = () => {
           )}
 
           {active === "admins" && <AdminsPanel />}
+
+          {active === "impact" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="font-bold">ইমপ্যাক্ট পরিসংখ্যান</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    হোম পেজে প্রদর্শিত সংখ্যাসমূহ (মানুষকে সাহায্য, প্রকল্প, স্বেচ্ছাসেবক ইত্যাদি)
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
+
+              <div className="space-y-3">
+                {(form.impact_stats || []).map((stat, idx) => (
+                  <div key={idx} className="grid grid-cols-[1fr_1fr_80px_40px] gap-3 items-end rounded-lg border border-border p-3">
+                    <Field
+                      label="লেবেল"
+                      value={stat.label}
+                      onChange={(v) => {
+                        const next = [...(form.impact_stats || [])];
+                        next[idx] = { ...next[idx], label: v };
+                        setForm({ ...form, impact_stats: next });
+                      }}
+                    />
+                    <Field
+                      label="সংখ্যা"
+                      type="number"
+                      value={stat.value}
+                      onChange={(v) => {
+                        const next = [...(form.impact_stats || [])];
+                        next[idx] = { ...next[idx], value: Number(v) || 0 };
+                        setForm({ ...form, impact_stats: next });
+                      }}
+                    />
+                    <Field
+                      label="সাফিক্স"
+                      value={stat.suffix || ""}
+                      onChange={(v) => {
+                        const next = [...(form.impact_stats || [])];
+                        next[idx] = { ...next[idx], suffix: v };
+                        setForm({ ...form, impact_stats: next });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = (form.impact_stats || []).filter((_, i) => i !== idx);
+                        setForm({ ...form, impact_stats: next });
+                      }}
+                      className="p-2.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      title="ডিলিট"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    impact_stats: [
+                      ...(form.impact_stats || []),
+                      { value: 0, label: "নতুন পরিসংখ্যান", suffix: "" },
+                    ],
+                  })
+                }
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <Plus className="h-4 w-4" /> নতুন পরিসংখ্যান যোগ করুন
+              </button>
+            </Card>
+          )}
+
+
 
 
 

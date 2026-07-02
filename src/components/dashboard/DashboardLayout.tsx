@@ -17,11 +17,13 @@ import {
   Mail,
   Menu,
   X,
+  Building2,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
+
 
 const menu = [
   { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true },
@@ -34,6 +36,7 @@ const menu = [
   { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", badge: "৪" },
   { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি" },
   { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম" },
+  { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান" },
 ];
 
 const generalMenu = [

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { impactStats } from "@/data/impact";
+import { useSettings } from "@/hooks/api/useDashboardData";
 import { toBnNum } from "@/data/projects";
 
 const useCount = (target: number, start: boolean, duration = 1600) => {
@@ -19,13 +19,13 @@ const useCount = (target: number, start: boolean, duration = 1600) => {
   return v;
 };
 
-const Stat = ({ value, label, suffix, start }: { value: number; label: string; suffix: string; start: boolean }) => {
+const Stat = ({ value, label, suffix, start }: { value: number; label: string; suffix?: string; start: boolean }) => {
   const v = useCount(value, start);
   return (
     <div className="text-center">
       <div className="text-4xl md:text-5xl font-extrabold gradient-donate-text">
         {toBnNum(new Intl.NumberFormat("en-IN").format(v))}
-        <span className="text-donate-highlight">{suffix}</span>
+        <span className="text-donate-highlight">{suffix || ""}</span>
       </div>
       <div className="mt-2 text-sm md:text-base text-muted-foreground font-medium">{label}</div>
     </div>
@@ -33,6 +33,8 @@ const Stat = ({ value, label, suffix, start }: { value: number; label: string; s
 };
 
 export const ImpactStats = () => {
+  const { data: settings } = useSettings();
+  const impactStats = settings?.impact_stats || [];
   const ref = useRef<HTMLDivElement>(null);
   const [start, setStart] = useState(false);
   useEffect(() => {
