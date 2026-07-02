@@ -44,6 +44,51 @@ import {
   type ApiGalleryItem,
 } from "@/hooks/api/usePublic";
 
+// Fallback images bundled with the app (same set that renders publicly)
+import g1 from "@/assets/gallery/01.jpg";
+import g2 from "@/assets/gallery/02.jpg";
+import g3 from "@/assets/gallery/03.jpg";
+import g4 from "@/assets/gallery/04.jpg";
+import g5 from "@/assets/gallery/05.jpg";
+import g6 from "@/assets/gallery/06.jpg";
+import g7 from "@/assets/gallery/07.jpg";
+import g8 from "@/assets/gallery/08.jpg";
+import g9 from "@/assets/gallery/09.jpg";
+import g10 from "@/assets/gallery/10.jpg";
+import g11 from "@/assets/gallery/11.jpg";
+import g12 from "@/assets/gallery/12.jpg";
+import g13 from "@/assets/gallery/13.jpg";
+import g14 from "@/assets/gallery/14.jpg";
+import g15 from "@/assets/gallery/15.jpg";
+import g16 from "@/assets/gallery/16.jpg";
+import g17 from "@/assets/gallery/17.jpg";
+import g18 from "@/assets/gallery/18.jpg";
+import g19 from "@/assets/gallery/19.jpg";
+import g20 from "@/assets/gallery/20.jpg";
+
+const DEFAULT_LIBRARY: { src: string; alt: string; cat: string }[] = [
+  { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন", cat: "ত্রাণ" },
+  { src: g2, alt: "নদীর তীরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম", cat: "খাদ্য বিতরণ" },
+  { src: g4, alt: "বন্যায় ত্রাণ পৌঁছে দেওয়া", cat: "ত্রাণ" },
+  { src: g5, alt: "ত্রাণ প্যাকেজ প্রস্তুতি", cat: "খাদ্য বিতরণ" },
+  { src: g6, alt: "শিশুদের সহায়তা", cat: "ত্রাণ" },
+  { src: g7, alt: "ইফতার প্রোগ্রাম — নেত্রকোণা", cat: "ইফতার" },
+  { src: g8, alt: "ইফতার প্রোগ্রাম — খুলনা", cat: "ইফতার" },
+  { src: g9, alt: "ইফতার প্রোগ্রাম — দিনাজপুর", cat: "ইফতার" },
+  { src: g10, alt: "বন্যায় ত্রাণ বহন", cat: "ত্রাণ" },
+  { src: g11, alt: "ত্রাণ সামগ্রী বিতরণ", cat: "ত্রাণ" },
+  { src: g12, alt: "স্বেচ্ছাসেবক দল — মাঠে", cat: "ত্রাণ" },
+  { src: g13, alt: "নদীপথে ত্রাণ অভিযান", cat: "ত্রাণ" },
+  { src: g14, alt: "খাদ্য প্যাকেট হস্তান্তর", cat: "খাদ্য বিতরণ" },
+  { src: g15, alt: "বন্যা পেরিয়ে ত্রাণ পৌঁছানো", cat: "ত্রাণ" },
+  { src: g16, alt: "জলাবদ্ধ এলাকায় ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g17, alt: "ত্রাণ সামগ্রী প্রস্তুত", cat: "খাদ্য বিতরণ" },
+  { src: g18, alt: "ক্ষতিগ্রস্ত পরিবারে ত্রাণ", cat: "ত্রাণ" },
+  { src: g19, alt: "ঘরে ঘরে ত্রাণ বিতরণ", cat: "ত্রাণ" },
+  { src: g20, alt: "নৌকায় ত্রাণ অভিযান — সূর্যাস্ত", cat: "ত্রাণ" },
+];
+
 const CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
 
 const slugify = (s: string) =>
@@ -246,6 +291,68 @@ export default function Gallery() {
     }
   };
 
+  const [importing, setImporting] = useState(false);
+  const importDefaults = async () => {
+    if (!confirm("ওয়েবসাইটে থাকা ডিফল্ট গ্যালারি ছবিগুলো (২০টি) ক্যাটাগরি-অনুযায়ী অ্যালবাম বানিয়ে ইমপোর্ট করবেন?")) return;
+    setImporting(true);
+    try {
+      const { compressImageToDataURL } = await import("@/lib/imageCompress");
+      // Group by category
+      const groups = new Map<string, typeof DEFAULT_LIBRARY>();
+      for (const it of DEFAULT_LIBRARY) {
+        if (!groups.has(it.cat)) groups.set(it.cat, []);
+        groups.get(it.cat)!.push(it);
+      }
+      let ok = 0;
+      for (const [cat, imgs] of groups) {
+        // Fetch → compress → dataURL
+        const dataUrls: { url: string; caption: string }[] = [];
+        for (const img of imgs) {
+          try {
+            const res = await fetch(img.src);
+            const blob = await res.blob();
+            const file = new File([blob], `${cat}-${ok}.jpg`, { type: blob.type || "image/jpeg" });
+            const url = await compressImageToDataURL(file, { maxWidth: 1400, quality: 0.8 });
+            dataUrls.push({ url, caption: img.alt });
+            ok++;
+          } catch { /* skip */ }
+        }
+        if (!dataUrls.length) continue;
+        // Create album
+        const meta = {
+          title: cat,
+          slug: slugify(cat),
+          description: `${cat} সংক্রান্ত কার্যক্রমের ছবি`,
+          category: cat,
+          status: "published" as const,
+          date: new Date().toISOString().slice(0, 10),
+          cover_url: dataUrls[0].url,
+          tags: [cat],
+          featured: 0,
+        };
+        const res: any = await saveAlbumMut.mutateAsync({ data: meta });
+        const albumId = res?.id;
+        if (!albumId) continue;
+        // Save items sequentially to avoid overwhelming server
+        for (const it of dataUrls) {
+          await saveItemMut.mutateAsync({
+            data: {
+              album_id: albumId,
+              kind: "image",
+              url: it.url,
+              caption: it.caption,
+            } as any,
+          });
+        }
+      }
+      toast.success(`ইমপোর্ট সম্পন্ন — ${ok}টি ছবি যুক্ত হয়েছে`);
+    } catch (e: any) {
+      toast.error(e?.message || "ইমপোর্ট ব্যর্থ");
+    } finally {
+      setImporting(false);
+    }
+  };
+
 
   return (
     <>
@@ -254,7 +361,9 @@ export default function Gallery() {
         subtitle="অ্যালবাম, ছবি ও ভিডিও তৈরি, এডিট ও প্রকাশ করুন"
         actions={
           <>
-            <Btn variant="outline" onClick={() => toast.message("CSV এক্সপোর্ট প্রস্তুত")}><Download className="h-4 w-4" /> এক্সপোর্ট</Btn>
+            <Btn variant="outline" onClick={importDefaults} disabled={importing}>
+              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
+            </Btn>
             <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
           </>
         }
