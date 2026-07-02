@@ -4,10 +4,11 @@ const { z } = require('zod');
 const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
-const { requireAuth, requireRole } = require('../middleware/auth');
+const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 
-router.use(requireAuth, requireRole('admin'));
+// Every /admin/* endpoint is super-admin only.
+router.use(requireAuth, requireSuperAdmin);
 
 router.get('/users', asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT id,name,email,role,two_factor_enabled,created_at FROM users ORDER BY created_at DESC');
@@ -18,7 +19,7 @@ router.post('/users', asyncH(async (req, res) => {
   const d = z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    role: z.enum(['admin','editor','viewer']),
+    role: z.enum(['super_admin','admin','editor','moderator','viewer']),
     password: z.string().min(8),
     sendEmail: z.boolean().optional(),
   }).parse(req.body);
@@ -28,6 +29,7 @@ router.post('/users', asyncH(async (req, res) => {
     'INSERT INTO users (id,name,email,password_hash,role) VALUES (?,?,?,?,?)',
     [id, d.name, d.email, hash, d.role]
   );
+
   let emailSent = false, emailError = null;
   if (d.sendEmail) {
     try {
