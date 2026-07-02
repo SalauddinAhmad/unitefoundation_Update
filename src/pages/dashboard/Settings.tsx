@@ -817,8 +817,6 @@ const AdminsPanel = () => {
       };
       refresh([newUser, ...list]);
 
-
-      refresh([newUser, ...list]);
       setLastCreds({ email: newUser.email, password });
       setName(""); setEmail(""); setRole("editor");
       if (apiOk && emailSent) {
