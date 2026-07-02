@@ -32,7 +32,7 @@ async function logActivity(p) {
         method, path, status, ip, user_agent, summary, meta)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        u.id || null,
+        u.id || u.sub || null,
         u.email || null,
         u.name || null,
         u.role || null,
