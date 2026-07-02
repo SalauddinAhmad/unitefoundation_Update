@@ -291,6 +291,68 @@ export default function Gallery() {
     }
   };
 
+  const [importing, setImporting] = useState(false);
+  const importDefaults = async () => {
+    if (!confirm("ওয়েবসাইটে থাকা ডিফল্ট গ্যালারি ছবিগুলো (২০টি) ক্যাটাগরি-অনুযায়ী অ্যালবাম বানিয়ে ইমপোর্ট করবেন?")) return;
+    setImporting(true);
+    try {
+      const { compressImageToDataURL } = await import("@/lib/imageCompress");
+      // Group by category
+      const groups = new Map<string, typeof DEFAULT_LIBRARY>();
+      for (const it of DEFAULT_LIBRARY) {
+        if (!groups.has(it.cat)) groups.set(it.cat, []);
+        groups.get(it.cat)!.push(it);
+      }
+      let ok = 0;
+      for (const [cat, imgs] of groups) {
+        // Fetch → compress → dataURL
+        const dataUrls: { url: string; caption: string }[] = [];
+        for (const img of imgs) {
+          try {
+            const res = await fetch(img.src);
+            const blob = await res.blob();
+            const file = new File([blob], `${cat}-${ok}.jpg`, { type: blob.type || "image/jpeg" });
+            const url = await compressImageToDataURL(file, { maxWidth: 1400, quality: 0.8 });
+            dataUrls.push({ url, caption: img.alt });
+            ok++;
+          } catch { /* skip */ }
+        }
+        if (!dataUrls.length) continue;
+        // Create album
+        const meta = {
+          title: cat,
+          slug: slugify(cat),
+          description: `${cat} সংক্রান্ত কার্যক্রমের ছবি`,
+          category: cat,
+          status: "published" as const,
+          date: new Date().toISOString().slice(0, 10),
+          cover_url: dataUrls[0].url,
+          tags: [cat],
+          featured: 0,
+        };
+        const res: any = await saveAlbumMut.mutateAsync({ data: meta });
+        const albumId = res?.id;
+        if (!albumId) continue;
+        // Save items sequentially to avoid overwhelming server
+        for (const it of dataUrls) {
+          await saveItemMut.mutateAsync({
+            data: {
+              album_id: albumId,
+              kind: "image",
+              url: it.url,
+              caption: it.caption,
+            } as any,
+          });
+        }
+      }
+      toast.success(`ইমপোর্ট সম্পন্ন — ${ok}টি ছবি যুক্ত হয়েছে`);
+    } catch (e: any) {
+      toast.error(e?.message || "ইমপোর্ট ব্যর্থ");
+    } finally {
+      setImporting(false);
+    }
+  };
+
 
   return (
     <>
@@ -299,7 +361,9 @@ export default function Gallery() {
         subtitle="অ্যালবাম, ছবি ও ভিডিও তৈরি, এডিট ও প্রকাশ করুন"
         actions={
           <>
-            <Btn variant="outline" onClick={() => toast.message("CSV এক্সপোর্ট প্রস্তুত")}><Download className="h-4 w-4" /> এক্সপোর্ট</Btn>
+            <Btn variant="outline" onClick={importDefaults} disabled={importing}>
+              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
+            </Btn>
             <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
           </>
         }
