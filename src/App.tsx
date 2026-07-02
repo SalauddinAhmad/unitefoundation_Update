@@ -34,6 +34,7 @@ const DashGallery = lazy(() => import("./pages/dashboard/Gallery.tsx"));
 const DashMessages = lazy(() => import("./pages/dashboard/Messages.tsx"));
 const DashCareers = lazy(() => import("./pages/dashboard/Careers.tsx"));
 const DashTeam = lazy(() => import("./pages/dashboard/Team.tsx"));
+const DashPartners = lazy(() => import("./pages/dashboard/Partners.tsx"));
 const DashSettings = lazy(() => import("./pages/dashboard/Settings.tsx"));
 const DashHelp = lazy(() => import("./pages/dashboard/Help.tsx"));
 
@@ -80,6 +81,7 @@ const App = () => (
               <Route path="messages" element={<DashMessages />} />
               <Route path="careers" element={<DashCareers />} />
               <Route path="team" element={<DashTeam />} />
+              <Route path="partners" element={<DashPartners />} />
               <Route path="settings" element={<DashSettings />} />
               <Route path="help" element={<DashHelp />} />
             </Route>
