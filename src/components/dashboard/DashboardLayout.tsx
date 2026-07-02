@@ -23,26 +23,30 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
+import { ROLE_LABEL, type Permission } from "@/lib/permissions";
 
 
-const menu = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true },
-  { to: "/dashboard/donations", icon: HandCoins, label: "দানসমূহ", badge: "নতুন" },
-  { to: "/dashboard/volunteers", icon: Users2, label: "স্বেচ্ছাসেবক", badge: "১২" },
-  { to: "/dashboard/members", icon: HeartHandshake, label: "সদস্যপদ" },
-  { to: "/dashboard/projects", icon: FolderKanban, label: "প্রকল্প" },
-  { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট" },
-  { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি" },
-  { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", badge: "৪" },
-  { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি" },
-  { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম" },
-  { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান" },
+type MenuItem = { to: string; icon: typeof LayoutDashboard; label: string; end?: boolean; badge?: string; perm: Permission };
+
+const menu: MenuItem[] = [
+  { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true, perm: "overview" },
+  { to: "/dashboard/donations", icon: HandCoins, label: "দানসমূহ", perm: "donations" },
+  { to: "/dashboard/volunteers", icon: Users2, label: "স্বেচ্ছাসেবক", perm: "volunteers" },
+  { to: "/dashboard/members", icon: HeartHandshake, label: "সদস্যপদ", perm: "members" },
+  { to: "/dashboard/projects", icon: FolderKanban, label: "প্রকল্প", perm: "projects" },
+  { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট", perm: "blog" },
+  { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি", perm: "gallery" },
+  { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", perm: "messages" },
+  { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
+  { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
+  { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },
 ];
 
-const generalMenu = [
-  { to: "/dashboard/settings", icon: Settings, label: "সেটিংস" },
-  { to: "/dashboard/help", icon: HelpCircle, label: "সাহায্য" },
+const generalMenu: MenuItem[] = [
+  { to: "/dashboard/settings", icon: Settings, label: "সেটিংস", perm: "settings" },
+  { to: "/dashboard/help", icon: HelpCircle, label: "সাহায্য", perm: "help" },
 ];
+
 
 const SidebarContent = ({ onNav, onLogout }: { onNav?: () => void; onLogout?: () => void }) => (
   <div className="flex h-full flex-col">
