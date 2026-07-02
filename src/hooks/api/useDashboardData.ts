@@ -59,35 +59,95 @@ export const useDonations = () => {
   });
 };
 
-export const useVolunteerApps = () => {
-  useExtrasInvalidator(EXTRAS.volunteers, ["applications", "volunteers"]);
-  return useQuery({
+// ---- Applications: DB-only (no mocks, no local extras) --------------------
+// Backend returns rows of: { id, kind, name, phone, email, address, profession,
+// message, extra (JSON), status, created_at }. We normalise to the Application
+// shape the dashboard table already renders — details are derived from the
+// `extra` blob and `message`, so whatever the public form submits shows up.
+import type { Application } from "@/data/dashboardMock";
+
+type ApiApplication = {
+  id: string;
+  kind: string;
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  profession?: string | null;
+  message?: string | null;
+  extra?: any;
+  status: Application["status"];
+  created_at?: string;
+};
+
+const parseExtra = (v: any) => {
+  if (!v) return {};
+  if (typeof v === "string") { try { return JSON.parse(v); } catch { return {}; } }
+  return v;
+};
+
+const formatDate = (d?: string) => (d ? String(d).slice(0, 10) : "");
+const formatDateTime = (d?: string) => (d ? String(d).replace("T", " ").slice(0, 16) : "");
+
+function toApplication(row: ApiApplication, idPrefix: string): Application {
+  const ex = parseExtra(row.extra);
+  // Prefer an explicit "type" from extras; fall back to profession.
+  const type = ex.type || ex.area || ex.membershipType || row.profession || "—";
+  const city = ex.city || ex.district || "—";
+
+  const detailFields: { label: string; value: string; long?: boolean }[] = [];
+  if (row.email) detailFields.push({ label: "ই-মেইল", value: row.email });
+  if (row.address) detailFields.push({ label: "ঠিকানা", value: row.address, long: true });
+  if (row.profession) detailFields.push({ label: "পেশা", value: row.profession });
+  Object.entries(ex).forEach(([k, v]) => {
+    if (v == null || v === "" || ["city", "district", "type", "area", "membershipType"].includes(k)) return;
+    detailFields.push({ label: k, value: Array.isArray(v) ? v.join(", ") : String(v) });
+  });
+  if (row.message) detailFields.push({ label: "বার্তা", value: row.message, long: true });
+
+  return {
+    id: `${idPrefix}-${String(row.id).slice(0, 6).toUpperCase()}`,
+    name: row.name,
+    phone: row.phone || "",
+    email: row.email || undefined,
+    city,
+    type,
+    date: formatDate(row.created_at),
+    submittedAt: formatDateTime(row.created_at),
+    status: row.status || "new",
+    details: detailFields.length ? [{ title: "বিস্তারিত", fields: detailFields }] : undefined,
+  };
+}
+
+const fetchApps = async (kind: "volunteers" | "members" | "careers", prefix: string): Promise<Application[]> => {
+  try {
+    const rows = await api.get<ApiApplication[]>(`/applications/${kind}`, { auth: true });
+    return (rows || []).map((r) => toApplication(r, prefix));
+  } catch {
+    return [];
+  }
+};
+
+export const useVolunteerApps = () =>
+  useQuery({
     queryKey: ["applications", "volunteers"],
-    queryFn: async () =>
-      mergeExtras(EXTRAS.volunteers, await tryApi("/applications/volunteers", mockVolunteers)),
+    queryFn: () => fetchApps("volunteers", "VOL"),
     staleTime: STALE,
   });
-};
 
-export const useMemberApps = () => {
-  useExtrasInvalidator(EXTRAS.members, ["applications", "members"]);
-  return useQuery({
+export const useMemberApps = () =>
+  useQuery({
     queryKey: ["applications", "members"],
-    queryFn: async () =>
-      mergeExtras(EXTRAS.members, await tryApi("/applications/members", mockMembers)),
+    queryFn: () => fetchApps("members", "MEM"),
     staleTime: STALE,
   });
-};
 
-export const useCareerApps = () => {
-  useExtrasInvalidator(EXTRAS.careers, ["applications", "careers"]);
-  return useQuery({
+export const useCareerApps = () =>
+  useQuery({
     queryKey: ["applications", "careers"],
-    queryFn: async () =>
-      mergeExtras(EXTRAS.careers, await tryApi("/applications/careers", mockCareers)),
+    queryFn: () => fetchApps("careers", "DR"),
     staleTime: STALE,
   });
-};
 
 export const useProjects = () =>
   useQuery({

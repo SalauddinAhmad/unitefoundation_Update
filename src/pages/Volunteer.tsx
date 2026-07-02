@@ -22,6 +22,26 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import volunteerImg from "@/assets/program-food.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+
+// Best-effort submit to backend so entries appear in the dashboard.
+// WhatsApp handoff continues regardless of network outcome.
+const saveApplication = (
+  kind: "volunteer" | "member" | "career" | "donor",
+  payload: {
+    name: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    profession?: string;
+    message?: string;
+    extra?: Record<string, unknown>;
+  },
+) => {
+  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {
+    /* silent — user already gets WhatsApp confirmation */
+  });
+};
 
 type TabKey = "regular" | "member" | "volunteer" | "representative";
 
@@ -580,6 +600,12 @@ const RegularForm = () => {
     e.preventDefault();
     const r = regularSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("donor", {
+      name: f.name, phone: f.phone, email: f.email,
+      profession: f.area,
+      message: f.note,
+      extra: { city: f.city, area: f.area, amount: f.amount, method: f.method },
+    });
     setWaUrl(buildWhatsAppUrl(
       "নিয়মিত দাতা আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\n\nদানের ক্ষেত্র: ${f.area}\nমাসিক পরিমাণ: ৳${f.amount}\nপেমেন্ট: ${f.method}\n\nবার্তা: ${f.note || "—"}`,
@@ -641,6 +667,11 @@ const MemberForm = () => {
     const r = memberSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
     const typeLabel = membershipTypes.find((t) => t.value === f.type)?.label || f.type;
+    saveApplication("member", {
+      name: f.name, phone: f.phone, email: f.email,
+      address: f.address, profession: f.profession, message: f.note,
+      extra: { city: f.city, membershipType: typeLabel, type: typeLabel },
+    });
     setWaUrl(buildWhatsAppUrl(
       "সদস্যপদ আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nসদস্যপদ: ${typeLabel}\nঠিকানা: ${f.address}\n\nবার্তা: ${f.note || "—"}`,
@@ -687,6 +718,11 @@ const VolunteerForm = () => {
     e.preventDefault();
     const r = volunteerSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("volunteer", {
+      name: f.name, phone: f.phone, email: f.email,
+      profession: f.profession, message: f.motivation,
+      extra: { age: f.age, city: f.city, area: f.area, type: f.area, availability: f.availability },
+    });
     setWaUrl(buildWhatsAppUrl(
       "স্বেচ্ছাসেবক আবেদন",
       `নাম: ${f.name}\nফোন: ${f.phone}\nই-মেইল: ${f.email || "—"}\nবয়স: ${f.age}\nশহর: ${f.city}\nপেশা: ${f.profession || "—"}\n\nআগ্রহের ক্ষেত্র: ${f.area}\nসময়: ${f.availability}\n\nকেন যুক্ত হতে চান:\n${f.motivation}`,
@@ -758,6 +794,19 @@ const RepresentativeForm = () => {
     if (!f.agree) return showError("গোপনীয়তা ও শর্তাবলিতে সম্মতি দিন");
     const r = representativeSchema.safeParse(f);
     if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("career", {
+      name: f.fullName, phone: f.whatsapp, email: f.email,
+      address: f.currentAddress, profession: f.profession, message: f.whyJoin,
+      extra: {
+        type: f.district, district: f.district, city: f.district,
+        guardianName: f.guardianName, dob: f.dob, nid: f.nid,
+        permanentAddress: f.permanentAddress,
+        educationMediums: f.educationMediums, educationDetails: f.educationDetails,
+        socialLink: f.socialLink, experience: f.experience,
+        emergencyName: f.emergencyName, emergencyPhone: f.emergencyPhone,
+        political: f.political, politicalDetails: f.politicalDetails,
+      },
+    });
     setWaUrl(buildWhatsAppUrl(
       "জেলা প্রতিনিধি আবেদন",
       `— ব্যক্তিগত তথ্য —\nপুরো নাম: ${f.fullName}\nপিতা/অভিভাবক: ${f.guardianName}\nজন্ম তারিখ: ${f.dob}\nNID: ${f.nid}\nবর্তমান ঠিকানা: ${f.currentAddress}\nস্থায়ী ঠিকানা: ${f.permanentAddress}\nজেলা: ${f.district}\nপেশা: ${f.profession}\n\n— শিক্ষা —\nমাধ্যম: ${f.educationMediums.join(", ")}\nবিবরণ: ${f.educationDetails}\n\n— যোগাযোগ —\nWhatsApp: ${f.whatsapp}\nই-মেইল: ${f.email || "—"}\nসোশ্যাল লিংক: ${f.socialLink || "—"}\n\n— অভিজ্ঞতা ও আগ্রহ —\nপূর্ব অভিজ্ঞতা: ${f.experience || "—"}\nকেন যুক্ত হতে চান:\n${f.whyJoin}\n\n— জরুরি যোগাযোগ —\n${f.emergencyName} — ${f.emergencyPhone}\n\n— রাজনৈতিক ঘোষণা —\nসম্পৃক্ততা: ${f.political}${f.political === "হ্যাঁ" ? `\nবিবরণ: ${f.politicalDetails}` : ""}`,
