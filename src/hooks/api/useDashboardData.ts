@@ -133,6 +133,35 @@ export const useOverviewStats = () =>
 // ---------- Settings (dashboard editable) ----------
 export type ImpactStat = { value: number; label: string; suffix?: string };
 
+export type HeroSlide = {
+  image: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  primaryCtaLabel: string;
+  primaryCtaTo: string;
+  secondaryCtaLabel: string;
+  secondaryCtaTo: string;
+};
+
+export type AboutContent = {
+  heading: string;
+  highlight: string;
+  body: string;
+  quoteText: string;
+  quoteSource: string;
+  points: string[];
+  sideImage: string;
+  expNumber: string;
+  expLabel: string;
+};
+
+export type TrustItem = {
+  icon: "shield" | "award" | "file" | "users";
+  title: string;
+  note: string;
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
