@@ -1,11 +1,74 @@
-import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, Calendar, TrendingUp, FileText, Inbox, Eye, CalendarDays } from "lucide-react";
+import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, TrendingUp, FileText, Inbox, Eye, CalendarDays, ChevronDown } from "lucide-react";
 import { Card, KpiCard, PageHeader, SectionHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
+import { exportRowsAsCsv } from "@/lib/csv";
 
 const bn = (n: number) => Number(n || 0).toLocaleString("bn-BD");
 const bnCurrency = (n: number) => `৳ ${bn(Math.round(n))}`;
+
+// ============ Date range helpers ============
+const BN_MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+const pad = (n: number) => String(n).padStart(2, "0");
+const bnDigit = (s: string | number) => String(s).replace(/\d/g, (d) => "০১২৩৪৫৬৭৮৯"[+d]);
+
+type Range = { from: string | null; to: string | null; key: string; label: string };
+
+function monthRange(year: number, month0: number): Range {
+  const last = new Date(year, month0 + 1, 0).getDate();
+  return {
+    from: `${year}-${pad(month0 + 1)}-01`,
+    to: `${year}-${pad(month0 + 1)}-${pad(last)}`,
+    key: `${year}-${pad(month0 + 1)}`,
+    label: `${BN_MONTHS[month0]} ${bnDigit(year)}`,
+  };
+}
+function buildRanges(): Range[] {
+  const now = new Date();
+  const list: Range[] = [];
+  const cur = monthRange(now.getFullYear(), now.getMonth());
+  list.push({ ...cur, key: "this", label: `এই মাস (${cur.label})` });
+  const prevD = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prev = monthRange(prevD.getFullYear(), prevD.getMonth());
+  list.push({ ...prev, key: "last", label: `গত মাস (${prev.label})` });
+  for (let i = 2; i < 14; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    list.push(monthRange(d.getFullYear(), d.getMonth()));
+  }
+  list.push({ from: null, to: null, key: "all", label: "সব সময়" });
+  return list;
+}
+
+// Compact dropdown for range picking (no extra deps)
+const RangePicker = ({ value, onChange }: { value: Range; onChange: (r: Range) => void }) => {
+  const [open, setOpen] = useState(false);
+  const ranges = useMemo(() => buildRanges(), []);
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold border border-border bg-card hover:bg-secondary transition-colors"
+      >
+        <CalendarDays className="h-4 w-4" /> {value.label} <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1.5 z-30 w-64 max-h-80 overflow-auto rounded-xl border border-border bg-card shadow-lg p-1">
+          {ranges.map((r) => (
+            <button
+              key={r.key}
+              onMouseDown={(e) => { e.preventDefault(); onChange(r); setOpen(false); }}
+              className={`w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-secondary ${value.key === r.key ? "bg-secondary font-bold text-primary" : ""}`}
+            >
+              {r.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ============ Types matching backend ============
 type VisitorTotals = { total: number; today: number; week: number; month: number };
@@ -92,6 +155,7 @@ const CHANNEL_COLORS: Record<string, string> = {
 const colorFor = (name: string) => CHANNEL_COLORS[name] || CHANNEL_COLORS[name?.toLowerCase()] || "#64748B";
 
 const Overview = () => {
+  const [range, setRange] = useState<Range>(() => buildRanges()[0]); // এই মাস
   const [kpisData, setKpis] = useState<OverviewKpis | null>(null);
   const [trend, setTrend] = useState<{ d: string; v: number }[]>([]);
   const [channels, setChannels] = useState<{ name: string; value: number; color: string }[]>([]);
@@ -100,23 +164,29 @@ const Overview = () => {
   const [pending, setPending] = useState<ApplicationRow[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const safe = <T,>(p: Promise<T>, fb: T) => p.catch(() => fb);
+    const qs = new URLSearchParams();
+    if (range.from) qs.set("from", range.from);
+    if (range.to) qs.set("to", range.to);
+    const q = qs.toString() ? `?${qs.toString()}` : "";
+    setLoading(true);
     (async () => {
       const [ov, tr, ch, dn, pr, va, ma, ca, po, ms] = await Promise.all([
-        safe(api.get<{ kpis: OverviewKpis }>("/stats/overview"), { kpis: null as unknown as OverviewKpis }),
-        safe(api.get<TrendRow[]>("/stats/donations-trend"), [] as TrendRow[]),
-        safe(api.get<ChannelRow[]>("/stats/channels"), [] as ChannelRow[]),
-        safe(api.get<DonationRow[]>("/donations"), [] as DonationRow[]),
+        safe(api.get<{ kpis: OverviewKpis }>(`/stats/overview${q}`), { kpis: null as unknown as OverviewKpis }),
+        safe(api.get<TrendRow[]>(`/stats/donations-trend${q}`), [] as TrendRow[]),
+        safe(api.get<ChannelRow[]>(`/stats/channels${q}`), [] as ChannelRow[]),
+        safe(api.get<DonationRow[]>(`/donations${q}`), [] as DonationRow[]),
         safe(api.get<ProjectRow[]>("/projects", { auth: false }), [] as ProjectRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/volunteers"), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/members"), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/careers"), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/volunteers${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/members${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/careers${q}`), [] as ApplicationRow[]),
         safe(api.get<any[]>("/posts", { auth: false }), [] as any[]),
         safe(api.get<any[]>("/messages"), [] as any[]),
       ]);
-      if (ov?.kpis) setKpis(ov.kpis);
+      if (ov?.kpis) setKpis(ov.kpis); else setKpis(null);
       setTrend((tr || []).map((r) => ({ d: String(r.d).slice(5), v: Number(r.total) })));
       const total = (ch || []).reduce((s, r) => s + Number(r.total || 0), 0) || 1;
       setChannels(
@@ -130,15 +200,42 @@ const Overview = () => {
       );
       setDonations(dn || []);
       setProjects(pr || []);
-      // Merge & sort all applications by created_at desc, keep pending only
       const allApps = [...(va || []), ...(ma || []), ...(ca || [])]
         .filter((a) => a.status === "new" || a.status === "reviewing")
         .sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
       setPending(allApps);
       setPosts(po || []);
       setMessages(ms || []);
+      setLoading(false);
     })();
-  }, []);
+  }, [range.key]);
+
+  const exportDonationsCsv = async () => {
+    const qs = new URLSearchParams();
+    if (range.from) qs.set("from", range.from);
+    if (range.to) qs.set("to", range.to);
+    qs.set("all", "1");
+    let rows: DonationRow[] = donations;
+    try {
+      rows = await api.get<DonationRow[]>(`/donations?${qs.toString()}`);
+    } catch { /* fall back to loaded rows */ }
+    const safeSlug = range.key.replace(/[^a-z0-9-]/gi, "_");
+    exportRowsAsCsv(
+      `donations-${safeSlug}.csv`,
+      rows,
+      [
+        { header: "ID", accessor: (r) => r.id },
+        { header: "নাম", accessor: (r) => r.name },
+        { header: "ফোন", accessor: (r) => r.phone || "" },
+        { header: "পরিমাণ (৳)", accessor: (r) => r.amount },
+        { header: "মাধ্যম", accessor: (r) => r.method },
+        { header: "খাত", accessor: (r) => r.area || "" },
+        { header: "স্ট্যাটাস", accessor: (r) => r.status },
+        { header: "তারিখ", accessor: (r) => (r.created_at ? String(r.created_at).replace("T", " ").slice(0, 19) : "") },
+      ]
+    );
+  };
+
 
   // Build recent activity feed from live data
   const activity = useMemo(() => {
@@ -199,45 +296,49 @@ const Overview = () => {
       value: kpisData ? bnCurrency(kpisData.total_donations) : "—",
       delta: weeklyDelta != null ? `${weeklyDelta >= 0 ? "+" : ""}${bn(weeklyDelta)}%` : undefined,
       trend: (weeklyDelta ?? 0) >= 0 ? "up" : "down",
-      note: "গত ৩০ দিনের ট্রেন্ড",
+      note: range.label,
       icon: HandCoins,
     },
     {
       key: "donors",
       label: "মোট দাতা",
       value: kpisData ? bn(kpisData.unique_donors) : "—",
-      note: kpisData ? `${bn(kpisData.donation_count)} ট্রানজেকশন` : "",
+      note: kpisData ? `${bn(kpisData.donation_count)} ট্রানজেকশন · ${range.label}` : range.label,
       icon: Users2,
     },
     {
       key: "volunteers",
-      label: "স্বেচ্ছাসেবক",
+      label: "স্বেচ্ছাসেবক আবেদন",
       value: kpisData ? bn(kpisData.volunteers) : "—",
-      note: "আবেদন গৃহীত",
+      note: range.label,
       icon: HeartHandshake,
     },
     {
       key: "projects",
       label: "চলমান প্রকল্প",
       value: kpisData ? bn(kpisData.active_projects) : "—",
-      note: `${bn(kpisData?.new_messages || 0)} নতুন মেসেজ`,
+      note: `${bn(kpisData?.new_messages || 0)} নতুন মেসেজ · ${range.label}`,
       icon: FolderKanban,
     },
+
   ];
 
   return (
     <>
       <PageHeader
         title="স্বাগতম, এডমিন 👋"
-        subtitle="আজ আপনার ফাউন্ডেশনের সকল কার্যক্রমের সারসংক্ষেপ"
+        subtitle={`ডেটা রেঞ্জ: ${range.label}${loading ? " · লোড হচ্ছে…" : ""}`}
         actions={
           <>
-            <Btn variant="outline"><Calendar className="h-4 w-4" /> এই মাস</Btn>
-            <Btn variant="outline"><Download className="h-4 w-4" /> এক্সপোর্ট</Btn>
+            <RangePicker value={range} onChange={setRange} />
+            <Btn variant="outline" onClick={exportDonationsCsv}>
+              <Download className="h-4 w-4" /> CSV এক্সপোর্ট
+            </Btn>
             <Btn><Plus className="h-4 w-4" /> নতুন প্রকল্প</Btn>
           </>
         }
       />
+
 
       <VisitorStrip />
 

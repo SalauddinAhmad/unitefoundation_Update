@@ -6,9 +6,21 @@ const { shortId } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 
 router.get('/', requireAuth, asyncH(async (req, res) => {
-  const [rows] = await pool.execute('SELECT * FROM donations ORDER BY created_at DESC LIMIT 500');
+  const from = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from) ? req.query.from : null;
+  const to = /^\d{4}-\d{2}-\d{2}$/.test(req.query.to) ? req.query.to : null;
+  const parts = [];
+  const args = [];
+  if (from) { parts.push('created_at >= ?'); args.push(`${from} 00:00:00`); }
+  if (to)   { parts.push('created_at <= ?'); args.push(`${to} 23:59:59`); }
+  const where = parts.length ? `WHERE ${parts.join(' AND ')}` : '';
+  const limit = req.query.all === '1' ? 100000 : 500;
+  const [rows] = await pool.execute(
+    `SELECT * FROM donations ${where} ORDER BY created_at DESC LIMIT ${limit}`,
+    args
+  );
   res.json(rows);
 }));
+
 
 router.get('/:id', requireAuth, asyncH(async (req, res) => {
   const [rows] = await pool.execute('SELECT * FROM donations WHERE id=?', [req.params.id]);
