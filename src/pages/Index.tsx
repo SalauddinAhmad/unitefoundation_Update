@@ -28,6 +28,7 @@ const Index = () => {
       <DonationChannelsSection />
       <GallerySection />
       <PartnersSection />
+      <VisitorCounter />
     </SiteLayout>
   );
 };
