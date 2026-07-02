@@ -38,11 +38,9 @@ const saveApplication = (
     extra?: Record<string, unknown>;
   },
 ) => {
-  api
-    .post(`/applications/${kind}`, { body: payload, auth: false })
-    .catch(() => {
-      /* silent — user already gets WhatsApp confirmation */
-    });
+  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {
+    /* silent — user already gets WhatsApp confirmation */
+  });
 };
 
 type TabKey = "regular" | "member" | "volunteer" | "representative";
