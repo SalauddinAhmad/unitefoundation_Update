@@ -38,6 +38,8 @@ app.use(cors({
     if (origins.includes(origin)) return cb(null, true);
     // Allow Lovable preview/staging origins
     if (/^https:\/\/[a-z0-9-]+\.lovable\.app$/.test(origin)) return cb(null, true);
+    if (/^https:\/\/[a-z0-9-]+\.lovableproject\.com$/.test(origin)) return cb(null, true);
+    if (/^https:\/\/[a-z0-9-]+\.lovable\.dev$/.test(origin)) return cb(null, true);
     return cb(null, false); // respond without CORS headers instead of 500
   },
   credentials: true,
