@@ -30,12 +30,10 @@ const Team = () => {
   const del = useDeleteTeam();
   const [editing, setEditing] = useState<TeamMember | null>(null);
 
-  const onPhoto = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      setEditing((prev) => (prev ? { ...prev, photo: String(reader.result) } : prev));
-    };
-    reader.readAsDataURL(file);
+  const onPhoto = async (file: File) => {
+    const { compressImageToDataURL } = await import("@/lib/imageCompress");
+    const dataUrl = await compressImageToDataURL(file, { maxWidth: 800, maxHeight: 800, quality: 0.85 });
+    setEditing((prev) => (prev ? { ...prev, photo: dataUrl } : prev));
   };
 
   const handleSave = async () => {

@@ -390,7 +390,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
   const cmd = (c: string, v?: string) => { document.execCommand(c, false, v); editorRef.current?.focus(); if (editorRef.current) setHtml(editorRef.current.innerHTML); };
   const insertLink = () => { const u = prompt("লিংক URL:", "https://"); if (u) cmd("createLink", u); };
   const insertImage = () => { const u = prompt("ছবির URL:", "https://"); if (u) cmd("insertHTML", `<img src="${u}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
-  const onImage = (f?: File) => { if (!f) return; const url = URL.createObjectURL(f); cmd("insertHTML", `<img src="${url}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
+  const onImage = async (f?: File) => { if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.82 }); cmd("insertHTML", `<img src="${url}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
 
   const addTag = (v: string) => { const t = v.trim().replace(/,$/, ""); if (t && !tags.includes(t)) setTags([...tags, t]); };
   const addGoal = (v: string) => { const g = v.trim(); if (g) setGoals([...goals, g]); };
@@ -449,7 +449,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
                     <input value={cover} onChange={(e) => setCover(e.target.value)} placeholder="কভার ছবির URL দিন বা আপলোড করুন" className="flex-1 px-3 py-2.5 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
                     <label className="inline-flex items-center gap-2 px-3 py-2.5 rounded-lg bg-secondary hover:bg-muted text-sm font-semibold cursor-pointer">
                       <ImageIcon className="h-4 w-4" /> আপলোড
-                      <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) setCover(URL.createObjectURL(f)); }} />
+                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1920, quality: 0.85 }); setCover(url); }} />
                     </label>
                   </div>
                 )}
