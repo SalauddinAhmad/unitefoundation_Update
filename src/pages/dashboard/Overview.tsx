@@ -327,15 +327,18 @@ const Overview = () => {
     <>
       <PageHeader
         title="স্বাগতম, এডমিন 👋"
-        subtitle="আজ আপনার ফাউন্ডেশনের সকল কার্যক্রমের সারসংক্ষেপ"
+        subtitle={`ডেটা রেঞ্জ: ${range.label}${loading ? " · লোড হচ্ছে…" : ""}`}
         actions={
           <>
-            <Btn variant="outline"><Calendar className="h-4 w-4" /> এই মাস</Btn>
-            <Btn variant="outline"><Download className="h-4 w-4" /> এক্সপোর্ট</Btn>
+            <RangePicker value={range} onChange={setRange} />
+            <Btn variant="outline" onClick={exportDonationsCsv}>
+              <Download className="h-4 w-4" /> CSV এক্সপোর্ট
+            </Btn>
             <Btn><Plus className="h-4 w-4" /> নতুন প্রকল্প</Btn>
           </>
         }
       />
+
 
       <VisitorStrip />
 
