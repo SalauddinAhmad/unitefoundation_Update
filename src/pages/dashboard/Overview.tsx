@@ -155,6 +155,7 @@ const CHANNEL_COLORS: Record<string, string> = {
 const colorFor = (name: string) => CHANNEL_COLORS[name] || CHANNEL_COLORS[name?.toLowerCase()] || "#64748B";
 
 const Overview = () => {
+  const [range, setRange] = useState<Range>(() => buildRanges()[0]); // এই মাস
   const [kpisData, setKpis] = useState<OverviewKpis | null>(null);
   const [trend, setTrend] = useState<{ d: string; v: number }[]>([]);
   const [channels, setChannels] = useState<{ name: string; value: number; color: string }[]>([]);
@@ -163,23 +164,29 @@ const Overview = () => {
   const [pending, setPending] = useState<ApplicationRow[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const safe = <T,>(p: Promise<T>, fb: T) => p.catch(() => fb);
+    const qs = new URLSearchParams();
+    if (range.from) qs.set("from", range.from);
+    if (range.to) qs.set("to", range.to);
+    const q = qs.toString() ? `?${qs.toString()}` : "";
+    setLoading(true);
     (async () => {
       const [ov, tr, ch, dn, pr, va, ma, ca, po, ms] = await Promise.all([
-        safe(api.get<{ kpis: OverviewKpis }>("/stats/overview"), { kpis: null as unknown as OverviewKpis }),
-        safe(api.get<TrendRow[]>("/stats/donations-trend"), [] as TrendRow[]),
-        safe(api.get<ChannelRow[]>("/stats/channels"), [] as ChannelRow[]),
-        safe(api.get<DonationRow[]>("/donations"), [] as DonationRow[]),
+        safe(api.get<{ kpis: OverviewKpis }>(`/stats/overview${q}`), { kpis: null as unknown as OverviewKpis }),
+        safe(api.get<TrendRow[]>(`/stats/donations-trend${q}`), [] as TrendRow[]),
+        safe(api.get<ChannelRow[]>(`/stats/channels${q}`), [] as ChannelRow[]),
+        safe(api.get<DonationRow[]>(`/donations${q}`), [] as DonationRow[]),
         safe(api.get<ProjectRow[]>("/projects", { auth: false }), [] as ProjectRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/volunteers"), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/members"), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>("/applications/careers"), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/volunteers${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/members${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/careers${q}`), [] as ApplicationRow[]),
         safe(api.get<any[]>("/posts", { auth: false }), [] as any[]),
         safe(api.get<any[]>("/messages"), [] as any[]),
       ]);
-      if (ov?.kpis) setKpis(ov.kpis);
+      if (ov?.kpis) setKpis(ov.kpis); else setKpis(null);
       setTrend((tr || []).map((r) => ({ d: String(r.d).slice(5), v: Number(r.total) })));
       const total = (ch || []).reduce((s, r) => s + Number(r.total || 0), 0) || 1;
       setChannels(
@@ -193,15 +200,42 @@ const Overview = () => {
       );
       setDonations(dn || []);
       setProjects(pr || []);
-      // Merge & sort all applications by created_at desc, keep pending only
       const allApps = [...(va || []), ...(ma || []), ...(ca || [])]
         .filter((a) => a.status === "new" || a.status === "reviewing")
         .sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
       setPending(allApps);
       setPosts(po || []);
       setMessages(ms || []);
+      setLoading(false);
     })();
-  }, []);
+  }, [range.key]);
+
+  const exportDonationsCsv = async () => {
+    const qs = new URLSearchParams();
+    if (range.from) qs.set("from", range.from);
+    if (range.to) qs.set("to", range.to);
+    qs.set("all", "1");
+    let rows: DonationRow[] = donations;
+    try {
+      rows = await api.get<DonationRow[]>(`/donations?${qs.toString()}`);
+    } catch { /* fall back to loaded rows */ }
+    const safeSlug = range.key.replace(/[^a-z0-9-]/gi, "_");
+    exportRowsAsCsv(
+      `donations-${safeSlug}.csv`,
+      rows,
+      [
+        { header: "ID", accessor: (r) => r.id },
+        { header: "নাম", accessor: (r) => r.name },
+        { header: "ফোন", accessor: (r) => r.phone || "" },
+        { header: "পরিমাণ (৳)", accessor: (r) => r.amount },
+        { header: "মাধ্যম", accessor: (r) => r.method },
+        { header: "খাত", accessor: (r) => r.area || "" },
+        { header: "স্ট্যাটাস", accessor: (r) => r.status },
+        { header: "তারিখ", accessor: (r) => (r.created_at ? String(r.created_at).replace("T", " ").slice(0, 19) : "") },
+      ]
+    );
+  };
+
 
   // Build recent activity feed from live data
   const activity = useMemo(() => {
