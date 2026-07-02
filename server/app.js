@@ -89,6 +89,42 @@ app.get('/health/smtp', async (req, res) => {
   }
 });
 
+// DB connectivity check — public, exposes NO secrets.
+// Shows masked config so we can verify what env vars the running process actually received.
+app.get('/health/db', async (_req, res) => {
+  const pw = process.env.DB_PASSWORD || '';
+  const info = {
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || null,
+    database: process.env.DB_NAME || null,
+    passwordSet: Boolean(pw),
+    passwordLength: pw.length,
+    // common cPanel env-var pitfalls (safe to expose — reveals nothing about the value itself)
+    passwordHasLeadingOrTrailingSpace: pw !== pw.trim(),
+    passwordHasQuotes: /^["']|["']$/.test(pw),
+    pid: process.pid,
+    startedAt: new Date(Date.now() - process.uptime() * 1000).toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
+  };
+  try {
+    const mysql = require('mysql2/promise');
+    const conn = await mysql.createConnection({
+      host: info.host,
+      port: info.port,
+      user: process.env.DB_USER,
+      password: pw,
+      database: process.env.DB_NAME,
+      connectTimeout: 8000,
+    });
+    const [rows] = await conn.query('SELECT DATABASE() AS db, CURRENT_USER() AS current_user_full');
+    await conn.end();
+    res.json({ ok: true, ...info, connectedAs: rows[0] && rows[0].current_user_full, db: rows[0] && rows[0].db });
+  } catch (err) {
+    res.status(502).json({ ok: false, ...info, error: String((err && err.message) || err), code: err && err.code });
+  }
+});
+
 // JWT self-test — detects missing/changed JWT_SECRET and inconsistent worker processes.
 // secretFp is a non-reversible 8-char fingerprint (safe to expose).
 app.get('/health/auth', (req, res) => {
