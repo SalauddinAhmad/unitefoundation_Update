@@ -108,7 +108,8 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
         সাধারণ
       </div>
       <nav className="space-y-1">
-        {generalMenu.map(({ to, icon: Icon, label }) => (
+        {generalMenu.filter((m) => can(m.perm)).map(({ to, icon: Icon, label }) => (
+
           <NavLink
             key={to}
             to={to}
@@ -208,18 +209,19 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
 
 export const DashboardLayout = () => {
   const [open, setOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, can } = useAuth();
   const nav = useNavigate();
   const handleLogout = () => {
     logout();
     nav("/login", { replace: true });
   };
 
+
   return (
     <div className="min-h-screen bg-muted/40">
       {/* Sidebar — desktop */}
       <aside className="hidden lg:flex fixed top-0 left-0 h-screen w-[260px] bg-card border-r border-border z-40 flex-col">
-        <SidebarContent onLogout={handleLogout} />
+        <SidebarContent onLogout={handleLogout} can={can} />
       </aside>
 
       {/* Sidebar — mobile drawer */}
@@ -233,7 +235,7 @@ export const DashboardLayout = () => {
             >
               <X className="h-4 w-4" />
             </button>
-            <SidebarContent onNav={() => setOpen(false)} onLogout={handleLogout} />
+            <SidebarContent onNav={() => setOpen(false)} onLogout={handleLogout} can={can} />
           </aside>
         </>
       )}
