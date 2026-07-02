@@ -5,19 +5,22 @@ const { requireAuth } = require('../middleware/auth');
 
 router.get('/overview', requireAuth, asyncH(async (_req, res) => {
   const [[donationSum]] = await pool.execute("SELECT COALESCE(SUM(amount),0) total, COUNT(*) count FROM donations WHERE status='completed'");
-  const [[volCount]] = await pool.execute("SELECT COUNT(*) c FROM applications WHERE kind='volunteer'");
+  const [[donors]] = await pool.execute("SELECT COUNT(DISTINCT COALESCE(NULLIF(phone,''), NULLIF(email,''), CAST(id AS CHAR))) c FROM donations WHERE status='completed'");
+  const [[volCount]] = await pool.execute("SELECT COUNT(*) c FROM applications WHERE kind='volunteers'");
   const [[projCount]] = await pool.execute("SELECT COUNT(*) c FROM projects WHERE status='active'");
   const [[msgCount]] = await pool.execute("SELECT COUNT(*) c FROM messages WHERE status='new'");
   res.json({
     kpis: {
       total_donations: Number(donationSum.total),
-      donation_count: donationSum.count,
-      volunteers: volCount.c,
-      active_projects: projCount.c,
-      new_messages: msgCount.c,
+      donation_count: Number(donationSum.count),
+      unique_donors: Number(donors.c),
+      volunteers: Number(volCount.c),
+      active_projects: Number(projCount.c),
+      new_messages: Number(msgCount.c),
     },
   });
 }));
+
 
 router.get('/donations-trend', requireAuth, asyncH(async (_req, res) => {
   const [rows] = await pool.execute(`
