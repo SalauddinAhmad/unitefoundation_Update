@@ -1081,9 +1081,9 @@ const ProfilePanel = () => {
           <Field label="বর্তমান পাসওয়ার্ড" type="password" value={currentPassword} onChange={setCurrent} />
           <Field label="নতুন পাসওয়ার্ড" type="password" value={newPassword} onChange={setNew} hint="কমপক্ষে ৮ অক্ষর" />
           <Field label="নতুন পাসওয়ার্ড কনফার্ম করুন" type="password" value={confirm} onChange={setConfirm} />
-          <Btn onClick={() => {}} disabled={busy}>
+          <button type="submit" disabled={busy} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 disabled:opacity-60 transition">
             {busy ? "পরিবর্তন হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন করুন"}
-          </Btn>
+          </button>
         </form>
       </Card>
     </>
