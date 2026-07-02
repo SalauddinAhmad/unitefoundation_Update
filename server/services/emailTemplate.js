@@ -81,22 +81,13 @@ function renderEmail(opts) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${BRAND.bg};padding:32px 12px;">
   <tr><td align="center">
     <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;">
-      <!-- Header bar -->
+      <!-- Header bar with brand wordmark -->
       <tr>
-        <td style="padding:0 4px 20px;">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-            <tr>
-              <td align="left" style="vertical-align:middle;">
-                <a href="${site}" target="_blank" style="text-decoration:none;color:${BRAND.text};">
-                  <img src="${logoUrl()}" width="44" height="44" alt="${esc(BRAND.name)}" style="display:inline-block;vertical-align:middle;border:0;border-radius:8px;" />
-                  <span style="display:inline-block;vertical-align:middle;margin-left:10px;font:700 17px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.text};letter-spacing:.2px;">${esc(BRAND.name)}</span>
-                </a>
-              </td>
-              <td align="right" style="vertical-align:middle;font:500 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">
-                ${esc(BRAND.tagline)}
-              </td>
-            </tr>
-          </table>
+        <td align="center" style="padding:4px 4px 22px;">
+          <a href="${site}" target="_blank" style="text-decoration:none;">
+            <img src="${logoUrl()}" width="180" alt="${esc(BRAND.name)}" style="display:block;border:0;height:auto;max-width:180px;" />
+          </a>
+          <div style="margin-top:8px;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:.2px;">${esc(BRAND.tagline)}</div>
         </td>
       </tr>
       <!-- Card -->
