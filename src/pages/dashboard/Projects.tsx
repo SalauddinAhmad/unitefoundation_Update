@@ -1,5 +1,5 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
-import { projects as seedProjects, type Project } from "@/data/dashboardMock";
+import type { Project } from "@/data/dashboardMock";
 import {
   Plus, Edit3, Eye, Users, Download, Search, Filter, ChevronDown, X, Save,
   Image as ImageIcon, Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
@@ -9,6 +9,12 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import {
+  useProjectsAdmin,
+  useSaveProject,
+  useDeleteProject,
+  type ApiProject,
+} from "@/hooks/api/usePublic";
 
 type ProjectEx = Project & {
   cover?: string;
@@ -19,37 +25,70 @@ type ProjectEx = Project & {
   endDate?: string;
   tags?: string[];
   goals?: string[];
+  slug?: string;
 };
 
-const LS_KEY = "uf_projects_state";
 const CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
 
-function load(): ProjectEx[] {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedProjects.map((p) => ({
-    ...p,
-    description: `${p.title} সম্পর্কে সংক্ষিপ্ত বিবরণ — এডিট করে আসল তথ্য যোগ করুন।`,
-    html: `<p>${p.title} প্রকল্পের বিস্তারিত বিবরণ এখানে যুক্ত করুন।</p>`,
-    location: "বাংলাদেশ",
-    tags: [p.category],
-    goals: ["প্রকল্পের লক্ষ্য ১", "প্রকল্পের লক্ষ্য ২"],
-  }));
+// ---- API ↔ UI mappers ----
+function apiToUi(row: ApiProject): ProjectEx {
+  const content: any = (() => {
+    try { return row.content ? JSON.parse(row.content) : {}; } catch { return {}; }
+  })();
+  return {
+    id: row.id,
+    title: row.title,
+    category: row.category || CATEGORIES[0],
+    budget: Number(row.budget || row.target || 0),
+    raised: Number(row.raised || 0),
+    beneficiaries: Number(row.beneficiaries || 0),
+    status: (row.status as ProjectEx["status"]) || "draft",
+    cover: row.cover_image_url || "",
+    description: row.short_description || "",
+    html: typeof content?.html === "string" ? content.html : (typeof row.description === "string" ? row.description : ""),
+    location: row.location || "",
+    slug: row.slug,
+    startDate: content?.startDate || "",
+    endDate: content?.endDate || "",
+    tags: Array.isArray(content?.tags) ? content.tags : [],
+    goals: Array.isArray(content?.goals) ? content.goals : [],
+  };
 }
-function persist(list: ProjectEx[]) { try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {} }
+function uiToApi(p: ProjectEx): Partial<ApiProject> {
+  const slug =
+    p.slug ||
+    p.title.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]+/gu, "").slice(0, 80) ||
+    `p-${Date.now()}`;
+  return {
+    title: p.title,
+    slug,
+    category: p.category,
+    short_description: p.description || "",
+    description: p.html || "",
+    content: JSON.stringify({ html: p.html || "", startDate: p.startDate, endDate: p.endDate, tags: p.tags, goals: p.goals }),
+    budget: Number(p.budget) || 0,
+    target: Number(p.budget) || 0,
+    raised: Number(p.raised) || 0,
+    beneficiaries: Number(p.beneficiaries) || 0,
+    location: p.location || "",
+    status: (p.status as any) || "draft",
+    cover_image_url: p.cover || "",
+  };
+}
 
 export default function Projects() {
-  const [list, setList] = useState<ProjectEx[]>(() => load());
+  const { data: rows = [] } = useProjectsAdmin();
+  const saveMut = useSaveProject();
+  const delMut = useDeleteProject();
+
+  const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed" | "draft">("all");
   const [category, setCategory] = useState("all");
   const [view, setView] = useState<"grid" | "table">("grid");
   const [editor, setEditor] = useState<{ open: boolean; p?: ProjectEx }>({ open: false });
   const [viewer, setViewer] = useState<ProjectEx | null>(null);
-
-  const update = (next: ProjectEx[]) => { setList(next); persist(next); };
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -76,22 +115,34 @@ export default function Projects() {
     };
   }, [list]);
 
-  const save = (p: ProjectEx) => {
+  const save = async (p: ProjectEx) => {
     const exists = list.some((x) => x.id === p.id);
-    update(exists ? list.map((x) => (x.id === p.id ? p : x)) : [p, ...list]);
-    setEditor({ open: false });
-    toast.success(exists ? "প্রকল্প আপডেট হয়েছে" : "নতুন প্রকল্প তৈরি হয়েছে");
+    try {
+      if (exists) await saveMut.mutateAsync({ id: p.id, data: uiToApi(p) });
+      else await saveMut.mutateAsync({ data: uiToApi(p) });
+      setEditor({ open: false });
+      toast.success(exists ? "প্রকল্প আপডেট হয়েছে" : "নতুন প্রকল্প তৈরি হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "সেভ করা যায়নি");
+    }
   };
-  const remove = (id: string) => { if (!confirm("ডিলিট করবেন?")) return; update(list.filter((p) => p.id !== id)); toast.success("ডিলিট হয়েছে"); };
-  const duplicate = (p: ProjectEx) => {
-    update([{ ...p, id: `P-${Math.floor(Math.random() * 900) + 100}`, title: p.title + " (কপি)", status: "draft", raised: 0 }, ...list]);
-    toast.success("কপি তৈরি হয়েছে");
+  const remove = async (id: string) => {
+    if (!confirm("ডিলিট করবেন?")) return;
+    try { await delMut.mutateAsync(id); toast.success("ডিলিট হয়েছে"); }
+    catch (e: any) { toast.error(e?.message || "ডিলিট ব্যর্থ"); }
   };
-  const toggleStatus = (p: ProjectEx) => {
+  const duplicate = async (p: ProjectEx) => {
+    const copy: ProjectEx = { ...p, id: "", title: p.title + " (কপি)", status: "draft", raised: 0, slug: "" };
+    try { await saveMut.mutateAsync({ data: uiToApi(copy) }); toast.success("কপি তৈরি হয়েছে"); }
+    catch (e: any) { toast.error(e?.message || "কপি ব্যর্থ"); }
+  };
+  const toggleStatus = async (p: ProjectEx) => {
     const next = p.status === "active" ? ("completed" as const) : ("active" as const);
-    update(list.map((x) => (x.id === p.id ? { ...x, status: next } : x)));
-    toast.success("স্ট্যাটাস আপডেট হয়েছে");
+    try { await saveMut.mutateAsync({ id: p.id, data: { status: next } }); toast.success("স্ট্যাটাস আপডেট হয়েছে"); }
+    catch (e: any) { toast.error(e?.message || "আপডেট ব্যর্থ"); }
   };
+
+
 
   return (
     <>
