@@ -790,12 +790,14 @@ const AdminsPanel = () => {
       let emailSent = false;
       let emailError: string | null = null;
       let apiOk = false;
+      let newId = "";
       try {
         const res = await api.post<{ id: string; emailSent?: boolean; emailError?: string | null }>(
           "/admin/users",
           { name, email, role, password, sendEmail: true },
         );
         apiOk = true;
+        newId = res?.id || "";
         emailSent = Boolean(res?.emailSent);
         emailError = res?.emailError ?? null;
       } catch (err: unknown) {
@@ -807,13 +809,14 @@ const AdminsPanel = () => {
         return;
       }
       const newUser: AdminUser = {
-        id: `U-${Math.floor(Math.random() * 9000) + 100}`,
+        id: newId || `U-${Math.floor(Math.random() * 9000) + 100}`,
         name: name || email.split("@")[0],
         email: email.trim(),
         role,
         created_at: new Date().toISOString().slice(0, 10),
       };
       refresh([newUser, ...list]);
+
       setLastCreds({ email: newUser.email, password });
       setName(""); setEmail(""); setRole("editor");
       if (apiOk && emailSent) {
