@@ -5,7 +5,7 @@ import {
   Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon, Quote,
   AlignLeft, AlignCenter, AlignRight, Heading1, Heading2, Code as CodeIcon,
   FileText, Calendar, Clock, BarChart3, FolderTree, Loader2, Filter,
-  ChevronDown, Globe, Archive, Copy, Sparkles,
+  ChevronDown, Globe, Archive, Copy, Sparkles, Tags, Check,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -24,7 +24,21 @@ type Post = BlogPost & {
   slug?: string;
 };
 
-const CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
+const DEFAULT_CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
+const CAT_STORAGE_KEY = "blog:custom-categories:v1";
+
+function loadCustomCategories(): string[] {
+  try {
+    const raw = localStorage.getItem(CAT_STORAGE_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveCustomCategories(list: string[]) {
+  try { localStorage.setItem(CAT_STORAGE_KEY, JSON.stringify(list)); } catch {}
+}
+
 
 // ---- API ↔ UI mappers ----
 function apiToUi(row: ApiPost): Post {
