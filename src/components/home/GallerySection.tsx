@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useGalleryPublic } from "@/hooks/api/usePublic";
-import g1 from "@/assets/gallery/01.jpg";
-import g2 from "@/assets/gallery/02.jpg";
-import g3 from "@/assets/gallery/03.jpg";
-import g4 from "@/assets/gallery/04.jpg";
-import g5 from "@/assets/gallery/05.jpg";
-import g6 from "@/assets/gallery/06.jpg";
+import g1Asset from "@/assets/gallery/01.jpg.asset.json"; const g1 = g1Asset.url;
+import g2Asset from "@/assets/gallery/02.jpg.asset.json"; const g2 = g2Asset.url;
+import g3Asset from "@/assets/gallery/03.jpg.asset.json"; const g3 = g3Asset.url;
+import g4Asset from "@/assets/gallery/04.jpg.asset.json"; const g4 = g4Asset.url;
+import g5Asset from "@/assets/gallery/05.jpg.asset.json"; const g5 = g5Asset.url;
+import g6Asset from "@/assets/gallery/06.jpg.asset.json"; const g6 = g6Asset.url;
 
 const fallback = [
   { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন" },
