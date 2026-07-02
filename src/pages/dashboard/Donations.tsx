@@ -19,6 +19,18 @@ const Donations = () => {
   );
   const total = filtered.reduce((s, d) => s + (d.status === "completed" ? d.amount : 0), 0);
 
+  const all = data as Donation[];
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const monthStr = todayStr.slice(0, 7);
+  const isSameDay = (s: string) => (s || "").slice(0, 10) === todayStr;
+  const isSameMonth = (s: string) => (s || "").slice(0, 7) === monthStr;
+  const todaySum = all.filter((d) => d.status === "completed" && isSameDay(d.date)).reduce((s, d) => s + d.amount, 0);
+  const monthSum = all.filter((d) => d.status === "completed" && isSameMonth(d.date)).reduce((s, d) => s + d.amount, 0);
+  const pendingSum = all.filter((d) => d.status === "pending").reduce((s, d) => s + d.amount, 0);
+  const completedCount = all.filter((d) => d.status === "completed").length;
+  const avgDonation = completedCount ? Math.round(all.filter((d) => d.status === "completed").reduce((s, d) => s + d.amount, 0) / completedCount) : 0;
+  const fmt = (n: number) => "৳ " + n.toLocaleString("bn-BD");
+
   return (
     <>
       <PageHeader
