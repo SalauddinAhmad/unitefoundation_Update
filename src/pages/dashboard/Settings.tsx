@@ -826,7 +826,7 @@ const AdminsPanel = () => {
       if (apiOk && emailSent) {
         toast({
           title: "অ্যাডমিন তৈরি হয়েছে",
-          description: `${newUser.email} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
+          description: `${newEmail} ঠিকানায় লগইন তথ্য পাঠানো হয়েছে।`,
         });
       } else {
         toast({
@@ -843,7 +843,7 @@ const AdminsPanel = () => {
   const removeAdmin = async (u: AdminUser) => {
     if (!confirm(`${u.email} মুছে ফেলবেন?`)) return;
     try { await api.delete(`/admin/users/${u.id}`); } catch {}
-    refresh(list.filter((x) => x.id !== u.id));
+    refresh();
     toast({ title: "মুছে ফেলা হয়েছে" });
   };
 
