@@ -158,7 +158,7 @@ const Settings = () => {
   const update = useUpdateSettings();
   const { toast } = useToast();
   const { can } = useAuth();
-  const visibleTabs = TABS.filter((t) => can(t.perm));
+  const visibleTabs = TABS.filter((t) => !t.perm || can(t.perm));
   const [form, setForm] = useState<SiteSettings | null>(null);
   const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
 
