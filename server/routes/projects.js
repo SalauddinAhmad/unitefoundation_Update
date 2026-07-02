@@ -27,23 +27,37 @@ const schema = z.object({
   title: z.string().min(1),
   slug: z.string().optional(),
   category: z.string().optional(),
-  description: z.string().optional(),
-  content: z.string().optional(),
+  short_description: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  content: z.string().optional().nullable(),
   budget: z.number().optional(),
+  target: z.number().optional(),
   raised: z.number().optional(),
   beneficiaries: z.number().optional(),
+  donors: z.number().optional(),
+  location: z.string().optional().nullable(),
+  urgent: z.union([z.boolean(), z.number()]).optional(),
+  gallery: z.array(z.string()).optional(),
   status: z.enum(['active','completed','draft']).optional(),
-  cover_image_url: z.string().optional(),
+  cover_image_url: z.string().optional().nullable(),
 });
 
 router.post('/', requireAuth, asyncH(async (req, res) => {
   const d = schema.parse(req.body);
   const id = shortId('P-');
   await pool.execute(
-    `INSERT INTO projects (id,title,slug,category,description,content,budget,raised,beneficiaries,status,cover_image_url)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-    [id, d.title, d.slug || id.toLowerCase(), d.category || null, d.description || null, d.content || null,
-     d.budget || 0, d.raised || 0, d.beneficiaries || 0, d.status || 'draft', d.cover_image_url || null]
+    `INSERT INTO projects
+      (id,title,slug,category,short_description,description,content,budget,target,raised,beneficiaries,donors,location,urgent,gallery,status,cover_image_url)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+    [
+      id, d.title, d.slug || id.toLowerCase(), d.category || null,
+      d.short_description || null, d.description || null, d.content || null,
+      d.budget || 0, d.target || d.budget || 0, d.raised || 0,
+      d.beneficiaries || 0, d.donors || 0, d.location || null,
+      d.urgent ? 1 : 0,
+      d.gallery ? JSON.stringify(d.gallery) : null,
+      d.status || 'draft', d.cover_image_url || null,
+    ]
   );
   res.status(201).json({ id });
 }));
