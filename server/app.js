@@ -55,6 +55,51 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
+// --- Public diagnostics (no secrets exposed) ---
+// SMTP connectivity/auth check — public so it works even when the login token is broken
+app.get('/health/smtp', async (_req, res) => {
+  try {
+    const { getTransporter } = require('./services/mailer');
+    await getTransporter().verify();
+    res.json({ ok: true, host: process.env.SMTP_HOST || null, port: Number(process.env.SMTP_PORT || 465) });
+  } catch (err) {
+    res.status(502).json({ ok: false, error: String((err && err.message) || err) });
+  }
+});
+
+// JWT self-test — detects missing/changed JWT_SECRET and inconsistent worker processes.
+// secretFp is a non-reversible 8-char fingerprint (safe to expose).
+app.get('/health/auth', (req, res) => {
+  const jwt = require('jsonwebtoken');
+  const crypto = require('crypto');
+  const secret = process.env.JWT_SECRET || '';
+  const out = {
+    ok: false,
+    secretSet: Boolean(secret),
+    secretFp: secret ? crypto.createHash('sha256').update(secret).digest('hex').slice(0, 8) : null,
+    pid: process.pid,
+  };
+  if (secret) {
+    try {
+      jwt.verify(jwt.sign({ t: 1 }, secret, { expiresIn: '1m' }), secret);
+      out.ok = true;
+    } catch (e) {
+      out.selfTestError = String((e && e.message) || e);
+    }
+  }
+  const h = req.headers.authorization || '';
+  const token = h.startsWith('Bearer ') ? h.slice(7) : null;
+  if (token && secret) {
+    try {
+      const d = jwt.verify(token, secret);
+      out.token = { valid: true, expiresAt: d.exp ? new Date(d.exp * 1000).toISOString() : null };
+    } catch (e) {
+      out.token = { valid: false, reason: String((e && e.message) || e) };
+    }
+  }
+  res.json(out);
+});
+
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));
 app.use('/donations', require('./routes/donations'));

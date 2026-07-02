@@ -81,15 +81,41 @@ const Messages = () => {
     (async () => {
       setSmtpStatus("checking");
       try {
-        await api.get("/messages/smtp/test");
+        // 1) Public SMTP check — works even if the login token is broken
+        await api.get("/health/smtp", { auth: false });
+        // 2) SMTP OK — now verify the login token itself
+        try {
+          const d = await api.get<{ token?: { valid: boolean; reason?: string } }>("/health/auth");
+          if (d?.token && !d.token.valid) {
+            setSmtpStatus("auth");
+            setSmtpError(
+              d.token.reason?.includes("expired")
+                ? "লগইন সেশনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন"
+                : `টোকেন অবৈধ (${d.token.reason || "unknown"}) — লগআউট করে আবার লগইন করুন`,
+            );
+            return;
+          }
+        } catch {
+          // old backend without /health/auth — skip token check
+        }
         setSmtpStatus("ok");
         setSmtpError("");
       } catch (e: unknown) {
-        if (e instanceof ApiError && e.status === 401) {
-          // Session expired — not an SMTP problem
-          setSmtpStatus("auth");
-          setSmtpError("লগইন সেশনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন");
-          return;
+        if (e instanceof ApiError && e.status === 404) {
+          // Old backend without /health/smtp — fall back to admin-only endpoint
+          try {
+            await api.get("/messages/smtp/test");
+            setSmtpStatus("ok");
+            setSmtpError("");
+            return;
+          } catch (e2: unknown) {
+            if (e2 instanceof ApiError && e2.status === 401) {
+              setSmtpStatus("auth");
+              setSmtpError("লগইন সেশনের মেয়াদ শেষ হয়েছে — আবার লগইন করুন");
+              return;
+            }
+            e = e2;
+          }
         }
         if (!(e instanceof ApiError)) {
           // fetch itself failed (CORS / network) — not an SMTP problem
@@ -248,10 +274,10 @@ const Messages = () => {
             {smtpStatus === "checking" && <span>SMTP সার্ভার যাচাই করা হচ্ছে...</span>}
             {smtpStatus === "auth" && (
               <>
-                <div className="font-semibold">সেশনের মেয়াদ শেষ — আবার লগইন করুন</div>
+                <div className="font-semibold">লগইন টোকেন সমস্যা — SMTP ঠিক আছে ✅</div>
+                <div className="text-xs mt-1 break-all opacity-90">{smtpError}</div>
                 <div className="text-xs mt-1 opacity-90">
-                  এটি SMTP-এর সমস্যা নয়। লগইন টোকেন মেয়াদোত্তীর্ণ বা অবৈধ হওয়ায় সার্ভার
-                  &quot;Unauthorized&quot; দিচ্ছে।{" "}
+                  এটি SMTP-এর সমস্যা নয়।{" "}
                   <a href="/login" className="underline font-semibold">
                     লগইন পেজে যান
                   </a>
