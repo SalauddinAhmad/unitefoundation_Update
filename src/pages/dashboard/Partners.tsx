@@ -377,20 +377,20 @@ function Editor({
                 className="input"
               />
             </F>
-            <F label="Logo URL">
-              <input
+            <F label="Logo (আপলোড বা URL)">
+              <ImageUploadField
                 value={d.logo_url || ""}
-                onChange={(e) => set("logo_url", e.target.value)}
-                className="input"
-                placeholder="https://..."
+                onChange={(v) => set("logo_url", v)}
+                aspect="square"
+                maxWidth={512}
               />
             </F>
-            <F label="Cover Image URL">
-              <input
-                value={d.cover_url || ""}
-                onChange={(e) => set("cover_url", e.target.value)}
-                className="input"
-                placeholder="https://..."
+            <F label="Cover Image (আপলোড বা URL)">
+              <ImageUploadField
+                value={(d as any).cover_url || ""}
+                onChange={(v) => set("cover_url" as any, v)}
+                aspect="wide"
+                maxWidth={1600}
               />
             </F>
             <F label="Website">
