@@ -807,12 +807,13 @@ const AdminsPanel = () => {
         return;
       }
       const newUser: AdminUser = {
-        id: `U-${Math.floor(Math.random() * 9000) + 100}`,
+        id: res?.id || `U-${Math.floor(Math.random() * 9000) + 100}`,
         name: name || email.split("@")[0],
         email: email.trim(),
         role,
         created_at: new Date().toISOString().slice(0, 10),
       };
+
       refresh([newUser, ...list]);
       setLastCreds({ email: newUser.email, password });
       setName(""); setEmail(""); setRole("editor");
