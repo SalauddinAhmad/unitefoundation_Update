@@ -161,6 +161,11 @@ const Messages = () => {
       setReplyText("");
       toast.success("SMTP এর মাধ্যমে উত্তর পাঠানো হয়েছে ✅");
     } catch (e: unknown) {
+      if (e instanceof ApiError && e.status === 401) {
+        toast.error("আপনার লগইন সেশনের মেয়াদ শেষ হয়েছে — লগআউট করে আবার লগইন করুন, তারপর মেসেজ পাঠান।");
+        setSending(false);
+        return;
+      }
       const anyE = e as { data?: { error?: string; message?: string }; message?: string };
       const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "উত্তর পাঠানো যায়নি";
       toast.error(`SMTP ব্যর্থ: ${msg}`);
@@ -186,6 +191,10 @@ const Messages = () => {
         html: data.html,
       });
     } catch (e: unknown) {
+      if (e instanceof ApiError && e.status === 401) {
+        toast.error("আপনার লগইন সেশনের মেয়াদ শেষ হয়েছে — লগআউট করে আবার লগইন করুন, তারপর মেসেজ পাঠান।");
+        return;
+      }
       const anyE = e as { data?: { error?: string; message?: string }; message?: string };
       const msg = anyE?.data?.error || anyE?.data?.message || anyE?.message || "মেসেজ পাঠানো যায়নি";
       toast.error(`SMTP ব্যর্থ: ${msg}`);
