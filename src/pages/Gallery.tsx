@@ -26,7 +26,7 @@ import g18Asset from "@/assets/gallery/18.jpg.asset.json"; const g18 = g18Asset.
 import g19Asset from "@/assets/gallery/19.jpg.asset.json"; const g19 = g19Asset.url;
 import g20Asset from "@/assets/gallery/20.jpg.asset.json"; const g20 = g20Asset.url;
 
-type Tab = "ছবি" | "ভিডিও";
+type Tab = "photos" | "videos";
 
 type ImageItem = { src: string; alt: string; cat: string };
 type VideoItem = { thumb: string; title: string; cat: string; youtubeId: string; duration?: string };
