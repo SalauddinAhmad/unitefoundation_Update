@@ -1,3 +1,11 @@
+# Disable directory listing (block /assets/, /qr/, etc.)
+Options -Indexes
+
+# Block access to hidden/sensitive files
+<FilesMatch "^\.(?!well-known)|\.(env|env\..*|log|sql|md|yml|yaml|lock|sh|bak|old|ini|conf)$">
+  Require all denied
+</FilesMatch>
+
 # React SPA — send all routes to index.html
 <IfModule mod_rewrite.c>
   RewriteEngine On
