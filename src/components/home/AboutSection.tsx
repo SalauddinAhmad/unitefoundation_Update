@@ -1,21 +1,21 @@
 import { CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import aboutFallback from "@/assets/about-mission.jpg";
 import { useSettings } from "@/hooks/api/useDashboardData";
 
 export const AboutSection = () => {
+  const { t } = useTranslation();
   const { data: settings } = useSettings();
   const a = settings?.about;
-  const heading = a?.heading || "সুন্নাহর অনুসরণে, মানবতার কল্যাণে";
-  const highlight = a?.highlight || "ইউনাইট ফাউন্ডেশন";
-  const body =
-    a?.body ||
-    "ইউনাইট ফাউন্ডেশন একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম।";
+  const heading = a?.heading || t("about.headingFallback");
+  const highlight = a?.highlight || t("about.highlightFallback");
+  const body = a?.body || t("about.bodyFallback");
   const quoteText = a?.quoteText || "";
   const quoteSource = a?.quoteSource || "";
   const points = a?.points?.length ? a.points : [];
   const sideImage = a?.sideImage && a.sideImage.trim() ? a.sideImage : aboutFallback;
-  const expNumber = a?.expNumber || "১৫+";
-  const expLabel = a?.expLabel || "বছরের অভিজ্ঞতা ও বিশ্বাস";
+  const expNumber = a?.expNumber || t("about.expNumber");
+  const expLabel = a?.expLabel || t("about.expLabel");
 
   return (
     <section className="section-y bg-background">

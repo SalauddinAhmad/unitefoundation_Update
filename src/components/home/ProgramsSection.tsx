@@ -1,30 +1,30 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { projects } from "@/data/projects";
 
 export const ProgramsSection = () => {
-  // Duplicate the list for a seamless infinite marquee
+  const { t } = useTranslation();
   const loop = [...projects, ...projects];
 
   return (
     <section className="section-y bg-secondary/40">
       <div className="container-page">
         <div className="text-center mb-10 md:mb-12">
-          <span className="eyebrow">আমাদের কার্যক্রম</span>
+          <span className="eyebrow">{t("programs.eyebrow")}</span>
           <h2 className="heading-display mt-3 max-w-2xl mx-auto">
-            চলমান প্রকল্পসমূহ — যেখানে আপনার দান সরাসরি কাজ করছে
+            {t("programs.heading")}
           </h2>
           <Link
             to="/projects"
             className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all mt-4"
           >
-            সব প্রকল্প <ArrowRight className="h-4 w-4" />
+            {t("programs.allProjects")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
         <div className="relative overflow-hidden">
-          {/* Edge fades */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-12 md:w-20 z-10 bg-gradient-to-r from-secondary/40 to-transparent" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-12 md:w-20 z-10 bg-gradient-to-l from-secondary/40 to-transparent" />
 
@@ -48,7 +48,7 @@ export const ProgramsSection = () => {
             to="/projects"
             className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
           >
-            সব প্রকল্প দেখুন <ArrowRight className="h-4 w-4" />
+            {t("programs.viewAll")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
