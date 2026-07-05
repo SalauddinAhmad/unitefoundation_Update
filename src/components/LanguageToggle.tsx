@@ -10,6 +10,21 @@ interface Props {
   variant?: "header" | "mobile";
 }
 
+// Set the Google Translate cookie for current host + parent domain.
+const setGoogTrans = (value: string) => {
+  const host = window.location.hostname;
+  const parent = host.split(".").slice(-2).join(".");
+  const expires = value ? "" : "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  const val = value || "";
+  // current host
+  document.cookie = `googtrans=${val}; path=/${expires}`;
+  // parent domain (e.g. .unitefoundation.bd) so subdomains share it
+  if (parent && parent !== host) {
+    document.cookie = `googtrans=${val}; path=/; domain=.${parent}${expires}`;
+    document.cookie = `googtrans=${val}; path=/; domain=${parent}${expires}`;
+  }
+};
+
 export const LanguageToggle = ({ className = "", variant = "header" }: Props) => {
   const { i18n, t } = useTranslation();
   const current = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
@@ -17,6 +32,13 @@ export const LanguageToggle = ({ className = "", variant = "header" }: Props) =>
 
   const toggle = () => {
     i18n.changeLanguage(next);
+    if (next === "en") {
+      setGoogTrans("/bn/en");
+    } else {
+      setGoogTrans("");
+    }
+    // Reload so Google Translate re-processes the DOM with the new cookie.
+    window.location.reload();
   };
 
   if (variant === "mobile") {
