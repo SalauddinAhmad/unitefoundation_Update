@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { type ContentBlock } from "@/data/blog";
@@ -117,6 +118,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
 };
 
 const BlogPost = () => {
+  const { t } = useTranslation();
   const { slug = "" } = useParams();
   const { data: post, isLoading } = usePostPublic(slug);
   const { data: allPosts = [] } = usePostsPublic();
