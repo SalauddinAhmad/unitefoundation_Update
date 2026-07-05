@@ -46,11 +46,11 @@ const saveApplication = (
 
 type TabKey = "regular" | "member" | "volunteer" | "representative";
 
-const tabs: { key: TabKey; label: string; icon: typeof HandHeart }[] = [
-  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
-  { key: "member", label: "আজীবন ও দাতা সদস্য", icon: HeartHandshake },
-  { key: "volunteer", label: "স্বেচ্ছাসেবক", icon: HandHeart },
-  { key: "representative", label: "জেলা প্রতিনিধি", icon: UserPlus },
+const tabsBase: { key: TabKey; labelKey: string; icon: typeof HandHeart }[] = [
+  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
+  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
+  { key: "volunteer", labelKey: "volunteerPage.tabVolunteer", icon: HandHeart },
+  { key: "representative", labelKey: "volunteerPage.tabRep", icon: UserPlus },
 ];
 
 
