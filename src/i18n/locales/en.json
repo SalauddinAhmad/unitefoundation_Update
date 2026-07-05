@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "Home",
+    "projects": "Programs",
+    "about": "About Us",
+    "gallery": "Gallery",
+    "blog": "Blog",
+    "volunteer": "Volunteer",
+    "contact": "Contact",
+    "donate": "Donate",
+    "menu": "Main menu",
+    "openMenu": "Open menu"
+  },
+  "common": {
+    "donate": "Donate",
+    "readMore": "Read more",
+    "viewDetails": "View details",
+    "prev": "Previous",
+    "next": "Next",
+    "slide": "Slide",
+    "language": "Language"
+  },
+  "hero": {
+    "slide1": {
+      "eyebrow": "Following the Sunnah, Serving Humanity",
+      "title": "Unite Foundation — Guided by the Qur'an & Authentic Hadith",
+      "subtitle": "By your side in da'wah, education, social welfare and emergency relief. A non-political Islamic platform — transparent, accountable and dedicated.",
+      "primaryCta": "Donate now",
+      "secondaryCta": "View our projects"
+    },
+    "slide2": {
+      "eyebrow": "Emergency campaign",
+      "title": "Deliver food to Palestine — stand with them",
+      "subtitle": "Your donation will reach hungry Muslim families in besieged Gaza and the West Bank, in shā' Allāh.",
+      "primaryCta": "Donate to Palestine",
+      "secondaryCta": "Learn more"
+    },
+    "slide3": {
+      "eyebrow": "Sadaqah Jariyah",
+      "title": "Take part in building mosques and madrasas",
+      "subtitle": "Build mosques and madrasas in remote villages and share in lasting reward. One initiative — countless lives changed.",
+      "primaryCta": "Donate to mosques",
+      "secondaryCta": "See more"
+    }
+  },
+  "footer": {
+    "ctaTitle": "Start something good today",
+    "ctaSubtitle": "Your small donation can bring a big change in someone's life — in shā' Allāh.",
+    "about": "Following the Sunnah, serving humanity. A non-political Islamic platform guided by the Holy Qur'an and authentic Hadith.",
+    "quickLinks": "Quick links",
+    "ourProjects": "Our projects",
+    "contact": "Contact",
+    "projects": {
+      "madrasa": "Madrasa & Mosque",
+      "yatim": "Orphan Sponsorship",
+      "palestine": "Palestine Food",
+      "qarz": "Qarz-e-Hasanah",
+      "tv": "Unite TV"
+    },
+    "rights": "All rights reserved."
+  }
+}
