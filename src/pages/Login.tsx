@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Lock, Mail, ShieldCheck, Loader2, Eye, EyeOff, ArrowRight, Heart, Users, BookOpen, KeyRound, ArrowLeft } from "lucide-react";
 import logoWhite from "@/assets/logo-white.svg";
 import logo from "@/assets/logo.png";
@@ -11,7 +11,9 @@ const Login = () => {
   const { login, verifyOtp, loading, isAuthenticated } = useAuth();
   const nav = useNavigate();
   const loc = useLocation();
-  const from = (loc.state as { from?: string })?.from || "/dashboard";
+  const [params] = useSearchParams();
+  const from = (loc.state as { from?: string })?.from || params.get("from") || "/dashboard";
+  const reason = params.get("reason");
 
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [email, setEmail] = useState("");
@@ -20,7 +22,16 @@ const Login = () => {
   const [code, setCode] = useState("");
   const [demoOtp, setDemoOtp] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (reason === "session_expired") {
+      toast.error("আপনার সেশনের মেয়াদ শেষ — অনুগ্রহ করে আবার লগইন করুন");
+    } else if (reason === "unauthorized") {
+      toast.error("অননুমোদিত অনুরোধ — আবার লগইন করুন");
+    }
+  }, [reason]);
+
   if (isAuthenticated) return <Navigate to={from} replace />;
+
 
   const submitCreds = async (e: React.FormEvent) => {
     e.preventDefault();
