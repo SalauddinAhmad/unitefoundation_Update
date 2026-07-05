@@ -17,6 +17,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import volunteerImg from "@/assets/program-food.jpg";
