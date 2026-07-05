@@ -17,6 +17,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import volunteerImg from "@/assets/program-food.jpg";
@@ -45,11 +46,11 @@ const saveApplication = (
 
 type TabKey = "regular" | "member" | "volunteer" | "representative";
 
-const tabs: { key: TabKey; label: string; icon: typeof HandHeart }[] = [
-  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
-  { key: "member", label: "আজীবন ও দাতা সদস্য", icon: HeartHandshake },
-  { key: "volunteer", label: "স্বেচ্ছাসেবক", icon: HandHeart },
-  { key: "representative", label: "জেলা প্রতিনিধি", icon: UserPlus },
+const tabsBase: { key: TabKey; labelKey: string; icon: typeof HandHeart }[] = [
+  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
+  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
+  { key: "volunteer", labelKey: "volunteerPage.tabVolunteer", icon: HandHeart },
+  { key: "representative", labelKey: "volunteerPage.tabRep", icon: UserPlus },
 ];
 
 
@@ -276,20 +277,21 @@ const SuccessCard = ({
 
 // ============================================================
 const Volunteer = () => {
+  const { t: tt } = useTranslation();
   const [active, setActive] = useState<TabKey>("volunteer");
 
   return (
     <SiteLayout>
       <Seo
-        title="আমাদের সাথে যুক্ত হোন | ইউনাইট ফাউন্ডেশন"
-        description="নিয়মিত দাতা, আজীবন সদস্য, স্বেচ্ছাসেবক বা ক্যারিয়ার — যেকোনো ভাবে ইউনাইট ফাউন্ডেশনের সাথে যুক্ত হোন।"
+        title={tt("volunteerPage.seoTitle")}
+        description={tt("volunteerPage.seoDesc")}
         canonical="/volunteer"
       />
 
       {/* HERO */}
       <section className="relative isolate">
         <div className="absolute inset-0 -z-10">
-          <img src={volunteerImg} alt="যুক্ত হোন" className="h-full w-full object-cover" loading="eager" />
+          <img src={volunteerImg} alt={tt("volunteerPage.heroTitle")} className="h-full w-full object-cover" loading="eager" />
           <div
             className="absolute inset-0"
             style={{
@@ -300,7 +302,7 @@ const Volunteer = () => {
         </div>
         <div className="container-page py-20 md:py-28 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight">
-            আমাদের সাথে যুক্ত হোন
+            {tt("volunteerPage.heroTitle")}
           </h1>
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-white/70" />
         </div>
@@ -311,25 +313,24 @@ const Volunteer = () => {
         <div className="container-page">
           <div className="max-w-3xl">
             <h2 className="text-2xl md:text-4xl font-bold leading-tight">
-              আমাদের সঙ্গে যুক্ত হতে পারেন বিভিন্নভাবে
+              {tt("volunteerPage.sectionTitle")}
             </h2>
             <p className="text-muted-foreground mt-4 leading-relaxed">
-              নিচ থেকে যেকোনো একটি অপশন নির্বাচন করুন — তার জন্য নির্দিষ্ট ফর্ম পূরণ করে
-              সরাসরি আমাদের কাছে আবেদন পাঠাতে পারবেন।
+              {tt("volunteerPage.sectionSubtitle")}
             </p>
           </div>
 
           {/* Tabs */}
           <div className="mt-10 rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {tabs.map((t) => {
-                const isActive = t.key === active;
-                const Icon = t.icon;
+              {tabsBase.map((tb) => {
+                const isActive = tb.key === active;
+                const Icon = tb.icon;
                 return (
                   <button
-                    key={t.key}
+                    key={tb.key}
                     type="button"
-                    onClick={() => setActive(t.key)}
+                    onClick={() => setActive(tb.key)}
                     aria-pressed={isActive}
                     className={
                       "group flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 py-5 md:py-6 px-3 rounded-xl text-sm md:text-base font-semibold text-center transition-colors " +
@@ -348,12 +349,14 @@ const Volunteer = () => {
                     >
                       <Icon className="h-5 w-5" />
                     </span>
-                    <span>{t.label}</span>
+                    <span>{tt(tb.labelKey)}</span>
                   </button>
                 );
               })}
             </div>
           </div>
+
+
 
           {/* Info strip */}
           <div className="mt-5 rounded-card bg-accent/60 border border-accent px-5 md:px-6 py-4 text-sm md:text-base text-foreground/80 text-center">

@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { type ContentBlock } from "@/data/blog";
@@ -117,6 +118,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
 };
 
 const BlogPost = () => {
+  const { t } = useTranslation();
   const { slug = "" } = useParams();
   const { data: post, isLoading } = usePostPublic(slug);
   const { data: allPosts = [] } = usePostsPublic();
@@ -149,12 +151,12 @@ const BlogPost = () => {
         <div className="absolute inset-x-0 bottom-0">
           <div className="container-page pb-10 md:pb-14">
             <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm text-foreground/80 hover:text-primary mb-4">
-              <ArrowLeft className="h-4 w-4" /> সব পোস্ট
+              <ArrowLeft className="h-4 w-4" /> {t("blogPost.allPosts")}
             </Link>
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">{post.category}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
-              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" />{toBnNum(post.readMin)} মিনিট পড়ুন</span>
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" />{toBnNum(post.readMin)} {t("blogPost.minutesRead")}</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl">{post.title}</h1>
           </div>
@@ -185,7 +187,7 @@ const BlogPost = () => {
             <div className="mt-10 pt-6 border-t border-border flex items-center justify-between gap-4 flex-wrap">
               <span className="px-3 py-1 rounded-full bg-accent text-accent-foreground font-semibold text-xs">{post.category}</span>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground mr-1">শেয়ার:</span>
+                <span className="text-sm text-muted-foreground mr-1">{t("blogPost.share")}:</span>
                 {shareLinks.map(({ Icon, href, label }) => (
                   <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="h-9 w-9 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground text-foreground flex items-center justify-center transition-colors">
                     <Icon className="h-4 w-4" />
@@ -199,7 +201,7 @@ const BlogPost = () => {
           <aside className="space-y-6 lg:sticky lg:top-28 self-start">
             <div className="rounded-card bg-accent/40 border border-border p-5">
               <div className="flex items-center justify-between gap-4">
-                <span className="font-semibold text-foreground">শেয়ার করুন</span>
+                <span className="font-semibold text-foreground">{t("blogPost.shareCard")}</span>
                 <div className="flex gap-2">
                   {shareLinks.map(({ Icon, href, label }) => (
                     <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label} className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:scale-110 transition-transform">
@@ -211,13 +213,13 @@ const BlogPost = () => {
             </div>
 
             <div className="rounded-card bg-primary text-primary-foreground p-7 text-center shadow-card">
-              <h3 className="text-2xl font-bold leading-snug">আসুন একসাথে পরিবর্তন আনি</h3>
-              <p className="mt-2 text-primary-foreground/80 text-sm">আপনার দান আমাদের কাজের মূল চালিকাশক্তি।</p>
+              <h3 className="text-2xl font-bold leading-snug">{t("blogPost.ctaTitle")}</h3>
+              <p className="mt-2 text-primary-foreground/80 text-sm">{t("blogPost.ctaSubtitle")}</p>
               <Link to="/donate" className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full bg-donate-highlight text-donate-highlight-foreground font-bold px-5 py-3 hover:brightness-105 transition">
-                <Heart className="h-4 w-4" /> দান করুন
+                <Heart className="h-4 w-4" /> {t("blogPost.donate")}
               </Link>
               <Link to="/donate?type=volunteer" className="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full bg-white text-foreground font-bold px-5 py-3 hover:bg-white/90 transition">
-                <Users className="h-4 w-4" /> স্বেচ্ছাসেবক হোন
+                <Users className="h-4 w-4" /> {t("blogPost.volunteer")}
               </Link>
             </div>
           </aside>
@@ -227,7 +229,7 @@ const BlogPost = () => {
       {/* Related */}
       <section className="py-14 md:py-20 bg-secondary/40 border-t border-border">
         <div className="container-page">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">আরও পড়ুন</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">{t("blogPost.related")}</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             {related.map((p) => (
               <Link key={p.slug} to={`/blog/${p.slug}`} className="group bg-card rounded-card overflow-hidden shadow-card hover:shadow-card-hover transition-all border border-border block">

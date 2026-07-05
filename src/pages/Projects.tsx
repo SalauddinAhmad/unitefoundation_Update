@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
@@ -8,29 +9,31 @@ import { useProjectsPublic } from "@/hooks/api/usePublic";
 import heroImg from "@/assets/program-food.jpg";
 
 const Projects = () => {
+  const { t } = useTranslation();
   const { data: projects = [], isLoading } = useProjectsPublic();
+  const ALL = t("projectsPage.all");
 
   const cats = useMemo(() => {
     const s = new Set<string>();
     projects.forEach((p) => p.category && s.add(p.category));
-    return ["সব", ...Array.from(s)];
-  }, [projects]);
+    return [ALL, ...Array.from(s)];
+  }, [projects, ALL]);
 
-  const [active, setActive] = useState<string>("সব");
+  const [active, setActive] = useState<string>(ALL);
   const filtered = useMemo(
-    () => (active === "সব" ? projects : projects.filter((p) => p.category === active)),
-    [projects, active]
+    () => (active === ALL || !cats.includes(active) ? projects : projects.filter((p) => p.category === active)),
+    [projects, active, ALL, cats]
   );
 
   return (
     <SiteLayout>
-      <Seo title="প্রকল্পসমূহ | ইউনাইট ফাউন্ডেশন" description="চলমান প্রকল্পগুলো দেখুন এবং সরাসরি দান করুন।" canonical="/projects" />
+      <Seo title={t("projectsPage.seoTitle")} description={t("projectsPage.seoDesc")} canonical="/projects" />
 
       <PageHero
         image={heroImg}
-        eyebrow="আমাদের প্রকল্প"
-        title="চলমান সকল প্রকল্প — সরাসরি দান করুন"
-        subtitle="প্রতিটি প্রকল্পের অগ্রগতি, লক্ষ্য ও বিস্তারিত হিসাব স্বচ্ছভাবে প্রকাশ করা হয়।"
+        eyebrow={t("projectsPage.eyebrow")}
+        title={t("projectsPage.title")}
+        subtitle={t("projectsPage.subtitle")}
       />
 
       <section className="py-10 md:py-14">
@@ -57,7 +60,7 @@ const Projects = () => {
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="py-24 text-center text-muted-foreground">কোনো প্রকল্প পাওয়া যায়নি।</div>
+            <div className="py-24 text-center text-muted-foreground">{t("projectsPage.noProjects")}</div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
               {filtered.map((p) => (
@@ -72,4 +75,5 @@ const Projects = () => {
 };
 
 export default Projects;
+
 

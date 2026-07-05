@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
@@ -25,7 +26,7 @@ import g18Asset from "@/assets/gallery/18.jpg.asset.json"; const g18 = g18Asset.
 import g19Asset from "@/assets/gallery/19.jpg.asset.json"; const g19 = g19Asset.url;
 import g20Asset from "@/assets/gallery/20.jpg.asset.json"; const g20 = g20Asset.url;
 
-type Tab = "ছবি" | "ভিডিও";
+type Tab = "photos" | "videos";
 
 type ImageItem = { src: string; alt: string; cat: string };
 type VideoItem = { thumb: string; title: string; cat: string; youtubeId: string; duration?: string };
@@ -73,7 +74,9 @@ function extractYouTubeId(url: string): string | null {
 }
 
 const Gallery = () => {
+  const { t } = useTranslation();
   const { data } = useGalleryPublic();
+  const ALL = t("galleryPage.all");
 
   // Build a map: album_id -> album for category lookup
   const albumMap = useMemo(() => {
@@ -112,17 +115,17 @@ const Gallery = () => {
   }, [data, albumMap]);
 
 
-  const cats = useMemo(() => ["সকল", ...Array.from(new Set(items.map((i) => i.cat)))], [items]);
-  const videoCats = useMemo(() => ["সকল", ...Array.from(new Set(videos.map((v) => v.cat)))], [videos]);
+  const cats = useMemo(() => [ALL, ...Array.from(new Set(items.map((i) => i.cat)))], [items, ALL]);
+  const videoCats = useMemo(() => [ALL, ...Array.from(new Set(videos.map((v) => v.cat)))], [videos, ALL]);
 
-  const [tab, setTab] = useState<Tab>("ছবি");
-  const [active, setActive] = useState<string>("সকল");
-  const [activeVideoCat, setActiveVideoCat] = useState<string>("সকল");
+  const [tab, setTab] = useState<Tab>("photos");
+  const [active, setActive] = useState<string>(ALL);
+  const [activeVideoCat, setActiveVideoCat] = useState<string>(ALL);
   const [open, setOpen] = useState<number | null>(null);
   const [openVideo, setOpenVideo] = useState<number | null>(null);
 
-  const filtered = active === "সকল" ? items : items.filter((i) => i.cat === active);
-  const filteredVideos = activeVideoCat === "সকল" ? videos : videos.filter((v) => v.cat === activeVideoCat);
+  const filtered = active === ALL ? items : items.filter((i) => i.cat === active);
+  const filteredVideos = activeVideoCat === ALL ? videos : videos.filter((v) => v.cat === activeVideoCat);
 
   const next = () => setOpen((o) => (o === null ? o : (o + 1) % filtered.length));
   const prev = () => setOpen((o) => (o === null ? o : (o - 1 + filtered.length) % filtered.length));
@@ -130,39 +133,42 @@ const Gallery = () => {
   const nextVideo = () => setOpenVideo((o) => (o === null ? o : (o + 1) % filteredVideos.length));
   const prevVideo = () => setOpenVideo((o) => (o === null ? o : (o - 1 + filteredVideos.length) % filteredVideos.length));
 
-  const sidebarCats: string[] = tab === "ছবি" ? cats : videoCats;
-  const activeCat: string = tab === "ছবি" ? active : activeVideoCat;
+  const sidebarCats: string[] = tab === "photos" ? cats : videoCats;
+  const activeCat: string = tab === "photos" ? active : activeVideoCat;
   const setActiveCat = (c: string) => {
-    if (tab === "ছবি") setActive(c);
+    if (tab === "photos") setActive(c);
     else setActiveVideoCat(c);
   };
 
+  const tabLabels: Record<Tab, string> = { photos: t("galleryPage.photos"), videos: t("galleryPage.videos") };
+
   return (
     <SiteLayout>
-      <Seo title="গ্যালারি | ইউনাইট ফাউন্ডেশন" description="মাঠ পর্যায়ের কাজের ছবি ও মুহূর্তগুলো।" canonical="/gallery" />
+      <Seo title={t("galleryPage.seoTitle")} description={t("galleryPage.seoDesc")} canonical="/gallery" />
 
       <PageHero
         image={g1}
-        eyebrow="গ্যালারি"
-        title="আমাদের কাজের মুহূর্তগুলো"
-        subtitle="মাঠ পর্যায়ের ছবি ও ভিডিওতে আমাদের সেবার গল্প।"
+        eyebrow={t("galleryPage.eyebrow")}
+        title={t("galleryPage.title")}
+        subtitle={t("galleryPage.subtitle")}
       />
+
 
       {/* Tab switcher */}
       <section className="bg-secondary/40 py-8 md:py-10 border-b border-border">
         <div className="container-page flex justify-center">
           <div className="inline-flex p-1.5 rounded-full bg-card shadow-card border border-border">
-            {(["ছবি", "ভিডিও"] as Tab[]).map((t) => (
+            {(["photos", "videos"] as Tab[]).map((tk) => (
               <button
-                key={t}
-                onClick={() => setTab(t)}
+                key={tk}
+                onClick={() => setTab(tk)}
                 className={`px-7 md:px-10 py-2.5 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
-                  tab === t
+                  tab === tk
                     ? "bg-accent text-primary shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t}
+                {tabLabels[tk]}
               </button>
             ))}
           </div>
@@ -196,7 +202,7 @@ const Gallery = () => {
           </aside>
 
           {/* Grid */}
-          {tab === "ছবি" ? (
+          {tab === "photos" ? (
             <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
               {filtered.map((it, i) => (
                 <button
@@ -221,7 +227,7 @@ const Gallery = () => {
             <div className="grid sm:grid-cols-2 gap-5">
               {filteredVideos.length === 0 && (
                 <div className="col-span-full text-center text-muted-foreground py-16">
-                  এই ক্যাটাগরিতে কোনো ভিডিও পাওয়া যায়নি।
+                  {t("galleryPage.noVideos")}
                 </div>
               )}
               {filteredVideos.map((v, i) => (
