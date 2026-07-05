@@ -74,7 +74,9 @@ function extractYouTubeId(url: string): string | null {
 }
 
 const Gallery = () => {
+  const { t } = useTranslation();
   const { data } = useGalleryPublic();
+  const ALL = t("galleryPage.all");
 
   // Build a map: album_id -> album for category lookup
   const albumMap = useMemo(() => {
