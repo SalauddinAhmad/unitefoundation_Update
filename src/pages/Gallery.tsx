@@ -227,7 +227,7 @@ const Gallery = () => {
             <div className="grid sm:grid-cols-2 gap-5">
               {filteredVideos.length === 0 && (
                 <div className="col-span-full text-center text-muted-foreground py-16">
-                  এই ক্যাটাগরিতে কোনো ভিডিও পাওয়া যায়নি।
+                  {t("galleryPage.noVideos")}
                 </div>
               )}
               {filteredVideos.map((v, i) => (
