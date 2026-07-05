@@ -89,16 +89,16 @@ const Donate = () => {
   return (
     <SiteLayout>
       <Seo
-        title="দান করুন | ইউনাইট ফাউন্ডেশন"
-        description="মাত্র কয়েক সেকেন্ডে আপনার দান সম্পন্ন করুন — bKash, Nagad, রকেট বা ব্যাংকের মাধ্যমে। নিরাপদ ও স্বচ্ছ।"
+        title={t("donatePage.seoTitle")}
+        description={t("donatePage.seoDesc")}
         canonical="/donate"
       />
 
       <PageHero
         image={donateImg}
-        eyebrow="দান করুন"
+        eyebrow={t("donatePage.eyebrow")}
         title={selected.title}
-        subtitle="আপনার দানে গড়ে উঠবে কারো নতুন দিন।"
+        subtitle={t("donatePage.heroSubtitle")}
       />
 
       <section id="donate-form" className="py-12 md:py-16 bg-gradient-to-b from-background to-secondary/20">
@@ -129,9 +129,9 @@ const Donate = () => {
             <div className="rounded-card bg-accent/50 border border-border p-6 md:p-7 relative overflow-hidden">
               <Quote className="absolute -top-2 -right-2 h-20 w-20 text-primary/10" />
               <p className="text-base md:text-lg leading-relaxed text-foreground relative">
-                "যে ব্যক্তি কোনো মুসলিমের পার্থিব কোনো বিপদ দূর করে দেবে, কিয়ামতের দিন আল্লাহ তার বিপদ দূর করে দেবেন।"
+                {t("donatePage.hadith")}
               </p>
-              <div className="mt-3 text-xs font-semibold text-muted-foreground relative">— সুনান আবু দাউদ</div>
+              <div className="mt-3 text-xs font-semibold text-muted-foreground relative">{t("donatePage.hadithSource")}</div>
             </div>
 
             {/* Description */}
@@ -144,9 +144,9 @@ const Donate = () => {
           <form onSubmit={submit} className="rounded-card bg-card border border-border shadow-card-hover overflow-hidden lg:sticky lg:top-28">
             {/* Green header */}
             <div className="gradient-donate-bg p-5 md:p-6 text-white">
-              <h2 className="text-xl md:text-2xl font-extrabold">দান করে পাশে দাঁড়ান</h2>
+              <h2 className="text-xl md:text-2xl font-extrabold">{t("donatePage.cardTitle")}</h2>
               <p className="text-sm opacity-90 mt-1.5 leading-relaxed">
-                আপনার সামান্য সহযোগিতাই হতে পারে কারো জীবনের বড় পরিবর্তন।
+                {t("donatePage.cardSubtitle")}
               </p>
             </div>
 
@@ -188,7 +188,7 @@ const Donate = () => {
                       : "border-dashed border-border bg-card hover:border-primary/60 text-muted-foreground"
                   }`}
                 >
-                  যে কোনো পরিমাণ
+                  {t("donatePage.anyAmount")}
                 </button>
               </div>
 
@@ -253,8 +253,8 @@ const Donate = () => {
                 >
                   <img src={sslLogo} alt="SSLCommerz" className="h-7 w-auto" />
                   <div className="text-left flex-1">
-                    <div className="text-sm font-bold text-foreground">কার্ড / মোবাইল ব্যাংকিং</div>
-                    <div className="text-[11px] text-muted-foreground">Visa · Mastercard · bKash · Nagad · Rocket</div>
+                    <div className="text-sm font-bold text-foreground">{t("donatePage.sslLabel")}</div>
+                    <div className="text-[11px] text-muted-foreground">{t("donatePage.sslSub")}</div>
                   </div>
                   {method === "ssl" && (
                     <span className="h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
@@ -301,7 +301,7 @@ const Donate = () => {
                 <div className="rounded-btn border-2 border-primary/30 bg-accent/40 p-3 flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <div className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
-                      {methodLabel.label} ({methodLabel.sub}) নম্বর
+                      {methodLabel.label} ({methodLabel.sub}) {t("donatePage.number")}
                     </div>
                     <div className="font-mono font-bold text-foreground mt-0.5 truncate" dir="ltr">
                       {methodNumber}
@@ -311,9 +311,9 @@ const Donate = () => {
                     type="button"
                     onClick={copyNumber}
                     className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-btn bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90"
-                    aria-label="নম্বর কপি করুন"
+                    aria-label={t("donatePage.copy")}
                   >
-                    <Copy className="h-3.5 w-3.5" /> কপি
+                    <Copy className="h-3.5 w-3.5" /> {t("donatePage.copy")}
                   </button>
                 </div>
               )}
@@ -321,18 +321,18 @@ const Donate = () => {
               {/* Submit */}
               <button type="submit" className="btn-donate w-full text-base py-4">
                 <Heart className="h-5 w-5" />
-                দান করুন — ৳{toBnNum(new Intl.NumberFormat("en-IN").format(finalAmount || 0))}
+                {t("donatePage.donateBtn")} — ৳{toBnNum(new Intl.NumberFormat("en-IN").format(finalAmount || 0))}
               </button>
 
 
               <p className="text-[11px] text-center text-muted-foreground leading-relaxed">
-                "দান করুন" ক্লিক করে আপনি আমাদের <span className="underline">শর্তাবলী</span> ও{" "}
-                <span className="underline">গোপনীয়তা নীতির</span> সাথে সম্মত হন।
+                {t("donatePage.terms")} <span className="underline">{t("donatePage.termsLink")}</span> {t("donatePage.and")}{" "}
+                <span className="underline">{t("donatePage.privacyLink")}</span> {t("donatePage.termsEnd")}
               </p>
 
               <div className="flex items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                শরীয়াহ-অনুমোদিত · স্বচ্ছ হিসাব · ডিজিটাল রসিদ
+                {t("donatePage.trust")}
               </div>
             </div>
           </form>
@@ -344,7 +344,7 @@ const Donate = () => {
         onClose={() => setShowModal(false)}
         amount={finalAmount}
         projectTitle={selected.title}
-        donorName={behalf ? `${name} (${behalf}-এর পক্ষ থেকে)` : name}
+        donorName={behalf ? `${name} (${behalf} ${t("donatePage.onBehalfOf")})` : name}
         donorPhone={contact}
       />
 
