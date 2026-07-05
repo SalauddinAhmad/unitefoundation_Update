@@ -150,5 +150,10 @@
     "month": "Last 30 days",
     "unitPeople": "people",
     "unitVisits": "visits"
+  },
+  "blogHome": {
+    "eyebrow": "Latest updates",
+    "heading": "News, reports & campaigns",
+    "allPosts": "All posts"
   }
 }

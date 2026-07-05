@@ -150,5 +150,10 @@
     "month": "গত ৩০ দিন",
     "unitPeople": "জন",
     "unitVisits": "ভিজিট"
+  },
+  "blogHome": {
+    "eyebrow": "সর্বশেষ আপডেট",
+    "heading": "খবর, প্রতিবেদন ও ক্যাম্পেইন",
+    "allPosts": "সব পোস্ট"
   }
 }
