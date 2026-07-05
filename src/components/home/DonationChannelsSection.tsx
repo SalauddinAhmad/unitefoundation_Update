@@ -64,10 +64,10 @@ export const DonationChannelsSection = () => {
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14 animate-fade-in">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            আমাদের সাথে যুক্ত হোন
+            {t("channels.heading")}
           </h2>
           <p className="text-white/60 mt-3 text-sm md:text-base leading-relaxed">
-            নিচের যে কোনো পদ্ধতিতে আমাদের সঙ্গে যুক্ত হয়ে আর্তমানবতার সেবায় ভূমিকা রাখতে পারেন।
+            {t("channels.subtitle")}
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export const DonationChannelsSection = () => {
               {/* Account name */}
               <div className="mb-4">
                 <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                  Account Name
+                  {t("channels.labels.accountName")}
                 </div>
                 <div className="text-[hsl(var(--donate-highlight))] font-bold text-lg">{b.accountName}</div>
               </div>
@@ -113,15 +113,15 @@ export const DonationChannelsSection = () => {
               <div className="rounded-2xl bg-black/30 border border-white/5 p-4 md:p-5 flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                    Account Number
+                    {t("channels.labels.accountNumber")}
                   </div>
                   <div className="font-mono font-bold text-white text-xl md:text-2xl tracking-wide" dir="ltr">
                     {formatAccount(b.accountNumber)}
                   </div>
                 </div>
                 <button
-                  onClick={() => copy(b.accountNumber, "অ্যাকাউন্ট নম্বর")}
-                  aria-label="অ্যাকাউন্ট নম্বর কপি করুন"
+                  onClick={() => copy(b.accountNumber, t("channels.toast.accountNumber"))}
+                  aria-label={t("channels.copyAccount")}
                   className="shrink-0 h-11 w-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white flex items-center justify-center transition-colors"
                 >
                   <Copy className="h-4 w-4" />
@@ -132,14 +132,14 @@ export const DonationChannelsSection = () => {
               <div className="grid grid-cols-2 gap-4 mt-5">
                 <div>
                   <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                    Branch
+                    {t("channels.labels.branch")}
                   </div>
                   <div className="text-white/90 text-sm font-medium">{b.branch}</div>
                 </div>
                 {b.routing ? (
                   <div>
                     <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                      Routing
+                      {t("channels.labels.routing")}
                     </div>
                     <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
                   </div>
@@ -147,7 +147,7 @@ export const DonationChannelsSection = () => {
                 {b.swift ? (
                   <div>
                     <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                      SWIFT
+                      {t("channels.labels.swift")}
                     </div>
                     <div className="text-white/90 text-sm font-mono font-medium" dir="ltr">{b.swift}</div>
                   </div>
@@ -174,7 +174,7 @@ export const DonationChannelsSection = () => {
                 <h3 className="text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">
                   Personal Number
                 </h3>
-                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">পার্সোনাল অ্যাকাউন্ট</div>
+                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">{t("channels.personalAccount")}</div>
               </div>
               <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-[hsl(var(--donate-highlight))]/30 to-[hsl(var(--donate-highlight))]/10 border border-[hsl(var(--donate-highlight))]/30 flex items-center justify-center">
                 <Smartphone className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
@@ -184,7 +184,7 @@ export const DonationChannelsSection = () => {
             {/* Account holder */}
             <div className="mb-4">
               <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                Account Name
+                {t("channels.labels.accountName")}
               </div>
               <div className="text-[hsl(var(--donate-highlight))] font-bold text-lg">{site.payments.bank.account}</div>
             </div>
@@ -193,15 +193,15 @@ export const DonationChannelsSection = () => {
             <div className="rounded-2xl bg-black/30 border border-white/5 p-4 md:p-5 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="text-[10px] font-bold tracking-[0.18em] text-white/40 uppercase mb-1">
-                  Mobile Number
+                  {t("channels.labels.mobileNumber")}
                 </div>
                 <div className="font-mono font-bold text-white text-xl md:text-2xl tracking-wide" dir="ltr">
                   {site.payments.bkash.number}
                 </div>
               </div>
               <button
-                onClick={() => copy(site.payments.bkash.number, "মোবাইল নম্বর")}
-                aria-label="মোবাইল নম্বর কপি করুন"
+                onClick={() => copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))}
+                aria-label={t("channels.copyMobile")}
                 className="shrink-0 h-11 w-11 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white flex items-center justify-center transition-colors"
               >
                 <Copy className="h-4 w-4" />
@@ -237,9 +237,9 @@ export const DonationChannelsSection = () => {
                   BANGLA QR
                 </div>
                 <h3 className="text-2xl md:text-3xl font-extrabold text-white mt-2 tracking-tight">
-                  স্ক্যান করে দান
+                  {t("channels.scanToDonate")}
                 </h3>
-                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">যেকোনো ব্যাংক/MFS অ্যাপ</div>
+                <div className="text-xs text-[hsl(var(--donate-highlight))]/90 mt-1.5 font-medium">{t("channels.anyAppNote")}</div>
               </div>
               <div className="h-12 w-16 rounded-lg bg-gradient-to-br from-[hsl(var(--donate-highlight))]/30 to-[hsl(var(--donate-highlight))]/10 border border-[hsl(var(--donate-highlight))]/30 flex items-center justify-center">
                 <QrCode className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
@@ -258,20 +258,20 @@ export const DonationChannelsSection = () => {
                 <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-emerald-900/20 rounded-xl">
                   <QrCode className="h-14 w-14 text-emerald-900/40" strokeWidth={1.2} />
                   <div className="text-emerald-900/70 text-xs font-semibold px-3">
-                    Bangla QR শীঘ্রই যুক্ত হবে
+                    {t("channels.qrPending")}
                   </div>
                 </div>
               )}
             </div>
 
             <p className="text-center text-[11px] text-white/50 mt-4 leading-relaxed">
-              মোবাইল ব্যাংকিং/ব্যাংক অ্যাপ থেকে QR স্ক্যান করে সরাসরি দান করুন
+              {t("channels.qrHint")}
             </p>
           </article>
         </div>
 
         <p className="text-center text-xs text-white/40 mt-10 italic max-w-xl mx-auto">
-          "যে ব্যক্তি ভালো কাজে উদ্যোগী হয়, সে ঐ কাজ সম্পাদনকারীর সমান সওয়াব পায়।"
+          {t("channels.quote")}
         </p>
       </div>
     </section>
