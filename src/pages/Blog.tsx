@@ -29,13 +29,13 @@ const Blog = () => {
 
   return (
     <SiteLayout>
-      <Seo title="ব্লগ ও আপডেট | ইউনাইট ফাউন্ডেশন" description="ফাউন্ডেশনের সর্বশেষ ক্যাম্পেইন, ফিল্ড রিপোর্ট ও স্বচ্ছতা প্রতিবেদন।" canonical="/blog" />
+      <Seo title={t("blogPage.seoTitle")} description={t("blogPage.seoDesc")} canonical="/blog" />
 
       <PageHero
         image={relief}
-        eyebrow="ব্লগ ও আপডেট"
-        title="খবর, প্রতিবেদন ও মাঠের গল্প"
-        subtitle="ফাউন্ডেশনের সর্বশেষ ক্যাম্পেইন, ফিল্ড রিপোর্ট ও স্বচ্ছতা প্রতিবেদন — এক জায়গায়।"
+        eyebrow={t("blogPage.eyebrow")}
+        title={t("blogPage.title")}
+        subtitle={t("blogPage.subtitle")}
       />
 
       {/* Search + filter bar */}
@@ -46,7 +46,7 @@ const Blog = () => {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="ব্লগ খুঁজুন…"
+              placeholder={t("blogPage.searchPlaceholder")}
               className="w-full pl-11 pr-4 py-3 rounded-full bg-card shadow-card border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
             />
           </div>
@@ -90,7 +90,7 @@ const Blog = () => {
                 <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-[1.2] group-hover:text-primary transition-colors">{featured.title}</h2>
                 <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-3">{featured.excerpt}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
-                  বিস্তারিত পড়ুন <ArrowRight className="h-4 w-4" />
+                  {t("blogPage.readMore")} <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
             </Link>
@@ -115,7 +115,7 @@ const Blog = () => {
                 <h3 className="mt-2 text-lg font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm group-hover:gap-2.5 transition-all">
-                  পড়ুন <ArrowRight className="h-4 w-4" />
+                  {t("blogPage.read")} <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
             </Link>
