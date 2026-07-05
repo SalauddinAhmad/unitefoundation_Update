@@ -76,6 +76,29 @@ async function request<T = unknown>(path: string, opts: Options = {}): Promise<T
     const msg =
       (isJson && payload && (payload as { message?: string }).message) ||
       `Request failed (${res.status})`;
+
+    // Global handling for expired / invalid session tokens.
+    // Backend returns 401 with "Invalid or expired token" from requireAuth
+    // middleware — force a clean re-login instead of showing a raw error.
+    if (
+      res.status === 401 &&
+      useAuth &&
+      typeof window !== "undefined" &&
+      auth.token
+    ) {
+      const reason =
+        /invalid|expired|unauthorized/i.test(msg) ? "session_expired" : "unauthorized";
+      auth.clear();
+      try {
+        localStorage.removeItem("uf_auth_user");
+      } catch { /* ignore */ }
+      const current = window.location.pathname + window.location.search;
+      // Avoid redirect loops if already on /login
+      if (!/^\/login\b/.test(window.location.pathname)) {
+        window.location.replace(`/login?reason=${reason}&from=${encodeURIComponent(current)}`);
+      }
+    }
+
     throw new ApiError(msg, res.status, payload);
   }
   return payload as T;
