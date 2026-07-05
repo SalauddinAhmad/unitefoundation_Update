@@ -17,8 +17,15 @@
     "viewDetails": "View details",
     "prev": "Previous",
     "next": "Next",
+    "close": "Close",
     "slide": "Slide",
-    "language": "Language"
+    "language": "Language",
+    "read": "Read",
+    "minutes": "min read",
+    "loading": "Loading…",
+    "copied": "Copied",
+    "copiedDesc": "{{label}} has been copied.",
+    "verifyInfo": "Please check your input"
   },
   "hero": {
     "slide1": {
@@ -58,5 +65,90 @@
       "tv": "Unite TV"
     },
     "rights": "All rights reserved."
+  },
+  "about": {
+    "headingFallback": "Following the Sunnah, Serving Humanity",
+    "highlightFallback": "Unite Foundation",
+    "bodyFallback": "Unite Foundation is a non-political, non-profit Islamic platform.",
+    "expNumber": "15+",
+    "expLabel": "years of experience and trust"
+  },
+  "programs": {
+    "eyebrow": "Our Programs",
+    "heading": "Ongoing projects — where your donation works directly",
+    "allProjects": "All projects",
+    "viewAll": "See all projects"
+  },
+  "impact": {
+    "eyebrow": "Our Impact",
+    "heading": "This achievement is built on your trust",
+    "subtitle": "Over a 15-year journey, you have changed the lives of hundreds of thousands."
+  },
+  "quickDonate": {
+    "heading": "Donate in 30 seconds — start the change today",
+    "subtitle": "Donate directly to your chosen project. Full accounting of every taka will reach you by email and SMS.",
+    "trust1": "100% secure",
+    "trust2": "Transparent accounts",
+    "trust3": "Direct impact",
+    "selectProject": "Select a project",
+    "amountLabel": "Donation amount (৳)",
+    "customPlaceholder": "Or enter a custom amount",
+    "namePlaceholder": "Your name",
+    "phonePlaceholder": "Mobile number",
+    "cta": "Continue",
+    "err": {
+      "projectRequired": "Please select a project",
+      "amountMin": "Minimum 50 taka",
+      "nameMin": "Please enter your name",
+      "phoneInvalid": "Please enter a valid mobile number"
+    }
+  },
+  "channels": {
+    "heading": "Get in touch with us",
+    "subtitle": "Use any of the methods below to join hands with us in serving humanity.",
+    "generalFund": "General Fund",
+    "personalAccount": "Personal account",
+    "scanToDonate": "Scan to donate",
+    "anyAppNote": "Any bank / MFS app",
+    "qrPending": "Bangla QR will be added soon",
+    "qrHint": "Scan the QR from your mobile banking or bank app to donate directly",
+    "quote": "\"Whoever guides someone to a good deed will have a reward equal to the one who does it.\"",
+    "copyAccount": "Copy account number",
+    "copyMobile": "Copy mobile number",
+    "labels": {
+      "accountName": "Account Name",
+      "accountNumber": "Account Number",
+      "mobileNumber": "Mobile Number",
+      "branch": "Branch",
+      "routing": "Routing",
+      "swift": "SWIFT"
+    },
+    "toast": {
+      "accountNumber": "Account number",
+      "mobileNumber": "Mobile number"
+    }
+  },
+  "gallery": {
+    "eyebrow": "Our activities",
+    "heading": "Gallery",
+    "seeMore": "See more",
+    "titleFallback": "Gallery"
+  },
+  "partners": {
+    "eyebrow": "Our partners",
+    "heading": "Our organisations",
+    "subtitle": "Click on any organisation's logo to learn more",
+    "aria": "See details about {{name}}"
+  },
+  "visitor": {
+    "liveLabel": "Live · Active now",
+    "heading": "Visitor statistics on our site",
+    "subtitle": "Real-time community engagement — every visit is a participation.",
+    "total": "Total visitors",
+    "today": "Today",
+    "week": "Last 7 days",
+    "month": "Last 30 days",
+    "unitPeople": "people",
+    "unitVisits": "visits"
   }
 }
