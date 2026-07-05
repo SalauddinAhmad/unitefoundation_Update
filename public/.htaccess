@@ -2,7 +2,7 @@
 Options -Indexes
 
 # Block access to hidden/sensitive files
-<FilesMatch "^\.(?!well-known)|\.(env|env\..*|log|sql|md|yml|yaml|lock|json|sh|bak|old|ini|conf)$">
+<FilesMatch "^\.(?!well-known)|\.(env|env\..*|log|sql|md|yml|yaml|lock|sh|bak|old|ini|conf)$">
   Require all denied
 </FilesMatch>
 
