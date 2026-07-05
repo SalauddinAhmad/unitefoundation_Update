@@ -1,20 +1,23 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { posts } from "@/data/blog";
-import { toBnNum } from "@/data/projects";
+import { useLocaleNum } from "@/hooks/useLocaleNum";
 
 export const BlogSection = () => {
+  const { t } = useTranslation();
+  const { fmt } = useLocaleNum();
   const latest = posts.slice(0, 3);
   return (
     <section className="section-y bg-secondary/40">
       <div className="container-page">
         <div className="flex items-end justify-between gap-6 mb-10">
           <div>
-            <span className="eyebrow">সর্বশেষ আপডেট</span>
-            <h2 className="heading-display mt-3 max-w-xl">খবর, প্রতিবেদন ও ক্যাম্পেইন</h2>
+            <span className="eyebrow">{t("blogHome.eyebrow")}</span>
+            <h2 className="heading-display mt-3 max-w-xl">{t("blogHome.heading")}</h2>
           </div>
           <Link to="/blog" className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
-            সব পোস্ট <ArrowRight className="h-4 w-4" />
+            {t("blogHome.allPosts")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
@@ -27,14 +30,14 @@ export const BlogSection = () => {
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="px-2 py-1 rounded bg-accent text-accent-foreground font-semibold">{p.category}</span>
                   <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" />{p.date}</span>
-                  <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{toBnNum(p.readMin)} মিনিট</span>
+                  <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{fmt(p.readMin)} {t("common.minutes")}</span>
                 </div>
                 <h3 className="mt-3 text-lg font-bold leading-snug line-clamp-2 hover:text-primary transition-colors">
                   <Link to={`/blog/${p.slug}`}>{p.title}</Link>
                 </h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
                 <Link to={`/blog/${p.slug}`} className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:gap-2.5 transition-all">
-                  পড়ুন <ArrowRight className="h-4 w-4" />
+                  {t("common.read")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
             </article>

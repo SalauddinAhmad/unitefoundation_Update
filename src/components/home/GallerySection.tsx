@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Images, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useGalleryPublic } from "@/hooks/api/usePublic";
 import g1Asset from "@/assets/gallery/01.jpg.asset.json"; const g1 = g1Asset.url;
 import g2Asset from "@/assets/gallery/02.jpg.asset.json"; const g2 = g2Asset.url;
@@ -9,21 +10,23 @@ import g4Asset from "@/assets/gallery/04.jpg.asset.json"; const g4 = g4Asset.url
 import g5Asset from "@/assets/gallery/05.jpg.asset.json"; const g5 = g5Asset.url;
 import g6Asset from "@/assets/gallery/06.jpg.asset.json"; const g6 = g6Asset.url;
 
-const fallback = [
-  { src: g1, alt: "বন্যা কবলিত এলাকায় পরিদর্শন" },
-  { src: g2, alt: "নৌকায় ত্রাণ বিতরণ" },
-  { src: g3, alt: "খাদ্য সামগ্রী বিতরণ কার্যক্রম" },
-  { src: g4, alt: "বন্যায় ত্রাণ পৌঁছে দেওয়া" },
-  { src: g5, alt: "ত্রাণ প্যাকেজ প্রস্তুতি" },
-  { src: g6, alt: "শিশুদের সহায়তা" },
-];
-
 export const GallerySection = () => {
+  const { t } = useTranslation();
+
+  const fallback = [
+    { src: g1, alt: t("gallery.titleFallback") },
+    { src: g2, alt: t("gallery.titleFallback") },
+    { src: g3, alt: t("gallery.titleFallback") },
+    { src: g4, alt: t("gallery.titleFallback") },
+    { src: g5, alt: t("gallery.titleFallback") },
+    { src: g6, alt: t("gallery.titleFallback") },
+  ];
+
   const { data } = useGalleryPublic();
   const apiImages = (data?.items || [])
     .filter((it) => it.kind === "image")
     .slice(0, 6)
-    .map((it) => ({ src: it.url, alt: it.title || "গ্যালারি" }));
+    .map((it) => ({ src: it.url, alt: it.title || t("gallery.titleFallback") }));
   const galleryImages = apiImages.length ? apiImages : fallback;
 
   const [open, setOpen] = useState<number | null>(null);
@@ -34,8 +37,8 @@ export const GallerySection = () => {
     <section className="section-y">
       <div className="container-page">
         <div className="text-center mb-10">
-          <span className="eyebrow">আমাদের কার্যক্রম</span>
-          <h2 className="heading-display mt-3 mx-auto">গ্যালারি</h2>
+          <span className="eyebrow">{t("gallery.eyebrow")}</span>
+          <h2 className="heading-display mt-3 mx-auto">{t("gallery.heading")}</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -61,7 +64,7 @@ export const GallerySection = () => {
             to="/gallery"
             className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
           >
-            আরও দেখুন <Images className="h-4 w-4" />
+            {t("gallery.seeMore")} <Images className="h-4 w-4" />
           </Link>
         </div>
       </div>
@@ -74,21 +77,21 @@ export const GallerySection = () => {
           <button
             onClick={(e) => { e.stopPropagation(); setOpen(null); }}
             className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
-            aria-label="বন্ধ করুন"
+            aria-label={t("common.close")}
           >
             <X className="h-5 w-5" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); prev(); }}
             className="absolute left-4 md:left-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
-            aria-label="আগের"
+            aria-label={t("common.prev")}
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); next(); }}
             className="absolute right-4 md:right-8 h-12 w-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"
-            aria-label="পরের"
+            aria-label={t("common.next")}
           >
             <ChevronRight className="h-6 w-6" />
           </button>

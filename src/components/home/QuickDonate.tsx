@@ -1,20 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Sparkles } from "lucide-react";
+import { Heart } from "lucide-react";
 import { z } from "zod";
-import { projects, toBnNum } from "@/data/projects";
+import { useTranslation } from "react-i18next";
+import { projects } from "@/data/projects";
+import { useLocaleNum } from "@/hooks/useLocaleNum";
 import { toast } from "@/hooks/use-toast";
 
 const presets = [500, 1000, 2500, 5000, 10000];
 
-const schema = z.object({
-  project: z.string().min(1, "প্রকল্প নির্বাচন করুন"),
-  amount: z.number().min(50, "ন্যূনতম ৫০ টাকা").max(10000000),
-  name: z.string().trim().min(2, "নাম লিখুন").max(80),
-  phone: z.string().trim().regex(/^01[3-9]\d{8}$/, "সঠিক মোবাইল নম্বর দিন"),
-});
-
 export const QuickDonate = () => {
+  const { t } = useTranslation();
+  const { fmt } = useLocaleNum();
   const navigate = useNavigate();
   const [project, setProject] = useState(projects[0].slug);
   const [amount, setAmount] = useState<number>(1000);
@@ -22,12 +19,19 @@ export const QuickDonate = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
+  const schema = z.object({
+    project: z.string().min(1, t("quickDonate.err.projectRequired")),
+    amount: z.number().min(50, t("quickDonate.err.amountMin")).max(10000000),
+    name: z.string().trim().min(2, t("quickDonate.err.nameMin")).max(80),
+    phone: z.string().trim().regex(/^01[3-9]\d{8}$/, t("quickDonate.err.phoneInvalid")),
+  });
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const finalAmount = custom ? Number(custom) : amount;
     const result = schema.safeParse({ project, amount: finalAmount, name, phone });
     if (!result.success) {
-      toast({ title: "তথ্য যাচাই করুন", description: result.error.issues[0]?.message, variant: "destructive" });
+      toast({ title: t("common.verifyInfo"), description: result.error.issues[0]?.message, variant: "destructive" });
       return;
     }
     navigate(`/donate?project=${project}&amount=${finalAmount}&name=${encodeURIComponent(name)}&phone=${phone}`);
@@ -41,21 +45,20 @@ export const QuickDonate = () => {
       <div className="container-page relative grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div className="text-donate-highlight-foreground">
           <h2 className="heading-display text-left text-donate-highlight-foreground">
-            ৩০ সেকেন্ডে দান করুন — পরিবর্তন শুরু হোক এখনই
+            {t("quickDonate.heading")}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-donate-highlight-foreground/80 max-w-lg">
-            আপনার পছন্দের প্রকল্পে সরাসরি দান করুন। প্রতিটি টাকার পূর্ণ হিসাব আপনি পাবেন
-            ই-মেইল ও SMS-এ।
+            {t("quickDonate.subtitle")}
           </p>
           <div className="mt-6 flex flex-wrap gap-6 text-sm font-semibold text-donate-highlight-foreground">
-            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />১০০% সুরক্ষিত</div>
-            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />স্বচ্ছ হিসাব</div>
-            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />সরাসরি প্রভাব</div>
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />{t("quickDonate.trust1")}</div>
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />{t("quickDonate.trust2")}</div>
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-primary" />{t("quickDonate.trust3")}</div>
           </div>
         </div>
 
         <form onSubmit={onSubmit} className="bg-card rounded-card p-6 md:p-8 shadow-card-hover">
-          <label className="block text-sm font-semibold text-foreground mb-2">প্রকল্প নির্বাচন করুন</label>
+          <label className="block text-sm font-semibold text-foreground mb-2">{t("quickDonate.selectProject")}</label>
           <select
             value={project}
             onChange={(e) => setProject(e.target.value)}
@@ -66,7 +69,7 @@ export const QuickDonate = () => {
             ))}
           </select>
 
-          <label className="block text-sm font-semibold text-foreground mt-5 mb-2">দানের পরিমাণ (৳)</label>
+          <label className="block text-sm font-semibold text-foreground mt-5 mb-2">{t("quickDonate.amountLabel")}</label>
           <div className="grid grid-cols-5 gap-2">
             {presets.map((p) => {
               const active = !custom && amount === p;
@@ -81,7 +84,7 @@ export const QuickDonate = () => {
                       : "border-input bg-background text-foreground hover:border-primary"
                   }`}
                 >
-                  ৳{toBnNum(p)}
+                  ৳{fmt(p)}
                 </button>
               );
             })}
@@ -89,7 +92,7 @@ export const QuickDonate = () => {
           <input
             type="number"
             min={50}
-            placeholder="বা কাস্টম পরিমাণ লিখুন"
+            placeholder={t("quickDonate.customPlaceholder")}
             value={custom}
             onChange={(e) => setCustom(e.target.value)}
             className="mt-3 w-full rounded-btn border border-input bg-background px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -99,7 +102,7 @@ export const QuickDonate = () => {
             <input
               required
               maxLength={80}
-              placeholder="আপনার নাম"
+              placeholder={t("quickDonate.namePlaceholder")}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="rounded-btn border border-input bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -109,7 +112,7 @@ export const QuickDonate = () => {
               type="tel"
               inputMode="numeric"
               maxLength={11}
-              placeholder="মোবাইল নম্বর"
+              placeholder={t("quickDonate.phonePlaceholder")}
               value={phone}
               onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
               className="rounded-btn border border-input bg-background px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary"
@@ -117,7 +120,7 @@ export const QuickDonate = () => {
           </div>
 
           <button type="submit" className="btn-donate w-full mt-6 text-base">
-            <Heart className="h-5 w-5" /> এগিয়ে যান
+            <Heart className="h-5 w-5" /> {t("quickDonate.cta")}
           </button>
         </form>
       </div>

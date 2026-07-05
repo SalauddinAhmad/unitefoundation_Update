@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Eye, Users, CalendarDays, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { api } from "@/lib/api";
+import { useLocaleNum } from "@/hooks/useLocaleNum";
 
 type Totals = { total: number; today: number; week: number; month: number };
 
-const bn = (n: number) => n.toLocaleString("bn-BD");
-
 export const VisitorCounter = () => {
-  const [t, setT] = useState<Totals | null>(null);
+  const { t } = useTranslation();
+  const { fmt } = useLocaleNum();
+  const [tot, setTot] = useState<Totals | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -18,7 +20,7 @@ export const VisitorCounter = () => {
           ? await api.get<Totals>("/stats/visits", { auth: false })
           : await api.post<Totals>("/stats/visit", undefined, { auth: false });
         if (!counted) sessionStorage.setItem("uf_visit_counted", "1");
-        if (!cancelled) setT(data);
+        if (!cancelled) setTot(data);
       } catch {
         /* silent */
       }
@@ -30,15 +32,14 @@ export const VisitorCounter = () => {
   }, []);
 
   const items = [
-    { icon: Eye, label: "মোট ভিজিটর", value: t?.total ?? 0 },
-    { icon: Users, label: "আজ", value: t?.today ?? 0 },
-    { icon: CalendarDays, label: "গত ৭ দিন", value: t?.week ?? 0 },
-    { icon: TrendingUp, label: "গত ৩০ দিন", value: t?.month ?? 0 },
+    { icon: Eye, label: t("visitor.total"), value: tot?.total ?? 0 },
+    { icon: Users, label: t("visitor.today"), value: tot?.today ?? 0 },
+    { icon: CalendarDays, label: t("visitor.week"), value: tot?.week ?? 0 },
+    { icon: TrendingUp, label: t("visitor.month"), value: tot?.month ?? 0 },
   ];
 
   return (
     <section className="relative py-14 overflow-hidden border-y border-border/60">
-      {/* backdrop */}
       <div className="absolute inset-0 bg-gradient-to-b from-secondary/40 via-background to-secondary/30" />
       <div
         className="absolute inset-0 opacity-[0.35] pointer-events-none"
@@ -67,14 +68,14 @@ export const VisitorCounter = () => {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
               </span>
               <span className="text-[11px] font-bold tracking-[0.22em] text-primary uppercase">
-                Live · এখনই সক্রিয়
+                {t("visitor.liveLabel")}
               </span>
             </div>
             <h3 className="mt-3 text-xl sm:text-2xl font-black tracking-tight">
-              আমাদের সাইটে ভিজিটর পরিসংখ্যান
+              {t("visitor.heading")}
             </h3>
             <p className="mt-1.5 text-sm text-muted-foreground max-w-md">
-              রিয়েল-টাইম কমিউনিটি এনগেজমেন্ট — প্রতিটি ভিজিট একেকটি অংশগ্রহণ।
+              {t("visitor.subtitle")}
             </p>
           </div>
 
@@ -98,10 +99,10 @@ export const VisitorCounter = () => {
 
                 <div className="mt-3 flex items-baseline gap-1.5">
                   <div className="text-3xl font-black tabular-nums tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-                    {t ? bn(it.value) : "—"}
+                    {tot ? fmt(it.value) : "—"}
                   </div>
                   <div className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider">
-                    {i === 1 ? "ভিজিট" : "জন"}
+                    {i === 1 ? t("visitor.unitVisits") : t("visitor.unitPeople")}
                   </div>
                 </div>
               </div>

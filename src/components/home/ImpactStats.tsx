@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSettings } from "@/hooks/api/useDashboardData";
-import { toBnNum } from "@/data/projects";
+import { useLocaleNum } from "@/hooks/useLocaleNum";
 
 const useCount = (target: number, start: boolean, duration = 1600) => {
   const [v, setV] = useState(0);
@@ -21,10 +22,11 @@ const useCount = (target: number, start: boolean, duration = 1600) => {
 
 const Stat = ({ value, label, suffix, start }: { value: number; label: string; suffix?: string; start: boolean }) => {
   const v = useCount(value, start);
+  const { fmt } = useLocaleNum();
   return (
     <div className="text-center">
       <div className="text-4xl md:text-5xl font-extrabold gradient-donate-text">
-        {toBnNum(new Intl.NumberFormat("en-IN").format(v))}
+        {fmt(v)}
         <span className="text-donate-highlight">{suffix || ""}</span>
       </div>
       <div className="mt-2 text-sm md:text-base text-muted-foreground font-medium">{label}</div>
@@ -33,6 +35,7 @@ const Stat = ({ value, label, suffix, start }: { value: number; label: string; s
 };
 
 export const ImpactStats = () => {
+  const { t } = useTranslation();
   const { data: settings } = useSettings();
   const impactStats = settings?.impact_stats || [];
   const ref = useRef<HTMLDivElement>(null);
@@ -50,10 +53,10 @@ export const ImpactStats = () => {
     <section className="section-y bg-background">
       <div ref={ref} className="container-page">
         <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">আমাদের প্রভাব</span>
-          <h2 className="heading-display mt-3">আপনাদের বিশ্বাসেই গড়ে উঠেছে এই অর্জন</h2>
+          <span className="eyebrow">{t("impact.eyebrow")}</span>
+          <h2 className="heading-display mt-3">{t("impact.heading")}</h2>
           <p className="mt-4 text-muted-foreground">
-            ১৫ বছরের যাত্রায় লক্ষাধিক মানুষের জীবনে পরিবর্তন এনেছেন আপনারা।
+            {t("impact.subtitle")}
           </p>
         </div>
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
