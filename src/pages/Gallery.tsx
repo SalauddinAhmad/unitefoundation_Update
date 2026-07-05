@@ -158,17 +158,17 @@ const Gallery = () => {
       <section className="bg-secondary/40 py-8 md:py-10 border-b border-border">
         <div className="container-page flex justify-center">
           <div className="inline-flex p-1.5 rounded-full bg-card shadow-card border border-border">
-            {(["ছবি", "ভিডিও"] as Tab[]).map((t) => (
+            {(["photos", "videos"] as Tab[]).map((tk) => (
               <button
-                key={t}
-                onClick={() => setTab(t)}
+                key={tk}
+                onClick={() => setTab(tk)}
                 className={`px-7 md:px-10 py-2.5 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
-                  tab === t
+                  tab === tk
                     ? "bg-accent text-primary shadow-sm"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {t}
+                {tabLabels[tk]}
               </button>
             ))}
           </div>
@@ -202,7 +202,7 @@ const Gallery = () => {
           </aside>
 
           {/* Grid */}
-          {tab === "ছবি" ? (
+          {tab === "photos" ? (
             <div className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5">
               {filtered.map((it, i) => (
                 <button
