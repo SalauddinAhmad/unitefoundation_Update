@@ -1,17 +1,7 @@
 import { Copy, CreditCard, QrCode, ShieldCheck, Smartphone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
-
-const bankCards = site.payments.banks.map((b) => ({
-  badge: "BANK TRANSFER",
-  title: b.bank,
-  accountName: b.account,
-  accountNumber: b.number,
-  branch: b.branch,
-  routing: b.routing,
-  swift: b.swift,
-  fundLabel: "সাধারণ ফান্ড",
-}));
 
 const mobileNumbers = [
   { brand: "bKash", number: site.payments.bkash.number },
@@ -19,14 +9,26 @@ const mobileNumbers = [
   { brand: "Rocket", number: site.payments.rocket.number },
 ];
 
-const copy = (text: string, label: string) => {
-  navigator.clipboard.writeText(text);
-  toast({ title: "কপি হয়েছে", description: `${label} কপি করা হয়েছে।` });
-};
-
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 
 export const DonationChannelsSection = () => {
+  const { t } = useTranslation();
+
+  const bankCards = site.payments.banks.map((b) => ({
+    badge: "BANK TRANSFER",
+    title: b.bank,
+    accountName: b.account,
+    accountNumber: b.number,
+    branch: b.branch,
+    routing: b.routing,
+    swift: b.swift,
+    fundLabel: t("channels.generalFund"),
+  }));
+
+  const copy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({ title: t("common.copied"), description: t("common.copiedDesc", { label }) });
+  };
   return (
     <section
       className="relative py-16 md:py-24 overflow-hidden isolate"
