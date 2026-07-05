@@ -37,7 +37,31 @@ const applyHtmlLang = (lng: string) => {
     document.documentElement.lang = lng;
   }
 };
-applyHtmlLang(i18n.language || "bn");
-i18n.on("languageChanged", applyHtmlLang);
+
+// Keep Google Translate cookie in sync with i18n language.
+// This ensures dynamic (DB-driven) content is auto-translated to English
+// even on fresh page loads / deep links / after cookie was cleared.
+const syncGoogTransCookie = (lng: string) => {
+  if (typeof document === "undefined") return;
+  const wantEn = lng.startsWith("en");
+  const host = window.location.hostname;
+  const parent = host.split(".").slice(-2).join(".");
+  const value = wantEn ? "/bn/en" : "";
+  const expires = wantEn ? "" : "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  document.cookie = `googtrans=${value}; path=/${expires}`;
+  if (parent && parent !== host) {
+    document.cookie = `googtrans=${value}; path=/; domain=.${parent}${expires}`;
+    document.cookie = `googtrans=${value}; path=/; domain=${parent}${expires}`;
+  }
+};
+
+const initialLang = i18n.language || "bn";
+applyHtmlLang(initialLang);
+syncGoogTransCookie(initialLang);
+
+i18n.on("languageChanged", (lng) => {
+  applyHtmlLang(lng);
+  syncGoogTransCookie(lng);
+});
 
 export default i18n;
