@@ -23,6 +23,20 @@ type PayMethod = "ssl" | "bkash" | "nagad" | "rocket" | "bank";
 
 
 const Donate = () => {
+  const { t } = useTranslation();
+  const methods = useMemo<{ id: PayMethod; label: string; sub: string; logo: string }[]>(() => [
+    { id: "bkash", label: "bKash", sub: t("donatePage.personal"), logo: bkashLogo },
+    { id: "nagad", label: "Nagad", sub: t("donatePage.personal"), logo: nagadLogo },
+    { id: "rocket", label: "Rocket", sub: t("donatePage.personal"), logo: rocketLogo },
+    { id: "bank", label: t("donatePage.bank"), sub: "Islami Bank", logo: bankLogo },
+  ], [t]);
+
+  const schema = useMemo(() => z.object({
+    amount: z.number().min(50, t("donatePage.errAmount")).max(10000000),
+    name: z.string().trim().min(2, t("donatePage.errName")).max(80),
+    contact: z.string().trim().min(3, t("donatePage.errContact")).max(255),
+  }), [t]);
+
   const [params] = useSearchParams();
   const initialSlug = params.get("project") || projects[0].slug;
   const initialAmount = Number(params.get("amount")) || 2550;
@@ -52,8 +66,8 @@ const Donate = () => {
     const result = schema.safeParse({ amount: finalAmount, name, contact });
     if (!result.success) {
       toast({
-        title: "তথ্য যাচাই করুন",
-        description: result.error.issues[0]?.message || "ফর্মটি সঠিকভাবে পূরণ করুন",
+        title: t("common.verifyInfo"),
+        description: result.error.issues[0]?.message,
         variant: "destructive",
       });
       return;
@@ -63,7 +77,7 @@ const Donate = () => {
 
   const copyNumber = () => {
     navigator.clipboard.writeText(methodNumber);
-    toast({ title: "কপি হয়েছে", description: `${methodLabel.label} নম্বর কপি করা হয়েছে।` });
+    toast({ title: t("donatePage.copiedToast"), description: t("donatePage.copiedDesc", { label: methodLabel?.label }) });
   };
 
   useEffect(() => {
