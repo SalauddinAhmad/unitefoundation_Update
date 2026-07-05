@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Heart, ShieldCheck, Check, Copy, Quote } from "lucide-react";
 import { z } from "zod";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
@@ -20,18 +21,6 @@ const presets = [4250, 3800, 2550, 1700, 850];
 
 type PayMethod = "ssl" | "bkash" | "nagad" | "rocket" | "bank";
 
-const methods: { id: PayMethod; label: string; sub: string; logo: string }[] = [
-  { id: "bkash", label: "bKash", sub: "পার্সোনাল", logo: bkashLogo },
-  { id: "nagad", label: "Nagad", sub: "পার্সোনাল", logo: nagadLogo },
-  { id: "rocket", label: "Rocket", sub: "পার্সোনাল", logo: rocketLogo },
-  { id: "bank", label: "ব্যাংক", sub: "Islami Bank", logo: bankLogo },
-];
-
-const schema = z.object({
-  amount: z.number().min(50, "সর্বনিম্ন ৫০ টাকা").max(10000000),
-  name: z.string().trim().min(2, "নাম দিন").max(80),
-  contact: z.string().trim().min(3, "মোবাইল বা ইমেইল দিন").max(255),
-});
 
 const Donate = () => {
   const [params] = useSearchParams();
