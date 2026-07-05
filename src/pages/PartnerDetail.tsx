@@ -3,12 +3,14 @@ import {
   ArrowLeft, ArrowUpRight, BadgeCheck, Globe2, Phone, MapPin,
   Target, BookOpen, CheckCircle2, Sparkles, Mail, Star, Loader2,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
 import { partnerThemeTokens } from "@/data/partners";
 import { usePartnerPublic, usePartnersPublic } from "@/hooks/api/usePublic";
 
 const PartnerDetail = () => {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const { data: partner, isLoading } = usePartnerPublic(slug || "");
   const { data: partners = [] } = usePartnersPublic();
