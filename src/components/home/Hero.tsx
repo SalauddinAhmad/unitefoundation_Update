@@ -124,14 +124,14 @@ export const Hero = () => {
           <div className="absolute bottom-6 right-6 hidden md:flex items-center gap-2">
             <button
               onClick={() => setI((v) => (v - 1 + slides.length) % slides.length)}
-              aria-label="পূর্বের"
+              aria-label={t("common.prev")}
               className="p-2.5 rounded-full bg-white/10 backdrop-blur text-white border border-white/20 hover:bg-white/20"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={() => setI((v) => (v + 1) % slides.length)}
-              aria-label="পরের"
+              aria-label={t("common.next")}
               className="p-2.5 rounded-full bg-white/10 backdrop-blur text-white border border-white/20 hover:bg-white/20"
             >
               <ChevronRight className="h-4 w-4" />
@@ -143,7 +143,7 @@ export const Hero = () => {
               <button
                 key={idx}
                 onClick={() => setI(idx)}
-                aria-label={`স্লাইড ${idx + 1}`}
+                aria-label={`${t("common.slide")} ${idx + 1}`}
                 className={`h-1.5 rounded-full transition-all ${idx === i ? "w-8 bg-donate-highlight" : "w-4 bg-white/40"}`}
               />
             ))}
