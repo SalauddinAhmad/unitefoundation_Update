@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { site } from "@/data/site";
 import logo from "@/assets/logo-white.svg";
 import footerBg from "@/assets/footer-bg.svg";
 
 export const Footer = () => {
+  const { t } = useTranslation();
   return (
     <footer className="relative bg-footer text-footer-foreground overflow-hidden">
       {/* Decorative SVG background */}

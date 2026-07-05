@@ -1,13 +1,27 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/data/site";
+import { useTranslation } from "react-i18next";
+import { site } from "@/data/site";
 import logo from "@/assets/logo.svg";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export const Header = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { key: "home", href: "/" },
+    { key: "projects", href: "/projects" },
+    { key: "about", href: "/about" },
+    { key: "gallery", href: "/gallery" },
+    { key: "blog", href: "/blog" },
+    { key: "volunteer", href: "/volunteer" },
+    { key: "contact", href: "/contact" },
+    { key: "donate", href: "/donate" },
+  ] as const;
 
   useEffect(() => setOpen(false), [location.pathname]);
   useEffect(() => {
@@ -61,8 +75,8 @@ export const Header = () => {
           </Link>
 
           {/* Nav */}
-          <nav className="relative hidden lg:flex items-center gap-0.5" aria-label="মূল মেনু">
-            {nav.map((item) => (
+          <nav className="relative hidden lg:flex items-center gap-0.5" aria-label={t("nav.menu")}>
+            {navItems.map((item) => (
               <NavLink
                 key={item.href}
                 to={item.href}
@@ -75,17 +89,18 @@ export const Header = () => {
                   }`
                 }
               >
-                {item.label}
+                {t(`nav.${item.key}`)}
               </NavLink>
             ))}
           </nav>
 
-          {/* Mobile menu toggle */}
+          {/* Right side: language toggle + mobile menu */}
           <div className="relative flex items-center gap-2">
+            <LanguageToggle className="hidden sm:inline-flex" />
             <button
               className="lg:hidden p-2 rounded-full text-foreground hover:bg-accent transition-colors"
               onClick={() => setOpen((v) => !v)}
-              aria-label="মেনু খুলুন"
+              aria-label={t("nav.openMenu")}
               aria-expanded={open}
             >
               {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -97,7 +112,7 @@ export const Header = () => {
         {open && (
           <div className="lg:hidden mt-2 rounded-3xl bg-card/95 backdrop-blur-xl shadow-card-hover overflow-hidden animate-fade-up">
             <nav className="p-3 flex flex-col gap-1">
-              {nav.map((item) => (
+              {navItems.map((item) => (
                 <NavLink
                   key={item.href}
                   to={item.href}
@@ -108,9 +123,10 @@ export const Header = () => {
                     }`
                   }
                 >
-                  {item.label}
+                  {t(`nav.${item.key}`)}
                 </NavLink>
               ))}
+              <LanguageToggle variant="mobile" className="sm:hidden mt-1" />
             </nav>
           </div>
         )}
