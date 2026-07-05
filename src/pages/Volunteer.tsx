@@ -356,7 +356,7 @@ const Volunteer = () => {
             </div>
           </div>
 
-          </div>
+
 
           {/* Info strip */}
           <div className="mt-5 rounded-card bg-accent/60 border border-accent px-5 md:px-6 py-4 text-sm md:text-base text-foreground/80 text-center">
