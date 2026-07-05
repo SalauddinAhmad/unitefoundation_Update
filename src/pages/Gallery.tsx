@@ -115,17 +115,17 @@ const Gallery = () => {
   }, [data, albumMap]);
 
 
-  const cats = useMemo(() => ["সকল", ...Array.from(new Set(items.map((i) => i.cat)))], [items]);
-  const videoCats = useMemo(() => ["সকল", ...Array.from(new Set(videos.map((v) => v.cat)))], [videos]);
+  const cats = useMemo(() => [ALL, ...Array.from(new Set(items.map((i) => i.cat)))], [items, ALL]);
+  const videoCats = useMemo(() => [ALL, ...Array.from(new Set(videos.map((v) => v.cat)))], [videos, ALL]);
 
-  const [tab, setTab] = useState<Tab>("ছবি");
-  const [active, setActive] = useState<string>("সকল");
-  const [activeVideoCat, setActiveVideoCat] = useState<string>("সকল");
+  const [tab, setTab] = useState<Tab>("photos");
+  const [active, setActive] = useState<string>(ALL);
+  const [activeVideoCat, setActiveVideoCat] = useState<string>(ALL);
   const [open, setOpen] = useState<number | null>(null);
   const [openVideo, setOpenVideo] = useState<number | null>(null);
 
-  const filtered = active === "সকল" ? items : items.filter((i) => i.cat === active);
-  const filteredVideos = activeVideoCat === "সকল" ? videos : videos.filter((v) => v.cat === activeVideoCat);
+  const filtered = active === ALL ? items : items.filter((i) => i.cat === active);
+  const filteredVideos = activeVideoCat === ALL ? videos : videos.filter((v) => v.cat === activeVideoCat);
 
   const next = () => setOpen((o) => (o === null ? o : (o + 1) % filtered.length));
   const prev = () => setOpen((o) => (o === null ? o : (o - 1 + filtered.length) % filtered.length));
@@ -133,23 +133,26 @@ const Gallery = () => {
   const nextVideo = () => setOpenVideo((o) => (o === null ? o : (o + 1) % filteredVideos.length));
   const prevVideo = () => setOpenVideo((o) => (o === null ? o : (o - 1 + filteredVideos.length) % filteredVideos.length));
 
-  const sidebarCats: string[] = tab === "ছবি" ? cats : videoCats;
-  const activeCat: string = tab === "ছবি" ? active : activeVideoCat;
+  const sidebarCats: string[] = tab === "photos" ? cats : videoCats;
+  const activeCat: string = tab === "photos" ? active : activeVideoCat;
   const setActiveCat = (c: string) => {
-    if (tab === "ছবি") setActive(c);
+    if (tab === "photos") setActive(c);
     else setActiveVideoCat(c);
   };
 
+  const tabLabels: Record<Tab, string> = { photos: t("galleryPage.photos"), videos: t("galleryPage.videos") };
+
   return (
     <SiteLayout>
-      <Seo title="গ্যালারি | ইউনাইট ফাউন্ডেশন" description="মাঠ পর্যায়ের কাজের ছবি ও মুহূর্তগুলো।" canonical="/gallery" />
+      <Seo title={t("galleryPage.seoTitle")} description={t("galleryPage.seoDesc")} canonical="/gallery" />
 
       <PageHero
         image={g1}
-        eyebrow="গ্যালারি"
-        title="আমাদের কাজের মুহূর্তগুলো"
-        subtitle="মাঠ পর্যায়ের ছবি ও ভিডিওতে আমাদের সেবার গল্প।"
+        eyebrow={t("galleryPage.eyebrow")}
+        title={t("galleryPage.title")}
+        subtitle={t("galleryPage.subtitle")}
       />
+
 
       {/* Tab switcher */}
       <section className="bg-secondary/40 py-8 md:py-10 border-b border-border">
