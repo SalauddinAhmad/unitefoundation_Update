@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Calendar, Search, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
@@ -8,17 +9,19 @@ import { usePostsPublic } from "@/hooks/api/usePublic";
 import relief from "@/assets/hero-relief.jpg";
 
 const Blog = () => {
+  const { t } = useTranslation();
+  const ALL = t("blogPage.all");
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState<string>("সকল");
+  const [cat, setCat] = useState<string>(ALL);
   const { data: posts = [], isLoading } = usePostsPublic();
 
   const cats = useMemo(
-    () => ["সকল", ...Array.from(new Set(posts.map((p) => p.category)))],
-    [posts]
+    () => [ALL, ...Array.from(new Set(posts.map((p) => p.category)))],
+    [posts, ALL]
   );
   const filtered = posts.filter(
     (p) =>
-      (cat === "সকল" || p.category === cat) &&
+      (cat === ALL || p.category === cat) &&
       (q.trim() === "" || p.title.toLowerCase().includes(q.toLowerCase()) || p.excerpt.toLowerCase().includes(q.toLowerCase()))
   );
 
