@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { X, ChevronLeft, ChevronRight, Image as ImageIcon, Play } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
