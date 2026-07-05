@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { formatBDT, toBnNum } from "@/data/projects";
@@ -9,6 +10,7 @@ import { useProjectPublic, useProjectsPublic } from "@/hooks/api/usePublic";
 import NotFound from "./NotFound";
 
 const ProjectDetail = () => {
+  const { t } = useTranslation();
   const { slug = "" } = useParams();
   const { data: project, isLoading } = useProjectPublic(slug);
   const { data: allProjects = [] } = useProjectsPublic();
