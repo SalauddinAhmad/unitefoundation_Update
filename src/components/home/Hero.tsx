@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Heart, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import hero1 from "@/assets/hero-relief.jpg";
 import hero2 from "@/assets/hero-water.jpg";
 import hero3 from "@/assets/hero-mosque.jpg";
@@ -8,44 +9,46 @@ import { useSettings, type HeroSlide } from "@/hooks/api/useDashboardData";
 
 const fallbackImages = [hero1, hero2, hero3];
 
-const fallbackSlides: HeroSlide[] = [
+// Fallback slides use translation keys so the hero switches with language.
+// Backend-provided hero_slides remain as-authored (Bangla) unless the
+// admin also stores English versions.
+const buildFallbackSlides = (t: (k: string) => string): HeroSlide[] => [
   {
     image: hero1,
-    eyebrow: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
-    title: "ইউনাইট ফাউন্ডেশন — কুরআন ও সহীহ হাদীছের আলোকে",
-    subtitle:
-      "দাওয়াহ, তালীম, সমাজকল্যাণ ও জরুরি ত্রাণে আপনার পাশে। একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম — স্বচ্ছ, দায়িত্বশীল ও নিবেদিত।",
-    primaryCtaLabel: "এখনই দান করুন",
+    eyebrow: t("hero.slide1.eyebrow"),
+    title: t("hero.slide1.title"),
+    subtitle: t("hero.slide1.subtitle"),
+    primaryCtaLabel: t("hero.slide1.primaryCta"),
     primaryCtaTo: "/donate",
-    secondaryCtaLabel: "প্রকল্পসমূহ দেখুন",
+    secondaryCtaLabel: t("hero.slide1.secondaryCta"),
     secondaryCtaTo: "/projects",
   },
   {
     image: hero2,
-    eyebrow: "জরুরি ক্যাম্পেইন",
-    title: "ফিলিস্তিনে খাদ্য পৌঁছে দিন — তাদের পাশে দাঁড়ান",
-    subtitle:
-      "অবরুদ্ধ গাজা ও পশ্চিম তীরে ক্ষুধার্ত মুসলিম পরিবারের কাছে আপনার দান পৌঁছে দেব ইনশাআল্লাহ।",
-    primaryCtaLabel: "ফিলিস্তিনে দান করুন",
+    eyebrow: t("hero.slide2.eyebrow"),
+    title: t("hero.slide2.title"),
+    subtitle: t("hero.slide2.subtitle"),
+    primaryCtaLabel: t("hero.slide2.primaryCta"),
     primaryCtaTo: "/donate?project=palestine-food",
-    secondaryCtaLabel: "বিস্তারিত জানুন",
+    secondaryCtaLabel: t("hero.slide2.secondaryCta"),
     secondaryCtaTo: "/projects/palestine-food",
   },
   {
     image: hero3,
-    eyebrow: "সদকায়ে জারিয়া",
-    title: "মাসজিদ ও মাদরাসা নির্মাণে অংশ নিন",
-    subtitle:
-      "প্রত্যন্ত গ্রামে মসজিদ-মাদরাসা গড়ে তুলে স্থায়ী সওয়াবের অংশীদার হোন। একটি উদ্যোগ — অসংখ্য জীবনে পরিবর্তন।",
-    primaryCtaLabel: "মসজিদে দান করুন",
+    eyebrow: t("hero.slide3.eyebrow"),
+    title: t("hero.slide3.title"),
+    subtitle: t("hero.slide3.subtitle"),
+    primaryCtaLabel: t("hero.slide3.primaryCta"),
     primaryCtaTo: "/donate?project=masjid-project",
-    secondaryCtaLabel: "আরও দেখুন",
+    secondaryCtaLabel: t("hero.slide3.secondaryCta"),
     secondaryCtaTo: "/projects",
   },
 ];
 
 export const Hero = () => {
+  const { t } = useTranslation();
   const { data: settings } = useSettings();
+  const fallbackSlides = buildFallbackSlides(t);
   const raw = settings?.hero_slides?.length ? settings.hero_slides : fallbackSlides;
   const slides = raw.map((s, i) => ({
     ...s,
