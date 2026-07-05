@@ -36,7 +36,7 @@ const PartnerDetail = () => {
   return (
     <SiteLayout>
       <Seo
-        title={`${partner.name} | ইউনাইট ফাউন্ডেশনের সহযোগী প্রতিষ্ঠান`}
+        title={`${partner.name} | ${t("partnerDetail.parentValue")}`}
         description={partner.tagline}
         canonical={`/partners/${partner.slug}`}
       />
@@ -62,7 +62,7 @@ const PartnerDetail = () => {
               to="/"
               className="inline-flex items-center gap-2 text-sm text-primary-foreground/80 hover:text-[hsl(var(--donate-highlight))] transition-colors mb-10"
             >
-              <ArrowLeft className="h-4 w-4" /> হোমে ফিরে যান
+              <ArrowLeft className="h-4 w-4" /> {t("partnerDetail.backHome")}
             </Link>
 
             <div className="flex flex-col md:flex-row items-center md:items-end gap-10">
@@ -89,7 +89,7 @@ const PartnerDetail = () => {
               <div className="text-center md:text-left flex-1">
                 <span className="inline-flex items-center gap-2 bg-[hsl(var(--donate-highlight))]/15 text-[hsl(var(--donate-highlight))] border border-[hsl(var(--donate-highlight))]/30 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-4">
                   <Star className="w-3.5 h-3.5 fill-current" />
-                  সহযোগী প্রতিষ্ঠান
+                  {t("partnerDetail.badge")}
                 </span>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-[1.05] tracking-tight">
                   {partner.name}
@@ -106,14 +106,14 @@ const PartnerDetail = () => {
                       rel="noopener noreferrer"
                       className="btn-donate inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-bold shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
                     >
-                      ওয়েবসাইট ভিজিট করুন <ArrowUpRight className="w-4 h-4" />
+                      {t("partnerDetail.visitWebsite")} <ArrowUpRight className="w-4 h-4" />
                     </a>
                     {partner.phone && (
                       <a
                         href={`tel:${partner.phone}`}
                         className="inline-flex items-center gap-2 px-6 py-3.5 bg-card/10 hover:bg-card/15 text-primary-foreground border border-white/20 rounded-xl font-semibold backdrop-blur-sm transition-all"
                       >
-                        <Phone className="w-4 h-4" /> যোগাযোগ
+                        <Phone className="w-4 h-4" /> {t("partnerDetail.contact")}
                       </a>
                     )}
                   </div>
@@ -135,7 +135,7 @@ const PartnerDetail = () => {
             <div className="lg:col-span-8 space-y-12">
               {/* About */}
               <section>
-                <SectionHeading>সংক্ষিপ্ত বর্ণনা</SectionHeading>
+                <SectionHeading>{t("partnerDetail.aboutSection")}</SectionHeading>
                 <p className="text-lg text-foreground/80 leading-relaxed">
                   {partner.description}
                 </p>
@@ -152,7 +152,7 @@ const PartnerDetail = () => {
                     </div>
                     <div>
                       <div className="text-xs uppercase tracking-[0.2em] font-bold text-[hsl(var(--donate-highlight))] mb-2">
-                        আমাদের লক্ষ্য
+                        {t("partnerDetail.goalSection")}
                       </div>
                       <p className="text-lg md:text-xl font-semibold leading-snug">
                         {partner.goal}
@@ -165,7 +165,7 @@ const PartnerDetail = () => {
               {/* Programs */}
               {partner.programs && partner.programs.length > 0 && (
                 <section>
-                  <SectionHeading>প্রশিক্ষণ ও প্রোগ্রাম</SectionHeading>
+                  <SectionHeading>{t("partnerDetail.programsSection")}</SectionHeading>
                   <div className="space-y-6">
                     {partner.programs.map((g, i) => (
                       <div
@@ -178,7 +178,7 @@ const PartnerDetail = () => {
                           </div>
                           <div>
                             <div className="text-[11px] uppercase tracking-[0.18em] font-bold text-[hsl(var(--donate-highlight))]">
-                              ক্যাটাগরি {String(i + 1).padStart(2, "0")}
+                              {t("partnerDetail.category")} {String(i + 1).padStart(2, "0")}
                             </div>
                             <h3 className="text-lg font-bold text-primary">{g.category}</h3>
                           </div>
@@ -200,7 +200,7 @@ const PartnerDetail = () => {
               {/* Activities */}
               {partner.activities?.length > 0 && (
                 <section>
-                  <SectionHeading>কার্যক্রম ও সেবা</SectionHeading>
+                  <SectionHeading>{t("partnerDetail.activitiesSection")}</SectionHeading>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {partner.activities.map((a, i) => (
                       <div
@@ -234,20 +234,20 @@ const PartnerDetail = () => {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-6">
                       <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
-                      <span className="text-xs uppercase tracking-[0.2em] font-bold text-[hsl(var(--donate-highlight))]">প্রোফাইল</span>
+                      <span className="text-xs uppercase tracking-[0.2em] font-bold text-[hsl(var(--donate-highlight))]">{t("partnerDetail.profile")}</span>
                     </div>
-                    <h2 className="text-2xl font-bold mb-7">এক নজরে</h2>
+                    <h2 className="text-2xl font-bold mb-7">{t("partnerDetail.atGlance")}</h2>
                     <dl className="space-y-5">
-                      <Row label="প্রতিষ্ঠাকাল" value={year} />
-                      {partner.license && <Row label="লাইসেন্স" value={partner.license} mono />}
-                      {partner.phone && <Row label="যোগাযোগ" value={partner.phone} mono />}
-                      {partner.address && <Row label="ঠিকানা" value={partner.address} />}
-                      <Row label="অভিভাবক" value="ইউনাইট ফাউন্ডেশন" highlight />
+                      <Row label={t("partnerDetail.founded")} value={year} />
+                      {partner.license && <Row label={t("partnerDetail.license")} value={partner.license} mono />}
+                      {partner.phone && <Row label={t("partnerDetail.contactLabel")} value={partner.phone} mono />}
+                      {partner.address && <Row label={t("partnerDetail.address")} value={partner.address} />}
+                      <Row label={t("partnerDetail.parent")} value={t("partnerDetail.parentValue")} highlight />
                     </dl>
 
                     <div className="mt-8 pt-6 border-t border-white/10">
                       <p className="text-sm text-primary-foreground/75 mb-5 italic leading-relaxed">
-                        "সুন্নাহর অনুসরণে, মানবতার কল্যাণে — ইউনাইট ফাউন্ডেশনের গর্বিত অঙ্গপ্রতিষ্ঠান।"
+                        {t("partnerDetail.quote")}
                       </p>
                       {partner.website && (
                         <a
@@ -256,7 +256,7 @@ const PartnerDetail = () => {
                           rel="noopener noreferrer"
                           className="btn-donate flex items-center justify-center gap-2 py-3.5 font-bold rounded-xl transition-all shadow-lg"
                         >
-                          ওয়েবসাইট ভিজিট করুন <ArrowUpRight className="w-4 h-4" />
+                          {t("partnerDetail.visitWebsite")} <ArrowUpRight className="w-4 h-4" />
                         </a>
                       )}
                     </div>
@@ -267,7 +267,7 @@ const PartnerDetail = () => {
                 <div className="p-6 border border-border rounded-3xl bg-card shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <span className="w-6 h-[2px] bg-[hsl(var(--donate-highlight))]" />
-                    <h3 className="font-bold text-primary">যোগাযোগ মাধ্যম</h3>
+                    <h3 className="font-bold text-primary">{t("partnerDetail.contactMethods")}</h3>
                   </div>
                   <ul className="space-y-3.5 text-sm text-foreground/75">
                     {partner.phone && (
@@ -316,10 +316,10 @@ const PartnerDetail = () => {
               <div className="flex items-end justify-between mb-8 border-t border-border pt-12">
                 <h2 className="text-2xl md:text-3xl font-bold text-primary flex items-center gap-3">
                   <span className="w-8 h-[2px] bg-[hsl(var(--donate-highlight))]" />
-                  অন্যান্য প্রতিষ্ঠান
+                  {t("partnerDetail.otherPartners")}
                 </h2>
                 <Link to="/" className="text-sm font-semibold text-primary hover:underline inline-flex items-center gap-1">
-                  সবগুলো দেখুন <ArrowUpRight className="w-4 h-4" />
+                  {t("partnerDetail.seeAll")} <ArrowUpRight className="w-4 h-4" />
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
