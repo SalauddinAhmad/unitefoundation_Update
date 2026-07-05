@@ -354,7 +354,321 @@
     "tabRegular": "Regular donor",
     "tabMember": "Life & donor member",
     "tabVolunteer": "Volunteer",
-    "tabRep": "District representative"
+    "tabRep": "District representative",
+    "orgName": "Unite Foundation",
+    "infoStripPre": "If you need help understanding anything, please email ",
+    "infoStripPost": ".",
+    "quickWATitle": "Quick WhatsApp",
+    "quickWAText": "Send us a message →",
+    "quickWAMsg": "Assalamu Alaikum, I am interested in joining.",
+    "officeTitle": "Office address",
+    "hoursTitle": "Office hours",
+    "hoursValue": "Sat–Thu, 10:00 AM – 6:00 PM",
+    "select": "— Please select —",
+    "dash": "—",
+    "submit": "Submit application",
+    "next": "Next step",
+    "secureInfo": "Data protected",
+    "respondTime": "Reply within 24–48 hours",
+    "errValidate": "Please check your details",
+    "err": {
+      "name": "Please enter your name",
+      "phone": "Enter a valid mobile number",
+      "email": "Enter a valid email",
+      "city": "Enter city/district",
+      "area": "Please select an area",
+      "amount": "Please select an amount",
+      "method": "Please select a payment method",
+      "membership": "Please select a membership",
+      "address": "Enter your full address",
+      "age": "Enter your age",
+      "interest": "Select an area of interest",
+      "availability": "Select your availability",
+      "motivation": "Write at least 10 characters",
+      "fullName": "Enter your full name",
+      "guardianName": "Enter parent/guardian name",
+      "dob": "Enter date of birth",
+      "nid": "Enter a valid NID number",
+      "currentAddr": "Enter current address",
+      "permanentAddr": "Enter permanent address",
+      "profession": "Select a profession",
+      "medium": "Select at least one education medium",
+      "education": "Enter education details",
+      "whatsapp": "Enter a valid WhatsApp number",
+      "socialLink": "Enter a valid social media link",
+      "district": "Enter district",
+      "whyJoin": "Write at least 10 characters",
+      "emergencyName": "Enter a name",
+      "emergencyPhone": "Enter a valid mobile number",
+      "political": "Please select",
+      "agree": "Please agree to the privacy terms"
+    },
+    "regularAreas": [
+      "Orphans & underprivileged children",
+      "Education support",
+      "Monthly food support",
+      "Medical support",
+      "Mosque & Da'wah",
+      "Wherever needed"
+    ],
+    "regularAmounts": ["500", "1,000", "2,000", "5,000", "10,000", "Other"],
+    "membershipTypes": [
+      { "value": "lifetime", "label": "Life member — one-time ৳50,000" },
+      { "value": "donor", "label": "Donor member — one-time ৳25,000" },
+      { "value": "honorary", "label": "Honorary member — one-time ৳1,00,000+" }
+    ],
+    "volunteerAreas": [
+      "Relief distribution",
+      "Education & mentorship",
+      "Health camps",
+      "Campaigns & fundraising",
+      "Media & content",
+      "Mosque & Da'wah"
+    ],
+    "otherOption": "Other",
+    "availabilityOptions": [
+      "1–4 hours / week",
+      "5–10 hours / week",
+      "10+ hours / week",
+      "Project-based",
+      "Weekends only"
+    ],
+    "educationMediums": ["Qawmi Madrasa", "Aliya Madrasa", "General (College/University)"],
+    "professionOptions": ["Service holder", "Business", "Student", "Other"],
+    "paymentMethods": ["bKash", "Nagad", "Rocket", "Bank transfer", "Card (SSLCommerz)"],
+    "politicalOptions": ["No", "Yes"],
+    "success": {
+      "nextStepHeader": "Next steps",
+      "newApplication": "New application",
+      "regular": {
+        "title": "Jazakallahu Khairan!",
+        "subtitle": "Your application as a regular donor has been received",
+        "message": "Your regular contribution will ensure the smile of an orphan, the food of a family and the continuity of a patient's treatment — In sha Allah.",
+        "bullets": [
+          "Our team will contact you within 24 hours to set up the monthly plan",
+          "Auto-reminders and receipts every month",
+          "Monthly impact report directly in your email"
+        ],
+        "nextStep": "Send details on WhatsApp"
+      },
+      "member": {
+        "title": "Alhamdulillah!",
+        "subtitle": "Your membership application has been received",
+        "message": "You are on your way to becoming a permanent partner of Unite Foundation. Your membership will make a lasting contribution to every long-term project — In sha Allah.",
+        "bullets": [
+          "Our representative will call within 48 hours",
+          "Membership card & certificate after payment is confirmed",
+          "Invitation to the AGM and project visits"
+        ],
+        "nextStep": "Send application on WhatsApp"
+      },
+      "volunteer": {
+        "title": "Jazakallahu Khairan!",
+        "subtitle": "We have received your application to join the volunteer team",
+        "message": "Your time and intention are extremely valuable to Allah. We will include you in a team based on your area of interest very soon — In sha Allah.",
+        "bullets": [
+          "Orientation call time will be shared within 24–48 hours",
+          "You will be introduced to the nearest team lead in your area",
+          "Opportunity to join the first field activity"
+        ],
+        "nextStep": "Send application on WhatsApp"
+      },
+      "representative": {
+        "title": "Alhamdulillah!",
+        "subtitle": "District representative application successfully received",
+        "message": "Your information is being reviewed. Only 1 dedicated representative will be selected from each district — you'll be informed once finalized, In sha Allah.",
+        "bullets": [
+          "Initial review & phone call within 7 working days",
+          "Orientation & handover after selection",
+          "All information is fully confidential and secure"
+        ],
+        "nextStep": "Send application on WhatsApp"
+      }
+    },
+    "left": {
+      "regular": {
+        "title": "Why regular donors matter",
+        "intro": "Your small monthly contribution keeps our programs sustainable — uninterrupted education, food and medical support for orphaned children.",
+        "quoteText": "The most beloved deed to Allah is the one done consistently, even if small.",
+        "quoteSource": "(Sahih al-Bukhari, Hadith 6464)",
+        "list": [
+          "Automatic reminders every month",
+          "Receipt and proof for every donation",
+          "Freedom to stop or change anytime",
+          "Monthly impact report"
+        ],
+        "stats": [
+          { "v": "12,000+", "l": "Regular donors" },
+          { "v": "64", "l": "Districts covered" },
+          { "v": "100%", "l": "Transparency" }
+        ]
+      },
+      "member": {
+        "title": "Life & donor members",
+        "intro": "With a one-time contribution you become a permanent partner of the foundation and your name stays associated with every long-term project.",
+        "list": [
+          "Membership card & certificate",
+          "Participation in the AGM",
+          "Opportunity to visit projects",
+          "Detailed quarterly reports",
+          "A voice in the foundation's decisions"
+        ],
+        "stats": [
+          { "v": "240+", "l": "Life members" },
+          { "v": "180+", "l": "Donor members" },
+          { "v": "1,280+", "l": "Projects" }
+        ]
+      },
+      "volunteer": {
+        "title": "Areas of volunteer work",
+        "intro": "Volunteering is not just giving time — it's an act of worship. Your small effort can change someone's life story.",
+        "quoteText": "The most beloved deed to Allah is the one done consistently, even if small.",
+        "quoteSource": "(Sahih al-Bukhari, Hadith 6464)",
+        "list": [
+          "Field relief during floods, winter and disasters",
+          "Weekly time for orphan education",
+          "Participation in free medical camps",
+          "Support in fundraising campaigns",
+          "Photography, video and social media",
+          "Da'wah and mosque-centered activities"
+        ],
+        "stats": [
+          { "v": "3,450+", "l": "Volunteers" },
+          { "v": "14", "l": "District networks" },
+          { "v": "1,280+", "l": "Projects" }
+        ]
+      },
+      "representative": {
+        "title": "District representatives",
+        "intro": "Alhamdulillah! There is a new opportunity to join the Unite Foundation family. To accelerate our services across the country, we are looking for 1 dedicated representative from each district. Step forward in service of humanity in your own area for the pleasure of Allah.",
+        "quoteText": "The best of you is the one who is engaged in the welfare of people.",
+        "quoteSource": "(Hadith)",
+        "list": [
+          "Islamic knowledge: sound basic knowledge of Islam and the Deen",
+          "Contemporary awareness: clear understanding of media and communications",
+          "Practice & Sunnah: God-conscious and a sincere follower of the Sunnah",
+          "Sincerity: sincere and free from self-promotion and worldly attachments",
+          "Only 1 per district — please fill in the application carefully"
+        ],
+        "stats": [
+          { "v": "64", "l": "Districts" },
+          { "v": "1 person", "l": "Per district" },
+          { "v": "100%", "l": "Confidentiality" }
+        ]
+      }
+    },
+    "form": {
+      "fullName": "Full name *",
+      "phone": "Mobile *",
+      "email": "Email",
+      "city": "City / District *",
+      "profession": "Profession",
+      "professionStudent": "Profession / Studies",
+      "professionPh": "e.g. Businessperson",
+      "professionPh2": "e.g. Student, Doctor",
+      "donationArea": "Donation area *",
+      "monthlyAmount": "Monthly amount (৳) *",
+      "payMethod": "Payment method *",
+      "messageOpt": "Message (optional)",
+      "messagePh": "Write here if you want to share anything specific",
+      "membershipType": "Membership type *",
+      "fullAddress": "Full address *",
+      "age": "Age *",
+      "interest": "Area of interest *",
+      "weeklyTime": "Weekly availability *",
+      "whyJoin": "Why do you want to join? *",
+      "whyJoinPh": "Briefly share your motivation",
+      "guardianName": "Parent/Guardian name *",
+      "dob": "Date of birth *",
+      "nid": "National ID (NID) *",
+      "district": "District *",
+      "districtPh": "e.g. Chattogram",
+      "professionReq": "Profession *",
+      "currentAddr": "Current address *",
+      "permanentAddr": "Permanent address *",
+      "eduMediumHint": "Education medium (multiple allowed) *",
+      "eduDetails": "Education details *",
+      "eduDetailsPh": "Latest degree, institution, year",
+      "whatsapp": "WhatsApp number *",
+      "emailAddr": "Email address",
+      "socialLink": "Personal social media link",
+      "socialLinkPh": "Facebook / LinkedIn profile link",
+      "experience": "Previous social / volunteer experience",
+      "experiencePh": "Previous organisation, role and duration",
+      "whyRepJoin": "Why do you want to join Unite Foundation? *",
+      "emergencyName": "Emergency contact — name *",
+      "emergencyPhone": "Emergency contact — mobile *",
+      "politicalQ": "Are you currently an active member of any political party or organisation? *",
+      "politicalDetails": "Please share details *",
+      "politicalDetailsPh": "Name of party/organisation and role",
+      "secPersonal": "1. Personal information",
+      "secEdu": "2. Educational qualification",
+      "secContact": "3. Contact & skills",
+      "secExp": "4. Experience & interest",
+      "secPolitical": "5. Political declaration",
+      "termsTitle": "Required terms",
+      "terms": [
+        "Islamic knowledge: sound basic knowledge of Islam and Deeni matters.",
+        "Contemporary awareness: clear understanding of media and communications.",
+        "Practice & Sunnah: practising, God-conscious and a sincere follower of the Sunnah.",
+        "Sincerity: sincere character, free from self-promotion and worldly attachments."
+      ],
+      "privacyTitle": "Data privacy:",
+      "privacyText": "All the information you provide will be used only for the internal work of Unite Foundation and will not be disclosed to any third party without your permission.",
+      "agreeTerms": "I have read the terms above and agree to the privacy policy."
+    },
+    "header": {
+      "regularTitle": "Join as a regular donor",
+      "regularSub": "Share your details to set up a monthly donation — our team will help you complete the setup on WhatsApp.",
+      "memberTitle": "Become a life or donor member",
+      "memberSub": "Once your application is received, our team will confirm the membership and payment process.",
+      "volunteerTitle": "Join us as a volunteer",
+      "volunteerSub": "Fill out the form — our team will get in touch within 24–48 hours.",
+      "repTitle": "District representative application",
+      "repSub": "Note: initially only 1 representative will be selected from each district, so please complete this application carefully."
+    },
+    "wa": {
+      "regularTitle": "Regular donor application",
+      "memberTitle": "Membership application",
+      "volunteerTitle": "Volunteer application",
+      "repTitle": "District representative application",
+      "lName": "Name",
+      "lPhone": "Phone",
+      "lEmail": "Email",
+      "lCity": "City",
+      "lProfession": "Profession",
+      "lArea": "Donation area",
+      "lMonthly": "Monthly amount",
+      "lPayment": "Payment",
+      "lMessage": "Message",
+      "lMembership": "Membership",
+      "lAddress": "Address",
+      "lAge": "Age",
+      "lInterest": "Area of interest",
+      "lAvailability": "Availability",
+      "lWhy": "Why join",
+      "lPersonal": "— Personal information —",
+      "lFullName": "Full name",
+      "lGuardian": "Parent/Guardian",
+      "lDob": "Date of birth",
+      "lNid": "NID",
+      "lCurAddr": "Current address",
+      "lPermAddr": "Permanent address",
+      "lDistrict": "District",
+      "lEdu": "— Education —",
+      "lMedium": "Medium",
+      "lEduDetails": "Details",
+      "lContact": "— Contact —",
+      "lWhatsapp": "WhatsApp",
+      "lSocial": "Social link",
+      "lExpAndInt": "— Experience & interest —",
+      "lExperience": "Previous experience",
+      "lEmergency": "— Emergency contact —",
+      "lPolDecl": "— Political declaration —",
+      "lPolInvolved": "Involvement",
+      "lPolDetails": "Details"
+    }
   }
 }
+
 
