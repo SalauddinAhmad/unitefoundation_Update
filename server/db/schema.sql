@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS projects (
   raised DECIMAL(14,2) DEFAULT 0,
   beneficiaries INT DEFAULT 0,
   status ENUM('active','completed','draft') NOT NULL DEFAULT 'draft',
-  cover_image_url TEXT,
+  cover_image_url LONGTEXT,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS posts (
   slug VARCHAR(255) UNIQUE NOT NULL,
   excerpt TEXT,
   content LONGTEXT,
-  cover_image_url TEXT,
+  cover_image_url LONGTEXT,
   category VARCHAR(100),
   status ENUM('draft','published') NOT NULL DEFAULT 'draft',
   author_id CHAR(36),
