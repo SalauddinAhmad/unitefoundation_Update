@@ -27,11 +27,8 @@ import {
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import type { HeroSlide } from "@/hooks/api/useDashboardData";
 
-// Default fallback thumbnails (bundled)
-import hero1 from "@/assets/hero-relief.jpg";
-import hero2 from "@/assets/hero-water.jpg";
-import hero3 from "@/assets/hero-mosque.jpg";
-const fallbackImages = [hero1, hero2, hero3];
+// No bundled fallbacks — slides without an image show a placeholder
+// so admins clearly see which slides still need an image assigned.
 
 interface Props {
   slides: HeroSlide[];
