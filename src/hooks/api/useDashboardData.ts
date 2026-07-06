@@ -352,6 +352,7 @@ const defaultSettings: SiteSettings = {
     { icon: "award", title: "শরীয়াহ-অনুমোদিত", note: "শরীয়াহ বোর্ড দ্বারা যাচাইকৃত" },
     { icon: "users", title: "৫০,০০০+ দাতা", note: "বিশ্বব্যাপী বিশ্বস্ত পরিবার" },
   ],
+  milestones: defaultMilestones,
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
