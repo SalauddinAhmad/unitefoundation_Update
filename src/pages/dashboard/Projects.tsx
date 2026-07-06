@@ -536,7 +536,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
           {/* Sidebar */}
           <aside className="border-t lg:border-t-0 lg:border-l border-border bg-muted/30 overflow-y-auto p-5 space-y-5">
             <Section title="মেট্রিক্স" icon={BarChart3}>
-              <Field label="বাজেট (৳)">
+              <Field label="বাজেট (৳) — ঐচ্ছিক">
                 <input type="number" value={budget} onChange={(e) => setBudget(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
               </Field>
               <Field label="সংগৃহীত (৳)">
