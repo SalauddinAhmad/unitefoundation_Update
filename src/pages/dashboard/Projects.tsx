@@ -451,7 +451,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
 
   const submit = (publish?: boolean) => {
     if (!title.trim()) return toast.error("শিরোনাম দিন");
-    if (budget <= 0) return toast.error("সঠিক বাজেট দিন");
+    if (budget < 0) return toast.error("বাজেট ঋণাত্মক হতে পারবে না");
     setSaving(true);
     const finalSlug = (slug.trim() ? slugify(slug) : slugify(title)) || `p-${Date.now()}`;
     const next: ProjectEx = {
