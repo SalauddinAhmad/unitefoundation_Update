@@ -640,6 +640,7 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
                     <Upload className="h-7 w-7 mx-auto text-primary" />
                     <div className="mt-2 text-sm font-semibold">ছবি আপলোড / ড্র্যাগ ড্রপ</div>
                     <div className="text-xs text-muted-foreground">PNG, JPG, WebP — একাধিক নির্বাচন</div>
+                    <div className="mt-1 text-[11px] text-muted-foreground">প্রস্তাবিত: <b>1600×1067 px</b> (3:2) · সর্বোচ্চ ~2MB</div>
                     <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={(e) => onFiles(e.target.files)} />
                   </div>
                   <div className="border border-border rounded-xl p-4 space-y-2">
