@@ -120,6 +120,17 @@ const valueIcons = [Heart, CheckCircle2, Target, Users];
 const About = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
+  const { data: settings } = useSettings();
+  const dynamicMilestones: Milestone[] = (settings?.milestones && settings.milestones.length)
+    ? settings.milestones.map((m) => ({
+        y: { bn: m.yearBn || m.yearEn, en: m.yearEn || m.yearBn },
+        t: { bn: m.titleBn || m.titleEn, en: m.titleEn || m.titleBn },
+        items: Array.from({ length: Math.max(m.itemsBn?.length || 0, m.itemsEn?.length || 0) }).map((_, i) => ({
+          bn: m.itemsBn?.[i] || m.itemsEn?.[i] || "",
+          en: m.itemsEn?.[i] || m.itemsBn?.[i] || "",
+        })),
+      }))
+    : milestones;
   const goals = t("aboutPage.goals", { returnObjects: true }) as string[];
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
