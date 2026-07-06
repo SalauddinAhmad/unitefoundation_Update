@@ -576,6 +576,23 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
                   <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="যেমন: কুড়িগ্রাম" className="w-full pl-9 pr-3 py-2 rounded-lg bg-card border border-border text-sm" />
                 </div>
               </Field>
+              <Field label="কাস্টম লিঙ্ক (URL)">
+                <div className="flex items-center gap-1 rounded-lg bg-card border border-border px-2 py-1.5">
+                  <span className="text-[11px] text-muted-foreground shrink-0">/projects/</span>
+                  <input
+                    value={slug}
+                    onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }}
+                    onBlur={(e) => setSlug(slugify(e.target.value))}
+                    placeholder="my-custom-url"
+                    className="flex-1 min-w-0 bg-transparent text-xs focus:outline-none"
+                  />
+                  {slugTouched && (
+                    <button type="button" onClick={() => { setSlug(slugify(title)); setSlugTouched(false); }}
+                      className="text-[10px] px-1.5 py-0.5 rounded hover:bg-muted text-muted-foreground shrink-0" title="অটো রিসেট">↺</button>
+                  )}
+                </div>
+                <p className="mt-1 text-[10px] text-muted-foreground">খালি রাখলে শিরোনাম থেকে অটো তৈরি হবে</p>
+              </Field>
             </Section>
 
             <Section title="সময়সূচি" icon={Calendar}>
