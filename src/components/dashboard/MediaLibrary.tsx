@@ -17,13 +17,13 @@
 //     />
 //   )}
 // ============================================================
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import {
   X, Upload, Image as ImageIcon, Trash2, Search, Loader2,
-  CheckCircle2, Library,
+  CheckCircle2, Library, Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useMediaLibrary, useUploadMedia, useDeleteMedia, fetchMediaFull, type MediaItem } from "@/hooks/api/useMedia";
+import { useMediaLibrary, useUploadMedia, useDeleteMedia, useRenameMedia, fetchMediaFull, type MediaItem } from "@/hooks/api/useMedia";
 import { compressImage, compressImageToDataURL } from "@/lib/imageCompress";
 
 type Props = {
