@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLE_LABEL, type Permission } from "@/lib/permissions";
+import { useMessages } from "@/hooks/api/useDashboardData";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -169,6 +170,17 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
 const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
   const nav = useNavigate();
   const location = useLocation();
+  const { data: messages } = useMessages();
+  const msgList = (Array.isArray(messages) ? messages : []) as Array<{ id: string; name: string; subject: string; status: string }>;
+  const unreadMsgs = msgList.filter((m) => m.status === "unread");
+  const unreadCount = unreadMsgs.length;
+  const notifications = [
+    ...unreadMsgs.slice(0, 5).map((m) => ({
+      title: `নতুন মেসেজ — ${m.name}`,
+      desc: m.subject,
+      to: "/dashboard/messages",
+    })),
+  ];
   const current =
     [...menu, ...generalMenu].find((m) =>
       m.to === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(m.to),
@@ -197,13 +209,69 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
             </kbd>
           </div>
         </div>
-        <button className="relative p-2.5 rounded-xl bg-card border border-border hover:bg-secondary transition">
+        <button
+          type="button"
+          onClick={() => nav("/dashboard/messages")}
+          title="মেসেজ"
+          className="relative p-2.5 rounded-xl bg-card border border-border hover:bg-secondary transition"
+        >
           <Mail className="h-4 w-4" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center ring-2 ring-card">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </span>
+          )}
         </button>
-        <button className="relative p-2.5 rounded-xl bg-card border border-border hover:bg-secondary transition">
-          <Bell className="h-4 w-4" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-card" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              title="নোটিফিকেশন"
+              className="relative p-2.5 rounded-xl bg-card border border-border hover:bg-secondary transition outline-none"
+            >
+              <Bell className="h-4 w-4" />
+              {notifications.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-card" />
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel className="flex items-center justify-between">
+              <span>নোটিফিকেশন</span>
+              {notifications.length > 0 && (
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">
+                  {notifications.length}
+                </span>
+              )}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {notifications.length === 0 ? (
+              <div className="px-3 py-6 text-center text-xs text-muted-foreground">
+                নতুন কোনো নোটিফিকেশন নেই
+              </div>
+            ) : (
+              <div className="max-h-80 overflow-y-auto">
+                {notifications.map((n, i) => (
+                  <DropdownMenuItem
+                    key={i}
+                    onClick={() => nav(n.to)}
+                    className="cursor-pointer flex items-start gap-2 py-2.5"
+                  >
+                    <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs font-semibold truncate">{n.title}</div>
+                      <div className="text-[11px] text-muted-foreground truncate">{n.desc}</div>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </div>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => nav("/dashboard/logs")} className="cursor-pointer justify-center text-xs font-semibold text-primary">
+              সব অ্যাক্টিভিটি দেখুন
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
