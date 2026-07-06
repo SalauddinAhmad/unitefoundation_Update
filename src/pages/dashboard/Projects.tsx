@@ -30,7 +30,15 @@ type ProjectEx = Project & {
   slug?: string;
 };
 
-const CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
+const DEFAULT_CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
+const CUSTOM_CATS_KEY = "projectCategoriesCustom";
+function loadCustomCategories(): string[] {
+  try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveCustomCategories(list: string[]) {
+  try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+const CATEGORIES = DEFAULT_CATEGORIES;
 
 // ---- API ↔ UI mappers ----
 function apiToUi(row: ApiProject): ProjectEx {
