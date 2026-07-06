@@ -14,6 +14,7 @@ import rocketLogo from "@/assets/payment/rocket.png";
 import bankLogo from "@/assets/payment/islami-bank.png";
 import { projects, toBnNum, getProject } from "@/data/projects";
 import { PaymentInstructionsModal } from "@/components/donation/PaymentInstructionsModal";
+import { MembershipDonorSection } from "@/components/donation/MembershipDonorSection";
 import { toast } from "@/hooks/use-toast";
 import { site } from "@/data/site";
 
@@ -338,6 +339,8 @@ const Donate = () => {
           </form>
         </div>
       </section>
+
+      <MembershipDonorSection />
 
       <PaymentInstructionsModal
         open={showModal}

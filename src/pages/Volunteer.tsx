@@ -1,10 +1,8 @@
 import { useState, useMemo } from "react";
 import {
   HandHeart,
-  HeartHandshake,
   Users,
   UserPlus,
-  Repeat,
   Send,
   ShieldCheck,
   Clock,
@@ -27,7 +25,7 @@ import { api } from "@/lib/api";
 
 // Best-effort submit to backend so entries appear in the dashboard.
 const saveApplication = (
-  kind: "volunteer" | "member" | "career" | "donor",
+  kind: "volunteer" | "career",
   payload: {
     name: string;
     phone?: string;
@@ -41,11 +39,9 @@ const saveApplication = (
   api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
 };
 
-type TabKey = "regular" | "member" | "volunteer" | "representative";
+type TabKey = "volunteer" | "representative";
 
 const tabsBase: { key: TabKey; labelKey: string; icon: typeof HandHeart }[] = [
-  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
-  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
   { key: "volunteer", labelKey: "volunteerPage.tabVolunteer", icon: HandHeart },
   { key: "representative", labelKey: "volunteerPage.tabRep", icon: UserPlus },
 ];
@@ -162,8 +158,6 @@ const Volunteer = () => {
               }}
             >
               <div className="p-7 md:p-9 text-white">
-                {active === "regular" && <RegularForm />}
-                {active === "member" && <MemberForm />}
                 {active === "volunteer" && <VolunteerForm />}
                 {active === "representative" && <RepresentativeForm />}
               </div>
@@ -384,20 +378,6 @@ const useSchemas = () => {
       city: z.string().trim().min(2, t("volunteerPage.err.city")).max(80),
     };
     return {
-      regular: z.object({
-        ...baseContact,
-        area: z.string().min(1, t("volunteerPage.err.area")),
-        amount: z.string().min(1, t("volunteerPage.err.amount")),
-        method: z.string().min(1, t("volunteerPage.err.method")),
-        note: z.string().trim().max(500).or(z.literal("")),
-      }),
-      member: z.object({
-        ...baseContact,
-        profession: z.string().trim().max(120).or(z.literal("")),
-        type: z.string().min(1, t("volunteerPage.err.membership")),
-        address: z.string().trim().min(5, t("volunteerPage.err.address")).max(300),
-        note: z.string().trim().max(500).or(z.literal("")),
-      }),
       volunteer: z.object({
         ...baseContact,
         age: z.string().trim().min(1, t("volunteerPage.err.age")),
@@ -437,137 +417,6 @@ const useShowError = () => {
     toast({ title: t("volunteerPage.errValidate"), description: msg, variant: "destructive" });
 };
 
-// ============================================================
-// 1) REGULAR DONOR FORM
-const RegularForm = () => {
-  const { t } = useTranslation();
-  const schemas = useSchemas();
-  const showError = useShowError();
-  const orgName = t("volunteerPage.orgName");
-  const dash = t("volunteerPage.dash");
-  const regularAreas = t("volunteerPage.regularAreas", { returnObjects: true }) as string[];
-  const regularAmounts = t("volunteerPage.regularAmounts", { returnObjects: true }) as string[];
-  const paymentMethods = t("volunteerPage.paymentMethods", { returnObjects: true }) as string[];
-
-  const init = { name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" };
-  const [f, setF] = useState(init);
-  const [waUrl, setWaUrl] = useState<string | null>(null);
-  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = schemas.regular.safeParse(f);
-    if (!r.success) return showError(r.error.issues[0]?.message);
-    saveApplication("donor", {
-      name: f.name, phone: f.phone, email: f.email,
-      profession: f.area,
-      message: f.note,
-      extra: { city: f.city, area: f.area, amount: f.amount, method: f.method },
-    });
-    setWaUrl(buildWhatsAppUrl(
-      t("volunteerPage.wa.regularTitle"),
-      `${t("volunteerPage.wa.lName")}: ${f.name}\n${t("volunteerPage.wa.lPhone")}: ${f.phone}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lCity")}: ${f.city}\n\n${t("volunteerPage.wa.lArea")}: ${f.area}\n${t("volunteerPage.wa.lMonthly")}: ৳${f.amount}\n${t("volunteerPage.wa.lPayment")}: ${f.method}\n\n${t("volunteerPage.wa.lMessage")}: ${f.note || dash}`,
-      orgName,
-    ));
-  };
-  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
-  return (
-    <>
-      <FormHeader title={t("volunteerPage.header.regularTitle")} sub={t("volunteerPage.header.regularSub")} />
-      <form onSubmit={submit} className="mt-6 space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.phone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.email")}><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.city")}><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
-        </div>
-        <FieldLight label={t("volunteerPage.form.donationArea")}>
-          <select required value={f.area} onChange={u("area")} className="vol-input">
-            <option value="">{t("volunteerPage.select")}</option>
-            {regularAreas.map((a) => <option key={a} value={a}>{a}</option>)}
-          </select>
-        </FieldLight>
-        <div className="grid sm:grid-cols-2 gap-3">
-          <FieldLight label={t("volunteerPage.form.monthlyAmount")}>
-            <select required value={f.amount} onChange={u("amount")} className="vol-input">
-              <option value="">{t("volunteerPage.select")}</option>
-              {regularAmounts.map((a) => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </FieldLight>
-          <FieldLight label={t("volunteerPage.form.payMethod")}>
-            <select required value={f.method} onChange={u("method")} className="vol-input">
-              <option value="">{t("volunteerPage.select")}</option>
-              {paymentMethods.map((m) => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </FieldLight>
-        </div>
-        <FieldLight label={t("volunteerPage.form.messageOpt")}>
-          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" placeholder={t("volunteerPage.form.messagePh")} />
-        </FieldLight>
-        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
-      </form>
-    </>
-  );
-};
-
-// ============================================================
-// 2) MEMBERSHIP FORM
-const MemberForm = () => {
-  const { t } = useTranslation();
-  const schemas = useSchemas();
-  const showError = useShowError();
-  const orgName = t("volunteerPage.orgName");
-  const dash = t("volunteerPage.dash");
-  const membershipTypes = t("volunteerPage.membershipTypes", { returnObjects: true }) as { value: string; label: string }[];
-
-  const init = { name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" };
-  const [f, setF] = useState(init);
-  const [waUrl, setWaUrl] = useState<string | null>(null);
-  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = schemas.member.safeParse(f);
-    if (!r.success) return showError(r.error.issues[0]?.message);
-    const typeLabel = membershipTypes.find((mt) => mt.value === f.type)?.label || f.type;
-    saveApplication("member", {
-      name: f.name, phone: f.phone, email: f.email,
-      address: f.address, profession: f.profession, message: f.note,
-      extra: { city: f.city, membershipType: typeLabel, type: typeLabel },
-    });
-    setWaUrl(buildWhatsAppUrl(
-      t("volunteerPage.wa.memberTitle"),
-      `${t("volunteerPage.wa.lName")}: ${f.name}\n${t("volunteerPage.wa.lPhone")}: ${f.phone}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lCity")}: ${f.city}\n${t("volunteerPage.wa.lProfession")}: ${f.profession || dash}\n\n${t("volunteerPage.wa.lMembership")}: ${typeLabel}\n${t("volunteerPage.wa.lAddress")}: ${f.address}\n\n${t("volunteerPage.wa.lMessage")}: ${f.note || dash}`,
-      orgName,
-    ));
-  };
-  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
-  return (
-    <>
-      <FormHeader title={t("volunteerPage.header.memberTitle")} sub={t("volunteerPage.header.memberSub")} />
-      <form onSubmit={submit} className="mt-6 space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.phone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.email")}><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.city")}><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.profession")}><input maxLength={120} value={f.profession} onChange={u("profession")} className="vol-input" placeholder={t("volunteerPage.form.professionPh")} /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.membershipType")}>
-            <select required value={f.type} onChange={u("type")} className="vol-input">
-              <option value="">{t("volunteerPage.select")}</option>
-              {membershipTypes.map((mt) => <option key={mt.value} value={mt.value}>{mt.label}</option>)}
-            </select>
-          </FieldLight>
-        </div>
-        <FieldLight label={t("volunteerPage.form.fullAddress")}>
-          <textarea required rows={2} maxLength={300} value={f.address} onChange={u("address")} className="vol-input resize-none" />
-        </FieldLight>
-        <FieldLight label={t("volunteerPage.form.messageOpt")}>
-          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" />
-        </FieldLight>
-        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
-      </form>
-    </>
-  );
-};
 
 // ============================================================
 // 3) VOLUNTEER FORM

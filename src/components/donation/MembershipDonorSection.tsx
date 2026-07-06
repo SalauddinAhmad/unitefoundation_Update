@@ -1,0 +1,450 @@
+import { useMemo, useState } from "react";
+import {
+  HeartHandshake,
+  Repeat,
+  Send,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
+  ChevronRight,
+  PartyPopper,
+  Phone,
+  Mail,
+  RotateCcw,
+} from "lucide-react";
+import { z } from "zod";
+import { useTranslation } from "react-i18next";
+import { site } from "@/data/site";
+import { toast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
+
+type TabKey = "regular" | "member";
+
+const tabsBase: { key: TabKey; labelKey: string; icon: typeof HeartHandshake }[] = [
+  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
+  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
+];
+
+const saveApplication = (
+  kind: "member" | "donor",
+  payload: {
+    name: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    profession?: string;
+    message?: string;
+    extra?: Record<string, unknown>;
+  },
+) => {
+  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
+};
+
+const buildWhatsAppUrl = (title: string, body: string, orgName: string) => {
+  const text = `*${title} — ${orgName}*\n\n${body}`;
+  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+};
+
+type LeftBlock = {
+  title: string;
+  intro: string;
+  list: string[];
+  stats: { v: string; l: string }[];
+  quoteText?: string;
+  quoteSource?: string;
+};
+
+const LeftPanel = ({ active }: { active: TabKey }) => {
+  const { t } = useTranslation();
+  const c = t(`volunteerPage.left.${active}`, { returnObjects: true }) as LeftBlock;
+  return (
+    <div>
+      <p className="text-base md:text-lg leading-relaxed text-foreground/85">{c.intro}</p>
+      {c.quoteText && (
+        <blockquote className="mt-6 rounded-card border-l-4 border-primary bg-accent/40 p-5 text-foreground/80 italic leading-relaxed">
+          {c.quoteText}{" "}
+          <span className="not-italic text-sm text-muted-foreground">{c.quoteSource}</span>
+        </blockquote>
+      )}
+      <h3 className="mt-8 text-xl font-bold">{c.title}</h3>
+      <ul className="mt-4 space-y-3">
+        {c.list.map((s) => (
+          <li key={s} className="flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+            <span className="text-foreground/80 leading-relaxed">{s}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-8 grid grid-cols-3 gap-3">
+        {c.stats.map((s) => (
+          <div key={s.l} className="rounded-card bg-secondary/60 p-4 text-center">
+            <div className="text-xl md:text-2xl font-extrabold text-primary">{s.v}</div>
+            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+type SuccessBlock = {
+  title: string;
+  subtitle: string;
+  message: string;
+  bullets: string[];
+  nextStep: string;
+};
+
+const SuccessCard = ({
+  topic,
+  waUrl,
+  onReset,
+}: {
+  topic: TabKey;
+  waUrl: string;
+  onReset: () => void;
+}) => {
+  const { t } = useTranslation();
+  const c = t(`volunteerPage.success.${topic}`, { returnObjects: true }) as SuccessBlock;
+  return (
+    <div className="text-white text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mx-auto h-20 w-20 rounded-full bg-white/15 backdrop-blur flex items-center justify-center ring-4 ring-white/20">
+        <PartyPopper className="h-10 w-10 text-white" />
+      </div>
+      <h3 className="mt-6 text-2xl md:text-3xl font-extrabold tracking-tight">{c.title}</h3>
+      <p className="mt-2 text-white/90 font-semibold">{c.subtitle}</p>
+      <p className="mt-4 text-white/85 leading-relaxed text-sm md:text-base">{c.message}</p>
+
+      <div className="mt-6 rounded-card bg-white/10 backdrop-blur border border-white/20 p-5 text-left">
+        <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-3">
+          {t("volunteerPage.success.nextStepHeader")}
+        </div>
+        <ul className="space-y-2.5">
+          {c.bullets.map((b) => (
+            <li key={b} className="flex items-start gap-2.5 text-sm text-white/95">
+              <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+              <span className="leading-relaxed">{b}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-6 grid sm:grid-cols-2 gap-3">
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3 hover:bg-white/90 transition-colors"
+        >
+          <Send className="h-4 w-4" /> {c.nextStep}
+        </a>
+        <button
+          type="button"
+          onClick={onReset}
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 hover:bg-white/20 transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" /> {t("volunteerPage.success.newApplication")}
+        </button>
+      </div>
+
+      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/75">
+        <a href={`tel:${site.whatsapp}`} className="inline-flex items-center gap-1.5 hover:text-white">
+          <Phone className="h-3.5 w-3.5" /> {site.whatsapp}
+        </a>
+        <a href={`mailto:${site.email || "info@unite.org"}`} className="inline-flex items-center gap-1.5 hover:text-white">
+          <Mail className="h-3.5 w-3.5" /> {site.email || "info@unite.org"}
+        </a>
+      </div>
+    </div>
+  );
+};
+
+const FieldLight = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <label className="block">
+    <span className="text-xs font-semibold text-white/90 mb-1.5 block">{label}</span>
+    {children}
+  </label>
+);
+
+const SubmitButton = ({ children }: { children?: React.ReactNode }) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <button
+        type="submit"
+        className="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3.5 hover:bg-white/90 transition-colors"
+      >
+        <Send className="h-4 w-4" /> {children ?? t("volunteerPage.next")}
+        <ChevronRight className="h-4 w-4" />
+      </button>
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/80 pt-2">
+        <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" />{t("volunteerPage.secureInfo")}</span>
+        <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{t("volunteerPage.respondTime")}</span>
+      </div>
+    </>
+  );
+};
+
+const FormHeader = ({ title, sub }: { title: string; sub: string }) => (
+  <>
+    <h3 className="text-xl md:text-2xl font-bold">{title}</h3>
+    <p className="text-white/85 text-sm mt-2 leading-relaxed">{sub}</p>
+  </>
+);
+
+const useSchemas = () => {
+  const { t } = useTranslation();
+  return useMemo(() => {
+    const baseContact = {
+      name: z.string().trim().min(2, t("volunteerPage.err.name")).max(80),
+      phone: z.string().trim().regex(/^01[3-9]\d{8}$/, t("volunteerPage.err.phone")),
+      email: z.string().trim().email(t("volunteerPage.err.email")).max(255).or(z.literal("")),
+      city: z.string().trim().min(2, t("volunteerPage.err.city")).max(80),
+    };
+    return {
+      regular: z.object({
+        ...baseContact,
+        area: z.string().min(1, t("volunteerPage.err.area")),
+        amount: z.string().min(1, t("volunteerPage.err.amount")),
+        method: z.string().min(1, t("volunteerPage.err.method")),
+        note: z.string().trim().max(500).or(z.literal("")),
+      }),
+      member: z.object({
+        ...baseContact,
+        profession: z.string().trim().max(120).or(z.literal("")),
+        type: z.string().min(1, t("volunteerPage.err.membership")),
+        address: z.string().trim().min(5, t("volunteerPage.err.address")).max(300),
+        note: z.string().trim().max(500).or(z.literal("")),
+      }),
+    };
+  }, [t]);
+};
+
+const useShowError = () => {
+  const { t } = useTranslation();
+  return (msg?: string) =>
+    toast({ title: t("volunteerPage.errValidate"), description: msg, variant: "destructive" });
+};
+
+const RegularForm = () => {
+  const { t } = useTranslation();
+  const schemas = useSchemas();
+  const showError = useShowError();
+  const orgName = t("volunteerPage.orgName");
+  const dash = t("volunteerPage.dash");
+  const regularAreas = t("volunteerPage.regularAreas", { returnObjects: true }) as string[];
+  const regularAmounts = t("volunteerPage.regularAmounts", { returnObjects: true }) as string[];
+  const paymentMethods = t("volunteerPage.paymentMethods", { returnObjects: true }) as string[];
+
+  const init = { name: "", phone: "", email: "", city: "", area: "", amount: "", method: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = schemas.regular.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    saveApplication("donor", {
+      name: f.name, phone: f.phone, email: f.email,
+      profession: f.area,
+      message: f.note,
+      extra: { city: f.city, area: f.area, amount: f.amount, method: f.method },
+    });
+    setWaUrl(buildWhatsAppUrl(
+      t("volunteerPage.wa.regularTitle"),
+      `${t("volunteerPage.wa.lName")}: ${f.name}\n${t("volunteerPage.wa.lPhone")}: ${f.phone}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lCity")}: ${f.city}\n\n${t("volunteerPage.wa.lArea")}: ${f.area}\n${t("volunteerPage.wa.lMonthly")}: ৳${f.amount}\n${t("volunteerPage.wa.lPayment")}: ${f.method}\n\n${t("volunteerPage.wa.lMessage")}: ${f.note || dash}`,
+      orgName,
+    ));
+  };
+  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
+  return (
+    <>
+      <FormHeader title={t("volunteerPage.header.regularTitle")} sub={t("volunteerPage.header.regularSub")} />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.phone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.email")}><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.city")}><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+        </div>
+        <FieldLight label={t("volunteerPage.form.donationArea")}>
+          <select required value={f.area} onChange={u("area")} className="vol-input">
+            <option value="">{t("volunteerPage.select")}</option>
+            {regularAreas.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+        </FieldLight>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label={t("volunteerPage.form.monthlyAmount")}>
+            <select required value={f.amount} onChange={u("amount")} className="vol-input">
+              <option value="">{t("volunteerPage.select")}</option>
+              {regularAmounts.map((a) => <option key={a} value={a}>{a}</option>)}
+            </select>
+          </FieldLight>
+          <FieldLight label={t("volunteerPage.form.payMethod")}>
+            <select required value={f.method} onChange={u("method")} className="vol-input">
+              <option value="">{t("volunteerPage.select")}</option>
+              {paymentMethods.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </FieldLight>
+        </div>
+        <FieldLight label={t("volunteerPage.form.messageOpt")}>
+          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" placeholder={t("volunteerPage.form.messagePh")} />
+        </FieldLight>
+        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
+      </form>
+    </>
+  );
+};
+
+const MemberForm = () => {
+  const { t } = useTranslation();
+  const schemas = useSchemas();
+  const showError = useShowError();
+  const orgName = t("volunteerPage.orgName");
+  const dash = t("volunteerPage.dash");
+  const membershipTypes = t("volunteerPage.membershipTypes", { returnObjects: true }) as { value: string; label: string }[];
+
+  const init = { name: "", phone: "", email: "", city: "", profession: "", type: "", address: "", note: "" };
+  const [f, setF] = useState(init);
+  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = schemas.member.safeParse(f);
+    if (!r.success) return showError(r.error.issues[0]?.message);
+    const typeLabel = membershipTypes.find((mt) => mt.value === f.type)?.label || f.type;
+    saveApplication("member", {
+      name: f.name, phone: f.phone, email: f.email,
+      address: f.address, profession: f.profession, message: f.note,
+      extra: { city: f.city, membershipType: typeLabel, type: typeLabel },
+    });
+    setWaUrl(buildWhatsAppUrl(
+      t("volunteerPage.wa.memberTitle"),
+      `${t("volunteerPage.wa.lName")}: ${f.name}\n${t("volunteerPage.wa.lPhone")}: ${f.phone}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lCity")}: ${f.city}\n${t("volunteerPage.wa.lProfession")}: ${f.profession || dash}\n\n${t("volunteerPage.wa.lMembership")}: ${typeLabel}\n${t("volunteerPage.wa.lAddress")}: ${f.address}\n\n${t("volunteerPage.wa.lMessage")}: ${f.note || dash}`,
+      orgName,
+    ));
+  };
+  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
+  return (
+    <>
+      <FormHeader title={t("volunteerPage.header.memberTitle")} sub={t("volunteerPage.header.memberSub")} />
+      <form onSubmit={submit} className="mt-6 space-y-3">
+        <div className="grid sm:grid-cols-2 gap-3">
+          <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.phone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.email")}><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.city")}><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.profession")}><input maxLength={120} value={f.profession} onChange={u("profession")} className="vol-input" placeholder={t("volunteerPage.form.professionPh")} /></FieldLight>
+          <FieldLight label={t("volunteerPage.form.membershipType")}>
+            <select required value={f.type} onChange={u("type")} className="vol-input">
+              <option value="">{t("volunteerPage.select")}</option>
+              {membershipTypes.map((mt) => <option key={mt.value} value={mt.value}>{mt.label}</option>)}
+            </select>
+          </FieldLight>
+        </div>
+        <FieldLight label={t("volunteerPage.form.fullAddress")}>
+          <textarea required rows={2} maxLength={300} value={f.address} onChange={u("address")} className="vol-input resize-none" />
+        </FieldLight>
+        <FieldLight label={t("volunteerPage.form.messageOpt")}>
+          <textarea rows={3} maxLength={500} value={f.note} onChange={u("note")} className="vol-input resize-none" />
+        </FieldLight>
+        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
+      </form>
+    </>
+  );
+};
+
+export const MembershipDonorSection = () => {
+  const { t } = useTranslation();
+  const [active, setActive] = useState<TabKey>("member");
+
+  return (
+    <section id="join-us" className="py-14 md:py-20 border-t border-border bg-secondary/20">
+      <div className="container-page">
+        <div className="max-w-3xl">
+          <h2 className="text-2xl md:text-4xl font-bold leading-tight">
+            {t("volunteerPage.sectionTitle")}
+          </h2>
+          <p className="text-muted-foreground mt-4 leading-relaxed">
+            {t("volunteerPage.sectionSubtitle")}
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="mt-10 rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
+          <div className="grid grid-cols-2 gap-2">
+            {tabsBase.map((tb) => {
+              const isActive = tb.key === active;
+              const Icon = tb.icon;
+              return (
+                <button
+                  key={tb.key}
+                  type="button"
+                  onClick={() => setActive(tb.key)}
+                  aria-pressed={isActive}
+                  className={
+                    "group flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 py-5 md:py-6 px-3 rounded-xl text-sm md:text-base font-semibold text-center transition-colors " +
+                    (isActive
+                      ? "bg-accent text-accent-foreground"
+                      : "text-foreground/70 hover:bg-secondary hover:text-foreground")
+                  }
+                >
+                  <span
+                    className={
+                      "h-10 w-10 rounded-full flex items-center justify-center transition-colors " +
+                      (isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-primary group-hover:bg-accent")
+                    }
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>{t(tb.labelKey)}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Info strip */}
+        <div className="mt-5 rounded-card bg-accent/60 border border-accent px-5 md:px-6 py-4 text-sm md:text-base text-foreground/80 text-center">
+          {t("volunteerPage.infoStripPre")}
+          <a
+            href={`mailto:${site.email || "info@unite.org"}`}
+            className="font-semibold text-primary underline-offset-4 hover:underline"
+          >
+            {site.email || "info@unite.org"}
+          </a>
+          {t("volunteerPage.infoStripPost")}
+        </div>
+
+        {/* Two-column content */}
+        <div className="mt-14 grid lg:grid-cols-2 gap-10 items-start">
+          <LeftPanel active={active} />
+
+          <div
+            className="rounded-card overflow-hidden shadow-[var(--shadow-card-hover)] scroll-mt-28"
+            style={{
+              background:
+                "linear-gradient(160deg, hsl(var(--primary)) 0%, hsl(142 56% 18%) 100%)",
+            }}
+          >
+            <div className="p-7 md:p-9 text-white">
+              {active === "regular" && <RegularForm />}
+              {active === "member" && <MemberForm />}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        .vol-input{width:100%;padding:0.7rem 0.9rem;border-radius:10px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);color:#fff;outline:none;transition:all .2s;font-size:0.95rem}
+        .vol-input::placeholder{color:rgba(255,255,255,0.6)}
+        .vol-input:focus{border-color:#fff;background:rgba(255,255,255,0.2);box-shadow:0 0 0 3px rgba(255,255,255,0.15)}
+        .vol-input option{color:#1a1a1a}
+      `}</style>
+    </section>
+  );
+};
+
+export default MembershipDonorSection;
