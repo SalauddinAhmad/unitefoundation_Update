@@ -227,6 +227,15 @@ export type TrustItem = {
   note: string;
 };
 
+export type Milestone = {
+  yearBn: string;
+  yearEn: string;
+  titleBn: string;
+  titleEn: string;
+  itemsBn: string[];
+  itemsEn: string[];
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
