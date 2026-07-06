@@ -30,7 +30,15 @@ type ProjectEx = Project & {
   slug?: string;
 };
 
-const CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
+const DEFAULT_CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
+const CUSTOM_CATS_KEY = "projectCategoriesCustom";
+function loadCustomCategories(): string[] {
+  try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveCustomCategories(list: string[]) {
+  try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+const CATEGORIES = DEFAULT_CATEGORIES;
 
 // ---- API ↔ UI mappers ----
 function apiToUi(row: ApiProject): ProjectEx {
@@ -84,6 +92,23 @@ export default function Projects() {
   const delMut = useDeleteProject();
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
+
+  const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const addCustomCategory = (name: string) => {
+    const n = name.trim();
+    if (!n) return;
+    if (allCategories.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+    const next = [...customCats, n];
+    setCustomCats(next); saveCustomCategories(next);
+    toast.success("ক্যাটাগরি যোগ হয়েছে");
+  };
+  const removeCustomCategory = (name: string) => {
+    if (!customCats.includes(name)) return;
+    if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+    const next = customCats.filter((c) => c !== name);
+    setCustomCats(next); saveCustomCategories(next);
+  };
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed" | "draft">("all");
@@ -245,10 +270,31 @@ export default function Projects() {
             <select value={category} onChange={(e) => setCategory(e.target.value)}
               className="appearance-none pl-9 pr-9 py-2 rounded-lg bg-secondary text-xs font-semibold focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer">
               <option value="all">সকল ক্যাটাগরি</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none" />
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              const n = prompt("নতুন ক্যাটাগরির নাম:");
+              if (n) addCustomCategory(n);
+            }}
+            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-card border border-transparent hover:border-border"
+            title="নতুন ক্যাটাগরি যোগ করুন"
+          >
+            <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+          </button>
+          {customCats.length > 0 && category !== "all" && customCats.includes(category) && (
+            <button
+              type="button"
+              onClick={() => { removeCustomCategory(category); setCategory("all"); }}
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+              title="এই কাস্টম ক্যাটাগরি ডিলিট"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
           <div className="ml-auto inline-flex p-1 bg-secondary rounded-lg">
             <button onClick={() => setView("grid")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "grid" ? "bg-card shadow-sm" : "text-muted-foreground")}>গ্রিড</button>
             <button onClick={() => setView("table")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "table" ? "bg-card shadow-sm" : "text-muted-foreground")}>টেবিল</button>
@@ -368,7 +414,7 @@ export default function Projects() {
         )}
       </Card>
 
-      {editor.open && <ProjectEditor p={editor.p} onClose={() => setEditor({ open: false })} onSave={save} />}
+      {editor.open && <ProjectEditor p={editor.p} categories={allCategories} onAddCategory={addCustomCategory} onClose={() => setEditor({ open: false })} onSave={save} />}
       {viewer && <ProjectViewer p={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, p: viewer }); setViewer(null); }} />}
     </>
   );
@@ -411,11 +457,11 @@ const Field = ({ label, children }: any) => (
 );
 
 /* ---------- editor ---------- */
-function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => void; onSave: (p: ProjectEx) => void }) {
+function ProjectEditor({ p, categories, onAddCategory, onClose, onSave }: { p?: ProjectEx; categories: string[]; onAddCategory: (name: string) => void; onClose: () => void; onSave: (p: ProjectEx) => void }) {
   const isNew = !p;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(p?.title || "");
-  const [category, setCategory] = useState(p?.category || CATEGORIES[0]);
+  const [category, setCategory] = useState(p?.category || categories[0] || DEFAULT_CATEGORIES[0]);
   const [description, setDescription] = useState(p?.description || "");
   const [cover, setCover] = useState(p?.cover || "");
   const [location, setLocation] = useState(p?.location || "");
@@ -557,9 +603,31 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
 
             <Section title="বিবরণ" icon={Target}>
               <Field label="ক্যাটাগরি">
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <div className="flex gap-1.5">
+                  <select
+                    value={categories.includes(category) ? category : ""}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-card border border-border text-sm"
+                  >
+                    {!categories.includes(category) && <option value="">— বাছুন —</option>}
+                    {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = prompt("নতুন ক্যাটাগরির নাম:");
+                      if (!n) return;
+                      const trimmed = n.trim();
+                      if (!trimmed) return;
+                      onAddCategory(trimmed);
+                      setCategory(trimmed);
+                    }}
+                    className="px-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90"
+                    title="নতুন ক্যাটাগরি যোগ"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </Field>
               <Field label="স্ট্যাটাস">
                 <select value={status} onChange={(e) => setStatus(e.target.value as any)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
