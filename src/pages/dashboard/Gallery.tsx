@@ -749,9 +749,17 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
           </div>
         </div>
       </div>
+      {libOpen && (
+        <MediaLibrary
+          onClose={() => setLibOpen(false)}
+          onSelect={(url) => { addImageUrl(url); setLibOpen(false); }}
+          hint="গ্যালারি ইমেজের প্রস্তাবিত সাইজ: 1600×1067 px (3:2)"
+        />
+      )}
     </div>
   );
 }
+
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
