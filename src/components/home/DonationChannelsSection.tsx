@@ -70,7 +70,11 @@ export const DonationChannelsSection = () => {
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6 items-stretch">
             {/* Bank */}
-            <article className="group relative flex flex-col rounded-[28px] bg-card border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1">
+            <article className="group relative flex flex-col rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "linear-gradient(160deg, hsl(var(--card)) 0%, hsl(152 40% 94%) 100%)",
+              }}
+            >
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
@@ -138,11 +142,11 @@ export const DonationChannelsSection = () => {
             >
               <div
                 aria-hidden
-                className="absolute inset-0 opacity-20"
+                className="pointer-events-none absolute inset-0 opacity-[0.07]"
                 style={{
                   backgroundImage:
                     "radial-gradient(hsl(var(--donate-highlight)) 1px, transparent 1px)",
-                  backgroundSize: "22px 22px",
+                  backgroundSize: "28px 28px",
                 }}
               />
               <div className="relative flex flex-col flex-1 p-6 md:p-7 text-center">
@@ -192,7 +196,11 @@ export const DonationChannelsSection = () => {
             </article>
 
             {/* Mobile */}
-            <article className="group relative flex flex-col rounded-[28px] bg-card border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1">
+            <article className="group relative flex flex-col rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "linear-gradient(160deg, hsl(var(--card)) 0%, hsl(28 60% 95%) 100%)",
+              }}
+            >
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
