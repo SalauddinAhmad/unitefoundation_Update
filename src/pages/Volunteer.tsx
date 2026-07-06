@@ -1,10 +1,8 @@
 import { useState, useMemo } from "react";
 import {
   HandHeart,
-  HeartHandshake,
   Users,
   UserPlus,
-  Repeat,
   Send,
   ShieldCheck,
   Clock,
@@ -27,7 +25,7 @@ import { api } from "@/lib/api";
 
 // Best-effort submit to backend so entries appear in the dashboard.
 const saveApplication = (
-  kind: "volunteer" | "member" | "career" | "donor",
+  kind: "volunteer" | "career",
   payload: {
     name: string;
     phone?: string;
@@ -41,11 +39,9 @@ const saveApplication = (
   api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
 };
 
-type TabKey = "regular" | "member" | "volunteer" | "representative";
+type TabKey = "volunteer" | "representative";
 
 const tabsBase: { key: TabKey; labelKey: string; icon: typeof HandHeart }[] = [
-  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
-  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
   { key: "volunteer", labelKey: "volunteerPage.tabVolunteer", icon: HandHeart },
   { key: "representative", labelKey: "volunteerPage.tabRep", icon: UserPlus },
 ];
