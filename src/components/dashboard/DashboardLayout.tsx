@@ -20,12 +20,22 @@ import {
   Building2,
   ScrollText,
   FormInput,
+  User as UserIcon,
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLE_LABEL, type Permission } from "@/lib/permissions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 
 type MenuItem = { to: string; icon: typeof LayoutDashboard; label: string; end?: boolean; badge?: string; perm: Permission };
@@ -157,6 +167,7 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
 );
 
 const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
+  const nav = useNavigate();
   const location = useLocation();
   const current =
     [...menu, ...generalMenu].find((m) =>
@@ -193,19 +204,49 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive ring-2 ring-card" />
         </button>
-        <button
-          onClick={onLogout}
-          title="লগ আউট"
-          className="flex items-center gap-2.5 pl-2 md:pl-3 ml-1 md:ml-2 md:border-l md:border-border hover:opacity-80 transition"
-        >
-          <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
-            {(user?.name || "UF").slice(0, 2).toUpperCase()}
-          </div>
-          <div className="hidden md:block leading-tight text-left">
-            <div className="text-sm font-bold">{user?.name || "এডমিন"}</div>
-            <div className="text-[11px] text-muted-foreground">{user?.email || "—"}</div>
-          </div>
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              title="আমার অ্যাকাউন্ট"
+              className="flex items-center gap-2.5 pl-2 md:pl-3 ml-1 md:ml-2 md:border-l md:border-border hover:opacity-80 transition outline-none"
+            >
+              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
+                {(user?.name || "UF").slice(0, 2).toUpperCase()}
+              </div>
+              <div className="hidden md:block leading-tight text-left">
+                <div className="text-sm font-bold">{user?.name || "এডমিন"}</div>
+                <div className="text-[11px] text-muted-foreground">{user?.email || "—"}</div>
+              </div>
+              <ChevronDown className="hidden md:block h-4 w-4 text-muted-foreground" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuLabel className="flex items-center gap-3 py-2">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
+                {(user?.name || "UF").slice(0, 2).toUpperCase()}
+              </div>
+              <div className="leading-tight min-w-0">
+                <div className="text-sm font-bold truncate">{user?.name || "এডমিন"}</div>
+                <div className="text-[11px] text-muted-foreground truncate">{user?.email || "—"}</div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => nav("/dashboard/settings?tab=account")} className="cursor-pointer">
+              <UserIcon className="h-4 w-4 mr-2" />
+              আমার প্রোফাইল
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => nav("/dashboard/settings?tab=account")} className="cursor-pointer">
+              <Settings className="h-4 w-4 mr-2" />
+              অ্যাকাউন্ট সেটিংস
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-destructive focus:text-destructive">
+              <LogOut className="h-4 w-4 mr-2" />
+              লগ আউট
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
