@@ -2,11 +2,15 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ProjectCard } from "@/components/project/ProjectCard";
-import { projects } from "@/data/projects";
+import { useProjectsPublic } from "@/hooks/api/usePublic";
 
 export const ProgramsSection = () => {
   const { t } = useTranslation();
-  const loop = [...projects, ...projects];
+  const { data: projects = [] } = useProjectsPublic();
+
+  // Only show active/ongoing projects (API already excludes deleted ones)
+  if (!projects.length) return null;
+  const loop = projects.length < 3 ? [...projects, ...projects, ...projects] : [...projects, ...projects];
 
   return (
     <section className="section-y bg-secondary/40">
