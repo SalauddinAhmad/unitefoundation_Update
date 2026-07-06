@@ -57,6 +57,7 @@ const MATRIX: Record<Permission, Role[]> = {
   team:                ["admin", "editor"],
   partners:            ["admin", "editor"],
   settings:            ["admin"],
+  forms:               ["admin", "editor"],
   "settings.security": [],   // super_admin only
   "settings.payment":  [],   // super_admin only
   admins:              [],   // super_admin only
