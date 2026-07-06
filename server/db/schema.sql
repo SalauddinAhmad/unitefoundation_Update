@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS gallery_albums (
   id CHAR(36) PRIMARY KEY,
   title VARCHAR(200) NOT NULL,
   slug VARCHAR(200) UNIQUE,
-  cover_url TEXT,
+  cover_url LONGTEXT,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -119,8 +119,8 @@ CREATE TABLE IF NOT EXISTS gallery_items (
   album_id CHAR(36),
   kind ENUM('image','video') NOT NULL DEFAULT 'image',
   title VARCHAR(200),
-  url TEXT NOT NULL,
-  thumb_url TEXT,
+  url LONGTEXT NOT NULL,
+  thumb_url LONGTEXT,
   sort_order INT DEFAULT 0,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (album_id) REFERENCES gallery_albums(id) ON DELETE SET NULL
