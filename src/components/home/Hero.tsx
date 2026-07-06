@@ -2,46 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Heart, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import hero1 from "@/assets/hero-relief.jpg";
-import hero2 from "@/assets/hero-water.jpg";
-import hero3 from "@/assets/hero-mosque.jpg";
 import { useSettings, type HeroSlide } from "@/hooks/api/useDashboardData";
-
-// Fallback slides use translation keys so the hero switches with language.
-// Backend-provided hero_slides remain as-authored (Bangla) unless the
-// admin also stores English versions.
-const buildFallbackSlides = (t: (k: string) => string): HeroSlide[] => [
-  {
-    image: hero1,
-    eyebrow: t("hero.slide1.eyebrow"),
-    title: t("hero.slide1.title"),
-    subtitle: t("hero.slide1.subtitle"),
-    primaryCtaLabel: t("hero.slide1.primaryCta"),
-    primaryCtaTo: "/donate",
-    secondaryCtaLabel: t("hero.slide1.secondaryCta"),
-    secondaryCtaTo: "/projects",
-  },
-  {
-    image: hero2,
-    eyebrow: t("hero.slide2.eyebrow"),
-    title: t("hero.slide2.title"),
-    subtitle: t("hero.slide2.subtitle"),
-    primaryCtaLabel: t("hero.slide2.primaryCta"),
-    primaryCtaTo: "/donate?project=palestine-food",
-    secondaryCtaLabel: t("hero.slide2.secondaryCta"),
-    secondaryCtaTo: "/projects/palestine-food",
-  },
-  {
-    image: hero3,
-    eyebrow: t("hero.slide3.eyebrow"),
-    title: t("hero.slide3.title"),
-    subtitle: t("hero.slide3.subtitle"),
-    primaryCtaLabel: t("hero.slide3.primaryCta"),
-    primaryCtaTo: "/donate?project=masjid-project",
-    secondaryCtaLabel: t("hero.slide3.secondaryCta"),
-    secondaryCtaTo: "/projects",
-  },
-];
 
 const overlayClasses: Record<NonNullable<HeroSlide["overlay"]>, string> = {
   dark: "bg-gradient-to-r from-black/75 via-black/50 to-black/20",
@@ -57,8 +18,7 @@ const alignClasses = {
 export const Hero = () => {
   const { t } = useTranslation();
   const { data: settings } = useSettings();
-  const fallbackSlides = buildFallbackSlides(t);
-  const raw = settings?.hero_slides?.length ? settings.hero_slides : fallbackSlides;
+  const raw = settings?.hero_slides || [];
   const slides = raw
     .filter((s) => s.enabled !== false && s.image && s.image.trim())
     .map((s) => ({
