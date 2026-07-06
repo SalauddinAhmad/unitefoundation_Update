@@ -550,6 +550,7 @@ const Settings = () => {
 
               <div className="text-sm font-bold mb-2">টাইমলাইন এন্ট্রি</div>
 
+              <div className="space-y-4">
                 {(form.milestones || []).map((m, idx) => {
                   const upd = (patch: Partial<Milestone>) => {
                     const next = [...(form.milestones || [])];
