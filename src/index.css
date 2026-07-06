@@ -16,13 +16,7 @@
   font-style: normal;
   font-display: swap;
 }
-@font-face {
-  font-family: "Ubuntu Sans";
-  src: url("/fonts/UbuntuSans.woff2") format("woff2-variations"), url("/fonts/UbuntuSans.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+/* English font: Roboto is loaded from Google Fonts in index.html */
 
 /* Unite Foundation Design System
    All colors are HSL. Tokens map to design.md §1.1 */
