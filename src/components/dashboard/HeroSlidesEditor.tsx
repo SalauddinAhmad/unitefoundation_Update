@@ -143,7 +143,7 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
       {list.map((slide, idx) => {
         const isOpen = openIdx === idx;
         const enabled = slide.enabled !== false;
-        const preview = slide.image?.trim() ? slide.image : fallbackImages[idx % fallbackImages.length];
+        const preview = slide.image?.trim() || "";
         return (
           <div
             key={idx}
