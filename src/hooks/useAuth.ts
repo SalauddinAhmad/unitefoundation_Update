@@ -101,11 +101,7 @@ export function useAuth() {
         // (network/CORS) AND we're not talking to the production API.
         // This prevents a stale `demo.local.token` from being sent to the
         // real server and getting rejected as "Invalid or expired token".
-        const isProdApi = /unitefoundation\.bd/i.test(
-          (import.meta.env.VITE_API_BASE_URL as string | undefined) || "https://api.unitefoundation.bd",
-        );
         if (
-          !isProdApi &&
           isNetworkErr(err) &&
           email === DEMO_USER.email &&
           password === DEMO_PASSWORD
