@@ -236,6 +236,17 @@ export type Milestone = {
   itemsEn: string[];
 };
 
+export type MilestonesSection = {
+  eyebrowBn: string;
+  eyebrowEn: string;
+  headingBn: string;
+  headingEn: string;
+  introBn: string;
+  introEn: string;
+  quoteBn: string;
+  quoteEn: string;
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
