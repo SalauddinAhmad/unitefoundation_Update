@@ -220,8 +220,7 @@ const About = () => {
               <Target className="h-3.5 w-3.5" /> {t("aboutPage.mission")}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold leading-[1.2] mt-3 text-foreground">
-              {t("aboutPage.mission")}{" "}
-              <span className="gradient-donate-text">।</span>
+              যে পথে আমরা <span className="gradient-donate-text">এগিয়ে যাচ্ছি</span>
             </h2>
             <p className="mt-3 text-sm md:text-[15px] text-muted-foreground leading-[1.85]">
               {t("aboutPage.missionAlt")}
