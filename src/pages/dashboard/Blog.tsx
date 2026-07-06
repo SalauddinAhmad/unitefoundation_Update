@@ -606,11 +606,12 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
                 <div className="h-5 w-px bg-border mx-1" />
                 <TBtn onClick={insertLink} icon={LinkIcon} title="লিংক" />
                 <TBtn onClick={insertImage} icon={ImageIcon} title="ছবির URL" />
-                <label className="p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground cursor-pointer" title="ছবি আপলোড">
+                <label className="p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground cursor-pointer" title="ছবি আপলোড (প্রস্তাবিত: 1200px চওড়া, JPG/WebP)">
                   <ImageIcon className="h-3.5 w-3.5" />
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => onImage(e.target.files?.[0])} />
                 </label>
               </div>
+              <p className="mt-1 text-[11px] text-muted-foreground px-1">লেখার ভেতরের ছবির প্রস্তাবিত সাইজ: <b>1200px চওড়া</b>, JPG/WebP · সর্বোচ্চ ~1.5MB</p>
 
               {/* Editor */}
               <div
