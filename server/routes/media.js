@@ -84,6 +84,20 @@ router.post('/', requireAuth, asyncH(async (req, res) => {
   res.status(201).json({ id, url: d.url });
 }));
 
+// Rename (SEO-friendly filename)
+const renameSchema = z.object({
+  filename: z.string().trim().min(1).max(255),
+});
+router.patch('/:id', requireAuth, asyncH(async (req, res) => {
+  const { filename } = renameSchema.parse(req.body);
+  const [r] = await pool.execute(
+    'UPDATE media_library SET filename=? WHERE id=?',
+    [filename, req.params.id]
+  );
+  if (!r.affectedRows) return res.status(404).json({ message: 'Not found' });
+  res.json({ ok: true, filename });
+}));
+
 router.delete('/:id', requireAuth, asyncH(async (req, res) => {
   await pool.execute('DELETE FROM media_library WHERE id=?', [req.params.id]);
   res.json({ ok: true });

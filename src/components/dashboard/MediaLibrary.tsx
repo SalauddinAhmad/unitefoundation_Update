@@ -17,13 +17,13 @@
 //     />
 //   )}
 // ============================================================
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import {
   X, Upload, Image as ImageIcon, Trash2, Search, Loader2,
-  CheckCircle2, Library,
+  CheckCircle2, Library, Pencil,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useMediaLibrary, useUploadMedia, useDeleteMedia, fetchMediaFull, type MediaItem } from "@/hooks/api/useMedia";
+import { useMediaLibrary, useUploadMedia, useDeleteMedia, useRenameMedia, fetchMediaFull, type MediaItem } from "@/hooks/api/useMedia";
 import { compressImage, compressImageToDataURL } from "@/lib/imageCompress";
 
 type Props = {
@@ -62,6 +62,25 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
   const { data, isLoading } = useMediaLibrary(search);
   const upload = useUploadMedia();
   const del = useDeleteMedia();
+  const rename = useRenameMedia();
+
+  const handleRename = async (m: MediaItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const current = m.filename || "";
+    const next = window.prompt(
+      "SEO-বান্ধব ফাইলনেম দিন (যেমন: eid-food-distribution-2024.jpg)\nছোট হাতের অক্ষর, শব্দের মাঝে হাইফেন (-) ব্যবহার করুন।",
+      current
+    );
+    if (next == null) return;
+    const cleaned = next.trim();
+    if (!cleaned || cleaned === current) return;
+    try {
+      await rename.mutateAsync({ id: m.id, filename: cleaned });
+      toast.success("নাম পরিবর্তন হয়েছে");
+    } catch (err: any) {
+      toast.error(err?.message || "নাম পরিবর্তন ব্যর্থ");
+    }
+  };
 
   const items = data?.items || [];
   const total = data?.total || 0;
@@ -243,13 +262,22 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
                             <CheckCircle2 className="h-3.5 w-3.5" />
                           </div>
                         )}
-                        <button
-                          onClick={(e) => handleDelete(m.id, e)}
-                          className="absolute top-1.5 right-1.5 h-7 w-7 rounded-md bg-card/95 border border-border shadow flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-destructive-foreground transition"
-                          title="ডিলিট"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        <div className="absolute top-1.5 right-1.5 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                          <button
+                            onClick={(e) => handleRename(m, e)}
+                            className="h-7 w-7 rounded-md bg-card/95 border border-border shadow flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition"
+                            title="নাম পরিবর্তন (SEO)"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => handleDelete(m.id, e)}
+                            className="h-7 w-7 rounded-md bg-card/95 border border-border shadow flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground transition"
+                            title="ডিলিট"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2 text-[10px] text-white opacity-0 group-hover:opacity-100 transition">
                           <div className="truncate">{m.filename || "—"}</div>
                           <div className="text-white/70">
