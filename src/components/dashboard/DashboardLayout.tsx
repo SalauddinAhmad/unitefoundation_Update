@@ -169,6 +169,17 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
 const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
   const nav = useNavigate();
   const location = useLocation();
+  const { data: messages } = useMessages();
+  const msgList = (Array.isArray(messages) ? messages : []) as Array<{ id: string; name: string; subject: string; status: string }>;
+  const unreadMsgs = msgList.filter((m) => m.status === "unread");
+  const unreadCount = unreadMsgs.length;
+  const notifications = [
+    ...unreadMsgs.slice(0, 5).map((m) => ({
+      title: `নতুন মেসেজ — ${m.name}`,
+      desc: m.subject,
+      to: "/dashboard/messages",
+    })),
+  ];
   const current =
     [...menu, ...generalMenu].find((m) =>
       m.to === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(m.to),
