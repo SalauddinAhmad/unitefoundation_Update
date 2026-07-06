@@ -247,14 +247,6 @@ const LeftPanel = ({ active }: { active: TabKey }) => {
           </li>
         ))}
       </ul>
-      <div className="mt-8 grid grid-cols-3 gap-3">
-        {c.stats.map((s) => (
-          <div key={s.l} className="rounded-card bg-secondary/60 p-4 text-center">
-            <div className="text-xl md:text-2xl font-extrabold text-primary">{s.v}</div>
-            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
