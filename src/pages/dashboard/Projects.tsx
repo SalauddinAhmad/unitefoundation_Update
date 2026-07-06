@@ -328,7 +328,7 @@ export default function Projects() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
-                  const pct = Math.min(100, Math.round((p.raised / p.budget) * 100));
+                  const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
                   return (
                     <tr key={p.id} className="border-t border-border hover:bg-muted/40">
                       <td className="px-5 py-3 max-w-sm">
