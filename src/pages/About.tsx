@@ -217,9 +217,9 @@ const About = () => {
       />
       <div className="container-page relative">
         <div className="text-center max-w-3xl mx-auto">
-          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> {t("aboutPage.journey")}</span>
-          <h2 className="heading-display mt-3">{t("aboutPage.milestones")}</h2>
-          <p className="mt-5 text-muted-foreground leading-[1.95]">{t("aboutPage.milestonesIntro")}</p>
+          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> {msEyebrow}</span>
+          <h2 className="heading-display mt-3">{msHeading}</h2>
+          <p className="mt-5 text-muted-foreground leading-[1.95]">{msIntro}</p>
         </div>
 
         <div className="mt-16 relative max-w-5xl mx-auto">
