@@ -196,7 +196,11 @@ export const DonationChannelsSection = () => {
             </article>
 
             {/* Mobile */}
-            <article className="group relative flex flex-col rounded-[28px] bg-card border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1">
+            <article className="group relative flex flex-col rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background: "linear-gradient(160deg, hsl(var(--card)) 0%, hsl(28 60% 95%) 100%)",
+              }}
+            >
               <div className="flex items-center justify-between gap-4 mb-6">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
