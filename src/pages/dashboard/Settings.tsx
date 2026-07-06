@@ -372,140 +372,22 @@ const Settings = () => {
 
           {active === "hero" && (
             <Card>
-              <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
                 <div>
                   <h3 className="font-bold">হোম পেজের স্লাইডার</h3>
                   <p className="text-xs text-muted-foreground mt-1">
-                    যতগুলো স্লাইড দরকার যোগ করুন। ইমেজ URL খালি রাখলে ডিফল্ট ইমেজ দেখাবে।
+                    যতগুলো স্লাইড দরকার যোগ করুন। প্রতিটি স্লাইডে ইমেজ, টেক্সট, বাটন, অ্যালাইনমেন্ট ও ওভারলে আলাদা ভাবে সেট করা যাবে। "সেভ করুন" বাটন চাপার পর সাইটে আপডেট হবে।
                   </p>
                 </div>
                 <SaveBar />
               </div>
-              <div className="space-y-4">
-                {(form.hero_slides || []).map((slide, idx) => (
-                  <div key={idx} className="rounded-xl border border-border p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm font-bold">স্লাইড #{idx + 1}</div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = form.hero_slides.filter((_, i) => i !== idx);
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                        className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <ImageField
-                      label="ব্যানার ইমেজ"
-                      value={slide.image}
-                      onChange={(v) => {
-                        const next = [...form.hero_slides];
-                        next[idx] = { ...next[idx], image: v };
-                        setForm({ ...form, hero_slides: next });
-                      }}
-                      hint="1920x1080 রেকমেন্ডেড। আপলোড করলে অটো কমপ্রেস হবে।"
-                    />
-                    <Field
-                      label="ছোট টাইটেল (Eyebrow)"
-                      value={slide.eyebrow}
-                      onChange={(v) => {
-                        const next = [...form.hero_slides];
-                        next[idx] = { ...next[idx], eyebrow: v };
-                        setForm({ ...form, hero_slides: next });
-                      }}
-                    />
-                    <Field
-                      label="মূল টাইটেল"
-                      value={slide.title}
-                      onChange={(v) => {
-                        const next = [...form.hero_slides];
-                        next[idx] = { ...next[idx], title: v };
-                        setForm({ ...form, hero_slides: next });
-                      }}
-                    />
-                    <label className="block">
-                      <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">সাবটাইটেল</span>
-                      <textarea
-                        value={slide.subtitle}
-                        onChange={(e) => {
-                          const next = [...form.hero_slides];
-                          next[idx] = { ...next[idx], subtitle: e.target.value };
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                        rows={2}
-                        className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
-                      />
-                    </label>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      <Field
-                        label="Primary বাটন লেবেল"
-                        value={slide.primaryCtaLabel}
-                        onChange={(v) => {
-                          const next = [...form.hero_slides];
-                          next[idx] = { ...next[idx], primaryCtaLabel: v };
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                      />
-                      <Field
-                        label="Primary বাটন লিংক"
-                        value={slide.primaryCtaTo}
-                        onChange={(v) => {
-                          const next = [...form.hero_slides];
-                          next[idx] = { ...next[idx], primaryCtaTo: v };
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                        hint="উদাহরণ: /donate"
-                      />
-                      <Field
-                        label="Secondary বাটন লেবেল"
-                        value={slide.secondaryCtaLabel}
-                        onChange={(v) => {
-                          const next = [...form.hero_slides];
-                          next[idx] = { ...next[idx], secondaryCtaLabel: v };
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                      />
-                      <Field
-                        label="Secondary বাটন লিংক"
-                        value={slide.secondaryCtaTo}
-                        onChange={(v) => {
-                          const next = [...form.hero_slides];
-                          next[idx] = { ...next[idx], secondaryCtaTo: v };
-                          setForm({ ...form, hero_slides: next });
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setForm({
-                    ...form,
-                    hero_slides: [
-                      ...(form.hero_slides || []),
-                      {
-                        image: "",
-                        eyebrow: "নতুন ক্যাম্পেইন",
-                        title: "নতুন স্লাইডের টাইটেল",
-                        subtitle: "সংক্ষিপ্ত বর্ণনা এখানে লিখুন",
-                        primaryCtaLabel: "এখনই দান করুন",
-                        primaryCtaTo: "/donate",
-                        secondaryCtaLabel: "বিস্তারিত",
-                        secondaryCtaTo: "/projects",
-                      },
-                    ],
-                  })
-                }
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-              >
-                <Plus className="h-4 w-4" /> নতুন স্লাইড যোগ করুন
-              </button>
+              <HeroSlidesEditor
+                slides={form.hero_slides || []}
+                onChange={(next) => setForm({ ...form, hero_slides: next })}
+              />
             </Card>
           )}
+
 
           {active === "about" && (
             <Card>
