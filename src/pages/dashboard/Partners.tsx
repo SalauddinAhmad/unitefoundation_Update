@@ -3,6 +3,7 @@ import { Plus, Edit3, Trash2, Search, X, Save, Loader2, ExternalLink, GripVertic
 import { partners as DEFAULT_PARTNERS } from "@/data/partners";
 import { toast } from "sonner";
 import { Card, PageHeader } from "@/components/dashboard/DashboardUI";
+import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import {
   usePartnersAdmin,
   useSavePartner,
@@ -558,71 +559,20 @@ function ImageUploadField({
   value,
   onChange,
   aspect = "square",
-  maxWidth = 1024,
 }: {
   value: string;
   onChange: (v: string) => void;
   aspect?: "square" | "wide";
   maxWidth?: number;
 }) {
-  const [busy, setBusy] = useState(false);
-  const onFile = async (f: File | null) => {
-    if (!f) return;
-    setBusy(true);
-    try {
-      const { compressImageToDataURL } = await import("@/lib/imageCompress");
-      const url = await compressImageToDataURL(f, { maxWidth, quality: 0.88 });
-      onChange(url);
-    } catch (e: any) {
-      toast.error(e?.message || "ইমেজ প্রসেস করতে সমস্যা");
-    } finally {
-      setBusy(false);
-    }
-  };
-  const previewBox =
-    aspect === "wide"
-      ? "w-40 h-20 rounded-lg"
-      : "w-20 h-20 rounded-lg";
   return (
-    <div className="flex gap-3 items-start">
-      <div className={`${previewBox} overflow-hidden bg-secondary border border-border flex items-center justify-center shrink-0`}>
-        {value ? (
-          <img src={value} alt="preview" className="w-full h-full object-contain" />
-        ) : (
-          <ImageIcon className="h-5 w-5 text-muted-foreground" />
-        )}
-      </div>
-      <div className="flex-1 space-y-2 min-w-0">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="input"
-          placeholder="https://... অথবা নিচ থেকে আপলোড"
-        />
-        <div className="flex items-center gap-2">
-          <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold cursor-pointer hover:bg-primary/20 transition">
-            {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-            {busy ? "আপলোড হচ্ছে..." : "ইমেজ আপলোড"}
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => onFile(e.target.files?.[0] || null)}
-            />
-          </label>
-          {value && (
-            <button
-              type="button"
-              onClick={() => onChange("")}
-              className="text-xs text-muted-foreground hover:text-destructive font-semibold"
-            >
-              রিমুভ
-            </button>
-          )}
-        </div>
-        <p className="text-[11px] text-muted-foreground">প্রস্তাবিত: <b>400×200 px</b>, ট্রান্সপারেন্ট PNG বা SVG (লোগো)</p>
-      </div>
-    </div>
+    <ImagePickerButton
+      value={value}
+      onChange={onChange}
+      aspect={aspect === "wide" ? "logo" : "square"}
+      objectFit="contain"
+      hint="প্রস্তাবিত: 400×200 px, ট্রান্সপারেন্ট PNG বা SVG (লোগো)"
+    />
   );
 }
+

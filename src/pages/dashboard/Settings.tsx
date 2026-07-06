@@ -1,5 +1,6 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
 import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info } from "lucide-react";
+import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
@@ -43,65 +44,16 @@ const ImageField = ({
   value: string;
   onChange: (v: string) => void;
   hint?: string;
-}) => {
-  const [busy, setBusy] = useState(false);
-  const onFile = async (f: File | null) => {
-    if (!f) return;
-    setBusy(true);
-    try {
-      const { compressImageToDataURL } = await import("@/lib/imageCompress");
-      const url = await compressImageToDataURL(f, { maxWidth: 1920, quality: 0.82 });
-      onChange(url);
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <div className="space-y-2">
-      <span className="text-xs font-semibold text-foreground/80 block">{label}</span>
-      <div className="flex gap-3 items-start">
-        <div className="w-24 h-16 rounded-lg overflow-hidden bg-secondary border border-border flex items-center justify-center shrink-0">
-          {value ? (
-            <img src={value} alt="" className="w-full h-full object-cover" />
-          ) : (
-            <ImageIcon className="h-5 w-5 text-muted-foreground" />
-          )}
-        </div>
-        <div className="flex-1 space-y-2">
-          <input
-            type="text"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            placeholder="ইমেজ URL অথবা নিচ থেকে আপলোড"
-            className="w-full px-3.5 py-2 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
-          />
-          <div className="flex items-center gap-2">
-            <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-semibold cursor-pointer hover:bg-primary/20 transition">
-              {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
-              {busy ? "আপলোড হচ্ছে..." : "ইমেজ আপলোড"}
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={(e) => onFile(e.target.files?.[0] || null)}
-              />
-            </label>
-            {value && (
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="text-xs text-muted-foreground hover:text-destructive"
-              >
-                রিমুভ
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-      {hint && <span className="block text-[11px] text-muted-foreground">{hint}</span>}
-    </div>
-  );
-};
+}) => (
+  <ImagePickerButton
+    label={label}
+    value={value}
+    onChange={onChange}
+    aspect="wide"
+    hint={hint}
+  />
+);
+
 
 const Toggle = ({
   label,

@@ -193,6 +193,7 @@ app.use('/partners', require('./routes/partners'));
 app.use('/admin', require('./routes/admin'));
 app.use('/stats', require('./routes/stats'));
 app.use('/logs', require('./routes/logs'));
+app.use('/media', require('./routes/media'));
 
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));

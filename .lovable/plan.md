@@ -1,99 +1,59 @@
-
-# সব কিছু Dynamic করার Plan (৫টি Module)
-
 ## লক্ষ্য
-পাবলিক পেজে যা দেখা যায় — সব DB থেকে load হবে; dashboard থেকে CRUD; static demo data সরানো হবে। **UI/ডিজাইন অপরিবর্তিত থাকবে** — শুধু data source পাল্টাবে।
 
----
+WordPress-এর মতো একটি **Media Library** সিস্টেম যোগ করা — যেখানে ইমেজ আপলোড অপশনে ক্লিক করলে আগে থেকে আপলোড করা সব ইমেজ দেখা যাবে, সেগুলো থেকে সিলেক্ট বা ডিলিট করা যাবে, এবং নতুন ইমেজ আপলোডও করা যাবে। এটি ড্যাশবোর্ডের **সব ইমেজ আপলোড অপশনে** কাজ করবে।
 
-## Module 1: Projects (Public → Dynamic)
-- ✅ Backend/dashboard/DB আগে থেকেই আছে
-- 🔨 `src/pages/Projects.tsx` — `GET /projects` fetch, category filter DB data থেকে
-- 🔨 `src/pages/ProjectDetail.tsx` — `GET /projects/:slug` fetch
-- 🔨 `src/data/projects.ts` — শুধু helper (`formatBDT`, `toBnNum`) রাখব, `projects` array remove
-- 🔨 `ProjectCard.tsx` — API shape এর সাথে সঙ্গতিপূর্ণ (cover_image_url ইত্যাদি)
-- ⚠️ Field mapping: existing DB tag `raised/budget/beneficiaries` ↔ UI `raised/target/donors` — schema এ minor addition (`donors`, `location`, `urgent`, `gallery` JSON)
+## ব্যাকএন্ড (Node/Express + MySQL)
 
-## Module 2: Blog (Public → Dynamic)
-- ✅ Backend/dashboard CRUD আছে
-- 🔨 `src/pages/Blog.tsx` — `GET /posts?status=published` fetch
-- 🔨 `src/pages/BlogPost.tsx` — `GET /posts/:slug`; `content` column এ JSON stringified `ContentBlock[]` store; parse করে render
-- 🔨 Dashboard Blog editor — rich ContentBlock builder সহ (heading/paragraph/image/quote/list/stats/callout/cta)
-- 🔨 `src/data/blog.ts` — শুধু `ContentBlock` type export
+**নতুন টেবিল** `media_library`:
+- `id CHAR(36) PRIMARY KEY`
+- `url LONGTEXT` — base64 data URI
+- `filename VARCHAR(255)`, `mime VARCHAR(60)`, `size_bytes INT`
+- `width INT`, `height INT`
+- `uploaded_by CHAR(36)` (users.id, nullable)
+- `created_at DATETIME`
 
-## Module 3: Gallery (Public → Dynamic)
-- ✅ Backend আছে
-- 🔨 `src/pages/Gallery.tsx` — `GET /gallery` fetch (albums + items)
-- 🔨 `src/components/home/GallerySection.tsx` — DB items দেখাবে
-- 🔨 Video support — `kind='video'` items এ YouTube URL
+**নতুন রাউট** `server/routes/media.js`:
+- `GET /media` — সব ইমেজ লিস্ট (page, search, sort by newest)
+- `POST /media` — নতুন ইমেজ যোগ করুন (base64 data URI বডি সহ)
+- `DELETE /media/:id` — ডিলিট করুন
+- সবই `requireAuth` দিয়ে সুরক্ষিত
 
-## Module 4: Partners (নতুন — Full stack)
-- 🆕 DB table `partners` (name, slug, logo_url, cover_url, tagline, description, website, category, sort_order)
-- 🆕 `server/routes/partners.js` — GET/POST/PATCH/DELETE
-- 🆕 `src/pages/dashboard/Partners.tsx` — CRUD UI
-- 🔨 `src/pages/PartnerDetail.tsx` — DB থেকে fetch
-- 🔨 `src/components/home/PartnersSection.tsx` — DB থেকে load
-- 🔨 `src/data/partners.ts` — remove (or type-only)
+**নতুন migration** `011_media_library.sql` — টেবিল ও ইনডেক্স তৈরি।
 
-## Module 5: Impact Stats (নতুন — DB-editable)
-- 🆕 settings JSON এ `impact_stats` field (array of `{label, value, icon}`)
-- 🔨 Settings page এ editor
-- 🔨 `src/components/home/ImpactStats.tsx` — settings থেকে load
-- 🔨 `src/data/impact.ts` — remove
+## ফ্রন্টএন্ড
 
----
+**নতুন কম্পোনেন্ট** `src/components/dashboard/MediaLibrary.tsx`:
+- মোডাল ডায়ালগ, দুটি ট্যাব: **"লাইব্রেরি"** ও **"নতুন আপলোড"**
+- Library ট্যাব: গ্রিড ভিউ (থাম্বনেইল), সার্চ বার, প্রতিটি ইমেজে hover-এ **সিলেক্ট / ডিলিট** বাটন
+- Upload ট্যাব: drag-and-drop + file picker, একাধিক ফাইল সাপোর্ট, ক্লায়েন্ট-সাইড কম্প্রেসন (আগের `imageCompress` লাইব্রেরি ব্যবহার করে)
+- আপলোডের পর অটো লাইব্রেরিতে সেভ হয়ে সিলেক্ট হবে
+- প্রতিটি জায়গার জন্য প্রস্তাবিত সাইজ hint দেখানো যাবে (prop হিসেবে)
 
-## Backend পরিবর্তনসমূহ (Schema)
+**নতুন hook** `src/hooks/api/useMedia.ts` — react-query দিয়ে list/upload/delete।
 
-`server/db/schema.sql` এ **CREATE TABLE IF NOT EXISTS** + **ALTER TABLE** যোগ করব। User দুইভাবে apply করতে পারবেন:
+**নতুন কম্পোনেন্ট** `src/components/dashboard/ImagePickerButton.tsx` — একটা রিইউজেবল বাটন/প্রিভিউ যেটা ক্লিক করলে MediaLibrary মোডাল খোলে। বর্তমান cover/photo/logo এলাকাগুলো এটি দিয়ে রিপ্লেস করা হবে।
 
-**Option A (আপনার জন্য সহজ):** নতুন SQL statements আমি আলাদা file `server/db/migrations/002_dynamic_modules.sql` এ দেব — phpMyAdmin এ import করলেই হবে। কোনো data হারাবে না।
+## যেসব জায়গায় ইন্টিগ্রেট হবে
 
-New tables/columns:
-```sql
-CREATE TABLE partners (id, name, slug, logo_url, cover_url, tagline, description, website, category, sort_order, created_at);
-ALTER TABLE projects ADD COLUMN donors INT DEFAULT 0, ADD COLUMN location VARCHAR(150), 
-  ADD COLUMN urgent TINYINT(1) DEFAULT 0, ADD COLUMN gallery JSON, ADD COLUMN target DECIMAL(14,2);
--- posts.content ইতিমধ্যে LONGTEXT — JSON store করবে, no change
-```
+1. **Blog** (`dashboard/Blog.tsx`) — কভার ইমেজ + এডিটরের ভেতরের ছবি
+2. **Projects** (`dashboard/Projects.tsx`) — কভার + inline
+3. **Team** (`dashboard/Team.tsx`) — মেম্বারের ফটো
+4. **Partners** (`dashboard/Partners.tsx`) — লোগো
+5. **Gallery** (`dashboard/Gallery.tsx`) — আপলোড ফ্লো (Gallery-এর নিজস্ব list-ও আছে, কিন্তু media library থেকে সিলেক্টের সুযোগও থাকবে)
+6. **Settings** (`dashboard/Settings.tsx`) — hero banner + যেকোনো ইমেজ ফিল্ড
+7. **Messages** — attachment (যদি প্রযোজ্য)
 
----
+সব জায়গায় একই MediaLibrary component ব্যবহার হবে — একবার আপলোড, সব জায়গায় রিইউজ।
 
-## নতুন API Endpoints
-- `GET /partners`, `GET /partners/:slug`, `POST/PATCH/DELETE /partners/:id`
-- `GET /settings` (public — impact_stats দিতে)
+## Migration চালানোর নির্দেশনা
 
----
+আপনি phpMyAdmin এ `server/db/migrations/011_media_library.sql` ফাইলের SQL রান করবেন — আগের মতোই।
 
-## Files Affected (আনুমানিক)
-- **Backend (add/edit):** 3 route files + 1 SQL migration + `app.js`
-- **Frontend (edit):** 8 public pages/components + 5 dashboard pages
-- **Frontend (new):** 1 dashboard page (Partners) + rich blog editor components
+## ডেলিভারেবল
 
----
+1. Backend: migration + `media.js` রাউট + `app.js`-এ register
+2. Frontend: `MediaLibrary.tsx`, `ImagePickerButton.tsx`, `useMedia.ts`
+3. ৭টি ড্যাশবোর্ড পেজে বর্তমান upload UI-গুলো নতুন picker দিয়ে রিপ্লেস
+4. পুরনো compress লাইব্রেরি reuse — সাইজ hint প্রতিটি জায়গায় বজায় থাকবে
 
-## Execution Order (5 ধাপে, প্রতি ধাপে test)
-1. **Backend**: SQL migration + partners route + settings expansion → deploy
-2. **Projects public**: API fetch conversion + card mapping
-3. **Gallery public + home**: API fetch conversion
-4. **Partners**: Dashboard CRUD + public pages fetch
-5. **Blog + Impact Stats**: Rich editor + settings-driven stats
-
-প্রতি ধাপ শেষে আপনি preview এ check করবেন — কোথাও ভুল হলে সেখানেই fix করে পরবর্তী step এ যাব।
-
----
-
-## ঝুঁকি ও Safety
-- ✅ কোনো existing data delete হবে না (শুধু `ADD COLUMN` / new tables)
-- ✅ Migration fail হলেও পুরনো site কাজ করবে
-- ✅ প্রথম deploy এর পর যদি DB empty থাকে (partners/projects), আমি seed data script দিব যাতে current static data DB তে চলে যায়
-
----
-
-## Deploy সংখ্যা
-- **1 বার backend deploy** (SQL migration + new routes)
-- **1 বার frontend deploy** সব হয়ে গেলে (আপনি চাইলে ধাপে ধাপেও দিতে পারেন)
-
----
-
-**Approve করলে Module 1 (Backend SQL + partners route + settings expansion) দিয়ে শুরু করব। প্রথমে backend, তারপর frontend — কারণ frontend আগে deploy করলে API missing হয়ে সাইট break হতে পারে।**
+অ্যাপ্রুভ করলে ইমপ্লিমেন্ট শুরু করবো।

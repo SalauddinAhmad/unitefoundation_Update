@@ -3,8 +3,9 @@ import { Card, KpiCard, PageHeader, StatusBadge, Btn } from "@/components/dashbo
 import {
   Plus, Search, Upload, ImageIcon, Video, Trash2, Edit3, Eye, X, Save, Calendar,
   FolderOpen, Play, Grid3x3, Rows3, Star, Copy, Archive, Download, Filter,
-  Images, Film, Sparkles, Link as LinkIcon,
+  Images, Film, Sparkles, Link as LinkIcon, Library,
 } from "lucide-react";
+import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import { toast } from "sonner";
 
 type MediaType = "image" | "video";
@@ -547,6 +548,7 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
   const fileRef = useRef<HTMLInputElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
   const captionRef = useRef<HTMLInputElement>(null);
+  const [libOpen, setLibOpen] = useState(false);
 
   useEffect(() => { setA(album); }, [album]);
 
@@ -650,10 +652,18 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
                     <Btn onClick={addVideo} className="w-full"><Plus className="h-4 w-4" /> ভিডিও যুক্ত করুন</Btn>
                   </div>
                 </div>
-                <div className="mt-3 flex gap-2">
-                  <input placeholder="অথবা ইমেজ URL পেস্ট করুন..." className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm" onKeyDown={(e) => { if (e.key === "Enter") { addImageUrl((e.target as HTMLInputElement).value); (e.target as HTMLInputElement).value = ""; } }} />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setLibOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/20 transition"
+                  >
+                    <Library className="h-4 w-4" /> মিডিয়া লাইব্রেরি থেকে যুক্ত করুন
+                  </button>
+                  <input placeholder="অথবা ইমেজ URL পেস্ট করুন..." className="flex-1 min-w-[220px] px-3 py-2 rounded-lg border border-border bg-background text-sm" onKeyDown={(e) => { if (e.key === "Enter") { addImageUrl((e.target as HTMLInputElement).value); (e.target as HTMLInputElement).value = ""; } }} />
                   <Btn variant="outline"><LinkIcon className="h-4 w-4" /> যুক্ত</Btn>
                 </div>
+
               </div>
 
               {/* Media list */}
@@ -739,9 +749,17 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
           </div>
         </div>
       </div>
+      {libOpen && (
+        <MediaLibrary
+          onClose={() => setLibOpen(false)}
+          onSelect={(url) => { addImageUrl(url); setLibOpen(false); }}
+          hint="গ্যালারি ইমেজের প্রস্তাবিত সাইজ: 1600×1067 px (3:2)"
+        />
+      )}
     </div>
   );
 }
+
 
 const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div>
