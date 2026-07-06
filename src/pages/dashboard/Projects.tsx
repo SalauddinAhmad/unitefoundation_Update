@@ -281,19 +281,21 @@ export default function Projects() {
                         <MapPin className="h-3 w-3" /> {p.location}
                       </div>
                     )}
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between text-xs mb-1.5">
-                        <span className="text-muted-foreground">সংগৃহীত</span>
-                        <span className="font-bold tabular-nums">{pct}%</span>
+                    {p.budget > 0 && (
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <span className="text-muted-foreground">সংগৃহীত</span>
+                          <span className="font-bold tabular-nums">{pct}%</span>
+                        </div>
+                        <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                          <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all" style={{ width: `${pct}%` }} />
+                        </div>
+                        <div className="flex items-center justify-between text-xs mt-2">
+                          <span className="font-bold tabular-nums text-primary">৳ {(p.raised / 100000).toFixed(1)}L</span>
+                          <span className="text-muted-foreground tabular-nums">/ ৳ {(p.budget / 100000).toFixed(1)}L</span>
+                        </div>
                       </div>
-                      <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                        <div className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all" style={{ width: `${pct}%` }} />
-                      </div>
-                      <div className="flex items-center justify-between text-xs mt-2">
-                        <span className="font-bold tabular-nums text-primary">৳ {(p.raised / 100000).toFixed(1)}L</span>
-                        <span className="text-muted-foreground tabular-nums">/ ৳ {(p.budget / 100000).toFixed(1)}L</span>
-                      </div>
-                    </div>
+                    )}
                     <div className="mt-auto pt-4 border-t border-border flex items-center justify-between">
                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Users className="h-3.5 w-3.5" />
@@ -337,12 +339,14 @@ export default function Projects() {
                       </td>
                       <td className="py-3"><span className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-xs font-semibold">{p.category}</span></td>
                       <td className="py-3 w-44">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                            <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                        {p.budget > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
+                              <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="text-xs font-bold tabular-nums w-8">{pct}%</span>
                           </div>
-                          <span className="text-xs font-bold tabular-nums w-8">{pct}%</span>
-                        </div>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
                       </td>
                       <td className="py-3 font-bold tabular-nums text-primary">৳ {(p.raised / 100000).toFixed(1)}L</td>
                       <td className="py-3 tabular-nums">{p.beneficiaries.toLocaleString()}</td>
