@@ -34,22 +34,22 @@ export const DonationChannelsSection = () => {
       className="relative py-16 md:py-24 overflow-hidden isolate"
       style={{
         background:
-          "radial-gradient(1200px 600px at 50% -10%, hsl(280 70% 55% / 0.22), transparent 60%), radial-gradient(800px 500px at 0% 100%, hsl(200 90% 50% / 0.20), transparent 55%), radial-gradient(800px 500px at 100% 100%, hsl(320 70% 45% / 0.25), transparent 55%), linear-gradient(180deg, hsl(240 45% 10%) 0%, hsl(250 50% 8%) 50%, hsl(235 45% 7%) 100%)",
+          "radial-gradient(1000px 550px at 50% -10%, hsl(var(--primary) / 0.18), transparent 60%), radial-gradient(700px 450px at 0% 100%, hsl(var(--donate-orange) / 0.14), transparent 55%), radial-gradient(700px 450px at 100% 100%, hsl(var(--donate-red) / 0.12), transparent 55%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(40 20% 96%) 50%, hsl(var(--background)) 100%)",
       }}
     >
-      {/* Fine grid overlay */}
+      {/* Brand-tinted geometric pattern */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 opacity-[0.05]"
         style={{
-          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23ffffff' stroke-width='0.6'><path d='M30 0v60M0 30h60'/><circle cx='30' cy='30' r='1.2' fill='%23ffffff'/></g></svg>")`,
-          backgroundSize: "60px 60px",
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%23006837' stroke-width='1'><path d='M40 4l12 12-12 12-12-12z'/><path d='M40 40l12 12-12 12-12-12z'/><circle cx='40' cy='40' r='3'/></g></svg>")`,
+          backgroundSize: "80px 80px",
         }}
       />
-      {/* Soft aurora blobs */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-fuchsia-500/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-cyan-400/15 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -left-40 w-[420px] h-[420px] rounded-full bg-indigo-500/15 blur-3xl" />
+      {/* Brand-color aurora blobs */}
+      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--primary))]/10 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/12 blur-3xl" />
+      <div className="pointer-events-none absolute top-1/3 -left-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl" />
 
       <div className="container-page relative">
         {/* Heading */}
