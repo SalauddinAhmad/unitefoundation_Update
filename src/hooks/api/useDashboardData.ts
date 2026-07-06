@@ -484,6 +484,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       Array.isArray(s?.trust) && s!.trust!.length ? s!.trust! : defaultSettings.trust,
     milestones:
       Array.isArray(s?.milestones) && s!.milestones!.length ? s!.milestones! : defaultSettings.milestones,
+    milestones_section: { ...defaultSettings.milestones_section, ...(s?.milestones_section || {}) },
   };
 }
 
