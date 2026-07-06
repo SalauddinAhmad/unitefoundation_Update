@@ -378,20 +378,6 @@ const useSchemas = () => {
       city: z.string().trim().min(2, t("volunteerPage.err.city")).max(80),
     };
     return {
-      regular: z.object({
-        ...baseContact,
-        area: z.string().min(1, t("volunteerPage.err.area")),
-        amount: z.string().min(1, t("volunteerPage.err.amount")),
-        method: z.string().min(1, t("volunteerPage.err.method")),
-        note: z.string().trim().max(500).or(z.literal("")),
-      }),
-      member: z.object({
-        ...baseContact,
-        profession: z.string().trim().max(120).or(z.literal("")),
-        type: z.string().min(1, t("volunteerPage.err.membership")),
-        address: z.string().trim().min(5, t("volunteerPage.err.address")).max(300),
-        note: z.string().trim().max(500).or(z.literal("")),
-      }),
       volunteer: z.object({
         ...baseContact,
         age: z.string().trim().min(1, t("volunteerPage.err.age")),
