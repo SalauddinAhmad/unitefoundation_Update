@@ -603,9 +603,31 @@ function ProjectEditor({ p, categories, onAddCategory, onClose, onSave }: { p?: 
 
             <Section title="বিবরণ" icon={Target}>
               <Field label="ক্যাটাগরি">
-                <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
-                  {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
+                <div className="flex gap-1.5">
+                  <select
+                    value={categories.includes(category) ? category : ""}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-card border border-border text-sm"
+                  >
+                    {!categories.includes(category) && <option value="">— বাছুন —</option>}
+                    {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const n = prompt("নতুন ক্যাটাগরির নাম:");
+                      if (!n) return;
+                      const trimmed = n.trim();
+                      if (!trimmed) return;
+                      onAddCategory(trimmed);
+                      setCategory(trimmed);
+                    }}
+                    className="px-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90"
+                    title="নতুন ক্যাটাগরি যোগ"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </Field>
               <Field label="স্ট্যাটাস">
                 <select value={status} onChange={(e) => setStatus(e.target.value as any)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm">
