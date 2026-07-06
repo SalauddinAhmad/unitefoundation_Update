@@ -10,6 +10,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { api } from "@/lib/api";
 import { EXTRAS, mergeExtras } from "@/lib/localExtras";
+import heroMosque from "@/assets/hero-mosque.jpg";
+import heroRelief from "@/assets/hero-relief.jpg";
+import heroWater from "@/assets/hero-water.jpg";
 import {
   donations as mockDonations,
   volunteerApps as mockVolunteers,
