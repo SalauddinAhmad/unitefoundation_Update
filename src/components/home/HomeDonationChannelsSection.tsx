@@ -11,7 +11,7 @@ const mobileNumbers = [
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 
-export const DonationChannelsSection = () => {
+export const HomeDonationChannelsSection = () => {
   const { t } = useTranslation();
 
   const bankCards = site.payments.banks.map((b) => ({
