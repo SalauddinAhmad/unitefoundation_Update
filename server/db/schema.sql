@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS team_members (
   name VARCHAR(150) NOT NULL,
   role VARCHAR(150) NOT NULL,
   bio TEXT,
-  photo TEXT,
+  photo LONGTEXT,
   facebook VARCHAR(255),
   linkedin VARCHAR(255),
   email VARCHAR(190),
