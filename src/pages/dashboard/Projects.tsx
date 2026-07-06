@@ -260,7 +260,7 @@ export default function Projects() {
         ) : view === "grid" ? (
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((p) => {
-              const pct = Math.min(100, Math.round((p.raised / p.budget) * 100));
+              const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
               return (
                 <div key={p.id} className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
                   <div className="h-32 relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
