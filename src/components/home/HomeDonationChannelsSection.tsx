@@ -38,8 +38,16 @@ export const HomeDonationChannelsSection = () => {
           "radial-gradient(ellipse at top, hsl(152 100% 14%) 0%, hsl(152 100% 9%) 55%, hsl(152 100% 6%) 100%)",
       }}
     >
+      {/* Islamic diamond pattern watermark on section background */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23FBB03B' stroke-width='0.8'><path d='M30 2 L58 30 L30 58 L2 30 Z'/><path d='M30 14 L46 30 L30 46 L14 30 Z'/></g></svg>")`,
+          backgroundSize: "60px 60px",
+        }}
+      />
       {/* Corner glow accents */}
-
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
@@ -54,17 +62,14 @@ export const HomeDonationChannelsSection = () => {
       <div className="container-page relative">
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/40 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-donate-highlight">
-            <span className="h-1.5 w-1.5 rounded-full bg-donate-highlight" />
-            দান ও সহযোগিতা
-          </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground leading-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-primary-foreground leading-tight">
             {t("channels.heading")}
           </h2>
-          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/70 md:px-8">
+          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:px-8">
             {t("channels.subtitle")}
           </p>
         </div>
+
 
         {/* 4 dark bank-card style cards */}
         <div className="mx-auto max-w-7xl">
