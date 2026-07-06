@@ -247,7 +247,11 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
               <div className="border-t border-border bg-background/60 p-4 space-y-4">
                 {/* Live preview */}
                 <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-foreground">
-                  <img src={preview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  {preview ? (
+                    <img src={preview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-white/60 text-xs">কোনো ইমেজ নির্বাচন করা হয়নি</div>
+                  )}
                   <div
                     className={`absolute inset-0 ${
                       (slide.overlay || "dark") === "dark"
