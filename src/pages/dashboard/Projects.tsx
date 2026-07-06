@@ -339,12 +339,14 @@ export default function Projects() {
                       </td>
                       <td className="py-3"><span className="px-2 py-0.5 rounded-md bg-accent text-accent-foreground text-xs font-semibold">{p.category}</span></td>
                       <td className="py-3 w-44">
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
-                            <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                        {p.budget > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden">
+                              <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="text-xs font-bold tabular-nums w-8">{pct}%</span>
                           </div>
-                          <span className="text-xs font-bold tabular-nums w-8">{pct}%</span>
-                        </div>
+                        ) : <span className="text-xs text-muted-foreground">—</span>}
                       </td>
                       <td className="py-3 font-bold tabular-nums text-primary">৳ {(p.raised / 100000).toFixed(1)}L</td>
                       <td className="py-3 tabular-nums">{p.beneficiaries.toLocaleString()}</td>
