@@ -4,9 +4,9 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
 const mobileNumbers = [
-  { brand: "bKash", number: site.payments.bkash.number, color: "hsl(340 75% 45%)" },
-  { brand: "Nagad", number: site.payments.nagad.number, color: "hsl(24 91% 54%)" },
-  { brand: "Rocket", number: site.payments.rocket.number, color: "hsl(280 55% 40%)" },
+  { brand: "bKash", number: site.payments.bkash.number },
+  { brand: "Nagad", number: site.payments.nagad.number },
+  { brand: "Rocket", number: site.payments.rocket.number },
 ];
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
@@ -31,256 +31,229 @@ export const DonationChannelsSection = () => {
   };
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-[hsl(40_25%_97%)]">
-      {/* Soft brand aurora blobs */}
-      <div className="pointer-events-none absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[hsl(var(--primary))]/8 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[hsl(var(--donate-orange))]/8 blur-3xl" />
-
+    <section className="relative py-12 md:py-16 overflow-hidden bg-secondary">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-60"
+        style={{
+          backgroundImage:
+            "radial-gradient(hsl(var(--primary) / 0.08) 1px, transparent 1px)",
+          backgroundSize: "26px 26px",
+        }}
+      />
       <div className="container-page relative">
-        {/* Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+          <div className="mx-auto mb-4 h-1 w-16 rounded-full gradient-donate-bg" />
+          <h2 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight">
             {t("channels.heading")}
           </h2>
-          <p className="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed">
+          <p className="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed md:px-8">
             {t("channels.subtitle")}
           </p>
         </div>
 
-        {/* Bento grid */}
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-5 auto-rows-auto">
-          {/* Bank card 1 — white, col-span-3 */}
-          {bankCards[0] && (
-            <article className="md:col-span-3 rounded-[2rem] bg-card p-7 md:p-8 shadow-[0_10px_40px_-15px_hsl(152_60%_15%/0.15)] hover:shadow-[0_20px_50px_-15px_hsl(152_60%_15%/0.25)] hover:-translate-y-1 transition-all duration-300 border border-border/50">
-              <div className="flex items-start justify-between mb-6">
-                <div className="h-12 w-12 rounded-2xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-[hsl(var(--primary))]" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-5 items-stretch">
+          <article className="lg:col-span-5 rounded-[28px] bg-card border border-border shadow-card p-5 md:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-donate-orange">
+                  Bank Transfer
+                </p>
+                <h3 className="mt-1 text-2xl font-extrabold text-foreground leading-tight">
+                  ব্যাংক অ্যাকাউন্ট
+                </h3>
+              </div>
+              <div className="h-12 w-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <CreditCard className="h-5 w-5 text-primary" />
+              </div>
+            </div>
+
+            <div className="relative mt-5 space-y-4 pl-5 before:absolute before:left-[14px] before:top-4 before:bottom-4 before:w-px before:bg-border">
+              {bankCards.map((bank, index) => (
+                <div key={bank.title} className="relative">
+                  <span className="absolute -left-[26px] top-4 h-4 w-4 rounded-full border-4 border-card bg-primary" />
+                  <div className="rounded-2xl bg-secondary/80 border border-border/70 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                          Bank · 0{index + 1}
+                        </p>
+                        <h4 className="mt-1 text-lg md:text-xl font-extrabold text-foreground leading-snug">
+                          {bank.title}
+                        </h4>
+                        <p className="mt-1 text-xs font-semibold text-primary">
+                          {bank.fundLabel} · {bank.accountName}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-card px-3 py-1 text-[10px] font-bold text-donate-orange border border-border">
+                        {bank.branch}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-card border border-border p-3">
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                          {t("channels.labels.accountNumber")}
+                        </p>
+                        <p className="mt-1 font-mono text-base md:text-lg font-extrabold text-foreground tracking-wide" dir="ltr">
+                          {formatAccount(bank.accountNumber)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => copy(bank.accountNumber, t("channels.toast.accountNumber"))}
+                        aria-label={t("channels.copyAccount")}
+                        className="h-10 w-10 shrink-0 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-colors hover:bg-primary/90"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    {(bank.routing || bank.swift) && (
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        {bank.routing && (
+                          <div className="rounded-xl bg-card/70 px-3 py-2 border border-border/70">
+                            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                              {t("channels.labels.routing")}
+                            </p>
+                            <p className="mt-0.5 font-mono font-semibold text-foreground" dir="ltr">
+                              {bank.routing}
+                            </p>
+                          </div>
+                        )}
+                        {bank.swift && (
+                          <div className="rounded-xl bg-card/70 px-3 py-2 border border-border/70">
+                            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                              {t("channels.labels.swift")}
+                            </p>
+                            <p className="mt-0.5 font-mono font-semibold text-foreground" dir="ltr">
+                              {bank.swift}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                  {bankCards[0].badge}
+              ))}
+            </div>
+          </article>
+
+          <article className="lg:col-span-3 rounded-[28px] bg-card border border-border shadow-card overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
+            <div className="relative h-32 bg-primary overflow-hidden">
+              <div
+                aria-hidden
+                className="absolute inset-0 opacity-20"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(135deg, hsl(var(--donate-highlight) / 0.7) 25%, transparent 25%), linear-gradient(225deg, hsl(var(--donate-highlight) / 0.7) 25%, transparent 25%)",
+                  backgroundSize: "38px 38px",
+                }}
+              />
+              <div className="relative flex items-center justify-between p-5">
+                <span className="rounded-full bg-card/95 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary">
+                  Bangla QR
                 </span>
+                <QrCode className="h-5 w-5 text-primary-foreground" />
               </div>
-              <h3 className="text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight leading-snug">
-                {bankCards[0].title}
-              </h3>
-              <div className="text-xs text-[hsl(var(--donate-orange))] font-semibold mt-1.5">
-                {bankCards[0].fundLabel} · {bankCards[0].accountName}
-              </div>
-
-              <div className="mt-5 rounded-2xl bg-[hsl(40_20%_96%)] p-4 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase mb-1">
-                    {t("channels.labels.accountNumber")}
-                  </div>
-                  <div className="font-mono font-bold text-foreground text-lg md:text-xl tracking-wide" dir="ltr">
-                    {formatAccount(bankCards[0].accountNumber)}
-                  </div>
-                </div>
-                <button
-                  onClick={() => copy(bankCards[0].accountNumber, t("channels.toast.accountNumber"))}
-                  aria-label={t("channels.copyAccount")}
-                  className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] flex items-center justify-center transition-colors"
-                >
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mt-4 text-xs">
-                <div>
-                  <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.branch")}</div>
-                  <div className="text-foreground/90 font-medium mt-0.5">{bankCards[0].branch}</div>
-                </div>
-                {bankCards[0].routing && (
-                  <div>
-                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.routing")}</div>
-                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[0].routing}</div>
-                  </div>
-                )}
-                {bankCards[0].swift && (
-                  <div>
-                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.swift")}</div>
-                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[0].swift}</div>
-                  </div>
-                )}
-              </div>
-            </article>
-          )}
-
-          {/* QR card — solid brand green, tall, col-span-3 row-span-2 */}
-          <article
-            className="md:col-span-3 md:row-span-2 rounded-[2rem] p-7 md:p-8 text-white shadow-[0_20px_50px_-15px_hsl(152_100%_15%/0.4)] relative overflow-hidden flex flex-col"
-            style={{
-              background:
-                "linear-gradient(155deg, hsl(152 100% 18%) 0%, hsl(152 100% 12%) 100%)",
-            }}
-          >
-            {/* Decorative pattern */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 opacity-[0.08]"
-              style={{
-                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23FBB03B' stroke-width='0.8'><path d='M30 4l10 10-10 10-10-10z'/><circle cx='30' cy='30' r='2'/></g></svg>")`,
-                backgroundSize: "60px 60px",
-              }}
-            />
-            <div className="relative flex items-start justify-between mb-6">
-              <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center">
-                <QrCode className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
-              </div>
-              <span className="text-[10px] font-bold tracking-[0.2em] text-white/60 uppercase">
-                Bangla QR
-              </span>
             </div>
 
-            <div className="relative">
-              <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
-                {t("channels.scanToDonate")}
-              </h3>
-              <p className="text-white/70 text-sm mt-2 leading-relaxed">
-                {t("channels.anyAppNote")}
-              </p>
-            </div>
-
-            {/* QR image */}
-            <div className="relative mt-6 md:mt-8 flex-1 flex items-center justify-center">
-              <div className="relative bg-white p-4 rounded-2xl shadow-2xl">
-                <div className="w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
+            <div className="px-5 pb-5 -mt-10 relative">
+              <div className="mx-auto w-44 max-w-full rounded-[24px] bg-card p-3 shadow-card border border-border">
+                <div className="aspect-square rounded-2xl bg-secondary flex items-center justify-center overflow-hidden">
                   {site.payments.qrImage ? (
                     <img
                       src={site.payments.qrImage}
                       alt="Unite Foundation Bangla QR"
-                      className="w-full h-full object-contain"
+                      className="h-full w-full object-contain"
+                      loading="lazy"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-[hsl(var(--primary))]/25 rounded-xl">
-                      <QrCode className="h-14 w-14 text-[hsl(var(--primary))]/40" strokeWidth={1.2} />
-                      <div className="text-[hsl(var(--primary))]/70 text-xs font-semibold px-3">
+                    <div className="h-full w-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-primary/20 rounded-2xl p-3">
+                      <QrCode className="h-11 w-11 text-primary/45" strokeWidth={1.4} />
+                      <p className="text-xs font-semibold text-primary/75 leading-snug">
                         {t("channels.qrPending")}
-                      </div>
+                      </p>
                     </div>
                   )}
                 </div>
-                <div className="absolute -bottom-2 -right-2 bg-[hsl(var(--donate-highlight))] text-[hsl(var(--donate-highlight-foreground))] text-[10px] font-black px-2.5 py-1 rounded-lg shadow-lg tracking-wider">
-                  SCAN TO PAY
-                </div>
+              </div>
+
+              <div className="mt-5 text-center">
+                <h3 className="text-xl font-extrabold text-foreground leading-tight">
+                  {t("channels.scanToDonate")}
+                </h3>
+                <p className="mt-1 text-xs font-semibold text-donate-orange">
+                  {t("channels.anyAppNote")}
+                </p>
+                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                  {t("channels.qrHint")}
+                </p>
               </div>
             </div>
-
-            <p className="relative text-center text-[11px] text-white/50 mt-6 leading-relaxed">
-              {t("channels.qrHint")}
-            </p>
           </article>
 
-          {/* Bank card 2 — white, col-span-3 */}
-          {bankCards[1] && (
-            <article className="md:col-span-3 rounded-[2rem] bg-card p-7 md:p-8 shadow-[0_10px_40px_-15px_hsl(152_60%_15%/0.15)] hover:shadow-[0_20px_50px_-15px_hsl(152_60%_15%/0.25)] hover:-translate-y-1 transition-all duration-300 border border-border/50">
-              <div className="flex items-start justify-between mb-6">
-                <div className="h-12 w-12 rounded-2xl bg-[hsl(var(--donate-highlight))]/15 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-[hsl(var(--donate-orange))]" />
-                </div>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
-                  {bankCards[1].badge}
-                </span>
+          <article className="lg:col-span-4 rounded-[28px] bg-card border border-border shadow-card p-5 md:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-donate-orange">
+                  Mobile Banking
+                </p>
+                <h3 className="mt-1 text-2xl font-extrabold text-foreground leading-tight">
+                  {t("channels.personalAccount")}
+                </h3>
+                <p className="mt-1 text-xs font-semibold text-primary">
+                  {site.payments.bank.account}
+                </p>
               </div>
-              <h3 className="text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight leading-snug">
-                {bankCards[1].title}
-              </h3>
-              <div className="text-xs text-[hsl(var(--donate-orange))] font-semibold mt-1.5">
-                {bankCards[1].fundLabel} · {bankCards[1].accountName}
+              <div className="h-12 w-12 shrink-0 rounded-2xl bg-donate-highlight/20 flex items-center justify-center">
+                <Smartphone className="h-5 w-5 text-donate-orange" />
               </div>
+            </div>
 
-              <div className="mt-5 rounded-2xl bg-[hsl(40_20%_96%)] p-4 flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase mb-1">
-                    {t("channels.labels.accountNumber")}
-                  </div>
-                  <div className="font-mono font-bold text-foreground text-lg md:text-xl tracking-wide" dir="ltr">
-                    {formatAccount(bankCards[1].accountNumber)}
-                  </div>
-                </div>
-                <button
-                  onClick={() => copy(bankCards[1].accountNumber, t("channels.toast.accountNumber"))}
-                  aria-label={t("channels.copyAccount")}
-                  className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] flex items-center justify-center transition-colors"
+            <div className="mt-5 grid grid-cols-1 gap-3">
+              {mobileNumbers.map((mobile, index) => (
+                <div
+                  key={mobile.brand}
+                  className="rounded-2xl bg-secondary/80 border border-border/70 p-4"
                 >
-                  <Copy className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3 mt-4 text-xs">
-                <div>
-                  <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.branch")}</div>
-                  <div className="text-foreground/90 font-medium mt-0.5">{bankCards[1].branch}</div>
-                </div>
-                {bankCards[1].routing && (
-                  <div>
-                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.routing")}</div>
-                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[1].routing}</div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className={`h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center text-sm font-extrabold ${
+                          index === 0
+                            ? "bg-donate-red text-primary-foreground"
+                            : index === 1
+                              ? "bg-donate-orange text-primary-foreground"
+                              : "bg-primary text-primary-foreground"
+                        }`}
+                      >
+                        {mobile.brand.charAt(0)}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-extrabold text-foreground">{mobile.brand}</p>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                          {t("channels.labels.mobileNumber")}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => copy(mobile.number, t("channels.toast.mobileNumber"))}
+                      aria-label={t("channels.copyMobile")}
+                      className="h-9 w-9 shrink-0 rounded-xl bg-card border border-border text-primary flex items-center justify-center transition-colors hover:bg-accent"
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                    </button>
                   </div>
-                )}
-                {bankCards[1].swift && (
-                  <div>
-                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.swift")}</div>
-                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[1].swift}</div>
-                  </div>
-                )}
-              </div>
-            </article>
-          )}
-
-          {/* Mobile banking — gradient accent card, col-span-3 */}
-          <article
-            className="md:col-span-3 rounded-[2rem] p-7 md:p-8 text-white shadow-[0_20px_50px_-15px_hsl(24_91%_45%/0.4)] relative overflow-hidden"
-            style={{ background: "var(--gradient-donate)" }}
-          >
-            <div className="flex items-start justify-between mb-5">
-              <div className="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center">
-                <Smartphone className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase">
-                Mobile Banking
-              </span>
-            </div>
-
-            <h3 className="text-2xl md:text-[26px] font-extrabold tracking-tight leading-snug">
-              {t("channels.personalAccount")}
-            </h3>
-            <div className="text-xs text-white/80 font-semibold mt-1.5">
-              {site.payments.bank.account}
-            </div>
-
-            <div className="mt-5 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 p-4 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="text-[10px] font-bold tracking-[0.16em] text-white/70 uppercase mb-1">
-                  {t("channels.labels.mobileNumber")}
+                  <p className="mt-3 rounded-2xl bg-card border border-border px-3 py-2 font-mono text-base font-extrabold text-foreground tracking-wide" dir="ltr">
+                    {mobile.number}
+                  </p>
                 </div>
-                <div className="font-mono font-bold text-white text-lg md:text-xl tracking-wide" dir="ltr">
-                  {site.payments.bkash.number}
-                </div>
-              </div>
-              <button
-                onClick={() => copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))}
-                aria-label={t("channels.copyMobile")}
-                className="shrink-0 h-11 w-11 rounded-xl bg-white text-[hsl(var(--donate-red))] hover:bg-white/90 flex items-center justify-center transition-colors"
-              >
-                <Copy className="h-4 w-4" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {mobileNumbers.map((m) => (
-                <span
-                  key={m.brand}
-                  className="text-center px-3 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold"
-                >
-                  {m.brand}
-                </span>
               ))}
             </div>
           </article>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-10 italic max-w-xl mx-auto">
+        <p className="text-center text-xs text-muted-foreground mt-8 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
       </div>
