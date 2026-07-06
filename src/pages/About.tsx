@@ -8,6 +8,7 @@ import t1 from "@/assets/team-founder.jpg";
 import t2 from "@/assets/team-2.jpg";
 import t3 from "@/assets/team-3.jpg";
 import { useTeam } from "@/hooks/api/useTeam";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 const TeamSection = () => {
   const { data = [] } = useTeam();
@@ -119,6 +120,17 @@ const valueIcons = [Heart, CheckCircle2, Target, Users];
 const About = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
+  const { data: settings } = useSettings();
+  const dynamicMilestones: Milestone[] = (settings?.milestones && settings.milestones.length)
+    ? settings.milestones.map((m) => ({
+        y: { bn: m.yearBn || m.yearEn, en: m.yearEn || m.yearBn },
+        t: { bn: m.titleBn || m.titleEn, en: m.titleEn || m.titleBn },
+        items: Array.from({ length: Math.max(m.itemsBn?.length || 0, m.itemsEn?.length || 0) }).map((_, i) => ({
+          bn: m.itemsBn?.[i] || m.itemsEn?.[i] || "",
+          en: m.itemsEn?.[i] || m.itemsBn?.[i] || "",
+        })),
+      }))
+    : milestones;
   const goals = t("aboutPage.goals", { returnObjects: true }) as string[];
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
@@ -215,7 +227,7 @@ const About = () => {
           </div>
 
           <div className="space-y-12 pt-12 pb-8">
-            {milestones.map((m, i) => {
+            {dynamicMilestones.map((m, i) => {
               const right = i % 2 === 1;
               return (
                 <div key={m.y[lang]} className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-10 md:items-center">

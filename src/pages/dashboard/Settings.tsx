@@ -1,9 +1,9 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 
-import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
+import { useSettings, useUpdateSettings, type SiteSettings, type Milestone } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -97,6 +97,7 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[
   { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
+  { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
   
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
@@ -507,9 +508,94 @@ const Settings = () => {
             </Card>
           )}
 
+          {active === "milestones" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+                <div>
+                  <h3 className="font-bold">মাইলফলকসমূহ (About পেজ)</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    বছর অনুযায়ী মাইলফলক যোগ, সম্পাদনা বা মুছে ফেলুন। প্রতিটি কার্ডের ভেতরে বাংলা ও ইংরেজি উভয়ই দিতে হবে। প্রতিটি পয়েন্ট নতুন লাইনে লিখুন।
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
 
+              <div className="space-y-4">
+                {(form.milestones || []).map((m, idx) => {
+                  const upd = (patch: Partial<Milestone>) => {
+                    const next = [...(form.milestones || [])];
+                    next[idx] = { ...next[idx], ...patch };
+                    setForm({ ...form, milestones: next });
+                  };
+                  const move = (dir: -1 | 1) => {
+                    const next = [...(form.milestones || [])];
+                    const j = idx + dir;
+                    if (j < 0 || j >= next.length) return;
+                    [next[idx], next[j]] = [next[j], next[idx]];
+                    setForm({ ...form, milestones: next });
+                  };
+                  const remove = () => {
+                    if (!confirm("এই মাইলফলকটি মুছে ফেলবেন?")) return;
+                    setForm({ ...form, milestones: (form.milestones || []).filter((_, i) => i !== idx) });
+                  };
+                  return (
+                    <div key={idx} className="rounded-xl border border-border p-4 bg-card">
+                      <div className="flex items-center justify-between gap-2 mb-3">
+                        <div className="text-xs font-bold text-muted-foreground">মাইলফলক #{idx + 1}</div>
+                        <div className="flex items-center gap-1">
+                          <button type="button" onClick={() => move(-1)} className="p-1.5 rounded-md hover:bg-secondary" title="উপরে সরান"><ArrowUp className="h-4 w-4" /></button>
+                          <button type="button" onClick={() => move(1)} className="p-1.5 rounded-md hover:bg-secondary" title="নিচে সরান"><ArrowDown className="h-4 w-4" /></button>
+                          <button type="button" onClick={remove} className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive" title="মুছুন"><Trash2 className="h-4 w-4" /></button>
+                        </div>
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <Field label="বছর (বাংলা)" value={m.yearBn} onChange={(v) => upd({ yearBn: v })} hint="যেমন: ২০২৭" />
+                        <Field label="বছর (English)" value={m.yearEn} onChange={(v) => upd({ yearEn: v })} hint="e.g. 2027" />
+                        <Field label="শিরোনাম (বাংলা)" value={m.titleBn} onChange={(v) => upd({ titleBn: v })} />
+                        <Field label="শিরোনাম (English)" value={m.titleEn} onChange={(v) => upd({ titleEn: v })} />
+                      </div>
+                      <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                        <label className="block">
+                          <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">পয়েন্টসমূহ (বাংলা — প্রতি লাইনে একটি)</span>
+                          <textarea
+                            value={(m.itemsBn || []).join("\n")}
+                            onChange={(e) => upd({ itemsBn: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                            rows={5}
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                          />
+                        </label>
+                        <label className="block">
+                          <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">Points (English — one per line)</span>
+                          <textarea
+                            value={(m.itemsEn || []).join("\n")}
+                            onChange={(e) => upd({ itemsEn: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                            rows={5}
+                            className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-
+              <button
+                type="button"
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    milestones: [
+                      ...(form.milestones || []),
+                      { yearBn: "", yearEn: "", titleBn: "", titleEn: "", itemsBn: [], itemsEn: [] },
+                    ],
+                  })
+                }
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+              >
+                <Plus className="h-4 w-4" /> নতুন মাইলফলক যোগ করুন
+              </button>
+            </Card>
+          )}
 
 
           {active === "notifications" && (

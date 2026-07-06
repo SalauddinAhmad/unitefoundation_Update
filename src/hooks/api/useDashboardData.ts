@@ -227,6 +227,15 @@ export type TrustItem = {
   note: string;
 };
 
+export type Milestone = {
+  yearBn: string;
+  yearEn: string;
+  titleBn: string;
+  titleEn: string;
+  itemsBn: string[];
+  itemsEn: string[];
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
@@ -271,7 +280,98 @@ export type SiteSettings = {
   hero_slides: HeroSlide[];
   about: AboutContent;
   trust: TrustItem[];
+  milestones: Milestone[];
 };
+
+const defaultMilestones: Milestone[] = [
+  { yearBn: "২০১৭", yearEn: "2017", titleBn: "যাত্রা শুরু", titleEn: "Journey begins",
+    itemsBn: [
+      "০৭ মার্চ ২০১৭ — মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে শিক্ষানগরী রাজশাহীর নওদাপাড়ায় ‘ইসলামিক রিসার্চ সেন্টার বাংলাদেশ’ নামে আনুষ্ঠানিক কার্যক্রমের শুভ সূচনা।",
+      "মানবতার কল্যাণে অনলাইন ভিত্তিক মিডিয়া ‘ইউনাইট টিভি’-এর কার্যক্রম শুরু।",
+    ],
+    itemsEn: [
+      "7 March 2017 — Formal launch as 'Islamic Research Centre Bangladesh' in Naodapara, Rajshahi, with just 10 volunteers.",
+      "Launch of the online media platform 'Unite TV' for humanitarian causes.",
+    ] },
+  { yearBn: "২০১৭–২০১৮", yearEn: "2017–2018", titleBn: "রোহিঙ্গা শরণার্থী সহায়তা", titleEn: "Rohingya refugee relief",
+    itemsBn: ["মিয়ানমার থেকে নির্যাতিত হয়ে বাংলাদেশে (বান্দরবান ও কক্সবাজার) আশ্রয় নেওয়া রোহিঙ্গা মুসলিমদের মাঝে প্রাথমিক খাদ্য, বস্ত্র ও আবাসন ব্যবস্থার সুনিপুণ আয়োজন।"],
+    itemsEn: ["Well-organised delivery of initial food, clothing and shelter to Rohingya Muslims who fled Myanmar to Bandarban and Cox's Bazar."] },
+  { yearBn: "২০১৮", yearEn: "2018", titleBn: "নিজস্ব ঠিকানার সূচনা", titleEn: "Our own address",
+    itemsBn: ["রাজধানী ঢাকার উত্তরা-উত্তরখানে নিজস্ব অফিস ভবনের নির্মাণকাজ শুরু।"],
+    itemsEn: ["Construction of our own office building begins in Uttara-Uttarkhan, Dhaka."] },
+  { yearBn: "২০১৯", yearEn: "2019", titleBn: "ঈদ সামগ্রী বিতরণ", titleEn: "Eid distribution",
+    itemsBn: ["সুবিধাবঞ্চিত ইয়াতিম, বিধবা, গরিব, মিসকিন ও অসহায় মানুষদের মাঝে প্রতি ঈদে ‘ঈদ সামগ্রী বিতরণ’ কর্মসূচির সূচনা।"],
+    itemsEn: ["Launch of the 'Eid Distribution' programme for orphans, widows, the poor and destitute every Eid."] },
+  { yearBn: "২০২০", yearEn: "2020", titleBn: "সম্প্রসারণ ও নবরূপ", titleEn: "Expansion & rebrand",
+    itemsBn: [
+      "উত্তরা-উত্তরখানে নিজস্ব অফিস ভবনের নির্মাণকাজ সফলভাবে সমাপ্ত।",
+      "প্রধান কার্যালয় রাজশাহী থেকে সফলভাবে রাজধানী ঢাকায় স্থানান্তর।",
+      "সেবার পরিধি বাড়াতে সংগঠনের নাম পরিবর্তন করে ‘ইসলামিক ফেইথ অ্যান্ড ওয়েলফেয়ার ফাউন্ডেশন’ নামকরণ।",
+    ],
+    itemsEn: [
+      "Completion of our office building in Uttara-Uttarkhan.",
+      "Head office relocated from Rajshahi to Dhaka.",
+      "Renamed 'Islamic Faith and Welfare Foundation' to expand our scope.",
+    ] },
+  { yearBn: "২০২১", yearEn: "2021", titleBn: "মহামারীর পাশে", titleEn: "Standing by in the pandemic",
+    itemsBn: ["করোনা মহামারীর বৈশ্বিক সংকটে শত-শত কর্মহীন ও অসহায় পরিবারে জরুরি ত্রাণ সহায়তা প্রদান।"],
+    itemsEn: ["Emergency relief for hundreds of jobless and helpless families during the COVID-19 crisis."] },
+  { yearBn: "২০২২", yearEn: "2022", titleBn: "ইউনাইট কনফারেন্স ও সাবলম্বীকরণ", titleEn: "Unite Conference & empowerment",
+    itemsBn: [
+      "ইউনাইট টিভির আয়োজনে ‘ইউনাইট কনফারেন্স’-এর শুভ সূচনা; যা প্রতি বছর পবিত্র রামাযান মাসে রাজধানী ঢাকায় সফলভাবে আয়োজিত হয়ে আসছে।",
+      "সাবলম্বীকরণ প্রকল্প — নারীদের মাঝে উপকরণ হস্তান্তর।",
+    ],
+    itemsEn: [
+      "Launch of the 'Unite Conference' by Unite TV, held annually in Dhaka during Ramadan.",
+      "Empowerment project — handing tools to women.",
+    ] },
+  { yearBn: "২০২৩", yearEn: "2023", titleBn: "দুর্যোগে পাশে, নতুন উদ্যোগ", titleEn: "Beside disasters, new initiatives",
+    itemsBn: [
+      "দেশজুড়ে তীব্র শীতে অসহায় শীতার্তদের মাঝে উন্নতমানের শীতবস্ত্র বিতরণ কর্মসূচির সূচনা।",
+      "বন্যা কবলিত এলাকায় জরুরি খাদ্য, বস্ত্র সরবরাহ এবং ক্ষতিগ্রস্ত বাসস্থানের পুনর্বাসন।",
+      "‘আত-ত্বাইয়্যেবা ট্রাভেল এজেন্সি’ ও ‘আত-ত্বাইয়্যেবা প্রকাশনী’-এর কার্যক্রম শুরু।",
+    ],
+    itemsEn: [
+      "Launch of nationwide winter clothing distribution for those suffering the cold.",
+      "Emergency food and clothing in flood-hit areas and rehabilitation of damaged homes.",
+      "Launch of 'At-Tayyiba Travel Agency' and 'At-Tayyiba Publications'.",
+    ] },
+  { yearBn: "২০২৪", yearEn: "2024", titleBn: "ইউনাইট ফাউন্ডেশন", titleEn: "Unite Foundation",
+    itemsBn: [
+      "সংগঠনের নাম পুনর্নির্ধারণ করে চূড়ান্তভাবে ‘ইউনাইট ফাউন্ডেশন’ রূপান্তর ও নামকরণ।",
+      "আন্তর্জাতিক অঙ্গনে সেবার পরিধি বিস্তৃত করে ফিলিস্তিনে নির্যাতিত মুসলিম ভাই-বোনদের মাঝে খাদ্য ও আবাসন সহযোগিতা কার্যক্রমের সূচনা।",
+      "দেশজুড়ে বৃক্ষ রোপন কর্মসূচী শুরু।",
+    ],
+    itemsEn: [
+      "Final renaming and rebranding as 'Unite Foundation'.",
+      "Extended service internationally — food and shelter aid for oppressed Muslim brothers and sisters in Palestine.",
+      "Launch of a nationwide tree-planting programme.",
+    ] },
+  { yearBn: "২০২৫", yearEn: "2025", titleBn: "কর্জে হাসানাহ ও ইফতার", titleEn: "Qarz-e-Hasanah & iftar",
+    itemsBn: [
+      "সম্পূর্ণ সুদমুক্ত ও আত্মনির্ভরশীল সমাজ গঠনে ‘কর্জে হাসানাহ’ প্রজেক্টের পথচলা শুরু।",
+      "পবিত্র রামাযান মাসব্যাপী অসহায় ও রোজাদারদের মাঝে ‘ইফতার বিতরণ’ কর্মসূচি শুরু।",
+    ],
+    itemsEn: [
+      "Launch of the 'Qarz-e-Hasanah' project to build an interest-free, self-reliant society.",
+      "Launch of the 'Iftar Distribution' programme for the needy and fasting people throughout Ramadan.",
+    ] },
+  { yearBn: "২০২৬", yearEn: "2026", titleBn: "নতুন দিগন্ত", titleEn: "New horizons",
+    itemsBn: [
+      "অসহায় ও ইয়াতিম শিশুদের মাঝে নতুন বস্ত্র বিতরণ।",
+      "পবিত্র ঈদুল আজহায় সুবিধাবঞ্চিতদের মাঝে ‘কুরবানী প্রজেক্ট’ সফলভাবে বাস্তবায়ন।",
+      "বিধবা, ইয়াতিম ও দরিদ্র পরিবারের জন্য ‘আবাসন প্রকল্প’-এর শুভ সূচনা।",
+      "দক্ষ জনশক্তি ও কর্মসংস্থান সৃষ্টির লক্ষ্যে ‘ইউনাইট ট্রেনিং সেন্টার’-এর কার্যক্রম শুরু।",
+      "মানসম্মত শিক্ষার প্রসারে ‘ইউনাইট একাডেমি’-এর গৌরবময় ঘোষণা।",
+    ],
+    itemsEn: [
+      "Distribution of new clothes to needy and orphan children.",
+      "Successful execution of the 'Qurbani Project' for the underprivileged on Eid al-Adha.",
+      "Launch of the 'Housing Project' for widows, orphans and poor families.",
+      "Launch of 'Unite Training Centre' for skilled workforce and employment.",
+      "Proud announcement of 'Unite Academy' for quality education.",
+    ] },
+];
 
 const defaultSettings: SiteSettings = {
   organization: {
@@ -342,6 +442,7 @@ const defaultSettings: SiteSettings = {
     { icon: "award", title: "শরীয়াহ-অনুমোদিত", note: "শরীয়াহ বোর্ড দ্বারা যাচাইকৃত" },
     { icon: "users", title: "৫০,০০০+ দাতা", note: "বিশ্বব্যাপী বিশ্বস্ত পরিবার" },
   ],
+  milestones: defaultMilestones,
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -359,6 +460,8 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     about: { ...defaultSettings.about, ...(s?.about || {}), points: (s?.about?.points && s.about.points.length ? s.about.points : defaultSettings.about.points) },
     trust:
       Array.isArray(s?.trust) && s!.trust!.length ? s!.trust! : defaultSettings.trust,
+    milestones:
+      Array.isArray(s?.milestones) && s!.milestones!.length ? s!.milestones! : defaultSettings.milestones,
   };
 }
 
