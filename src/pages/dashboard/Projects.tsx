@@ -270,10 +270,31 @@ export default function Projects() {
             <select value={category} onChange={(e) => setCategory(e.target.value)}
               className="appearance-none pl-9 pr-9 py-2 rounded-lg bg-secondary text-xs font-semibold focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none cursor-pointer">
               <option value="all">সকল ক্যাটাগরি</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {allCategories.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none" />
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              const n = prompt("নতুন ক্যাটাগরির নাম:");
+              if (n) addCustomCategory(n);
+            }}
+            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-card border border-transparent hover:border-border"
+            title="নতুন ক্যাটাগরি যোগ করুন"
+          >
+            <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+          </button>
+          {customCats.length > 0 && category !== "all" && customCats.includes(category) && (
+            <button
+              type="button"
+              onClick={() => { removeCustomCategory(category); setCategory("all"); }}
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+              title="এই কাস্টম ক্যাটাগরি ডিলিট"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
           <div className="ml-auto inline-flex p-1 bg-secondary rounded-lg">
             <button onClick={() => setView("grid")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "grid" ? "bg-card shadow-sm" : "text-muted-foreground")}>গ্রিড</button>
             <button onClick={() => setView("table")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "table" ? "bg-card shadow-sm" : "text-muted-foreground")}>টেবিল</button>
