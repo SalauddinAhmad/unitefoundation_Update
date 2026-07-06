@@ -520,7 +520,36 @@ const Settings = () => {
                 <SaveBar />
               </div>
 
-              <div className="space-y-4">
+              <div className="mb-6 rounded-xl border border-border p-4 bg-secondary/30">
+                <div className="text-sm font-bold mb-3">সেকশন হেডার ও শেষের উক্তি</div>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <Field label="Eyebrow (বাংলা)" value={form.milestones_section.eyebrowBn} onChange={(v) => setForm({ ...form, milestones_section: { ...form.milestones_section, eyebrowBn: v } })} hint="ছোট লেবেল, যেমন: আমাদের যাত্রা" />
+                  <Field label="Eyebrow (English)" value={form.milestones_section.eyebrowEn} onChange={(v) => setForm({ ...form, milestones_section: { ...form.milestones_section, eyebrowEn: v } })} />
+                  <Field label="হেডিং (বাংলা)" value={form.milestones_section.headingBn} onChange={(v) => setForm({ ...form, milestones_section: { ...form.milestones_section, headingBn: v } })} />
+                  <Field label="Heading (English)" value={form.milestones_section.headingEn} onChange={(v) => setForm({ ...form, milestones_section: { ...form.milestones_section, headingEn: v } })} />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                  <label className="block">
+                    <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">সংক্ষিপ্ত বিবরণ (বাংলা)</span>
+                    <textarea value={form.milestones_section.introBn} onChange={(e) => setForm({ ...form, milestones_section: { ...form.milestones_section, introBn: e.target.value } })} rows={3} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">Intro (English)</span>
+                    <textarea value={form.milestones_section.introEn} onChange={(e) => setForm({ ...form, milestones_section: { ...form.milestones_section, introEn: e.target.value } })} rows={3} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">শেষের উক্তি (বাংলা)</span>
+                    <textarea value={form.milestones_section.quoteBn} onChange={(e) => setForm({ ...form, milestones_section: { ...form.milestones_section, quoteBn: e.target.value } })} rows={4} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                  </label>
+                  <label className="block">
+                    <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">Closing quote (English)</span>
+                    <textarea value={form.milestones_section.quoteEn} onChange={(e) => setForm({ ...form, milestones_section: { ...form.milestones_section, quoteEn: e.target.value } })} rows={4} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="text-sm font-bold mb-2">টাইমলাইন এন্ট্রি</div>
+
                 {(form.milestones || []).map((m, idx) => {
                   const upd = (patch: Partial<Milestone>) => {
                     const next = [...(form.milestones || [])];
