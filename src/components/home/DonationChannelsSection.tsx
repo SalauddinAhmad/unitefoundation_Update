@@ -38,16 +38,8 @@ export const DonationChannelsSection = () => {
           "radial-gradient(ellipse at top, hsl(152 100% 14%) 0%, hsl(152 100% 9%) 55%, hsl(152 100% 6%) 100%)",
       }}
     >
-      {/* Islamic geometric pattern overlay */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.08]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%23FBB03B' stroke-width='1'><path d='M40 4 L76 40 L40 76 L4 40 Z'/><path d='M40 16 L64 40 L40 64 L16 40 Z'/><circle cx='40' cy='40' r='6'/></g></svg>")`,
-          backgroundSize: "80px 80px",
-        }}
-      />
       {/* Corner glow accents */}
+
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
