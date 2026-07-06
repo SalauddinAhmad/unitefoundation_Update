@@ -203,13 +203,6 @@ const About = () => {
                 className="absolute inset-0 bg-gradient-to-t from-primary/25 via-transparent to-transparent"
               />
             </div>
-            {/* signature chip */}
-            <div className="absolute -bottom-4 left-6 bg-card px-4 py-2 rounded-full shadow-card border border-border flex items-center gap-2">
-              <Sprout className="h-4 w-4 text-primary" />
-              <span className="text-xs font-semibold text-foreground tracking-wide">
-                Unite Foundation
-              </span>
-            </div>
           </div>
         </div>
 
