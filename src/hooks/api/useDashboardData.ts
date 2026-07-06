@@ -527,6 +527,12 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     milestones:
       Array.isArray(s?.milestones) && s!.milestones!.length ? s!.milestones! : defaultSettings.milestones,
     milestones_section: { ...defaultSettings.milestones_section, ...(s?.milestones_section || {}) },
+    mission_section: {
+      ...defaultSettings.mission_section,
+      ...(s?.mission_section || {}),
+      goalsBn: (s?.mission_section?.goalsBn && s.mission_section.goalsBn.length ? s.mission_section.goalsBn : defaultSettings.mission_section.goalsBn),
+      goalsEn: (s?.mission_section?.goalsEn && s.mission_section.goalsEn.length ? s.mission_section.goalsEn : defaultSettings.mission_section.goalsEn),
+    },
   };
 }
 
