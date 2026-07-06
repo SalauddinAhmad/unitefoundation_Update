@@ -27,11 +27,8 @@ import {
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import type { HeroSlide } from "@/hooks/api/useDashboardData";
 
-// Default fallback thumbnails (bundled)
-import hero1 from "@/assets/hero-relief.jpg";
-import hero2 from "@/assets/hero-water.jpg";
-import hero3 from "@/assets/hero-mosque.jpg";
-const fallbackImages = [hero1, hero2, hero3];
+// No bundled fallbacks — slides without an image show a placeholder
+// so admins clearly see which slides still need an image assigned.
 
 interface Props {
   slides: HeroSlide[];
@@ -146,7 +143,7 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
       {list.map((slide, idx) => {
         const isOpen = openIdx === idx;
         const enabled = slide.enabled !== false;
-        const preview = slide.image?.trim() ? slide.image : fallbackImages[idx % fallbackImages.length];
+        const preview = slide.image?.trim() || "";
         return (
           <div
             key={idx}
@@ -157,18 +154,20 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
             {/* Header row (always visible) */}
             <div className="flex items-stretch gap-3 p-3">
               {/* Thumbnail preview */}
-              <button
-                type="button"
-                onClick={() => setOpenIdx(isOpen ? null : idx)}
-                className="relative shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-secondary border border-border group"
-                aria-label="স্লাইড টগল"
-              >
-                <img
-                  src={preview}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+                <button
+                  type="button"
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  className="relative shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-secondary border border-border group"
+                  aria-label="স্লাইড টগল"
+                >
+                  {preview ? (
+                    <img src={preview} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <ImagePlus className="h-5 w-5" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent pointer-events-none" />
                 <span className="absolute top-1 left-1 text-[10px] font-bold text-white bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
                   #{idx + 1}
                 </span>
@@ -248,7 +247,11 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
               <div className="border-t border-border bg-background/60 p-4 space-y-4">
                 {/* Live preview */}
                 <div className="relative w-full aspect-[21/9] rounded-xl overflow-hidden bg-foreground">
-                  <img src={preview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  {preview ? (
+                    <img src={preview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-white/60 text-xs">কোনো ইমেজ নির্বাচন করা হয়নি</div>
+                  )}
                   <div
                     className={`absolute inset-0 ${
                       (slide.overlay || "dark") === "dark"
