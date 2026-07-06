@@ -545,31 +545,7 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
                 className="w-full bg-transparent text-3xl md:text-4xl font-extrabold focus:outline-none placeholder:text-muted-foreground/50"
               />
 
-              {/* Custom Slug / URL */}
-              <div className="mt-4 rounded-lg border border-border bg-secondary/40 p-3">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <LinkIcon className="h-3 w-3" /> কাস্টম লিঙ্ক (URL)
-                </label>
-                <div className="mt-1.5 flex items-center gap-1 text-sm">
-                  <span className="text-muted-foreground shrink-0">/blog/</span>
-                  <input
-                    value={slug}
-                    onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }}
-                    onBlur={(e) => setSlug(slugify(e.target.value))}
-                    placeholder="my-custom-url"
-                    className="flex-1 min-w-0 px-2 py-1.5 rounded-md bg-card border border-border text-sm focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                  />
-                  {slugTouched && (
-                    <button
-                      type="button"
-                      onClick={() => { setSlug(slugify(title)); setSlugTouched(false); }}
-                      className="text-[11px] px-2 py-1 rounded-md hover:bg-muted text-muted-foreground"
-                      title="শিরোনাম থেকে অটো তৈরি করুন"
-                    >রিসেট</button>
-                  )}
-                </div>
-                <p className="mt-1 text-[11px] text-muted-foreground">খালি রাখলে শিরোনাম থেকে অটোমেটিক তৈরি হবে</p>
-              </div>
+
 
               <textarea
                 value={excerpt}
