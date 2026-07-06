@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS partners (
   id CHAR(36) PRIMARY KEY,
   name VARCHAR(200) NOT NULL,
   slug VARCHAR(200) UNIQUE NOT NULL,
-  logo_url TEXT,
-  cover_url TEXT,
+  logo_url LONGTEXT,
+  cover_url LONGTEXT,
   tagline VARCHAR(500),
   description TEXT,
   content LONGTEXT,               -- Full rich content (JSON: activities, programs, gallery, etc.)
