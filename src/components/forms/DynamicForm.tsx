@@ -35,7 +35,7 @@ function buildZod(fields: FormField[]) {
         s = f.required ? z.string().trim().url("সঠিক লিংক দিন") : z.string().trim().url("সঠিক লিংক দিন").or(z.literal(""));
         break;
       case "number":
-        s = z.coerce.number({ invalid_type_error: `${f.label} সংখ্যায় দিন` });
+        s = z.coerce.number({ message: `${f.label} সংখ্যায় দিন` });
         if (!f.required) s = z.union([z.literal(""), s]);
         break;
       case "date":
@@ -48,7 +48,7 @@ function buildZod(fields: FormField[]) {
         break;
       case "checkbox":
         s = f.required
-          ? z.literal(true, { errorMap: () => ({ message: `${f.label} সম্মতি দিন` }) })
+          ? z.literal(true, { message: `${f.label} সম্মতি দিন` })
           : z.boolean();
         break;
       case "select":
