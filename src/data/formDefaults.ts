@@ -28,8 +28,7 @@ export const FORM_KEYS = [
   "volunteer",
   "representative",
   "donor",
-  "member_lifetime",
-  "member_donor",
+  "member",
 ] as const;
 export type FormKey = (typeof FORM_KEYS)[number];
 
@@ -37,8 +36,7 @@ export const FORM_LABEL: Record<FormKey, string> = {
   volunteer: "স্বেচ্ছাসেবক আবেদন",
   representative: "জেলা প্রতিনিধি আবেদন",
   donor: "নিয়মিত দাতা",
-  member_lifetime: "আজীবন সদস্য",
-  member_donor: "দাতা সদস্য",
+  member: "সদস্যপদ (আজীবন / দাতা)",
 };
 
 const volunteer: FormSchema = {
