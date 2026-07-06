@@ -20,12 +20,22 @@ import {
   Building2,
   ScrollText,
   FormInput,
+  User as UserIcon,
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLE_LABEL, type Permission } from "@/lib/permissions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 
 type MenuItem = { to: string; icon: typeof LayoutDashboard; label: string; end?: boolean; badge?: string; perm: Permission };
