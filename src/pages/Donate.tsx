@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import { DonationChannelsSection } from "@/components/home/DonationChannelsSection";
+import { PremiumChannelsSection } from "@/components/donation/PremiumChannelsSection";
 import { MembershipDonorSection } from "@/components/donation/MembershipDonorSection";
 
 const Donate = () => {
@@ -15,7 +15,7 @@ const Donate = () => {
         canonical="/donate"
       />
 
-      <DonationChannelsSection />
+      <PremiumChannelsSection />
       <MembershipDonorSection />
     </SiteLayout>
   );
