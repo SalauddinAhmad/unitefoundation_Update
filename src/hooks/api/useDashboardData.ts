@@ -477,7 +477,7 @@ const defaultSettings: SiteSettings = {
       enabled: true,
     },
     {
-      image: "/src/assets/hero-water.jpg",
+      image: heroWater,
       eyebrow: "বিশুদ্ধ পানি প্রকল্প",
       title: "প্রতিটি ফোঁটায় সাদাকায়ে জারিয়াহ",
       subtitle: "গ্রামে গ্রামে গভীর নলকূপ ও পানির প্ল্যান্ট স্থাপন করে নিরাপদ পানির সুযোগ পৌঁছে দিচ্ছি।",
