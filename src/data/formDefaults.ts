@@ -1,0 +1,160 @@
+// Default schemas for every dashboard-editable public form.
+// Used as fallback when the backend has no row yet, and as "reset to default".
+
+export type FieldType =
+  | "text" | "email" | "tel" | "number" | "url" | "date"
+  | "textarea" | "select" | "radio-group" | "checkbox-group" | "checkbox" | "section";
+
+export type FormField = {
+  key: string;
+  label: string;
+  placeholder?: string;
+  type: FieldType;
+  required?: boolean;
+  options?: string[];
+  help?: string;
+  full?: boolean;
+  system?: boolean; // system fields: key locked, cannot delete
+};
+
+export type FormSchema = {
+  form_key: string;
+  title: string;
+  subtitle: string;
+  fields: FormField[];
+};
+
+export const FORM_KEYS = [
+  "volunteer",
+  "representative",
+  "donor",
+  "member_lifetime",
+  "member_donor",
+] as const;
+export type FormKey = (typeof FORM_KEYS)[number];
+
+export const FORM_LABEL: Record<FormKey, string> = {
+  volunteer: "স্বেচ্ছাসেবক আবেদন",
+  representative: "জেলা প্রতিনিধি আবেদন",
+  donor: "নিয়মিত দাতা",
+  member_lifetime: "আজীবন সদস্য",
+  member_donor: "দাতা সদস্য",
+};
+
+const volunteer: FormSchema = {
+  form_key: "volunteer",
+  title: "স্বেচ্ছাসেবক ফর্ম",
+  subtitle: "নিচের তথ্য পূরণ করে আবেদন জমা দিন — আমরা যাচাই করে যোগাযোগ করব।",
+  fields: [
+    { key: "name", label: "পূর্ণ নাম", placeholder: "আপনার নাম", type: "text", required: true, system: true },
+    { key: "phone", label: "মোবাইল নম্বর", placeholder: "01XXXXXXXXX", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল (ঐচ্ছিক)", placeholder: "example@mail.com", type: "email", system: true },
+    { key: "age", label: "বয়স", placeholder: "১৮-৬০", type: "number", required: true },
+    { key: "city", label: "শহর / জেলা", placeholder: "যেমন: ঢাকা", type: "text", required: true },
+    { key: "profession", label: "পেশা / শ্রেণি", placeholder: "যেমন: ছাত্র / শিক্ষক", type: "text" },
+    { key: "area", label: "আগ্রহের ক্ষেত্র", type: "select", required: true,
+      options: ["ত্রাণ বিতরণ", "শিক্ষা মেন্টরশিপ", "মিডিয়া ও কনটেন্ট", "স্বাস্থ্যসেবা ক্যাম্প", "ফান্ডরাইজিং", "অন্যান্য"] },
+    { key: "availability", label: "প্রতি সপ্তাহে সময় দিতে পারবেন", type: "select", required: true,
+      options: ["১-৩ ঘণ্টা", "৪-৭ ঘণ্টা", "৮-১৫ ঘণ্টা", "১৫+ ঘণ্টা"] },
+    { key: "motivation", label: "কেন যুক্ত হতে চান?", placeholder: "সংক্ষেপে বলুন…", type: "textarea", required: true, full: true },
+  ],
+};
+
+const representative: FormSchema = {
+  form_key: "representative",
+  title: "জেলা প্রতিনিধি ফর্ম",
+  subtitle: "নিজ এলাকায় ফাউন্ডেশনের প্রতিনিধিত্ব করতে চাইলে আবেদন করুন।",
+  fields: [
+    { key: "_sec1", label: "ব্যক্তিগত তথ্য", type: "section", full: true },
+    { key: "fullName", label: "পূর্ণ নাম", type: "text", required: true, system: true },
+    { key: "guardianName", label: "পিতা/অভিভাবকের নাম", type: "text", required: true },
+    { key: "dob", label: "জন্ম তারিখ", type: "date", required: true },
+    { key: "nid", label: "জাতীয় পরিচয়পত্র নং", placeholder: "10-17 digits", type: "text", required: true },
+    { key: "district", label: "জেলা", placeholder: "যেমন: কুমিল্লা", type: "text", required: true },
+    { key: "profession", label: "পেশা", type: "select", required: true,
+      options: ["ছাত্র", "শিক্ষক", "চাকরিজীবী", "ব্যবসায়ী", "কৃষক", "অন্যান্য"] },
+    { key: "currentAddress", label: "বর্তমান ঠিকানা", type: "textarea", required: true },
+    { key: "permanentAddress", label: "স্থায়ী ঠিকানা", type: "textarea", required: true },
+
+    { key: "_sec2", label: "শিক্ষা", type: "section", full: true },
+    { key: "educationMediums", label: "শিক্ষার মাধ্যম", type: "checkbox-group", required: true, full: true,
+      options: ["সাধারণ (বাংলা)", "ইংরেজি", "মাদ্রাসা", "কারিগরি"] },
+    { key: "educationDetails", label: "সর্বোচ্চ শিক্ষাগত যোগ্যতা", type: "textarea", required: true, full: true },
+
+    { key: "_sec3", label: "যোগাযোগ", type: "section", full: true },
+    { key: "whatsapp", label: "WhatsApp নম্বর", placeholder: "01XXXXXXXXX", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল (ঐচ্ছিক)", type: "email", system: true },
+    { key: "socialLink", label: "ফেসবুক / সোশ্যাল লিংক", type: "url", full: true },
+
+    { key: "_sec4", label: "অভিজ্ঞতা ও প্রেরণা", type: "section", full: true },
+    { key: "experience", label: "পূর্ব সাংগঠনিক অভিজ্ঞতা (ঐচ্ছিক)", type: "textarea", full: true },
+    { key: "whyJoin", label: "কেন জেলা প্রতিনিধি হতে চান?", type: "textarea", required: true, full: true },
+    { key: "emergencyName", label: "জরুরি যোগাযোগ (নাম)", type: "text", required: true },
+    { key: "emergencyPhone", label: "জরুরি যোগাযোগ (মোবাইল)", type: "tel", required: true },
+
+    { key: "_sec5", label: "রাজনৈতিক পরিচয়", type: "section", full: true },
+    { key: "political", label: "কোনো রাজনৈতিক দলের সাথে জড়িত?", type: "radio-group", required: true, full: true,
+      options: ["না", "হ্যাঁ"] },
+
+    { key: "agree", label: "আমি নিয়ম-শর্তে সম্মত এবং প্রদত্ত তথ্য সঠিক", type: "checkbox", required: true, full: true },
+  ],
+};
+
+const donor: FormSchema = {
+  form_key: "donor",
+  title: "নিয়মিত দাতা নিবন্ধন",
+  subtitle: "মাসিক দানের মাধ্যমে টেকসই সহায়তায় অংশ নিন।",
+  fields: [
+    { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
+    { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল", type: "email", system: true },
+    { key: "city", label: "শহর", type: "text", required: true },
+    { key: "amount", label: "মাসিক দানের পরিমাণ (৳)", type: "number", required: true },
+    { key: "method", label: "পছন্দসই পেমেন্ট মাধ্যম", type: "select", required: true,
+      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
+    { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
+  ],
+};
+
+const memberLifetime: FormSchema = {
+  form_key: "member_lifetime",
+  title: "আজীবন সদস্য আবেদন",
+  subtitle: "এককালীন ৫০,০০০ টাকা প্রদান করে আজীবন সদস্যপদ গ্রহণ করুন।",
+  fields: [
+    { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
+    { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল", type: "email", system: true },
+    { key: "dob", label: "জন্ম তারিখ", type: "date", required: true },
+    { key: "profession", label: "পেশা", type: "text", required: true },
+    { key: "address", label: "ঠিকানা", type: "textarea", required: true, full: true },
+    { key: "amount", label: "চাঁদার পরিমাণ (৳)", type: "number", required: true },
+    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
+      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
+    { key: "txnId", label: "ট্রানজেকশন আইডি", type: "text", required: true },
+  ],
+};
+
+const memberDonor: FormSchema = {
+  form_key: "member_donor",
+  title: "দাতা সদস্য আবেদন",
+  subtitle: "এককালীন ২৫,০০০ টাকা প্রদান করে দাতা সদস্যপদ গ্রহণ করুন।",
+  fields: [
+    { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
+    { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল", type: "email", system: true },
+    { key: "profession", label: "পেশা", type: "text", required: true },
+    { key: "address", label: "ঠিকানা", type: "textarea", required: true, full: true },
+    { key: "amount", label: "চাঁদার পরিমাণ (৳)", type: "number", required: true },
+    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
+      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
+    { key: "txnId", label: "ট্রানজেকশন আইডি", type: "text", required: true },
+  ],
+};
+
+export const FORM_DEFAULTS: Record<FormKey, FormSchema> = {
+  volunteer,
+  representative,
+  donor,
+  member_lifetime: memberLifetime,
+  member_donor: memberDonor,
+};

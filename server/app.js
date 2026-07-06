@@ -194,6 +194,7 @@ app.use('/admin', require('./routes/admin'));
 app.use('/stats', require('./routes/stats'));
 app.use('/logs', require('./routes/logs'));
 app.use('/media', require('./routes/media'));
+app.use('/forms', require('./routes/forms'));
 
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));

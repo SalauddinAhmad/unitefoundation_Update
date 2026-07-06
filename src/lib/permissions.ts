@@ -37,6 +37,7 @@ export type Permission =
   | "settings"           // general org settings tabs
   | "settings.security"  // sensitive: 2FA, session, allowed emails
   | "settings.payment"   // sensitive: bank / gateway credentials
+  | "forms"              // dynamic public-form editor
   | "admins"             // create/delete admins, reset passwords
   | "logs"               // activity / audit log — super admin only
   | "help";
@@ -56,6 +57,7 @@ const MATRIX: Record<Permission, Role[]> = {
   team:                ["admin", "editor"],
   partners:            ["admin", "editor"],
   settings:            ["admin"],
+  forms:               ["admin", "editor"],
   "settings.security": [],   // super_admin only
   "settings.payment":  [],   // super_admin only
   admins:              [],   // super_admin only

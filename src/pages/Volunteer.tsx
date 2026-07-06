@@ -412,245 +412,87 @@ const useShowError = () => {
 
 
 // ============================================================
-// 3) VOLUNTEER FORM
+// Dynamic forms (schemas managed from the dashboard's Form Manager).
+import { useFormSchema } from "@/hooks/api/useForms";
+import { DynamicForm } from "@/components/forms/DynamicForm";
+
+type SubmittedVals = Record<string, string | number | boolean | string[]>;
+
+const stringVal = (v: unknown) => (Array.isArray(v) ? v.join(", ") : v == null ? "" : String(v));
+
+const buildWhatsAppBody = (schema: { fields: { key: string; label: string; type: string }[] }, vals: SubmittedVals) =>
+  schema.fields
+    .filter((f) => f.type !== "section" && f.type !== "checkbox")
+    .map((f) => `${f.label}: ${stringVal(vals[f.key]) || "-"}`)
+    .join("\n");
+
 const VolunteerForm = () => {
   const { t } = useTranslation();
-  const schemas = useSchemas();
-  const showError = useShowError();
   const orgName = t("volunteerPage.orgName");
-  const dash = t("volunteerPage.dash");
-  const volunteerAreas = t("volunteerPage.volunteerAreas", { returnObjects: true }) as string[];
-  const availabilityOptions = t("volunteerPage.availabilityOptions", { returnObjects: true }) as string[];
-
-  const init = { name: "", phone: "", email: "", age: "", city: "", profession: "", area: "", availability: "", motivation: "" };
-  const [f, setF] = useState(init);
+  const { data: schema } = useFormSchema("volunteer");
   const [waUrl, setWaUrl] = useState<string | null>(null);
-  const u = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value });
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = schemas.volunteer.safeParse(f);
-    if (!r.success) return showError(r.error.issues[0]?.message);
-    saveApplication("volunteer", {
-      name: f.name, phone: f.phone, email: f.email,
-      profession: f.profession, message: f.motivation,
-      extra: { age: f.age, city: f.city, area: f.area, type: f.area, availability: f.availability },
-    });
-    setWaUrl(buildWhatsAppUrl(
-      t("volunteerPage.wa.volunteerTitle"),
-      `${t("volunteerPage.wa.lName")}: ${f.name}\n${t("volunteerPage.wa.lPhone")}: ${f.phone}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lAge")}: ${f.age}\n${t("volunteerPage.wa.lCity")}: ${f.city}\n${t("volunteerPage.wa.lProfession")}: ${f.profession || dash}\n\n${t("volunteerPage.wa.lInterest")}: ${f.area}\n${t("volunteerPage.wa.lAvailability")}: ${f.availability}\n\n${t("volunteerPage.wa.lWhy")}:\n${f.motivation}`,
-      orgName,
-    ));
-  };
-  if (waUrl) return <SuccessCard topic="volunteer" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
+  const [resetKey, setResetKey] = useState(0);
+
+  if (!schema) return null;
+  if (waUrl) return <SuccessCard topic="volunteer" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+
   return (
     <>
-      <FormHeader title={t("volunteerPage.header.volunteerTitle")} sub={t("volunteerPage.header.volunteerSub")} />
-      <form onSubmit={submit} className="mt-6 space-y-3">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={80} value={f.name} onChange={u("name")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.phone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value.replace(/\D/g, "") })} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.email")}><input type="email" maxLength={255} value={f.email} onChange={u("email")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.age")}><input required type="number" min={14} max={80} value={f.age} onChange={u("age")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.city")}><input required maxLength={80} value={f.city} onChange={u("city")} className="vol-input" /></FieldLight>
-          <FieldLight label={t("volunteerPage.form.professionStudent")}><input maxLength={120} value={f.profession} onChange={u("profession")} className="vol-input" placeholder={t("volunteerPage.form.professionPh2")} /></FieldLight>
-        </div>
-        <FieldLight label={t("volunteerPage.form.interest")}>
-          <select required value={f.area} onChange={u("area")} className="vol-input">
-            <option value="">{t("volunteerPage.select")}</option>
-            {volunteerAreas.map((a) => <option key={a} value={a}>{a}</option>)}
-            <option value={t("volunteerPage.otherOption")}>{t("volunteerPage.otherOption")}</option>
-          </select>
-        </FieldLight>
-        <FieldLight label={t("volunteerPage.form.weeklyTime")}>
-          <select required value={f.availability} onChange={u("availability")} className="vol-input">
-            <option value="">{t("volunteerPage.select")}</option>
-            {availabilityOptions.map((a) => <option key={a} value={a}>{a}</option>)}
-          </select>
-        </FieldLight>
-        <FieldLight label={t("volunteerPage.form.whyJoin")}>
-          <textarea required rows={4} maxLength={1000} value={f.motivation} onChange={u("motivation")} className="vol-input resize-none" placeholder={t("volunteerPage.form.whyJoinPh")} />
-        </FieldLight>
-        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
-      </form>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          onSubmit={(vals) => {
+            saveApplication("volunteer", {
+              name: stringVal(vals.name),
+              phone: stringVal(vals.phone),
+              email: stringVal(vals.email),
+              profession: stringVal(vals.profession),
+              message: stringVal(vals.motivation),
+              extra: vals,
+            });
+            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.volunteerTitle"), buildWhatsAppBody(schema, vals), orgName));
+          }}
+        />
+      </div>
     </>
   );
 };
 
-// ============================================================
-// 4) DISTRICT REPRESENTATIVE FORM
 const RepresentativeForm = () => {
   const { t } = useTranslation();
-  const schemas = useSchemas();
-  const showError = useShowError();
   const orgName = t("volunteerPage.orgName");
-  const dash = t("volunteerPage.dash");
-  const educationMediums = t("volunteerPage.educationMediums", { returnObjects: true }) as string[];
-  const professionOptions = t("volunteerPage.professionOptions", { returnObjects: true }) as string[];
-  const politicalOptions = t("volunteerPage.politicalOptions", { returnObjects: true }) as string[];
-  const terms = t("volunteerPage.form.terms", { returnObjects: true }) as string[];
-  const yesOpt = politicalOptions[1];
-
-  const init = {
-    fullName: "", guardianName: "", dob: "", nid: "",
-    currentAddress: "", permanentAddress: "", profession: "",
-    educationMediums: [] as string[], educationDetails: "",
-    whatsapp: "", email: "", socialLink: "", district: "",
-    experience: "", whyJoin: "",
-    emergencyName: "", emergencyPhone: "",
-    political: politicalOptions[0], politicalDetails: "",
-    agree: false,
-  };
-  const [f, setF] = useState(init);
+  const { data: schema } = useFormSchema("representative");
   const [waUrl, setWaUrl] = useState<string | null>(null);
-  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((s) => ({ ...s, [k]: v }));
-  const onIn = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    set(k, e.target.value as never);
-  const toggleMedium = (m: string) => {
-    const has = f.educationMediums.includes(m);
-    set("educationMediums", (has ? f.educationMediums.filter((x) => x !== m) : [...f.educationMediums, m]) as never);
-  };
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!f.agree) return showError(t("volunteerPage.err.agree"));
-    const r = schemas.representative.safeParse(f);
-    if (!r.success) return showError(r.error.issues[0]?.message);
-    saveApplication("career", {
-      name: f.fullName, phone: f.whatsapp, email: f.email,
-      address: f.currentAddress, profession: f.profession, message: f.whyJoin,
-      extra: {
-        type: f.district, district: f.district, city: f.district,
-        guardianName: f.guardianName, dob: f.dob, nid: f.nid,
-        permanentAddress: f.permanentAddress,
-        educationMediums: f.educationMediums, educationDetails: f.educationDetails,
-        socialLink: f.socialLink, experience: f.experience,
-        emergencyName: f.emergencyName, emergencyPhone: f.emergencyPhone,
-        political: f.political, politicalDetails: f.politicalDetails,
-      },
-    });
-    setWaUrl(buildWhatsAppUrl(
-      t("volunteerPage.wa.repTitle"),
-      `${t("volunteerPage.wa.lPersonal")}\n${t("volunteerPage.wa.lFullName")}: ${f.fullName}\n${t("volunteerPage.wa.lGuardian")}: ${f.guardianName}\n${t("volunteerPage.wa.lDob")}: ${f.dob}\n${t("volunteerPage.wa.lNid")}: ${f.nid}\n${t("volunteerPage.wa.lCurAddr")}: ${f.currentAddress}\n${t("volunteerPage.wa.lPermAddr")}: ${f.permanentAddress}\n${t("volunteerPage.wa.lDistrict")}: ${f.district}\n${t("volunteerPage.wa.lProfession")}: ${f.profession}\n\n${t("volunteerPage.wa.lEdu")}\n${t("volunteerPage.wa.lMedium")}: ${f.educationMediums.join(", ")}\n${t("volunteerPage.wa.lEduDetails")}: ${f.educationDetails}\n\n${t("volunteerPage.wa.lContact")}\n${t("volunteerPage.wa.lWhatsapp")}: ${f.whatsapp}\n${t("volunteerPage.wa.lEmail")}: ${f.email || dash}\n${t("volunteerPage.wa.lSocial")}: ${f.socialLink || dash}\n\n${t("volunteerPage.wa.lExpAndInt")}\n${t("volunteerPage.wa.lExperience")}: ${f.experience || dash}\n${t("volunteerPage.wa.lWhy")}:\n${f.whyJoin}\n\n${t("volunteerPage.wa.lEmergency")}\n${f.emergencyName} — ${f.emergencyPhone}\n\n${t("volunteerPage.wa.lPolDecl")}\n${t("volunteerPage.wa.lPolInvolved")}: ${f.political}${f.political === yesOpt ? `\n${t("volunteerPage.wa.lPolDetails")}: ${f.politicalDetails}` : ""}`,
-      orgName,
-    ));
-  };
-  if (waUrl) return <SuccessCard topic="representative" waUrl={waUrl} onReset={() => { setF(init); setWaUrl(null); }} />;
+  const [resetKey, setResetKey] = useState(0);
+
+  if (!schema) return null;
+  if (waUrl) return <SuccessCard topic="representative" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+
   return (
     <>
-      <FormHeader title={t("volunteerPage.header.repTitle")} sub={t("volunteerPage.header.repSub")} />
-      <form onSubmit={submit} className="mt-6 space-y-5">
-        {/* 1. Personal */}
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">{t("volunteerPage.form.secPersonal")}</div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <FieldLight label={t("volunteerPage.form.fullName")}><input required maxLength={120} value={f.fullName} onChange={onIn("fullName")} className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.guardianName")}><input required maxLength={120} value={f.guardianName} onChange={onIn("guardianName")} className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.dob")}><input required type="date" value={f.dob} onChange={onIn("dob")} className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.nid")}><input required inputMode="numeric" maxLength={17} value={f.nid} onChange={(e) => set("nid", e.target.value.replace(/\D/g, "") as never)} className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.district")}><input required maxLength={80} value={f.district} onChange={onIn("district")} className="vol-input" placeholder={t("volunteerPage.form.districtPh")} /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.professionReq")}>
-              <select required value={f.profession} onChange={onIn("profession")} className="vol-input">
-                <option value="">{t("volunteerPage.select")}</option>
-                {professionOptions.map((p) => <option key={p} value={p}>{p}</option>)}
-              </select>
-            </FieldLight>
-          </div>
-          <div className="mt-3 grid sm:grid-cols-2 gap-3">
-            <FieldLight label={t("volunteerPage.form.currentAddr")}><textarea required rows={2} maxLength={300} value={f.currentAddress} onChange={onIn("currentAddress")} className="vol-input resize-none" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.permanentAddr")}><textarea required rows={2} maxLength={300} value={f.permanentAddress} onChange={onIn("permanentAddress")} className="vol-input resize-none" /></FieldLight>
-          </div>
-        </div>
-
-        {/* 2. Education */}
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">{t("volunteerPage.form.secEdu")}</div>
-          <div className="text-xs text-white/80 mb-2">{t("volunteerPage.form.eduMediumHint")}</div>
-          <div className="grid sm:grid-cols-3 gap-2">
-            {educationMediums.map((m) => {
-              const checked = f.educationMediums.includes(m);
-              return (
-                <label key={m} className={`cursor-pointer flex items-center gap-2 rounded-lg border px-3 py-2.5 text-sm transition-colors ${checked ? "bg-white/25 border-white text-white" : "bg-white/10 border-white/25 text-white/85 hover:bg-white/15"}`}>
-                  <input type="checkbox" checked={checked} onChange={() => toggleMedium(m)} className="accent-white" />
-                  <span>{m}</span>
-                </label>
-              );
-            })}
-          </div>
-          <div className="mt-3">
-            <FieldLight label={t("volunteerPage.form.eduDetails")}>
-              <textarea required rows={2} maxLength={500} value={f.educationDetails} onChange={onIn("educationDetails")} className="vol-input resize-none" placeholder={t("volunteerPage.form.eduDetailsPh")} />
-            </FieldLight>
-          </div>
-        </div>
-
-        {/* 3. Contact */}
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">{t("volunteerPage.form.secContact")}</div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <FieldLight label={t("volunteerPage.form.whatsapp")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.whatsapp} onChange={(e) => set("whatsapp", e.target.value.replace(/\D/g, "") as never)} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.emailAddr")}><input type="email" maxLength={255} value={f.email} onChange={onIn("email")} className="vol-input" /></FieldLight>
-          </div>
-          <div className="mt-3">
-            <FieldLight label={t("volunteerPage.form.socialLink")}>
-              <input type="url" value={f.socialLink} onChange={onIn("socialLink")} className="vol-input" placeholder={t("volunteerPage.form.socialLinkPh")} />
-            </FieldLight>
-          </div>
-        </div>
-
-        {/* 4. Experience */}
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">{t("volunteerPage.form.secExp")}</div>
-          <FieldLight label={t("volunteerPage.form.experience")}>
-            <textarea rows={3} maxLength={1000} value={f.experience} onChange={onIn("experience")} className="vol-input resize-none" placeholder={t("volunteerPage.form.experiencePh")} />
-          </FieldLight>
-          <div className="mt-3">
-            <FieldLight label={t("volunteerPage.form.whyRepJoin")}>
-              <textarea required rows={4} maxLength={1000} value={f.whyJoin} onChange={onIn("whyJoin")} className="vol-input resize-none" />
-            </FieldLight>
-          </div>
-          <div className="mt-3 grid sm:grid-cols-2 gap-3">
-            <FieldLight label={t("volunteerPage.form.emergencyName")}><input required maxLength={120} value={f.emergencyName} onChange={onIn("emergencyName")} className="vol-input" /></FieldLight>
-            <FieldLight label={t("volunteerPage.form.emergencyPhone")}><input required type="tel" inputMode="numeric" maxLength={11} value={f.emergencyPhone} onChange={(e) => set("emergencyPhone", e.target.value.replace(/\D/g, "") as never)} placeholder="01XXXXXXXXX" className="vol-input" /></FieldLight>
-          </div>
-        </div>
-
-        {/* 5. Political */}
-        <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-2 border-b border-white/20 pb-1.5">{t("volunteerPage.form.secPolitical")}</div>
-          <div className="text-xs text-white/80 mb-2">{t("volunteerPage.form.politicalQ")}</div>
-          <div className="grid grid-cols-2 gap-2">
-            {politicalOptions.map((v) => (
-              <label key={v} className={`cursor-pointer flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-semibold transition-colors ${f.political === v ? "bg-white/25 border-white text-white" : "bg-white/10 border-white/25 text-white/85 hover:bg-white/15"}`}>
-                <input type="radio" name="political" checked={f.political === v} onChange={() => set("political", v)} className="accent-white" />
-                <span>{v}</span>
-              </label>
-            ))}
-          </div>
-          {f.political === yesOpt && (
-            <div className="mt-3">
-              <FieldLight label={t("volunteerPage.form.politicalDetails")}>
-                <textarea required rows={2} maxLength={500} value={f.politicalDetails} onChange={onIn("politicalDetails")} className="vol-input resize-none" placeholder={t("volunteerPage.form.politicalDetailsPh")} />
-              </FieldLight>
-            </div>
-          )}
-        </div>
-
-        {/* Terms */}
-        <div className="rounded-lg bg-white/10 border border-white/20 p-4 text-xs text-white/85 leading-relaxed">
-          <div className="font-bold text-white mb-1.5">{t("volunteerPage.form.termsTitle")}</div>
-          <ol className="list-decimal pl-4 space-y-1">
-            {terms.map((tm) => <li key={tm}>{tm}</li>)}
-          </ol>
-          <div className="mt-3 font-semibold text-white">{t("volunteerPage.form.privacyTitle")}</div>
-          <p className="mt-1">{t("volunteerPage.form.privacyText")}</p>
-        </div>
-
-        <label className="flex items-start gap-2.5 text-sm text-white/90 cursor-pointer">
-          <input type="checkbox" checked={f.agree} onChange={(e) => set("agree", e.target.checked as never)} className="mt-1 accent-white" />
-          <span>{t("volunteerPage.form.agreeTerms")}</span>
-        </label>
-
-        <SubmitButton>{t("volunteerPage.submit")}</SubmitButton>
-      </form>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          onSubmit={(vals) => {
+            saveApplication("career", {
+              name: stringVal(vals.fullName || vals.name),
+              phone: stringVal(vals.whatsapp || vals.phone),
+              email: stringVal(vals.email),
+              address: stringVal(vals.currentAddress),
+              profession: stringVal(vals.profession),
+              message: stringVal(vals.whyJoin),
+              extra: vals,
+            });
+            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.repTitle"), buildWhatsAppBody(schema, vals), orgName));
+          }}
+        />
+      </div>
     </>
   );
 };
