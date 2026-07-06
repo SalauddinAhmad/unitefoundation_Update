@@ -451,7 +451,7 @@ const defaultSettings: SiteSettings = {
   ],
   hero_slides: [
     {
-      image: "/src/assets/hero-mosque.jpg",
+      image: heroMosque,
       eyebrow: "সুন্নাহর অনুসরণে",
       title: "মানবতার কল্যাণে, একসাথে এগিয়ে চলি",
       subtitle: "ইউনাইট ফাউন্ডেশন — দাওয়াহ, শিক্ষা, ত্রাণ ও সমাজকল্যাণে নিবেদিত একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম।",
