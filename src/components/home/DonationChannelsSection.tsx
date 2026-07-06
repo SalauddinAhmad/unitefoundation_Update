@@ -66,198 +66,217 @@ export const DonationChannelsSection = () => {
           </p>
         </div>
 
-        {/* Aligned 3-column grid */}
-        <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6 items-stretch">
-            {/* Bank */}
-            <article className="group relative flex flex-col rounded-[28px] border border-primary/15 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                background: "linear-gradient(155deg, hsl(152 45% 92%) 0%, hsl(152 55% 85%) 100%)",
-              }}
-            >
-              <div className="flex items-center justify-between gap-4 mb-6">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
-                    ব্যাংক ট্রান্সফার
-                  </p>
-                  <h3 className="mt-1.5 text-xl md:text-2xl font-extrabold text-foreground leading-tight">
-                    ব্যাংক অ্যাকাউন্ট
-                  </h3>
-                </div>
-                <div className="h-12 w-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-
-              <div className="relative flex-1 space-y-5 pl-5 before:absolute before:left-[13px] before:top-2 before:bottom-2 before:w-px before:bg-border">
-                {bankCards.map((bank, index) => (
-                  <div key={bank.title} className="relative">
-                    <span className="absolute -left-[25px] top-1 h-4 w-4 rounded-full border-4 border-card bg-primary" />
-                    <div className="min-w-0">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                            Bank · 0{index + 1}
-                          </p>
-                          <h4 className="mt-1 text-base font-extrabold text-foreground leading-snug">
-                            {bank.title}
-                          </h4>
-                        </div>
-                        <span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-primary">
-                          {bank.branch}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs font-semibold text-primary">
-                        {bank.accountName}
-                      </p>
-                      <div className="mt-3 flex items-center justify-between gap-2 rounded-2xl bg-secondary/80 border border-border/60 px-3 py-2.5">
-                        <p className="font-mono text-sm font-extrabold text-foreground tracking-wide" dir="ltr">
-                          {formatAccount(bank.accountNumber)}
-                        </p>
-                        <button
-                          onClick={() => copy(bank.accountNumber, t("channels.toast.accountNumber"))}
-                          aria-label={t("channels.copyAccount")}
-                          className="h-8 w-8 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition-colors hover:bg-primary/90"
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                      {(bank.routing || bank.swift) && (
-                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-semibold text-muted-foreground" dir="ltr">
-                          {bank.routing && <span>Routing: {bank.routing}</span>}
-                          {bank.swift && <span>SWIFT: {bank.swift}</span>}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            {/* QR */}
-            <article className="group relative flex flex-col rounded-[28px] overflow-hidden border border-donate-highlight/30 shadow-2xl transition-all duration-300 hover:-translate-y-1"
-              style={{
-                background: "linear-gradient(160deg, hsl(152 100% 20%) 0%, hsl(152 100% 12%) 100%)",
-              }}
-            >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        {/* 4 dark bank-card style cards */}
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6 items-stretch">
+            {/* Bank cards — one per bank */}
+            {site.payments.banks.map((bank) => (
+              <article
+                key={bank.bank}
+                className="relative flex flex-col rounded-[24px] p-6 overflow-hidden border border-donate-highlight/25 shadow-2xl transition-all duration-300 hover:-translate-y-1"
                 style={{
-                  backgroundImage:
-                    "radial-gradient(hsl(var(--donate-highlight)) 1px, transparent 1px)",
-                  backgroundSize: "28px 28px",
+                  background:
+                    "linear-gradient(160deg, hsl(152 60% 12%) 0%, hsl(152 70% 7%) 100%)",
                 }}
-              />
-              <div className="relative flex flex-col flex-1 p-6 md:p-7 text-center">
-                <div className="flex items-center justify-between gap-4 mb-6">
-                  <div className="text-left">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight">
-                      Bangla QR
-                    </p>
-                    <h3 className="mt-1.5 text-xl md:text-2xl font-extrabold text-primary-foreground leading-tight">
-                      {t("channels.scanToDonate")}
-                    </h3>
-                  </div>
-                  <div className="h-12 w-12 shrink-0 rounded-2xl bg-donate-highlight/20 flex items-center justify-center">
-                    <QrCode className="h-5 w-5 text-donate-highlight" />
-                  </div>
+              >
+                {/* watermark shield */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -bottom-8 -right-8 opacity-[0.07]"
+                >
+                  <CreditCard className="h-56 w-56 text-donate-highlight" strokeWidth={1} />
                 </div>
 
-                <div className="flex-1 flex items-center justify-center">
-                  <div className="mx-auto w-52 max-w-full rounded-[24px] bg-card p-3 shadow-2xl">
-                    <div className="aspect-square rounded-2xl bg-secondary flex items-center justify-center overflow-hidden">
-                      {site.payments.qrImage ? (
-                        <img
-                          src={site.payments.qrImage}
-                          alt="Unite Foundation Bangla QR"
-                          className="h-full w-full object-contain"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="h-full w-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-primary/25 rounded-2xl p-3">
-                          <QrCode className="h-12 w-12 text-primary/45" strokeWidth={1.4} />
-                          <p className="text-xs font-semibold text-primary/75 leading-snug">
-                            {t("channels.qrPending")}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <p className="mt-6 text-xs font-semibold text-donate-highlight">
-                  {t("channels.anyAppNote")}
-                </p>
-                <p className="mt-2 text-[11px] leading-relaxed text-primary-foreground/70">
-                  {t("channels.qrHint")}
-                </p>
-              </div>
-            </article>
-
-            {/* Mobile */}
-            <article className="group relative flex flex-col rounded-[28px] border border-donate-orange/25 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
-              style={{
-                background: "linear-gradient(155deg, hsl(35 85% 93%) 0%, hsl(28 80% 86%) 100%)",
-              }}
-            >
-              <div className="flex items-center justify-between gap-4 mb-6">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
-                    মোবাইল ব্যাংকিং
+                <div className="relative flex items-start justify-between gap-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight/80">
+                    Bank Transfer
                   </p>
-                  <h3 className="mt-1.5 text-xl md:text-2xl font-extrabold text-foreground leading-tight">
-                    {t("channels.personalAccount")}
-                  </h3>
-                </div>
-                <div className="h-12 w-12 shrink-0 rounded-2xl bg-donate-red/10 flex items-center justify-center">
-                  <Smartphone className="h-5 w-5 text-donate-red" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                {mobileNumbers.map((mobile, index) => (
-                  <div key={mobile.brand} className="rounded-2xl bg-secondary/80 border border-border/70 p-3 text-center">
-                    <div
-                      className={`mx-auto h-11 w-11 rounded-2xl flex items-center justify-center text-sm font-extrabold ${
-                        index === 0
-                          ? "bg-donate-red text-primary-foreground"
-                          : index === 1
-                            ? "bg-donate-orange text-primary-foreground"
-                            : "bg-primary text-primary-foreground"
-                      }`}
-                    >
-                      {mobile.brand.charAt(0)}
-                    </div>
-                    <p className="mt-2 text-[11px] font-extrabold text-foreground">{mobile.brand}</p>
+                  <div className="h-9 w-9 rounded-lg bg-donate-highlight/15 border border-donate-highlight/30 flex items-center justify-center">
+                    <CreditCard className="h-4 w-4 text-donate-highlight" />
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="mt-auto pt-5 space-y-3">
-                {mobileNumbers.map((mobile) => (
-                  <div key={mobile.brand} className="flex items-center justify-between gap-3 rounded-2xl bg-secondary/80 border border-border/70 px-4 py-3">
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                        {mobile.brand} · পার্সোনাল
-                      </p>
-                      <p className="mt-0.5 font-mono text-sm font-extrabold text-foreground tracking-wide" dir="ltr">
-                        {mobile.number}
-                      </p>
-                    </div>
+                <h3 className="relative mt-3 text-2xl font-extrabold text-primary-foreground leading-tight">
+                  {bank.bank}
+                </h3>
+                <p className="relative mt-1 text-[11px] font-semibold text-donate-highlight">
+                  সাধারণ ফান্ড
+                </p>
+
+                <p className="relative mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
+                  Account Name
+                </p>
+                <p className="relative mt-1 text-sm font-bold text-donate-highlight">
+                  {bank.account}
+                </p>
+
+                <div className="relative mt-4 rounded-2xl border border-donate-highlight/20 bg-black/25 p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
+                    Account Number
+                  </p>
+                  <div className="mt-1 flex items-start justify-between gap-2">
+                    <p className="font-mono text-xl font-extrabold text-primary-foreground leading-tight" dir="ltr">
+                      {formatAccount(bank.number)}
+                    </p>
                     <button
-                      onClick={() => copy(mobile.number, t("channels.toast.mobileNumber"))}
-                      aria-label={t("channels.copyMobile")}
-                      className="h-9 w-9 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition-colors hover:bg-primary/90"
+                      onClick={() => copy(bank.number, t("channels.toast.accountNumber"))}
+                      aria-label={t("channels.copyAccount")}
+                      className="h-9 w-9 shrink-0 rounded-lg bg-donate-highlight/15 border border-donate-highlight/30 text-donate-highlight flex items-center justify-center hover:bg-donate-highlight/25 transition-colors"
                     >
                       <Copy className="h-3.5 w-3.5" />
                     </button>
                   </div>
+                </div>
+
+                <div className="relative mt-4 space-y-2 text-[11px]">
+                  <div>
+                    <p className="font-bold uppercase tracking-[0.16em] text-primary-foreground/55">Branch</p>
+                    <p className="mt-0.5 font-semibold text-primary-foreground/90">{bank.branch}</p>
+                  </div>
+                  {bank.routing && (
+                    <div>
+                      <p className="font-bold uppercase tracking-[0.16em] text-primary-foreground/55">Routing</p>
+                      <p className="mt-0.5 font-mono font-semibold text-primary-foreground/90" dir="ltr">{bank.routing}</p>
+                    </div>
+                  )}
+                  {bank.swift && (
+                    <div>
+                      <p className="font-bold uppercase tracking-[0.16em] text-primary-foreground/55">Swift</p>
+                      <p className="mt-0.5 font-mono font-semibold text-primary-foreground/90" dir="ltr">{bank.swift}</p>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+
+            {/* Mobile banking card */}
+            <article
+              className="relative flex flex-col rounded-[24px] p-6 overflow-hidden border border-donate-highlight/25 shadow-2xl transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background:
+                  "linear-gradient(160deg, hsl(152 60% 12%) 0%, hsl(152 70% 7%) 100%)",
+              }}
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-8 -right-8 opacity-[0.07]"
+              >
+                <Smartphone className="h-56 w-56 text-donate-highlight" strokeWidth={1} />
+              </div>
+
+              <div className="relative flex items-start justify-between gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight/80">
+                  Mobile Banking
+                </p>
+                <div className="h-9 w-9 rounded-lg bg-donate-highlight/15 border border-donate-highlight/30 flex items-center justify-center">
+                  <Smartphone className="h-4 w-4 text-donate-highlight" />
+                </div>
+              </div>
+
+              <h3 className="relative mt-3 text-2xl font-extrabold text-primary-foreground leading-tight">
+                Personal Number
+              </h3>
+              <p className="relative mt-1 text-[11px] font-semibold text-donate-highlight">
+                পার্সোনাল অ্যাকাউন্ট
+              </p>
+
+              <p className="relative mt-4 text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
+                Account Name
+              </p>
+              <p className="relative mt-1 text-sm font-bold text-donate-highlight">
+                {site.payments.bank.account}
+              </p>
+
+              <div className="relative mt-4 rounded-2xl border border-donate-highlight/20 bg-black/25 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary-foreground/60">
+                  Mobile Number
+                </p>
+                <div className="mt-1 flex items-start justify-between gap-2">
+                  <p className="font-mono text-xl font-extrabold text-primary-foreground leading-tight" dir="ltr">
+                    {site.payments.bkash.number}
+                  </p>
+                  <button
+                    onClick={() => copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))}
+                    aria-label={t("channels.copyMobile")}
+                    className="h-9 w-9 shrink-0 rounded-lg bg-donate-highlight/15 border border-donate-highlight/30 text-donate-highlight flex items-center justify-center hover:bg-donate-highlight/25 transition-colors"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative mt-4 flex flex-wrap gap-2">
+                {mobileNumbers.map((m) => (
+                  <span
+                    key={m.brand}
+                    className="rounded-full border border-donate-highlight/30 bg-donate-highlight/10 px-3 py-1 text-[11px] font-bold text-donate-highlight"
+                  >
+                    {m.brand}
+                  </span>
                 ))}
               </div>
             </article>
+
+            {/* QR card */}
+            <article
+              className="relative flex flex-col rounded-[24px] p-6 overflow-hidden border border-donate-highlight/25 shadow-2xl transition-all duration-300 hover:-translate-y-1"
+              style={{
+                background:
+                  "linear-gradient(160deg, hsl(152 60% 12%) 0%, hsl(152 70% 7%) 100%)",
+              }}
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -bottom-8 -right-8 opacity-[0.07]"
+              >
+                <QrCode className="h-56 w-56 text-donate-highlight" strokeWidth={1} />
+              </div>
+
+              <div className="relative flex items-start justify-between gap-3">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight/80">
+                  Bangla QR
+                </p>
+                <div className="h-9 w-9 rounded-lg bg-donate-highlight/15 border border-donate-highlight/30 flex items-center justify-center">
+                  <QrCode className="h-4 w-4 text-donate-highlight" />
+                </div>
+              </div>
+
+              <h3 className="relative mt-3 text-2xl font-extrabold text-primary-foreground leading-tight">
+                স্ক্যান করে দান
+              </h3>
+              <p className="relative mt-1 text-[11px] font-semibold text-donate-highlight">
+                যেকোনো ব্যাংক/MFS অ্যাপ
+              </p>
+
+              <div className="relative mt-4 flex-1 flex items-center justify-center">
+                <div className="w-full rounded-2xl border border-donate-highlight/25 bg-card p-3">
+                  <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
+                    {site.payments.qrImage ? (
+                      <img
+                        src={site.payments.qrImage}
+                        alt="Unite Foundation Bangla QR"
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary/25 rounded-xl p-3 text-center">
+                        <QrCode className="h-10 w-10 text-primary/50" strokeWidth={1.4} />
+                        <p className="text-[11px] font-semibold text-primary/70">
+                          Bangla QR শীঘ্রই যুক্ত হবে
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <p className="relative mt-4 text-[11px] text-primary-foreground/70 text-center leading-relaxed">
+                মোবাইল ব্যাংকিং/ব্যাংক অ্যাপ থেকে QR স্ক্যান করে সরাসরি দান করুন
+              </p>
+            </article>
           </div>
         </div>
+
 
         <p className="text-center text-xs text-primary-foreground/60 mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
