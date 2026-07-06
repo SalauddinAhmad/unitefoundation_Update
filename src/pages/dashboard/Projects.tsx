@@ -93,6 +93,23 @@ export default function Projects() {
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
 
+  const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const addCustomCategory = (name: string) => {
+    const n = name.trim();
+    if (!n) return;
+    if (allCategories.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+    const next = [...customCats, n];
+    setCustomCats(next); saveCustomCategories(next);
+    toast.success("ক্যাটাগরি যোগ হয়েছে");
+  };
+  const removeCustomCategory = (name: string) => {
+    if (!customCats.includes(name)) return;
+    if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+    const next = customCats.filter((c) => c !== name);
+    setCustomCats(next); saveCustomCategories(next);
+  };
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed" | "draft">("all");
   const [category, setCategory] = useState("all");
