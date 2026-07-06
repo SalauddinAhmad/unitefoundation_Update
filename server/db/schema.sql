@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS posts (
   slug VARCHAR(255) UNIQUE NOT NULL,
   excerpt TEXT,
   content LONGTEXT,
-  cover_image_url TEXT,
+  cover_image_url LONGTEXT,
   category VARCHAR(100),
   status ENUM('draft','published') NOT NULL DEFAULT 'draft',
   author_id CHAR(36),
