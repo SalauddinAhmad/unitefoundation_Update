@@ -155,31 +155,64 @@ const About = () => {
       subtitle={t("aboutPage.heroSubtitle")}
     />
 
-    <section className="section-y">
-      <div className="container-page grid lg:grid-cols-2 gap-12 items-center">
-        <div className="relative">
-          <div className="absolute -inset-4 rounded-3xl bg-accent/40 -z-10" />
-          <img
-            src={about}
-            alt={t("aboutPage.missionAlt")}
-            className="w-full h-full rounded-2xl object-cover shadow-lg"
-            loading="lazy"
-          />
-        </div>
-        <div>
-          <div className="h-11 w-11 rounded-full bg-accent flex items-center justify-center text-primary mb-4">
-            <Target className="h-5 w-5" />
+    <section className="section-y relative overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 20% 20%, hsl(var(--primary)) 1px, transparent 1px)",
+          backgroundSize: "36px 36px",
+        }}
+      />
+      <div className="container-page relative grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="lg:col-span-5 lg:sticky lg:top-24">
+          <div className="relative">
+            <div className="absolute -inset-4 rounded-3xl bg-accent/50 -z-10" />
+            <div className="absolute -bottom-5 -right-5 hidden md:block h-24 w-24 rounded-2xl gradient-donate-bg shadow-donate -z-10" />
+            <img
+              src={about}
+              alt={t("aboutPage.missionAlt")}
+              className="w-full h-auto rounded-2xl object-cover shadow-card-hover"
+              loading="lazy"
+            />
           </div>
+          <div className="mt-8">
+            <span className="eyebrow inline-flex items-center gap-2">
+              <Target className="h-3.5 w-3.5" /> {t("aboutPage.mission")}
+            </span>
+            <h2 className="heading-display text-left mt-3">
+              {t("aboutPage.mission")}{" "}
+              <span className="gradient-donate-text">—</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground leading-[1.9]">
+              {t("aboutPage.missionAlt")}
+            </p>
+          </div>
+        </div>
 
-          <h2 className="heading-display">{t("aboutPage.mission")}</h2>
-          <ul className="mt-6 space-y-4">
+        <div className="lg:col-span-7">
+          <ol className="relative space-y-4">
             {goals.map((goal, i) => (
-              <li key={i} className="flex items-start gap-2 text-muted-foreground leading-[1.9]">
-                <span className="text-primary mt-1">•</span>
-                <span>{goal}</span>
+              <li
+                key={i}
+                className="group relative rounded-2xl bg-card border border-border p-5 md:p-6 shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+              >
+                <span
+                  className="absolute left-0 top-0 bottom-0 w-1 gradient-donate-bg opacity-70 group-hover:opacity-100 transition-opacity"
+                  aria-hidden
+                />
+                <div className="flex items-start gap-4 pl-2">
+                  <div className="shrink-0 h-11 w-11 rounded-xl bg-accent text-primary flex items-center justify-center font-bold text-lg shadow-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    {new Intl.NumberFormat(lang === "en" ? "en-US" : "bn-BD").format(i + 1)}
+                  </div>
+                  <p className="text-foreground leading-[1.95] text-[15px] md:text-base pt-1.5">
+                    {goal}
+                  </p>
+                </div>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </div>
     </section>
