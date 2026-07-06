@@ -223,9 +223,9 @@ export const HomeDonationChannelsSection = () => {
             </p>
           </article>
 
-          {/* Bangla QR — spans full width to keep layout balanced when odd */}
+          {/* Bangla QR */}
           <article
-            className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8 md:col-span-2"
+            className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8"
             style={{ background: cardBg }}
           >
             <div
@@ -235,42 +235,46 @@ export const HomeDonationChannelsSection = () => {
               <QrCode className="h-48 w-48 text-donate-highlight" strokeWidth={1} />
             </div>
 
-            <div className="relative flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
-              <div className="flex-1">
+            <div className="relative flex items-start justify-between gap-4">
+              <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary-foreground/60">
                   Bangla QR
                 </p>
                 <h3 className="mt-2 text-2xl md:text-3xl font-extrabold text-primary-foreground leading-tight">
                   {t("channels.scanToDonate")}
                 </h3>
-                <p className="mt-3 text-sm text-primary-foreground/75 leading-relaxed">
-                  {t("channels.qrHint")}
-                </p>
-                <p className="mt-3 text-xs font-semibold text-donate-highlight">
-                  {t("channels.anyAppNote")}
-                </p>
               </div>
-
-              <div className="w-40 md:w-44 shrink-0 rounded-2xl bg-card p-3 border border-donate-highlight/20">
-                <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
-                  {site.payments.qrImage ? (
-                    <img
-                      src={site.payments.qrImage}
-                      alt="Unite Foundation Bangla QR"
-                      className="h-full w-full object-contain"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary/25 rounded-xl p-3 text-center">
-                      <QrCode className="h-10 w-10 text-primary/50" strokeWidth={1.4} />
-                      <p className="text-[11px] font-semibold text-primary/70">
-                        {t("channels.qrPending")}
-                      </p>
-                    </div>
-                  )}
-                </div>
+              <div className="h-11 w-11 shrink-0 rounded-lg bg-donate-highlight/90 flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-[hsl(152_65%_8%)]" strokeWidth={2.4} />
               </div>
             </div>
+
+            <div className="relative mt-8 mx-auto w-44 rounded-2xl bg-card p-3 border border-donate-highlight/20">
+              <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
+                {site.payments.qrImage ? (
+                  <img
+                    src={site.payments.qrImage}
+                    alt="Unite Foundation Bangla QR"
+                    className="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="h-full w-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-primary/25 rounded-xl p-3 text-center">
+                    <QrCode className="h-10 w-10 text-primary/50" strokeWidth={1.4} />
+                    <p className="text-[11px] font-semibold text-primary/70">
+                      {t("channels.qrPending")}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p className="relative mt-5 text-center text-xs font-semibold text-donate-highlight">
+              {t("channels.anyAppNote")}
+            </p>
+            <p className="relative mt-2 text-center text-xs text-primary-foreground/70 leading-relaxed">
+              {t("channels.qrHint")}
+            </p>
           </article>
         </div>
 
