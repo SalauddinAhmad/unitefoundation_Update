@@ -62,6 +62,25 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
   const { data, isLoading } = useMediaLibrary(search);
   const upload = useUploadMedia();
   const del = useDeleteMedia();
+  const rename = useRenameMedia();
+
+  const handleRename = async (m: MediaItem, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const current = m.filename || "";
+    const next = window.prompt(
+      "SEO-বান্ধব ফাইলনেম দিন (যেমন: eid-food-distribution-2024.jpg)\nছোট হাতের অক্ষর, শব্দের মাঝে হাইফেন (-) ব্যবহার করুন।",
+      current
+    );
+    if (next == null) return;
+    const cleaned = next.trim();
+    if (!cleaned || cleaned === current) return;
+    try {
+      await rename.mutateAsync({ id: m.id, filename: cleaned });
+      toast.success("নাম পরিবর্তন হয়েছে");
+    } catch (err: any) {
+      toast.error(err?.message || "নাম পরিবর্তন ব্যর্থ");
+    }
+  };
 
   const items = data?.items || [];
   const total = data?.total || 0;
