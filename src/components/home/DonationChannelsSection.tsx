@@ -225,9 +225,8 @@ export const DonationChannelsSection = () => {
             </div>
           </article>
 
-          {/* Bangla QR — placeholder, replace src with real QR image */}
           <article
-            className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+            className="group relative rounded-3xl p-6 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
             style={{
               background:
                 "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
@@ -235,7 +234,7 @@ export const DonationChannelsSection = () => {
           >
             <QrCode className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-white/[0.03]" strokeWidth={1} />
 
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex items-start justify-between mb-5">
               <div>
                 <div className="text-[11px] font-bold tracking-[0.22em] text-white/50 uppercase">
                   BANGLA QR
@@ -250,8 +249,23 @@ export const DonationChannelsSection = () => {
               </div>
             </div>
 
-            {/* QR image slot */}
-            <div className="rounded-2xl bg-white p-4 flex items-center justify-center aspect-square border border-white/10">
+            {/* QR image slot — compact */}
+            <div className="rounded-2xl bg-white p-3 flex items-center justify-center border border-white/10 mx-auto w-40 h-40 md:w-44 md:h-44">
+              {site.payments.qrImage ? (
+                <img
+                  src={site.payments.qrImage}
+                  alt="Unite Foundation Bangla QR"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-emerald-900/20 rounded-xl">
+                  <QrCode className="h-10 w-10 text-emerald-900/40" strokeWidth={1.2} />
+                  <div className="text-emerald-900/70 text-[10px] font-semibold px-2">
+                    {t("channels.qrPending")}
+                  </div>
+                </div>
+              )}
+            </div>
               {site.payments.qrImage ? (
                 <img
                   src={site.payments.qrImage}
