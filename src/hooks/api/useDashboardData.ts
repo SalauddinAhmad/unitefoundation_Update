@@ -202,7 +202,12 @@ export type HeroSlide = {
   primaryCtaTo: string;
   secondaryCtaLabel: string;
   secondaryCtaTo: string;
+  // ---- optional pro controls (all backward-compatible) ----
+  enabled?: boolean;                       // default true
+  align?: "left" | "center" | "right";     // default "left"
+  overlay?: "dark" | "medium" | "light";   // default "dark"
 };
+
 
 export type AboutContent = {
   heading: string;
