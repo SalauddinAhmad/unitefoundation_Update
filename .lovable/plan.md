@@ -1,59 +1,97 @@
 ## লক্ষ্য
 
-WordPress-এর মতো একটি **Media Library** সিস্টেম যোগ করা — যেখানে ইমেজ আপলোড অপশনে ক্লিক করলে আগে থেকে আপলোড করা সব ইমেজ দেখা যাবে, সেগুলো থেকে সিলেক্ট বা ডিলিট করা যাবে, এবং নতুন ইমেজ আপলোডও করা যাবে। এটি ড্যাশবোর্ডের **সব ইমেজ আপলোড অপশনে** কাজ করবে।
+ড্যাশবোর্ডে একটি নতুন **"ফর্ম ম্যানেজার"** সেকশন যোগ হবে, যেখানে ট্যাব আকারে সব পাবলিক ফর্ম থাকবে। প্রতিটি ফর্মের ফিল্ড লেবেল, placeholder, type, required/optional, options (select-এর জন্য), এবং ফিল্ড যোগ/বাদ — সব ড্যাশবোর্ড থেকে কনফিগার করা যাবে। কনফিগ ব্যাকএন্ডে সেভ হবে এবং পাবলিক পেজগুলো সেটা থেকে ফর্ম রেন্ডার করবে।
 
-## ব্যাকএন্ড (Node/Express + MySQL)
+## স্কোপ (৫টি ফর্ম)
 
-**নতুন টেবিল** `media_library`:
-- `id CHAR(36) PRIMARY KEY`
-- `url LONGTEXT` — base64 data URI
-- `filename VARCHAR(255)`, `mime VARCHAR(60)`, `size_bytes INT`
-- `width INT`, `height INT`
-- `uploaded_by CHAR(36)` (users.id, nullable)
-- `created_at DATETIME`
+1. **স্বেচ্ছাসেবক** (`/volunteer` → volunteer tab)
+2. **জেলা প্রতিনিধি** (`/volunteer` → representative tab)
+3. **নিয়মিত দাতা** (Donate পেজের donor sign-up)
+4. **আজীবন সদস্য**
+5. **দাতা সদস্য**
 
-**নতুন রাউট** `server/routes/media.js`:
-- `GET /media` — সব ইমেজ লিস্ট (page, search, sort by newest)
-- `POST /media` — নতুন ইমেজ যোগ করুন (base64 data URI বডি সহ)
-- `DELETE /media/:id` — ডিলিট করুন
-- সবই `requireAuth` দিয়ে সুরক্ষিত
+## Backend (server/)
 
-**নতুন migration** `011_media_library.sql` — টেবিল ও ইনডেক্স তৈরি।
+### নতুন migration `014_form_schemas.sql`
+```sql
+CREATE TABLE form_schemas (
+  form_key VARCHAR(64) PRIMARY KEY,   -- volunteer, representative, donor, member_lifetime, member_donor
+  title VARCHAR(200),
+  subtitle TEXT,
+  fields LONGTEXT,                     -- JSON: [{key,label,placeholder,type,required,options,order,help}]
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+Seed row per form with existing field definitions extracted from `Volunteer.tsx` / `Donate.tsx`.
 
-## ফ্রন্টএন্ড
+### নতুন route `server/routes/forms.js`
+- `GET /forms` — public: সব ফর্ম স্কিমা
+- `GET /forms/:key` — public: একটি ফর্ম
+- `PUT /forms/:key` — admin only (permission `settings`): title/subtitle/fields update
+- `POST /forms/:key/reset` — admin: default-এ ফেরত
 
-**নতুন কম্পোনেন্ট** `src/components/dashboard/MediaLibrary.tsx`:
-- মোডাল ডায়ালগ, দুটি ট্যাব: **"লাইব্রেরি"** ও **"নতুন আপলোড"**
-- Library ট্যাব: গ্রিড ভিউ (থাম্বনেইল), সার্চ বার, প্রতিটি ইমেজে hover-এ **সিলেক্ট / ডিলিট** বাটন
-- Upload ট্যাব: drag-and-drop + file picker, একাধিক ফাইল সাপোর্ট, ক্লায়েন্ট-সাইড কম্প্রেসন (আগের `imageCompress` লাইব্রেরি ব্যবহার করে)
-- আপলোডের পর অটো লাইব্রেরিতে সেভ হয়ে সিলেক্ট হবে
-- প্রতিটি জায়গার জন্য প্রস্তাবিত সাইজ hint দেখানো যাবে (prop হিসেবে)
+Field JSON shape:
+```json
+{
+  "key": "name",
+  "label": "পূর্ণ নাম",
+  "placeholder": "আপনার নাম",
+  "type": "text|email|phone|number|textarea|select|checkbox-group|date",
+  "required": true,
+  "options": ["ঢাকা", "চট্টগ্রাম"],
+  "help": "",
+  "order": 1
+}
+```
 
-**নতুন hook** `src/hooks/api/useMedia.ts` — react-query দিয়ে list/upload/delete।
+## Dashboard (নতুন)
 
-**নতুন কম্পোনেন্ট** `src/components/dashboard/ImagePickerButton.tsx` — একটা রিইউজেবল বাটন/প্রিভিউ যেটা ক্লিক করলে MediaLibrary মোডাল খোলে। বর্তমান cover/photo/logo এলাকাগুলো এটি দিয়ে রিপ্লেস করা হবে।
+### Route: `/dashboard/forms` (menu item: "ফর্ম ম্যানেজার", icon `FormInput`)
 
-## যেসব জায়গায় ইন্টিগ্রেট হবে
+### Page `src/pages/dashboard/FormsManager.tsx`
+- Top tabs: ৫টি ফর্ম key
+- প্রতিটি ট্যাবে:
+  - Title + subtitle এডিটর
+  - Draggable field list (dnd-kit) — reorder সাপোর্ট
+  - প্রতিটি রো-তে: label, placeholder, type dropdown, required switch, options editor (select হলে), delete
+  - "+ নতুন ফিল্ড যোগ করুন" বাটন
+  - "সংরক্ষণ" ও "ডিফল্ট-এ ফেরত" বাটন
+- Live preview panel (right side): কনফিগ অনুযায়ী রেন্ডার্ড ফর্মের প্রিভিউ
 
-1. **Blog** (`dashboard/Blog.tsx`) — কভার ইমেজ + এডিটরের ভেতরের ছবি
-2. **Projects** (`dashboard/Projects.tsx`) — কভার + inline
-3. **Team** (`dashboard/Team.tsx`) — মেম্বারের ফটো
-4. **Partners** (`dashboard/Partners.tsx`) — লোগো
-5. **Gallery** (`dashboard/Gallery.tsx`) — আপলোড ফ্লো (Gallery-এর নিজস্ব list-ও আছে, কিন্তু media library থেকে সিলেক্টের সুযোগও থাকবে)
-6. **Settings** (`dashboard/Settings.tsx`) — hero banner + যেকোনো ইমেজ ফিল্ড
-7. **Messages** — attachment (যদি প্রযোজ্য)
+### Components
+- `src/components/dashboard/FormFieldEditor.tsx` — একটি ফিল্ড row edit UI
+- `src/components/forms/DynamicForm.tsx` — কনফিগ থেকে ফর্ম রেন্ডার + zod validation dynamic build
 
-সব জায়গায় একই MediaLibrary component ব্যবহার হবে — একবার আপলোড, সব জায়গায় রিইউজ।
+## Public pages update
 
-## Migration চালানোর নির্দেশনা
+### `src/pages/Volunteer.tsx`
+- হার্ডকোডেড `VolunteerForm` ও `RepresentativeForm` → `<DynamicForm formKey="volunteer" />` ও `<DynamicForm formKey="representative" />` দিয়ে replace
+- Submit logic (`saveApplication`, WhatsApp URL) `DynamicForm`-এর `onSubmit` prop-এ pass
+- হার্ডকোডেড লেবেল/i18n keys backend defaults-এ চলে যাবে; সাফল্যের কার্ড আগের মতোই থাকবে
 
-আপনি phpMyAdmin এ `server/db/migrations/011_media_library.sql` ফাইলের SQL রান করবেন — আগের মতোই।
+### `src/pages/Donate.tsx` + membership sections
+- Donor/member forms → `<DynamicForm formKey="donor" />` ইত্যাদি
 
-## ডেলিভারেবল
+## Error-free guarantee
 
-1. Backend: migration + `media.js` রাউট + `app.js`-এ register
-2. Frontend: `MediaLibrary.tsx`, `ImagePickerButton.tsx`, `useMedia.ts`
-3. ৭টি ড্যাশবোর্ড পেজে বর্তমান upload UI-গুলো নতুন picker দিয়ে রিপ্লেস
-4. পুরনো compress লাইব্রেরি reuse — সাইজ hint প্রতিটি জায়গায় বজায় থাকবে
+1. **Zod schema dynamic**: field type + required থেকে auto-build (text→string.min(1), email→email(), phone→regex, number→coerce.number(), select→enum)
+2. **Backwards-compat**: fixed system keys (name, phone, email) protected — delete করা যাবে না, শুধু label/placeholder edit
+3. **Fallback**: backend fetch fail হলে hardcoded default JSON ব্যবহৃত হবে (bundled in `src/data/formDefaults.ts`)
+4. **Submit payload**: dynamic → API-তে `{fields: {...}}` shape, existing `/applications/*` routes accept extra fields via existing `extra` param
 
-অ্যাপ্রুভ করলে ইমপ্লিমেন্ট শুরু করবো।
+## টেকনিক্যাল বিবরণ
+
+- **Files added**: `server/db/migrations/014_form_schemas.sql`, `server/routes/forms.js`, `src/pages/dashboard/FormsManager.tsx`, `src/components/dashboard/FormFieldEditor.tsx`, `src/components/forms/DynamicForm.tsx`, `src/data/formDefaults.ts`, `src/hooks/api/useForms.ts`
+- **Files edited**: `server/app.js` (mount route), `src/App.tsx` (route), `src/components/dashboard/DashboardLayout.tsx` (menu), `src/lib/permissions.ts` (add `forms` perm), `src/pages/Volunteer.tsx` (use DynamicForm), `src/pages/Donate.tsx` (use DynamicForm for donor/member sections)
+- **Deps**: `@dnd-kit/core @dnd-kit/sortable` for drag-reorder
+
+## ডেলিভারি ক্রম
+
+1. Migration + backend route + seed defaults
+2. `DynamicForm` component + `formDefaults.ts`
+3. Dashboard FormsManager UI + menu entry
+4. Refactor Volunteer.tsx to use DynamicForm
+5. Refactor Donate.tsx donor/member forms
+6. QA: প্রতিটি ফর্ম add/edit/delete/reorder/save/reset test
+
+অনুমোদন করলে বাস্তবায়ন শুরু করব।
