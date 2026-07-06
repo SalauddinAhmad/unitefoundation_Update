@@ -88,10 +88,11 @@ const Volunteer = () => {
       {/* TABS + FORMS */}
       <section className="py-14 md:py-20">
         <div className="container-page">
-          <div className="max-w-3xl">
+          <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-2xl md:text-4xl font-bold leading-tight">
               {t("volunteerPage.sectionTitle")}
             </h2>
+            <div className="mx-auto mt-4 h-1 w-14 rounded-full bg-primary/70" />
             <p className="text-muted-foreground mt-4 leading-relaxed">
               {t("volunteerPage.sectionSubtitle")}
             </p>
