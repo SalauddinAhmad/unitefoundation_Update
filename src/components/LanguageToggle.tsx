@@ -11,17 +11,24 @@ interface Props {
 }
 
 // Set the Google Translate cookie for current host + parent domain.
+// When clearing, we must overwrite on EVERY path/domain variant Google
+// may have set it on, otherwise mobile browsers keep translating.
 const setGoogTrans = (value: string) => {
   const host = window.location.hostname;
-  const parent = host.split(".").slice(-2).join(".");
+  const parts = host.split(".");
+  const parent = parts.slice(-2).join(".");
+  const domains = [host, parent, `.${parent}`];
   const expires = value ? "" : "; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   const val = value || "";
-  // current host
+  // no-domain (host-only) cookie
   document.cookie = `googtrans=${val}; path=/${expires}`;
-  // parent domain (e.g. .unitefoundation.bd) so subdomains share it
-  if (parent && parent !== host) {
-    document.cookie = `googtrans=${val}; path=/; domain=.${parent}${expires}`;
-    document.cookie = `googtrans=${val}; path=/; domain=${parent}${expires}`;
+  // every domain variant
+  for (const d of domains) {
+    if (!d || d === host.replace(/^\./, "")) {
+      document.cookie = `googtrans=${val}; path=/; domain=${d}${expires}`;
+    } else {
+      document.cookie = `googtrans=${val}; path=/; domain=${d}${expires}`;
+    }
   }
 };
 
@@ -37,9 +44,19 @@ export const LanguageToggle = ({ className = "", variant = "header" }: Props) =>
     } else {
       setGoogTrans("");
     }
-    // Reload so Google Translate re-processes the DOM with the new cookie.
-    window.location.reload();
+    // Google Translate also stores its state in the URL hash
+    // (e.g. `#googtrans(bn|en)`). If we don't strip it, reloading
+    // to Bangla still triggers a re-translation to English on mobile.
+    const url = new URL(window.location.href);
+    if (url.hash && /googtrans/i.test(url.hash)) {
+      url.hash = "";
+    }
+    // Also strip Google's `_x_tr_*` query params if present.
+    ["_x_tr_sl", "_x_tr_tl", "_x_tr_hl", "_x_tr_pto"].forEach((k) => url.searchParams.delete(k));
+    // Use replace so back-button doesn't return to the pre-toggle URL.
+    window.location.replace(url.toString());
   };
+
 
   if (variant === "mobile") {
     return (
