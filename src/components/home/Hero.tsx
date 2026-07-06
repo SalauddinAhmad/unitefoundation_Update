@@ -45,15 +45,30 @@ const buildFallbackSlides = (t: (k: string) => string): HeroSlide[] => [
   },
 ];
 
+const overlayClasses: Record<NonNullable<HeroSlide["overlay"]>, string> = {
+  dark: "bg-gradient-to-r from-black/75 via-black/50 to-black/20",
+  medium: "bg-gradient-to-r from-black/55 via-black/30 to-transparent",
+  light: "bg-gradient-to-t from-black/60 via-black/15 to-transparent",
+};
+const alignClasses = {
+  left: "items-start text-left mr-auto",
+  center: "items-center text-center mx-auto",
+  right: "items-end text-right ml-auto",
+} as const;
+
 export const Hero = () => {
   const { t } = useTranslation();
   const { data: settings } = useSettings();
   const fallbackSlides = buildFallbackSlides(t);
   const raw = settings?.hero_slides?.length ? settings.hero_slides : fallbackSlides;
-  const slides = raw.map((s, i) => ({
-    ...s,
-    image: s.image && s.image.trim() ? s.image : fallbackImages[i % fallbackImages.length],
-  }));
+  const slides = raw
+    .filter((s) => s.enabled !== false)
+    .map((s, i) => ({
+      ...s,
+      image: s.image && s.image.trim() ? s.image : fallbackImages[i % fallbackImages.length],
+      align: s.align || "left",
+      overlay: s.overlay || "dark",
+    }));
 
   const [i, setI] = useState(0);
 
@@ -63,7 +78,9 @@ export const Hero = () => {
     return () => clearInterval(t);
   }, [slides.length]);
 
+  if (!slides.length) return null;
   const current = slides[Math.min(i, slides.length - 1)];
+  const align = current.align as keyof typeof alignClasses;
 
   return (
     <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-foreground">
@@ -78,15 +95,15 @@ export const Hero = () => {
             alt=""
             width={1920}
             height={1080}
-            className="h-full w-full object-cover"
+            className={`h-full w-full object-cover ${idx === i ? "animate-hero-zoom" : ""}`}
             fetchPriority={idx === 0 ? "high" : "low"}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/20" />
+          <div className={`absolute inset-0 ${overlayClasses[s.overlay as keyof typeof overlayClasses]}`} />
         </div>
       ))}
 
       <div className="relative h-full container-page flex items-center">
-        <div className="max-w-2xl text-white">
+        <div className={`flex flex-col max-w-2xl text-white ${alignClasses[align]}`}>
           <div key={`eb-${i}`} className="animate-fade-up">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-donate-highlight text-donate-highlight-foreground text-xs font-bold uppercase tracking-wider">
               <Heart className="h-3.5 w-3.5" />
@@ -153,3 +170,4 @@ export const Hero = () => {
     </section>
   );
 };
+
