@@ -142,11 +142,11 @@ export const DonationChannelsSection = () => {
             >
               <div
                 aria-hidden
-                className="absolute inset-0 opacity-20"
+                className="pointer-events-none absolute inset-0 opacity-[0.07]"
                 style={{
                   backgroundImage:
                     "radial-gradient(hsl(var(--donate-highlight)) 1px, transparent 1px)",
-                  backgroundSize: "22px 22px",
+                  backgroundSize: "28px 28px",
                 }}
               />
               <div className="relative flex flex-col flex-1 p-6 md:p-7 text-center">
