@@ -48,8 +48,14 @@ const ProjectDetail = () => {
               <img src={project.image} alt={project.title} width={1280} height={720} className="w-full h-auto" />
             </div>
             <div className="mt-8 prose-bn max-w-none">
-              <p className="text-lg text-foreground leading-[1.85]">{project.shortDescription}</p>
-              <p className="mt-4">{project.description}</p>
+              <div
+                className="text-lg text-foreground leading-[1.85] [&_p]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-card [&_img]:my-3 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic"
+                dangerouslySetInnerHTML={{ __html: project.shortDescription || "" }}
+              />
+              <div
+                className="mt-4 [&_p]:mb-3 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mt-5 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_img]:rounded-card [&_img]:my-3 [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic"
+                dangerouslySetInnerHTML={{ __html: project.description || "" }}
+              />
             </div>
             {project.gallery.length > 1 && (
               <div className="mt-8 grid grid-cols-2 md:grid-cols-3 gap-3">
