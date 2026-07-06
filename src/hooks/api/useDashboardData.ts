@@ -460,6 +460,8 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     about: { ...defaultSettings.about, ...(s?.about || {}), points: (s?.about?.points && s.about.points.length ? s.about.points : defaultSettings.about.points) },
     trust:
       Array.isArray(s?.trust) && s!.trust!.length ? s!.trust! : defaultSettings.trust,
+    milestones:
+      Array.isArray(s?.milestones) && s!.milestones!.length ? s!.milestones! : defaultSettings.milestones,
   };
 }
 
