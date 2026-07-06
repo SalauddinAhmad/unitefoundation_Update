@@ -154,18 +154,20 @@ export default function HeroSlidesEditor({ slides, onChange }: Props) {
             {/* Header row (always visible) */}
             <div className="flex items-stretch gap-3 p-3">
               {/* Thumbnail preview */}
-              <button
-                type="button"
-                onClick={() => setOpenIdx(isOpen ? null : idx)}
-                className="relative shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-secondary border border-border group"
-                aria-label="স্লাইড টগল"
-              >
-                <img
-                  src={preview}
-                  alt=""
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+                <button
+                  type="button"
+                  onClick={() => setOpenIdx(isOpen ? null : idx)}
+                  className="relative shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-secondary border border-border group"
+                  aria-label="স্লাইড টগল"
+                >
+                  {preview ? (
+                    <img src={preview} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <ImagePlus className="h-5 w-5" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent pointer-events-none" />
                 <span className="absolute top-1 left-1 text-[10px] font-bold text-white bg-black/50 backdrop-blur rounded px-1.5 py-0.5">
                   #{idx + 1}
                 </span>
