@@ -280,6 +280,7 @@ export type SiteSettings = {
   hero_slides: HeroSlide[];
   about: AboutContent;
   trust: TrustItem[];
+  milestones: Milestone[];
 };
 
 const defaultSettings: SiteSettings = {
