@@ -464,7 +464,7 @@ const defaultSettings: SiteSettings = {
       enabled: true,
     },
     {
-      image: "/src/assets/hero-relief.jpg",
+      image: heroRelief,
       eyebrow: "জরুরি ত্রাণ",
       title: "দুর্যোগে দাঁড়াই অসহায়দের পাশে",
       subtitle: "বন্যা, শীত ও সংকটে ক্ষতিগ্রস্ত পরিবারের কাছে আপনার দান পৌঁছে দিচ্ছি সরাসরি ও স্বচ্ছভাবে।",
