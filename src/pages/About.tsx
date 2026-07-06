@@ -283,8 +283,8 @@ const About = () => {
 
         <div className="mt-20 max-w-3xl mx-auto text-center">
           <div className="rounded-card border border-donate-highlight/30 bg-card p-8 md:p-10 shadow-card">
-            <p className="text-base md:text-lg leading-[1.95] text-foreground italic">
-              {t("aboutPage.milestonesQuote")}
+            <p className="text-base md:text-lg leading-[1.95] text-foreground italic whitespace-pre-line">
+              {msQuote}
             </p>
           </div>
         </div>
