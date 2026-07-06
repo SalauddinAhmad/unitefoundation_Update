@@ -7,8 +7,6 @@ import hero2 from "@/assets/hero-water.jpg";
 import hero3 from "@/assets/hero-mosque.jpg";
 import { useSettings, type HeroSlide } from "@/hooks/api/useDashboardData";
 
-const fallbackImages = [hero1, hero2, hero3];
-
 // Fallback slides use translation keys so the hero switches with language.
 // Backend-provided hero_slides remain as-authored (Bangla) unless the
 // admin also stores English versions.
