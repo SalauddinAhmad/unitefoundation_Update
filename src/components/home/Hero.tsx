@@ -60,10 +60,9 @@ export const Hero = () => {
   const fallbackSlides = buildFallbackSlides(t);
   const raw = settings?.hero_slides?.length ? settings.hero_slides : fallbackSlides;
   const slides = raw
-    .filter((s) => s.enabled !== false)
-    .map((s, i) => ({
+    .filter((s) => s.enabled !== false && s.image && s.image.trim())
+    .map((s) => ({
       ...s,
-      image: s.image && s.image.trim() ? s.image : fallbackImages[i % fallbackImages.length],
       align: s.align || "left",
       overlay: s.overlay || "dark",
     }));
