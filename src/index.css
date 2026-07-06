@@ -94,7 +94,7 @@
     @apply font-bangla font-bold tracking-tight;
     color: inherit;
   }
-  .font-en { font-family: "Ubuntu Sans", system-ui, sans-serif; }
+  .font-en { font-family: "Roboto", system-ui, sans-serif; }
 }
 
 @layer components {
