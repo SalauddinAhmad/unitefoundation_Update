@@ -414,7 +414,7 @@ export default function Projects() {
         )}
       </Card>
 
-      {editor.open && <ProjectEditor p={editor.p} onClose={() => setEditor({ open: false })} onSave={save} />}
+      {editor.open && <ProjectEditor p={editor.p} categories={allCategories} onAddCategory={addCustomCategory} onClose={() => setEditor({ open: false })} onSave={save} />}
       {viewer && <ProjectViewer p={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, p: viewer }); setViewer(null); }} />}
     </>
   );
