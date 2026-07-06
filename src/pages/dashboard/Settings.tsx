@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 
@@ -98,6 +98,7 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[
   { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
   { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
+  { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
   
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
