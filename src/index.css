@@ -128,16 +128,19 @@
     @apply text-3xl md:text-5xl font-bold leading-[1.15] text-center;
   }
   .prose-bn p { @apply leading-[1.85] text-muted-foreground; }
-  /* Force site's Bangla font on ALL pasted blog content, overriding any inline font-family */
+  /* Force site's Bornomala BN font on ALL pasted blog content, overriding any inline font-family */
   .prose-bn,
-  .prose-bn * {
-    font-family: inherit !important;
+  .prose-bn *,
+  .prose-bn *::before,
+  .prose-bn *::after {
+    font-family: "Bornomala BN", system-ui, sans-serif !important;
   }
   /* Also strip pasted inline colors/backgrounds so the site theme wins */
   .prose-bn p,
   .prose-bn span,
   .prose-bn div,
-  .prose-bn li {
+  .prose-bn li,
+  .prose-bn h1, .prose-bn h2, .prose-bn h3, .prose-bn h4, .prose-bn h5, .prose-bn h6 {
     color: inherit !important;
     background-color: transparent !important;
   }
