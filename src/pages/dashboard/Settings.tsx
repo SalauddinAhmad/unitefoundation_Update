@@ -3,7 +3,7 @@ import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail,
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 
-import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
+import { useSettings, useUpdateSettings, type SiteSettings, type Milestone } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
