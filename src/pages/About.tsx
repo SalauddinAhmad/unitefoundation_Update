@@ -8,6 +8,7 @@ import t1 from "@/assets/team-founder.jpg";
 import t2 from "@/assets/team-2.jpg";
 import t3 from "@/assets/team-3.jpg";
 import { useTeam } from "@/hooks/api/useTeam";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 const TeamSection = () => {
   const { data = [] } = useTeam();
