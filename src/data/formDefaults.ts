@@ -28,8 +28,7 @@ export const FORM_KEYS = [
   "volunteer",
   "representative",
   "donor",
-  "member_lifetime",
-  "member_donor",
+  "member",
 ] as const;
 export type FormKey = (typeof FORM_KEYS)[number];
 
@@ -37,8 +36,7 @@ export const FORM_LABEL: Record<FormKey, string> = {
   volunteer: "স্বেচ্ছাসেবক আবেদন",
   representative: "জেলা প্রতিনিধি আবেদন",
   donor: "নিয়মিত দাতা",
-  member_lifetime: "আজীবন সদস্য",
-  member_donor: "দাতা সদস্য",
+  member: "সদস্যপদ (আজীবন / দাতা)",
 };
 
 const volunteer: FormSchema = {
@@ -107,47 +105,32 @@ const donor: FormSchema = {
   fields: [
     { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
     { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
-    { key: "email", label: "ইমেইল", type: "email", system: true },
-    { key: "city", label: "শহর", type: "text", required: true },
-    { key: "amount", label: "মাসিক দানের পরিমাণ (৳)", type: "number", required: true },
-    { key: "method", label: "পছন্দসই পেমেন্ট মাধ্যম", type: "select", required: true,
+    { key: "email", label: "ইমেইল (ঐচ্ছিক)", type: "email", system: true },
+    { key: "city", label: "শহর / জেলা", type: "text", required: true },
+    { key: "area", label: "দানের ক্ষেত্র", type: "select", required: true, full: true,
+      options: ["এতিম শিশু", "শিক্ষা", "খাদ্য সহায়তা", "চিকিৎসা", "মসজিদ নির্মাণ", "যেখানে প্রয়োজন"] },
+    { key: "amount", label: "মাসিক দানের পরিমাণ (৳)", type: "select", required: true,
+      options: ["৳ ৫০০", "৳ ১,০০০", "৳ ২,৫০০", "৳ ৫,০০০", "৳ ১০,০০০", "কাস্টম"] },
+    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
       options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
     { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
   ],
 };
 
-const memberLifetime: FormSchema = {
-  form_key: "member_lifetime",
-  title: "আজীবন সদস্য আবেদন",
-  subtitle: "এককালীন ৫০,০০০ টাকা প্রদান করে আজীবন সদস্যপদ গ্রহণ করুন।",
+const member: FormSchema = {
+  form_key: "member",
+  title: "সদস্যপদ আবেদন",
+  subtitle: "আজীবন অথবা দাতা সদস্যপদ গ্রহণ করুন।",
   fields: [
     { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
     { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
-    { key: "email", label: "ইমেইল", type: "email", system: true },
-    { key: "dob", label: "জন্ম তারিখ", type: "date", required: true },
-    { key: "profession", label: "পেশা", type: "text", required: true },
-    { key: "address", label: "ঠিকানা", type: "textarea", required: true, full: true },
-    { key: "amount", label: "চাঁদার পরিমাণ (৳)", type: "number", required: true },
-    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
-      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
-    { key: "txnId", label: "ট্রানজেকশন আইডি", type: "text", required: true },
-  ],
-};
-
-const memberDonor: FormSchema = {
-  form_key: "member_donor",
-  title: "দাতা সদস্য আবেদন",
-  subtitle: "এককালীন ২৫,০০০ টাকা প্রদান করে দাতা সদস্যপদ গ্রহণ করুন।",
-  fields: [
-    { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
-    { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
-    { key: "email", label: "ইমেইল", type: "email", system: true },
-    { key: "profession", label: "পেশা", type: "text", required: true },
-    { key: "address", label: "ঠিকানা", type: "textarea", required: true, full: true },
-    { key: "amount", label: "চাঁদার পরিমাণ (৳)", type: "number", required: true },
-    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
-      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
-    { key: "txnId", label: "ট্রানজেকশন আইডি", type: "text", required: true },
+    { key: "email", label: "ইমেইল (ঐচ্ছিক)", type: "email", system: true },
+    { key: "city", label: "শহর / জেলা", type: "text", required: true },
+    { key: "profession", label: "পেশা", type: "text" },
+    { key: "type", label: "সদস্যপদের ধরন", type: "select", required: true,
+      options: ["আজীবন সদস্য (৳৫০,০০০)", "দাতা সদস্য (৳২৫,০০০)", "সম্মানিত সদস্য (৳১,০০,০০০)"] },
+    { key: "address", label: "সম্পূর্ণ ঠিকানা", type: "textarea", required: true, full: true },
+    { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
   ],
 };
 
@@ -155,6 +138,5 @@ export const FORM_DEFAULTS: Record<FormKey, FormSchema> = {
   volunteer,
   representative,
   donor,
-  member_lifetime: memberLifetime,
-  member_donor: memberDonor,
+  member,
 };
