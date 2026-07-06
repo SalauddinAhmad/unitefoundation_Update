@@ -455,6 +455,16 @@ const defaultSettings: SiteSettings = {
     { icon: "users", title: "৫০,০০০+ দাতা", note: "বিশ্বব্যাপী বিশ্বস্ত পরিবার" },
   ],
   milestones: defaultMilestones,
+  milestones_section: {
+    eyebrowBn: "আমাদের যাত্রা",
+    eyebrowEn: "Our journey",
+    headingBn: "মাইলফলকসমূহ",
+    headingEn: "Milestones",
+    introBn: "শূন্য থেকে শুরু হওয়া একটি স্বপ্ন — যা আজ হাজারো মানুষের সেবার পথে অবিরাম এগিয়ে চলছে।",
+    introEn: "A dream that started from nothing — today it moves on tirelessly, serving thousands.",
+    quoteBn: "২০১৭ সালে মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে যে ছোট চারাগাছটি রোপণ করা হয়েছিল, ২০২৬ সালে এসে সেটি অসংখ্য মানুষের সেবার এক বিশাল 'মহীরুহে' পরিণত হয়েছে। ফালিল্লাহিল হামদ।",
+    quoteEn: "The small sapling planted in 2017 with just 10 volunteers has, by 2026, grown into a mighty tree serving countless people. Falillahil hamd.",
+  },
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
