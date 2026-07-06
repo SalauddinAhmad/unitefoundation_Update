@@ -457,11 +457,11 @@ const Field = ({ label, children }: any) => (
 );
 
 /* ---------- editor ---------- */
-function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => void; onSave: (p: ProjectEx) => void }) {
+function ProjectEditor({ p, categories, onAddCategory, onClose, onSave }: { p?: ProjectEx; categories: string[]; onAddCategory: (name: string) => void; onClose: () => void; onSave: (p: ProjectEx) => void }) {
   const isNew = !p;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(p?.title || "");
-  const [category, setCategory] = useState(p?.category || CATEGORIES[0]);
+  const [category, setCategory] = useState(p?.category || categories[0] || DEFAULT_CATEGORIES[0]);
   const [description, setDescription] = useState(p?.description || "");
   const [cover, setCover] = useState(p?.cover || "");
   const [location, setLocation] = useState(p?.location || "");
