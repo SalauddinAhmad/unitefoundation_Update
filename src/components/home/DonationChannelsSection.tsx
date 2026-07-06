@@ -266,21 +266,6 @@ export const DonationChannelsSection = () => {
                 </div>
               )}
             </div>
-              {site.payments.qrImage ? (
-                <img
-                  src={site.payments.qrImage}
-                  alt="Unite Foundation Bangla QR"
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-emerald-900/20 rounded-xl">
-                  <QrCode className="h-14 w-14 text-emerald-900/40" strokeWidth={1.2} />
-                  <div className="text-emerald-900/70 text-xs font-semibold px-3">
-                    {t("channels.qrPending")}
-                  </div>
-                </div>
-              )}
-            </div>
 
             <p className="text-center text-[11px] text-white/50 mt-4 leading-relaxed">
               {t("channels.qrHint")}
