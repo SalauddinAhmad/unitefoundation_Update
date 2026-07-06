@@ -1,12 +1,12 @@
-import { Copy, CreditCard, QrCode, ShieldCheck, Smartphone } from "lucide-react";
+import { Copy, CreditCard, QrCode, Smartphone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 
 const mobileNumbers = [
-  { brand: "bKash", number: site.payments.bkash.number },
-  { brand: "Nagad", number: site.payments.nagad.number },
-  { brand: "Rocket", number: site.payments.rocket.number },
+  { brand: "bKash", number: site.payments.bkash.number, color: "hsl(340 75% 45%)" },
+  { brand: "Nagad", number: site.payments.nagad.number, color: "hsl(24 91% 54%)" },
+  { brand: "Rocket", number: site.payments.rocket.number, color: "hsl(280 55% 40%)" },
 ];
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
@@ -29,31 +29,16 @@ export const DonationChannelsSection = () => {
     navigator.clipboard.writeText(text);
     toast({ title: t("common.copied"), description: t("common.copiedDesc", { label }) });
   };
+
   return (
-    <section
-      className="relative py-16 md:py-24 overflow-hidden isolate"
-      style={{
-        background:
-          "radial-gradient(1000px 550px at 50% -10%, hsl(var(--primary) / 0.18), transparent 60%), radial-gradient(700px 450px at 0% 100%, hsl(var(--donate-orange) / 0.14), transparent 55%), radial-gradient(700px 450px at 100% 100%, hsl(var(--donate-red) / 0.12), transparent 55%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(40 20% 96%) 50%, hsl(var(--background)) 100%)",
-      }}
-    >
-      {/* Brand-tinted geometric pattern */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'><g fill='none' stroke='%23006837' stroke-width='1'><path d='M40 4l12 12-12 12-12-12z'/><path d='M40 40l12 12-12 12-12-12z'/><circle cx='40' cy='40' r='3'/></g></svg>")`,
-          backgroundSize: "80px 80px",
-        }}
-      />
-      {/* Brand-color aurora blobs */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-[hsl(var(--primary))]/10 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 -right-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-orange))]/12 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 -left-40 w-[420px] h-[420px] rounded-full bg-[hsl(var(--donate-highlight))]/10 blur-3xl" />
+    <section className="relative py-16 md:py-24 overflow-hidden bg-[hsl(40_25%_97%)]">
+      {/* Soft brand aurora blobs */}
+      <div className="pointer-events-none absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-[hsl(var(--primary))]/8 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-40 w-[520px] h-[520px] rounded-full bg-[hsl(var(--donate-orange))]/8 blur-3xl" />
 
       <div className="container-page relative">
         {/* Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14 animate-fade-in">
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
           <h2 className="text-3xl md:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
             {t("channels.heading")}
           </h2>
@@ -62,49 +47,37 @@ export const DonationChannelsSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 md:gap-6">
-          {/* Bank cards */}
-          {bankCards.map((b, idx) => (
-            <article
-              key={idx}
-              className="group relative rounded-3xl p-6 md:p-8 overflow-hidden bg-card border border-border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--donate-highlight))] to-[hsl(var(--donate-orange))]" />
-              <ShieldCheck className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-[hsl(var(--primary))]/[0.04]" strokeWidth={1} />
-
+        {/* Bento grid */}
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 md:gap-5 auto-rows-auto">
+          {/* Bank card 1 — white, col-span-3 */}
+          {bankCards[0] && (
+            <article className="md:col-span-3 rounded-[2rem] bg-card p-7 md:p-8 shadow-[0_10px_40px_-15px_hsl(152_60%_15%/0.15)] hover:shadow-[0_20px_50px_-15px_hsl(152_60%_15%/0.25)] hover:-translate-y-1 transition-all duration-300 border border-border/50">
               <div className="flex items-start justify-between mb-6">
-                <div>
-                  <div className="text-[11px] font-bold tracking-[0.22em] text-[hsl(var(--primary))]/70 uppercase">
-                    {b.badge}
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mt-2 tracking-tight">
-                    {b.title}
-                  </h3>
-                  <div className="text-xs text-[hsl(var(--donate-orange))] mt-1.5 font-semibold">{b.fundLabel}</div>
-                </div>
-                <div className="h-12 w-16 rounded-lg bg-[hsl(var(--primary))]/10 border border-[hsl(var(--primary))]/20 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-2xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
                   <CreditCard className="h-5 w-5 text-[hsl(var(--primary))]" />
                 </div>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
+                  {bankCards[0].badge}
+                </span>
+              </div>
+              <h3 className="text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight leading-snug">
+                {bankCards[0].title}
+              </h3>
+              <div className="text-xs text-[hsl(var(--donate-orange))] font-semibold mt-1.5">
+                {bankCards[0].fundLabel} · {bankCards[0].accountName}
               </div>
 
-              <div className="mb-4">
-                <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                  {t("channels.labels.accountName")}
-                </div>
-                <div className="text-[hsl(var(--primary))] font-bold text-lg">{b.accountName}</div>
-              </div>
-
-              <div className="rounded-2xl bg-[hsl(var(--primary))]/[0.06] border border-[hsl(var(--primary))]/15 p-4 md:p-5 flex items-center justify-between gap-3">
+              <div className="mt-5 rounded-2xl bg-[hsl(40_20%_96%)] p-4 flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
+                  <div className="text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase mb-1">
                     {t("channels.labels.accountNumber")}
                   </div>
-                  <div className="font-mono font-bold text-foreground text-xl md:text-2xl tracking-wide" dir="ltr">
-                    {formatAccount(b.accountNumber)}
+                  <div className="font-mono font-bold text-foreground text-lg md:text-xl tracking-wide" dir="ltr">
+                    {formatAccount(bankCards[0].accountNumber)}
                   </div>
                 </div>
                 <button
-                  onClick={() => copy(b.accountNumber, t("channels.toast.accountNumber"))}
+                  onClick={() => copy(bankCards[0].accountNumber, t("channels.toast.accountNumber"))}
                   aria-label={t("channels.copyAccount")}
                   className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] flex items-center justify-center transition-colors"
                 >
@@ -112,131 +85,198 @@ export const DonationChannelsSection = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-5">
+              <div className="grid grid-cols-3 gap-3 mt-4 text-xs">
                 <div>
-                  <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                    {t("channels.labels.branch")}
-                  </div>
-                  <div className="text-foreground/90 text-sm font-medium">{b.branch}</div>
+                  <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.branch")}</div>
+                  <div className="text-foreground/90 font-medium mt-0.5">{bankCards[0].branch}</div>
                 </div>
-                {b.routing ? (
+                {bankCards[0].routing && (
                   <div>
-                    <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                      {t("channels.labels.routing")}
-                    </div>
-                    <div className="text-foreground/90 text-sm font-mono font-medium" dir="ltr">{b.routing}</div>
+                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.routing")}</div>
+                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[0].routing}</div>
                   </div>
-                ) : null}
-                {b.swift ? (
+                )}
+                {bankCards[0].swift && (
                   <div>
-                    <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                      {t("channels.labels.swift")}
-                    </div>
-                    <div className="text-foreground/90 text-sm font-mono font-medium" dir="ltr">{b.swift}</div>
+                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.swift")}</div>
+                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[0].swift}</div>
                   </div>
-                ) : null}
+                )}
               </div>
             </article>
-          ))}
-        </div>
+          )}
 
-        {/* Bottom row: mobile banking + QR — compact, centered */}
-        <div className="grid md:grid-cols-2 gap-5 md:gap-6 mt-5 md:mt-6 max-w-4xl mx-auto">
-          <article className="group relative rounded-3xl p-6 overflow-hidden bg-card border border-border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--donate-highlight))] to-[hsl(var(--donate-orange))]" />
-            <Smartphone className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-[hsl(var(--primary))]/[0.04]" strokeWidth={1} />
+          {/* QR card — solid brand green, tall, col-span-3 row-span-2 */}
+          <article
+            className="md:col-span-3 md:row-span-2 rounded-[2rem] p-7 md:p-8 text-white shadow-[0_20px_50px_-15px_hsl(152_100%_15%/0.4)] relative overflow-hidden flex flex-col"
+            style={{
+              background:
+                "linear-gradient(155deg, hsl(152 100% 18%) 0%, hsl(152 100% 12%) 100%)",
+            }}
+          >
+            {/* Decorative pattern */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-[0.08]"
+              style={{
+                backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23FBB03B' stroke-width='0.8'><path d='M30 4l10 10-10 10-10-10z'/><circle cx='30' cy='30' r='2'/></g></svg>")`,
+                backgroundSize: "60px 60px",
+              }}
+            />
+            <div className="relative flex items-start justify-between mb-6">
+              <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-[hsl(var(--donate-highlight))]" />
+              </div>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-white/60 uppercase">
+                Bangla QR
+              </span>
+            </div>
 
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <div className="text-[11px] font-bold tracking-[0.22em] text-[hsl(var(--primary))]/70 uppercase">
-                  MOBILE BANKING
+            <div className="relative">
+              <h3 className="text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
+                {t("channels.scanToDonate")}
+              </h3>
+              <p className="text-white/70 text-sm mt-2 leading-relaxed">
+                {t("channels.anyAppNote")}
+              </p>
+            </div>
+
+            {/* QR image */}
+            <div className="relative mt-6 md:mt-8 flex-1 flex items-center justify-center">
+              <div className="relative bg-white p-4 rounded-2xl shadow-2xl">
+                <div className="w-48 h-48 md:w-56 md:h-56 flex items-center justify-center">
+                  {site.payments.qrImage ? (
+                    <img
+                      src={site.payments.qrImage}
+                      alt="Unite Foundation Bangla QR"
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-[hsl(var(--primary))]/25 rounded-xl">
+                      <QrCode className="h-14 w-14 text-[hsl(var(--primary))]/40" strokeWidth={1.2} />
+                      <div className="text-[hsl(var(--primary))]/70 text-xs font-semibold px-3">
+                        {t("channels.qrPending")}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mt-2 tracking-tight">
-                  Personal Number
-                </h3>
-                <div className="text-xs text-[hsl(var(--donate-orange))] mt-1.5 font-semibold">{t("channels.personalAccount")}</div>
-              </div>
-              <div className="h-12 w-16 rounded-lg bg-[hsl(var(--primary))]/10 border border-[hsl(var(--primary))]/20 flex items-center justify-center">
-                <Smartphone className="h-5 w-5 text-[hsl(var(--primary))]" />
+                <div className="absolute -bottom-2 -right-2 bg-[hsl(var(--donate-highlight))] text-[hsl(var(--donate-highlight-foreground))] text-[10px] font-black px-2.5 py-1 rounded-lg shadow-lg tracking-wider">
+                  SCAN TO PAY
+                </div>
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                {t("channels.labels.accountName")}
+            <p className="relative text-center text-[11px] text-white/50 mt-6 leading-relaxed">
+              {t("channels.qrHint")}
+            </p>
+          </article>
+
+          {/* Bank card 2 — white, col-span-3 */}
+          {bankCards[1] && (
+            <article className="md:col-span-3 rounded-[2rem] bg-card p-7 md:p-8 shadow-[0_10px_40px_-15px_hsl(152_60%_15%/0.15)] hover:shadow-[0_20px_50px_-15px_hsl(152_60%_15%/0.25)] hover:-translate-y-1 transition-all duration-300 border border-border/50">
+              <div className="flex items-start justify-between mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-[hsl(var(--donate-highlight))]/15 flex items-center justify-center">
+                  <CreditCard className="h-5 w-5 text-[hsl(var(--donate-orange))]" />
+                </div>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase">
+                  {bankCards[1].badge}
+                </span>
               </div>
-              <div className="text-[hsl(var(--primary))] font-bold text-lg">{site.payments.bank.account}</div>
+              <h3 className="text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight leading-snug">
+                {bankCards[1].title}
+              </h3>
+              <div className="text-xs text-[hsl(var(--donate-orange))] font-semibold mt-1.5">
+                {bankCards[1].fundLabel} · {bankCards[1].accountName}
+              </div>
+
+              <div className="mt-5 rounded-2xl bg-[hsl(40_20%_96%)] p-4 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase mb-1">
+                    {t("channels.labels.accountNumber")}
+                  </div>
+                  <div className="font-mono font-bold text-foreground text-lg md:text-xl tracking-wide" dir="ltr">
+                    {formatAccount(bankCards[1].accountNumber)}
+                  </div>
+                </div>
+                <button
+                  onClick={() => copy(bankCards[1].accountNumber, t("channels.toast.accountNumber"))}
+                  aria-label={t("channels.copyAccount")}
+                  className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] flex items-center justify-center transition-colors"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mt-4 text-xs">
+                <div>
+                  <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.branch")}</div>
+                  <div className="text-foreground/90 font-medium mt-0.5">{bankCards[1].branch}</div>
+                </div>
+                {bankCards[1].routing && (
+                  <div>
+                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.routing")}</div>
+                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[1].routing}</div>
+                  </div>
+                )}
+                {bankCards[1].swift && (
+                  <div>
+                    <div className="text-[9px] font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("channels.labels.swift")}</div>
+                    <div className="text-foreground/90 font-mono font-medium mt-0.5" dir="ltr">{bankCards[1].swift}</div>
+                  </div>
+                )}
+              </div>
+            </article>
+          )}
+
+          {/* Mobile banking — gradient accent card, col-span-3 */}
+          <article
+            className="md:col-span-3 rounded-[2rem] p-7 md:p-8 text-white shadow-[0_20px_50px_-15px_hsl(24_91%_45%/0.4)] relative overflow-hidden"
+            style={{ background: "var(--gradient-donate)" }}
+          >
+            <div className="flex items-start justify-between mb-5">
+              <div className="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+                <Smartphone className="h-5 w-5 text-white" />
+              </div>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-white/80 uppercase">
+                Mobile Banking
+              </span>
             </div>
 
-            <div className="rounded-2xl bg-[hsl(var(--primary))]/[0.06] border border-[hsl(var(--primary))]/15 p-4 md:p-5 flex items-center justify-between gap-3">
+            <h3 className="text-2xl md:text-[26px] font-extrabold tracking-tight leading-snug">
+              {t("channels.personalAccount")}
+            </h3>
+            <div className="text-xs text-white/80 font-semibold mt-1.5">
+              {site.payments.bank.account}
+            </div>
+
+            <div className="mt-5 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 p-4 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
+                <div className="text-[10px] font-bold tracking-[0.16em] text-white/70 uppercase mb-1">
                   {t("channels.labels.mobileNumber")}
                 </div>
-                <div className="font-mono font-bold text-foreground text-xl md:text-2xl tracking-wide" dir="ltr">
+                <div className="font-mono font-bold text-white text-lg md:text-xl tracking-wide" dir="ltr">
                   {site.payments.bkash.number}
                 </div>
               </div>
               <button
                 onClick={() => copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))}
                 aria-label={t("channels.copyMobile")}
-                className="shrink-0 h-11 w-11 rounded-xl bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))]/90 text-[hsl(var(--primary-foreground))] flex items-center justify-center transition-colors"
+                className="shrink-0 h-11 w-11 rounded-xl bg-white text-[hsl(var(--donate-red))] hover:bg-white/90 flex items-center justify-center transition-colors"
               >
                 <Copy className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 mt-5">
+            <div className="grid grid-cols-3 gap-2 mt-4">
               {mobileNumbers.map((m) => (
                 <span
                   key={m.brand}
-                  className="text-center px-3 py-1.5 rounded-lg bg-[hsl(var(--primary))]/[0.06] border border-[hsl(var(--primary))]/15 text-foreground/80 text-xs font-semibold"
+                  className="text-center px-3 py-2 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 text-white text-xs font-bold"
                 >
                   {m.brand}
                 </span>
               ))}
             </div>
-          </article>
-
-          <article className="group relative rounded-3xl p-6 overflow-hidden bg-card border border-border shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300">
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--donate-highlight))] to-[hsl(var(--donate-orange))]" />
-            <QrCode className="pointer-events-none absolute -right-6 -bottom-6 h-44 w-44 text-[hsl(var(--primary))]/[0.04]" strokeWidth={1} />
-
-            <div className="flex items-start justify-between mb-5">
-              <div>
-                <div className="text-[11px] font-bold tracking-[0.22em] text-[hsl(var(--primary))]/70 uppercase">
-                  BANGLA QR
-                </div>
-                <h3 className="text-2xl md:text-3xl font-extrabold text-foreground mt-2 tracking-tight">
-                  {t("channels.scanToDonate")}
-                </h3>
-                <div className="text-xs text-[hsl(var(--donate-orange))] mt-1.5 font-semibold">{t("channels.anyAppNote")}</div>
-              </div>
-              <div className="h-12 w-16 rounded-lg bg-[hsl(var(--primary))]/10 border border-[hsl(var(--primary))]/20 flex items-center justify-center">
-                <QrCode className="h-5 w-5 text-[hsl(var(--primary))]" />
-              </div>
-            </div>
-
-            <div className="rounded-2xl bg-[hsl(var(--primary))]/[0.06] p-3 flex items-center justify-center border border-[hsl(var(--primary))]/15 mx-auto w-40 h-40 md:w-44 md:h-44">
-              {site.payments.qrImage ? (
-                <img
-                  src={site.payments.qrImage}
-                  alt="Unite Foundation Bangla QR"
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-[hsl(var(--primary))]/25 rounded-xl bg-card">
-                  <QrCode className="h-10 w-10 text-[hsl(var(--primary))]/50" strokeWidth={1.2} />
-                  <div className="text-[hsl(var(--primary))]/80 text-[10px] font-semibold px-2">
-                    {t("channels.qrPending")}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <p className="text-center text-[11px] text-muted-foreground mt-4 leading-relaxed">
-              {t("channels.qrHint")}
-            </p>
           </article>
         </div>
 
