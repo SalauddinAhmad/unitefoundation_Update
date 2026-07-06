@@ -167,6 +167,7 @@ const Team = () => {
                     ছবি সরান
                   </button>
                 )}
+                <span className="text-[11px] text-muted-foreground">প্রস্তাবিত: <b>600×600 px</b> (স্কয়ার), JPG/PNG</span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
