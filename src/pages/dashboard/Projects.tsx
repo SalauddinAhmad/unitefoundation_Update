@@ -260,7 +260,7 @@ export default function Projects() {
         ) : view === "grid" ? (
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((p) => {
-              const pct = Math.min(100, Math.round((p.raised / p.budget) * 100));
+              const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
               return (
                 <div key={p.id} className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
                   <div className="h-32 relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
@@ -328,7 +328,7 @@ export default function Projects() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
-                  const pct = Math.min(100, Math.round((p.raised / p.budget) * 100));
+                  const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
                   return (
                     <tr key={p.id} className="border-t border-border hover:bg-muted/40">
                       <td className="px-5 py-3 max-w-sm">
@@ -451,7 +451,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
 
   const submit = (publish?: boolean) => {
     if (!title.trim()) return toast.error("শিরোনাম দিন");
-    if (budget <= 0) return toast.error("সঠিক বাজেট দিন");
+    if (budget < 0) return toast.error("বাজেট ঋণাত্মক হতে পারবে না");
     setSaving(true);
     const finalSlug = (slug.trim() ? slugify(slug) : slugify(title)) || `p-${Date.now()}`;
     const next: ProjectEx = {
@@ -536,7 +536,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
           {/* Sidebar */}
           <aside className="border-t lg:border-t-0 lg:border-l border-border bg-muted/30 overflow-y-auto p-5 space-y-5">
             <Section title="মেট্রিক্স" icon={BarChart3}>
-              <Field label="বাজেট (৳)">
+              <Field label="বাজেট (৳) — ঐচ্ছিক">
                 <input type="number" value={budget} onChange={(e) => setBudget(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
               </Field>
               <Field label="সংগৃহীত (৳)">
