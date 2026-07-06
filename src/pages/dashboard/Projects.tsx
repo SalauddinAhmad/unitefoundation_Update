@@ -509,6 +509,7 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
                     </label>
                   </div>
                 )}
+                <p className="mt-2 text-[11px] text-muted-foreground">প্রস্তাবিত সাইজ: <b>1600×900 px</b> (16:9), JPG/WebP · সর্বোচ্চ ~2MB</p>
               </div>
 
               {/* Toolbar */}
