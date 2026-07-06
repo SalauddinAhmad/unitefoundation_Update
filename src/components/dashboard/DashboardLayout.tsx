@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLE_LABEL, type Permission } from "@/lib/permissions";
+import { useMessages } from "@/hooks/api/useDashboardData";
 import {
   DropdownMenu,
   DropdownMenuContent,
