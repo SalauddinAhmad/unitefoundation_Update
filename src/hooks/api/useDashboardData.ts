@@ -307,6 +307,7 @@ export type SiteSettings = {
   trust: TrustItem[];
   milestones: Milestone[];
   milestones_section: MilestonesSection;
+  mission_section: MissionSection;
 };
 
 const defaultMilestones: Milestone[] = [
