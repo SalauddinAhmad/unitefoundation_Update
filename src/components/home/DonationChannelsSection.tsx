@@ -156,9 +156,13 @@ export const DonationChannelsSection = () => {
             </article>
           ))}
 
+        </div>
+
+        {/* Bottom row: mobile banking + QR — compact, centered */}
+        <div className="grid md:grid-cols-2 gap-5 md:gap-6 mt-5 md:mt-6 max-w-4xl mx-auto">
           {/* Mobile banking — same card style as bank */}
           <article
-            className="group relative rounded-3xl p-6 md:p-8 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+            className="group relative rounded-3xl p-6 overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
             style={{
               background:
                 "linear-gradient(145deg, hsl(152 60% 8% / 0.6), hsl(152 70% 6% / 0.75))",
