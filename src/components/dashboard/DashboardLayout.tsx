@@ -43,6 +43,7 @@ const menu: MenuItem[] = [
   { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
   { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },
   { to: "/dashboard/logs", icon: ScrollText, label: "অ্যাক্টিভিটি লগ", perm: "logs" },
+  { to: "/dashboard/forms", icon: FormInput, label: "ফর্ম ম্যানেজার", perm: "forms" },
 ];
 
 const generalMenu: MenuItem[] = [
