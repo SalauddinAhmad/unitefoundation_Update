@@ -1,6 +1,8 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
 import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
+import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
+
 import { useSettings, useUpdateSettings, type SiteSettings } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
