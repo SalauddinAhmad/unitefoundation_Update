@@ -167,6 +167,7 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
 );
 
 const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
+  const nav = useNavigate();
   const location = useLocation();
   const current =
     [...menu, ...generalMenu].find((m) =>
