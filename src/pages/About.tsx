@@ -140,7 +140,18 @@ const About = () => {
   const msHeading = pick(ms?.headingBn, ms?.headingEn, t("aboutPage.milestones"));
   const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
   const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
-  const goals = t("aboutPage.goals", { returnObjects: true }) as string[];
+  const mss = settings?.mission_section;
+  const missionImage = mss?.image && mss.image.trim() ? mss.image : about;
+  const missionEyebrow = pick(mss?.eyebrowBn, mss?.eyebrowEn, t("aboutPage.mission"));
+  const missionHeading = pick(mss?.headingBn, mss?.headingEn, "যে পথে আমরা");
+  const missionHighlight = pick(mss?.headingHighlightBn, mss?.headingHighlightEn, "এগিয়ে যাচ্ছি");
+  const missionIntro = pick(mss?.introBn, mss?.introEn, t("aboutPage.missionAlt"));
+  const missionGoalsSetting = lang === "en"
+    ? (mss?.goalsEn?.length ? mss.goalsEn : mss?.goalsBn)
+    : (mss?.goalsBn?.length ? mss.goalsBn : mss?.goalsEn);
+  const goals = (missionGoalsSetting && missionGoalsSetting.length
+    ? missionGoalsSetting
+    : (t("aboutPage.goals", { returnObjects: true }) as string[]));
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
 
@@ -193,8 +204,8 @@ const About = () => {
               style={{ borderRadius: "50% 50% 16px 16px / 40% 40% 16px 16px" }}
             >
               <img
-                src={about}
-                alt={t("aboutPage.missionAlt")}
+                src={missionImage}
+                alt={missionEyebrow}
                 className="w-full h-[480px] md:h-[540px] object-cover"
                 loading="lazy"
               />
@@ -210,14 +221,14 @@ const About = () => {
         <div className="lg:col-span-7">
           <div className="max-w-xl">
             <span className="eyebrow inline-flex items-center gap-2">
-              <Target className="h-3.5 w-3.5" /> {t("aboutPage.mission")}
+              <Target className="h-3.5 w-3.5" /> {missionEyebrow}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold leading-[1.5] mt-3 text-foreground pb-1">
-              যে পথে আমরা{" "}
-              <span className="gradient-donate-text inline-block pb-1">এগিয়ে যাচ্ছি</span>
+              {missionHeading}{" "}
+              <span className="gradient-donate-text inline-block pb-1">{missionHighlight}</span>
             </h2>
             <p className="mt-3 text-sm md:text-[15px] text-muted-foreground leading-[1.85]">
-              {t("aboutPage.missionAlt")}
+              {missionIntro}
             </p>
           </div>
 

@@ -247,6 +247,20 @@ export type MilestonesSection = {
   quoteEn: string;
 };
 
+export type MissionSection = {
+  image: string;
+  eyebrowBn: string;
+  eyebrowEn: string;
+  headingBn: string;
+  headingEn: string;
+  headingHighlightBn: string;
+  headingHighlightEn: string;
+  introBn: string;
+  introEn: string;
+  goalsBn: string[];
+  goalsEn: string[];
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
@@ -293,6 +307,7 @@ export type SiteSettings = {
   trust: TrustItem[];
   milestones: Milestone[];
   milestones_section: MilestonesSection;
+  mission_section: MissionSection;
 };
 
 const defaultMilestones: Milestone[] = [
@@ -465,6 +480,33 @@ const defaultSettings: SiteSettings = {
     quoteBn: "২০১৭ সালে মাত্র ১০ জন স্বেচ্ছাসেবক নিয়ে যে ছোট চারাগাছটি রোপণ করা হয়েছিল, ২০২৬ সালে এসে সেটি অসংখ্য মানুষের সেবার এক বিশাল 'মহীরুহে' পরিণত হয়েছে। ফালিল্লাহিল হামদ।",
     quoteEn: "The small sapling planted in 2017 with just 10 volunteers has, by 2026, grown into a mighty tree serving countless people. Falillahil hamd.",
   },
+  mission_section: {
+    image: "",
+    eyebrowBn: "আমাদের লক্ষ্য",
+    eyebrowEn: "Our mission",
+    headingBn: "যে পথে আমরা",
+    headingEn: "The path we walk",
+    headingHighlightBn: "এগিয়ে যাচ্ছি",
+    headingHighlightEn: "together",
+    introBn: "একটি সমৃদ্ধ, ন্যায়ভিত্তিক ও ঈমানদার সমাজ গঠনে আমাদের পরিকল্পিত পথচলা — নিচে আমাদের মূল ছয়টি লক্ষ্য তুলে ধরা হলো।",
+    introEn: "Our planned path toward a prosperous, just and faith-guided society — the six core goals below shape our work.",
+    goalsBn: [
+      "সকল মানুষের নিকট পবিত্র কুরআন ও সহীহ হাদীছের দাওয়াত পৌঁছানো।",
+      "তরুণ ও ছাত্র সমাজকে যোগ্য ও তাক্বওয়াশীল দাঈ ইলাল্লাহ হিসেবে গঠন করা।",
+      "বিশুদ্ধ আক্বীদা ও আমল সম্পর্কে সমাজে সচেতনতা সৃষ্টি করা।",
+      "ইসলামী শিক্ষা ও সংস্কৃতির নীতি প্রণয়ন ও বাস্তবায়ন।",
+      "ইসলামের বিভিন্ন বিষয়ে গ্রন্থ ও সহীহ অনুবাদ প্রকাশ।",
+      "সমাজকল্যাণমূলক কার্যক্রম পরিচালনা।",
+    ],
+    goalsEn: [
+      "Convey the message of the Holy Qur'an and authentic Hadith to all people.",
+      "Shape young people and students into capable, God-conscious callers to Allah.",
+      "Raise awareness in society about correct beliefs and practices.",
+      "Formulate and implement policies for Islamic education and culture.",
+      "Publish books and authentic translations on Islamic topics.",
+      "Carry out social welfare activities.",
+    ],
+  },
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -485,6 +527,12 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     milestones:
       Array.isArray(s?.milestones) && s!.milestones!.length ? s!.milestones! : defaultSettings.milestones,
     milestones_section: { ...defaultSettings.milestones_section, ...(s?.milestones_section || {}) },
+    mission_section: {
+      ...defaultSettings.mission_section,
+      ...(s?.mission_section || {}),
+      goalsBn: (s?.mission_section?.goalsBn && s.mission_section.goalsBn.length ? s.mission_section.goalsBn : defaultSettings.mission_section.goalsBn),
+      goalsEn: (s?.mission_section?.goalsEn && s.mission_section.goalsEn.length ? s.mission_section.goalsEn : defaultSettings.mission_section.goalsEn),
+    },
   };
 }
 
