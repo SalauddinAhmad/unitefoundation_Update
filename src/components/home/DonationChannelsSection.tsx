@@ -54,10 +54,10 @@ export const DonationChannelsSection = () => {
       <div className="container-page relative">
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14 animate-fade-in">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-foreground tracking-tight leading-tight">
             {t("channels.heading")}
           </h2>
-          <p className="text-white/60 mt-3 text-sm md:text-base leading-relaxed">
+          <p className="text-muted-foreground mt-3 text-sm md:text-base leading-relaxed">
             {t("channels.subtitle")}
           </p>
         </div>
