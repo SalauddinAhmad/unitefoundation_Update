@@ -226,7 +226,7 @@ const About = () => {
                   />
                   <div className={`${right ? "md:order-2 md:text-left md:pl-6" : "md:text-right md:pr-6"}`}>
                     <div className="inline-flex flex-col">
-                      <span className="font-en text-3xl md:text-5xl font-extrabold gradient-donate-text leading-none tracking-tight">
+                      <span className="text-3xl md:text-5xl font-extrabold gradient-donate-text leading-none tracking-tight">
                         {m.y[lang]}
                       </span>
                       <span className="mt-2 text-sm md:text-base font-semibold text-foreground/80">
