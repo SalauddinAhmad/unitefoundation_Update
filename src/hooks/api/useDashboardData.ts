@@ -292,6 +292,7 @@ export type SiteSettings = {
   about: AboutContent;
   trust: TrustItem[];
   milestones: Milestone[];
+  milestones_section: MilestonesSection;
 };
 
 const defaultMilestones: Milestone[] = [
