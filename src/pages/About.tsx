@@ -131,6 +131,15 @@ const About = () => {
         })),
       }))
     : milestones;
+  const ms = settings?.milestones_section;
+  const pick = (bn?: string, en?: string, fallback?: string) => {
+    const v = lang === "en" ? (en || bn) : (bn || en);
+    return v && v.trim() ? v : (fallback || "");
+  };
+  const msEyebrow = pick(ms?.eyebrowBn, ms?.eyebrowEn, t("aboutPage.journey"));
+  const msHeading = pick(ms?.headingBn, ms?.headingEn, t("aboutPage.milestones"));
+  const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
+  const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
   const goals = t("aboutPage.goals", { returnObjects: true }) as string[];
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
