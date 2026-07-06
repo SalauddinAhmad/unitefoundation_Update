@@ -223,9 +223,9 @@ export const HomeDonationChannelsSection = () => {
             </p>
           </article>
 
-          {/* Bangla QR — spans full width to keep layout balanced when odd */}
+          {/* Bangla QR */}
           <article
-            className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8 md:col-span-2"
+            className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8"
             style={{ background: cardBg }}
           >
             <div
