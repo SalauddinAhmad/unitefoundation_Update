@@ -158,8 +158,6 @@ const Volunteer = () => {
               }}
             >
               <div className="p-7 md:p-9 text-white">
-                {active === "regular" && <RegularForm />}
-                {active === "member" && <MemberForm />}
                 {active === "volunteer" && <VolunteerForm />}
                 {active === "representative" && <RepresentativeForm />}
               </div>
