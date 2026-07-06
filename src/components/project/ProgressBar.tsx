@@ -9,6 +9,7 @@ export const ProgressBar = ({
   target: number;
   size?: "sm" | "md";
 }) => {
+  if (!target || target <= 0) return null;
   const pct = Math.min(100, Math.round((raised / target) * 100));
   return (
     <div className="w-full">

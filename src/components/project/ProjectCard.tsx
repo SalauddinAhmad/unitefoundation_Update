@@ -41,13 +41,15 @@ export const ProjectCard = ({ project }: { project: Project }) => {
           </div>
         </div>
 
-        <ProgressBar raised={project.raised} target={project.target} size="sm" />
+        {project.target > 0 && <ProgressBar raised={project.raised} target={project.target} size="sm" />}
 
         <div className="flex items-center justify-between gap-3 pt-1">
-          <div className="text-sm">
-            <div className="text-[11px] text-muted-foreground">সংগৃহীত</div>
-            <div className="font-bold text-foreground">৳{toBnNum(formatBDT(project.raised))}</div>
-          </div>
+          {project.target > 0 ? (
+            <div className="text-sm">
+              <div className="text-[11px] text-muted-foreground">সংগৃহীত</div>
+              <div className="font-bold text-foreground">৳{toBnNum(formatBDT(project.raised))}</div>
+            </div>
+          ) : <div />}
           <Link
             to={`/donate?project=${project.slug}`}
             className="btn-donate text-sm py-2.5 px-4"

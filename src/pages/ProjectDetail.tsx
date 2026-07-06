@@ -68,25 +68,34 @@ const ProjectDetail = () => {
 
           <aside className="lg:sticky lg:top-24 self-start">
             <div className="card-base p-6">
-              <div className="flex items-baseline justify-between">
-                <div>
-                  <div className="text-xs text-muted-foreground">{t("projectDetail.collected")}</div>
-                  <div className="text-3xl font-extrabold gradient-donate-text">৳{toBnNum(formatBDT(project.raised))}</div>
+              {project.target > 0 ? (
+                <>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <div className="text-xs text-muted-foreground">{t("projectDetail.collected")}</div>
+                      <div className="text-3xl font-extrabold gradient-donate-text">৳{toBnNum(formatBDT(project.raised))}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground">{t("projectDetail.goal")}</div>
+                      <div className="font-bold">৳{toBnNum(formatBDT(project.target))}</div>
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <ProgressBar raised={project.raised} target={project.target} />
+                  </div>
+                  <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
+                    <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
+                    <Stat icon={TrendingUp} label={t("projectDetail.raisedPct")} value={`${toBnNum(Math.round((project.raised/project.target)*100))}%`} />
+                    <Stat icon={Target} label={t("projectDetail.remaining")} value={`৳${toBnNum(formatBDT(Math.max(0, project.target - project.raised)))}`} />
+                    <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
+                  </div>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
+                  <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
                 </div>
-                <div className="text-right">
-                  <div className="text-xs text-muted-foreground">{t("projectDetail.goal")}</div>
-                  <div className="font-bold">৳{toBnNum(formatBDT(project.target))}</div>
-                </div>
-              </div>
-              <div className="mt-4">
-                <ProgressBar raised={project.raised} target={project.target} />
-              </div>
-              <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
-                <Stat icon={TrendingUp} label={t("projectDetail.raisedPct")} value={`${toBnNum(Math.round((project.raised/project.target)*100))}%`} />
-                <Stat icon={Target} label={t("projectDetail.remaining")} value={`৳${toBnNum(formatBDT(Math.max(0, project.target - project.raised)))}`} />
-                <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
-              </div>
+              )}
               <Link to={`/donate?project=${project.slug}`} className="btn-donate w-full mt-6 text-base">
                 <Heart className="h-5 w-5" /> {t("projectDetail.donateCta")}
               </Link>
