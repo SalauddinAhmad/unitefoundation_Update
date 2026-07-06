@@ -425,6 +425,10 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
   const [goalInput, setGoalInput] = useState("");
   const [html, setHtml] = useState(p?.html || "");
   const [saving, setSaving] = useState(false);
+  const slugify = (s: string) =>
+    s.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]+/gu, "").slice(0, 80);
+  const [slug, setSlug] = useState(p?.slug || "");
+  const [slugTouched, setSlugTouched] = useState(!!p?.slug);
 
   useEffect(() => {
     if (editorRef.current && !editorRef.current.innerHTML) {
@@ -446,12 +450,14 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
     if (!title.trim()) return toast.error("শিরোনাম দিন");
     if (budget <= 0) return toast.error("সঠিক বাজেট দিন");
     setSaving(true);
+    const finalSlug = (slug.trim() ? slugify(slug) : slugify(title)) || `p-${Date.now()}`;
     const next: ProjectEx = {
       id: p?.id || `P-${Math.floor(Math.random() * 900) + 100}`,
       title: title.trim(), category, budget, raised, beneficiaries,
       status: publish ? "active" : status,
       cover, description: description.trim() || html.replace(/<[^>]+>/g, "").slice(0, 140),
       location, startDate, endDate, tags, goals, html,
+      slug: finalSlug,
     };
     onSave(next); setSaving(false);
   };
@@ -481,7 +487,34 @@ function ProjectEditor({ p, onClose, onSave }: { p?: ProjectEx; onClose: () => v
         <div className="flex-1 overflow-hidden grid lg:grid-cols-[1fr_340px]">
           <div className="overflow-y-auto">
             <div className="max-w-3xl mx-auto px-5 md:px-10 py-8">
-              <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="প্রকল্পের নাম..." className="w-full bg-transparent text-3xl md:text-4xl font-extrabold focus:outline-none placeholder:text-muted-foreground/50" />
+              <input value={title} onChange={(e) => { setTitle(e.target.value); if (!slugTouched) setSlug(slugify(e.target.value)); }} placeholder="প্রকল্পের নাম..." className="w-full bg-transparent text-3xl md:text-4xl font-extrabold focus:outline-none placeholder:text-muted-foreground/50" />
+
+              {/* Custom Slug / URL */}
+              <div className="mt-4 rounded-lg border border-border bg-secondary/40 p-3">
+                <label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <LinkIcon className="h-3 w-3" /> কাস্টম লিঙ্ক (URL)
+                </label>
+                <div className="mt-1.5 flex items-center gap-1 text-sm">
+                  <span className="text-muted-foreground shrink-0">/projects/</span>
+                  <input
+                    value={slug}
+                    onChange={(e) => { setSlug(e.target.value); setSlugTouched(true); }}
+                    onBlur={(e) => setSlug(slugify(e.target.value))}
+                    placeholder="my-custom-url"
+                    className="flex-1 min-w-0 px-2 py-1.5 rounded-md bg-card border border-border text-sm focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                  />
+                  {slugTouched && (
+                    <button
+                      type="button"
+                      onClick={() => { setSlug(slugify(title)); setSlugTouched(false); }}
+                      className="text-[11px] px-2 py-1 rounded-md hover:bg-muted text-muted-foreground"
+                      title="শিরোনাম থেকে অটো তৈরি করুন"
+                    >রিসেট</button>
+                  )}
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground">খালি রাখলে শিরোনাম থেকে অটোমেটিক তৈরি হবে</p>
+              </div>
+
               <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="সংক্ষিপ্ত বিবরণ..." rows={2} className="mt-3 w-full bg-transparent text-base text-muted-foreground focus:outline-none resize-none placeholder:text-muted-foreground/50" />
 
               {/* Cover */}
