@@ -131,6 +131,15 @@ const About = () => {
         })),
       }))
     : milestones;
+  const ms = settings?.milestones_section;
+  const pick = (bn?: string, en?: string, fallback?: string) => {
+    const v = lang === "en" ? (en || bn) : (bn || en);
+    return v && v.trim() ? v : (fallback || "");
+  };
+  const msEyebrow = pick(ms?.eyebrowBn, ms?.eyebrowEn, t("aboutPage.journey"));
+  const msHeading = pick(ms?.headingBn, ms?.headingEn, t("aboutPage.milestones"));
+  const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
+  const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
   const goals = t("aboutPage.goals", { returnObjects: true }) as string[];
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
@@ -208,9 +217,9 @@ const About = () => {
       />
       <div className="container-page relative">
         <div className="text-center max-w-3xl mx-auto">
-          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> {t("aboutPage.journey")}</span>
-          <h2 className="heading-display mt-3">{t("aboutPage.milestones")}</h2>
-          <p className="mt-5 text-muted-foreground leading-[1.95]">{t("aboutPage.milestonesIntro")}</p>
+          <span className="eyebrow inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5" /> {msEyebrow}</span>
+          <h2 className="heading-display mt-3">{msHeading}</h2>
+          <p className="mt-5 text-muted-foreground leading-[1.95]">{msIntro}</p>
         </div>
 
         <div className="mt-16 relative max-w-5xl mx-auto">
@@ -274,8 +283,8 @@ const About = () => {
 
         <div className="mt-20 max-w-3xl mx-auto text-center">
           <div className="rounded-card border border-donate-highlight/30 bg-card p-8 md:p-10 shadow-card">
-            <p className="text-base md:text-lg leading-[1.95] text-foreground italic">
-              {t("aboutPage.milestonesQuote")}
+            <p className="text-base md:text-lg leading-[1.95] text-foreground italic whitespace-pre-line">
+              {msQuote}
             </p>
           </div>
         </div>
