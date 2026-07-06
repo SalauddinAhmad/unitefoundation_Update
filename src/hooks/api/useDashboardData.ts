@@ -319,19 +319,7 @@ const defaultSettings: SiteSettings = {
     { value: 3450, label: "স্বেচ্ছাসেবক", suffix: "" },
     { value: 14, label: "দেশে কার্যক্রম", suffix: "" },
   ],
-  hero_slides: [
-    {
-      image: "",
-      eyebrow: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
-      title: "ইউনাইট ফাউন্ডেশন — কুরআন ও সহীহ হাদীছের আলোকে",
-      subtitle:
-        "দাওয়াহ, তালীম, সমাজকল্যাণ ও জরুরি ত্রাণে আপনার পাশে। একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম — স্বচ্ছ, দায়িত্বশীল ও নিবেদিত।",
-      primaryCtaLabel: "এখনই দান করুন",
-      primaryCtaTo: "/donate",
-      secondaryCtaLabel: "প্রকল্পসমূহ দেখুন",
-      secondaryCtaTo: "/projects",
-    },
-  ],
+  hero_slides: [],
   about: {
     heading: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
     highlight: "ইউনাইট ফাউন্ডেশন",
