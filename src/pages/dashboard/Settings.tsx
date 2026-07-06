@@ -628,6 +628,121 @@ const Settings = () => {
             </Card>
           )}
 
+          {active === "mission" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+                <div>
+                  <h3 className="font-bold">আমাদের লক্ষ্য (About পেজ)</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    ইমেজ, হেডিং, ইন্ট্রো ও ৬টি লক্ষ্য এখান থেকে এডিট করা যাবে। ইমেজ আপলোড করুন অথবা মিডিয়া লাইব্রেরি থেকে বাছুন।
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
+
+              <div className="mb-6">
+                <ImagePickerButton
+                  label="সেকশন ইমেজ"
+                  value={form.mission_section.image}
+                  onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, image: v } })}
+                  aspect="wide"
+                  hint="খালি রাখলে ডিফল্ট মিশন ইমেজ দেখাবে"
+                />
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Field label="Eyebrow (বাংলা)" value={form.mission_section.eyebrowBn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, eyebrowBn: v } })} hint="যেমন: আমাদের লক্ষ্য" />
+                <Field label="Eyebrow (English)" value={form.mission_section.eyebrowEn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, eyebrowEn: v } })} />
+                <Field label="হেডিং প্রথম অংশ (বাংলা)" value={form.mission_section.headingBn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, headingBn: v } })} hint="যেমন: যে পথে আমরা" />
+                <Field label="Heading first part (English)" value={form.mission_section.headingEn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, headingEn: v } })} />
+                <Field label="হাইলাইট অংশ (বাংলা)" value={form.mission_section.headingHighlightBn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, headingHighlightBn: v } })} hint="গ্রেডিয়েন্ট রঙে দেখাবে" />
+                <Field label="Highlight part (English)" value={form.mission_section.headingHighlightEn} onChange={(v) => setForm({ ...form, mission_section: { ...form.mission_section, headingHighlightEn: v } })} />
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                <label className="block">
+                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">সংক্ষিপ্ত বিবরণ (বাংলা)</span>
+                  <textarea value={form.mission_section.introBn} onChange={(e) => setForm({ ...form, mission_section: { ...form.mission_section, introBn: e.target.value } })} rows={3} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                </label>
+                <label className="block">
+                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">Intro (English)</span>
+                  <textarea value={form.mission_section.introEn} onChange={(e) => setForm({ ...form, mission_section: { ...form.mission_section, introEn: e.target.value } })} rows={3} className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition" />
+                </label>
+              </div>
+
+              <div className="mt-6">
+                <div className="text-sm font-bold mb-2">লক্ষ্যসমূহ (বাংলা)</div>
+                <div className="space-y-2">
+                  {(form.mission_section.goalsBn || []).map((g, idx) => (
+                    <div key={idx} className="flex gap-2 items-start">
+                      <span className="mt-2 text-xs font-bold text-muted-foreground w-6 text-right">{String(idx + 1).padStart(2, "0")}</span>
+                      <textarea
+                        value={g}
+                        rows={2}
+                        onChange={(e) => {
+                          const next = [...form.mission_section.goalsBn];
+                          next[idx] = e.target.value;
+                          setForm({ ...form, mission_section: { ...form.mission_section, goalsBn: next } });
+                        }}
+                        className="flex-1 px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextBn = form.mission_section.goalsBn.filter((_, i) => i !== idx);
+                          const nextEn = form.mission_section.goalsEn.filter((_, i) => i !== idx);
+                          setForm({ ...form, mission_section: { ...form.mission_section, goalsBn: nextBn, goalsEn: nextEn } });
+                        }}
+                        className="p-2.5 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                        title="মুছুন"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="text-sm font-bold mb-2 mt-6">Goals (English)</div>
+                <div className="space-y-2">
+                  {(form.mission_section.goalsEn || []).map((g, idx) => (
+                    <div key={idx} className="flex gap-2 items-start">
+                      <span className="mt-2 text-xs font-bold text-muted-foreground w-6 text-right">{String(idx + 1).padStart(2, "0")}</span>
+                      <textarea
+                        value={g}
+                        rows={2}
+                        onChange={(e) => {
+                          const next = [...form.mission_section.goalsEn];
+                          next[idx] = e.target.value;
+                          setForm({ ...form, mission_section: { ...form.mission_section, goalsEn: next } });
+                        }}
+                        className="flex-1 px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      mission_section: {
+                        ...form.mission_section,
+                        goalsBn: [...(form.mission_section.goalsBn || []), "নতুন লক্ষ্য"],
+                        goalsEn: [...(form.mission_section.goalsEn || []), "New goal"],
+                      },
+                    })
+                  }
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  <Plus className="h-4 w-4" /> নতুন লক্ষ্য যোগ করুন
+                </button>
+              </div>
+            </Card>
+          )}
+
+
+
 
           {active === "notifications" && (
             <Card>
