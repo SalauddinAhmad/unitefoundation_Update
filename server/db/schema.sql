@@ -193,4 +193,19 @@ INSERT INTO settings (id, data) VALUES (1, JSON_OBJECT(
   )
 )) ON DUPLICATE KEY UPDATE id=id;
 
+-- Media Library (WordPress-style central image repository)
+CREATE TABLE IF NOT EXISTS media_library (
+  id CHAR(36) PRIMARY KEY,
+  url LONGTEXT NOT NULL,
+  thumb_url LONGTEXT,
+  filename VARCHAR(255),
+  mime VARCHAR(60),
+  size_bytes INT DEFAULT 0,
+  width INT DEFAULT 0,
+  height INT DEFAULT 0,
+  uploaded_by CHAR(36) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS=1;

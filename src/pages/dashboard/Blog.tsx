@@ -1,4 +1,6 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
+import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
+import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import type { BlogPost } from "@/data/dashboardMock";
 import {
   Plus, Edit3, Eye, Trash2, Search, X, Save, Image as ImageIcon,
@@ -453,6 +455,7 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
   const [date, setDate] = useState(post?.date || new Date().toISOString().slice(0, 10));
   const [html, setHtml] = useState(post?.html || "");
   const [saving, setSaving] = useState(false);
+  const [mediaOpen, setMediaOpen] = useState(false);
   const slugify = (s: string) =>
     s.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^\p{L}\p{N}-]+/gu, "").slice(0, 80);
   const [slug, setSlug] = useState(post?.slug || "");
@@ -469,8 +472,8 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
   const cmd = (c: string, v?: string) => { document.execCommand(c, false, v); editorRef.current?.focus(); if (editorRef.current) setHtml(editorRef.current.innerHTML); };
 
   const insertLink = () => { const u = prompt("লিংক URL দিন:", "https://"); if (u) cmd("createLink", u); };
-  const insertImage = () => { const u = prompt("ছবির URL দিন:", "https://"); if (u) cmd("insertHTML", `<img src="${u}" alt="" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
-  const onImage = async (f?: File) => { if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.82 }); cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:10px;margin:10px 0"/>`); };
+  const insertImage = () => setMediaOpen(true);
+  const insertImageUrl = (url: string) => cmd("insertHTML", `<img src="${url}" alt="" style="max-width:100%;border-radius:10px;margin:10px 0"/>`);
 
   const addTag = (v: string) => {
     const t = v.trim().replace(/,$/, "");
@@ -557,34 +560,14 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
 
               {/* Cover */}
               <div className="mt-5 rounded-2xl border-2 border-dashed border-border p-4">
-                {cover ? (
-                  <div className="relative">
-                    <img src={cover} alt="cover" className="w-full max-h-64 object-cover rounded-xl" />
-                    <button onClick={() => setCover("")} className="absolute top-2 right-2 p-1.5 rounded-md bg-card/90 border border-border hover:bg-destructive/10 hover:text-destructive">
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col sm:flex-row items-center gap-3">
-                    <input
-                      value={cover}
-                      onChange={(e) => setCover(e.target.value)}
-                      placeholder="কভার ছবির URL দিন বা আপলোড করুন"
-                      className="flex-1 px-3 py-2.5 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                    />
-                    <label className="inline-flex items-center gap-2 px-3 py-2.5 rounded-lg bg-secondary hover:bg-muted text-sm font-semibold cursor-pointer">
-                      <ImageIcon className="h-4 w-4" /> আপলোড
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; const { compressImageToDataURL } = await import("@/lib/imageCompress"); const url = await compressImageToDataURL(f, { maxWidth: 1920, quality: 0.85 }); setCover(url); }}
-                      />
-                    </label>
-                  </div>
-                )}
-                <p className="mt-2 text-[11px] text-muted-foreground">প্রস্তাবিত সাইজ: <b>1600×900 px</b> (16:9), JPG/WebP · সর্বোচ্চ ~2MB</p>
+                <ImagePickerButton
+                  value={cover}
+                  onChange={setCover}
+                  aspect="wide"
+                  hint="প্রস্তাবিত: 1600×900 px (16:9), JPG/WebP · সর্বোচ্চ ~2MB"
+                />
               </div>
+
 
               {/* Toolbar */}
               <div className="mt-6 sticky top-0 z-10 -mx-2 px-2 bg-card/95 backdrop-blur border-b border-border py-2 flex flex-wrap items-center gap-0.5">
@@ -605,13 +588,10 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
                 <TBtn onClick={() => cmd("justifyRight")} icon={AlignRight} title="ডানে" />
                 <div className="h-5 w-px bg-border mx-1" />
                 <TBtn onClick={insertLink} icon={LinkIcon} title="লিংক" />
-                <TBtn onClick={insertImage} icon={ImageIcon} title="ছবির URL" />
-                <label className="p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground cursor-pointer" title="ছবি আপলোড (প্রস্তাবিত: 1200px চওড়া, JPG/WebP)">
-                  <ImageIcon className="h-3.5 w-3.5" />
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => onImage(e.target.files?.[0])} />
-                </label>
+                <TBtn onClick={insertImage} icon={ImageIcon} title="ছবি (মিডিয়া লাইব্রেরি)" />
               </div>
               <p className="mt-1 text-[11px] text-muted-foreground px-1">লেখার ভেতরের ছবির প্রস্তাবিত সাইজ: <b>1200px চওড়া</b>, JPG/WebP · সর্বোচ্চ ~1.5MB</p>
+
 
               {/* Editor */}
               <div
@@ -738,9 +718,17 @@ function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post
           </aside>
         </div>
       </div>
+      {mediaOpen && (
+        <MediaLibrary
+          onClose={() => setMediaOpen(false)}
+          onSelect={(url) => { insertImageUrl(url); setMediaOpen(false); }}
+          hint="লেখার ভেতরের ছবির প্রস্তাবিত সাইজ: 1200px চওড়া"
+        />
+      )}
     </div>
   );
 }
+
 
 const Section = ({ title, icon: Icon, children }: any) => (
   <div className="space-y-3">

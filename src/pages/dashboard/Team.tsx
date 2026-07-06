@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, X, Users2, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Users2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
+import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import {
   useTeam,
   useSaveTeam,
@@ -30,11 +31,8 @@ const Team = () => {
   const del = useDeleteTeam();
   const [editing, setEditing] = useState<TeamMember | null>(null);
 
-  const onPhoto = async (file: File) => {
-    const { compressImageToDataURL } = await import("@/lib/imageCompress");
-    const dataUrl = await compressImageToDataURL(file, { maxWidth: 800, maxHeight: 800, quality: 0.85 });
-    setEditing((prev) => (prev ? { ...prev, photo: dataUrl } : prev));
-  };
+  // Photo handling now goes through the Media Library picker.
+
 
   const handleSave = async () => {
     if (!editing) return;
@@ -135,40 +133,14 @@ const Team = () => {
             </div>
 
             <div className="p-6 space-y-4 overflow-y-auto">
-              <div className="flex items-center gap-4">
-                <div className="h-24 w-24 rounded-xl bg-secondary overflow-hidden flex-shrink-0 border">
-                  {editing.photo ? (
-                    <img src={editing.photo} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                      <Users2 className="h-8 w-8" />
-                    </div>
-                  )}
-                </div>
-                <label className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium cursor-pointer hover:bg-secondary">
-                  <Upload className="h-4 w-4" />
-                  ছবি আপলোড
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) onPhoto(f);
-                    }}
-                  />
-                </label>
-                {editing.photo && (
-                  <button
-                    type="button"
-                    onClick={() => setEditing({ ...editing, photo: "" })}
-                    className="text-xs text-destructive hover:underline"
-                  >
-                    ছবি সরান
-                  </button>
-                )}
-                <span className="text-[11px] text-muted-foreground">প্রস্তাবিত: <b>600×600 px</b> (স্কয়ার), JPG/PNG</span>
-              </div>
+              <ImagePickerButton
+                label="সদস্যের ছবি"
+                value={editing.photo || ""}
+                onChange={(url) => setEditing({ ...editing, photo: url })}
+                aspect="square"
+                hint="প্রস্তাবিত: 600×600 px (স্কয়ার), JPG/PNG"
+              />
+
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
