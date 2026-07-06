@@ -247,6 +247,20 @@ export type MilestonesSection = {
   quoteEn: string;
 };
 
+export type MissionSection = {
+  image: string;
+  eyebrowBn: string;
+  eyebrowEn: string;
+  headingBn: string;
+  headingEn: string;
+  headingHighlightBn: string;
+  headingHighlightEn: string;
+  introBn: string;
+  introEn: string;
+  goalsBn: string[];
+  goalsEn: string[];
+};
+
 export type SiteSettings = {
   organization: {
     name: string;
