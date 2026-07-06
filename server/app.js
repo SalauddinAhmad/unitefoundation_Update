@@ -18,8 +18,10 @@ const app = express();
 // --- Core middleware ---
 app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ extended: true }));
+// Body limits raised to 25mb so base64-encoded image uploads
+// (gallery / blog cover / project cover) don't get truncated.
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // --- CORS ---

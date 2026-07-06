@@ -21,6 +21,24 @@ Options -Indexes
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
 </IfModule>
 
+# Allow larger uploads (base64 images can be 2-5 MB)
+<IfModule mod_php.c>
+  php_value upload_max_filesize 32M
+  php_value post_max_size 32M
+</IfModule>
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 32M
+  php_value post_max_size 32M
+</IfModule>
+<IfModule mod_php8.c>
+  php_value upload_max_filesize 32M
+  php_value post_max_size 32M
+</IfModule>
+# LiteSpeed / cPanel body size
+<IfModule LiteSpeed>
+  SecRequestBodyLimit 33554432
+</IfModule>
+
 # Cache static assets
 <IfModule mod_expires.c>
   ExpiresActive On
