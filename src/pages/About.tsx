@@ -227,7 +227,7 @@ const About = () => {
           </div>
 
           <div className="space-y-12 pt-12 pb-8">
-            {milestones.map((m, i) => {
+            {dynamicMilestones.map((m, i) => {
               const right = i % 2 === 1;
               return (
                 <div key={m.y[lang]} className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-10 md:items-center">
