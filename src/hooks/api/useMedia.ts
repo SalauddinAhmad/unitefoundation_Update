@@ -45,6 +45,15 @@ export const useUploadMedia = () => {
   });
 };
 
+export const useRenameMedia = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, filename }: { id: string; filename: string }) =>
+      api.patch<{ ok: boolean; filename: string }>(`/media/${id}`, { filename }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: MEDIA_QUERY_KEY }),
+  });
+};
+
 export const useDeleteMedia = () => {
   const qc = useQueryClient();
   return useMutation({
