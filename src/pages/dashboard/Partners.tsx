@@ -621,6 +621,7 @@ function ImageUploadField({
             </button>
           )}
         </div>
+        <p className="text-[11px] text-muted-foreground">প্রস্তাবিত: <b>400×200 px</b>, ট্রান্সপারেন্ট PNG বা SVG (লোগো)</p>
       </div>
     </div>
   );
