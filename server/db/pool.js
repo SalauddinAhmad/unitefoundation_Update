@@ -7,8 +7,12 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+  // Shared cPanel hosting has tight NPROC/EP limits — keep pool small.
+  connectionLimit: 5,
+  queueLimit: 20,
+  idleTimeout: 60000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
   charset: 'utf8mb4_unicode_ci',
   timezone: '+00:00',
 });
