@@ -97,22 +97,18 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
       try {
         const compressed = await compressImage(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.85 });
         const thumb = await compressImageToDataURL(compressed, { maxWidth: 400, maxHeight: 400, quality: 0.75 });
-        const url = await new Promise<string>((res, rej) => {
-          const r = new FileReader();
-          r.onload = () => res(String(r.result));
-          r.onerror = rej;
-          r.readAsDataURL(compressed);
-        });
         const meta = await fileToMeta(compressed);
-        const saved = await upload.mutateAsync({
-          url,
-          thumb_url: thumb,
-          filename: f.name,
-          mime: compressed.type,
-          size_bytes: compressed.size,
-          width: meta.width,
-          height: meta.height,
-        });
+
+        const form = new FormData();
+        form.append("file", compressed, compressed.name || f.name);
+        form.append("thumb_url", thumb);
+        form.append("filename", f.name);
+        form.append("mime", compressed.type);
+        form.append("size_bytes", String(compressed.size));
+        form.append("width", String(meta.width));
+        form.append("height", String(meta.height));
+
+        const saved = await upload.mutateAsync(form);
         lastUrl = saved.url;
       } catch (e: any) {
         toast.error(`${f.name}: আপলোড ব্যর্থ`);

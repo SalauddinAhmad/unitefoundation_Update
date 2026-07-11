@@ -39,7 +39,7 @@ export const useMediaLibrary = (search = "") =>
 export const useUploadMedia = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Partial<MediaItem>) =>
+    mutationFn: (data: Partial<MediaItem> | FormData) =>
       api.post<{ id: string; url: string }>("/media", data),
     onSuccess: () => qc.invalidateQueries({ queryKey: MEDIA_QUERY_KEY }),
   });
