@@ -6,10 +6,68 @@
 // ================================================================
 const router = require('express').Router();
 const { z } = require('zod');
+const fs = require('fs/promises');
+const path = require('path');
+const multer = require('multer');
 const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype && file.mimetype.startsWith('image/')) return cb(null, true);
+    cb(new Error('Only image uploads are allowed'));
+  },
+});
+
+const uploadsRoot = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || './uploads');
+const mediaDir = path.join(uploadsRoot, 'media');
+
+function publicBaseUrl(req) {
+  const configured = (process.env.PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '').replace(/\/$/, '');
+  return configured || `${req.protocol}://${req.get('host')}`;
+}
+
+function safeName(name = 'image') {
+  return name
+    .toLowerCase()
+    .replace(/\.[^.]+$/, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'image';
+}
+
+function extFromMime(mime = '') {
+  if (mime.includes('png')) return 'png';
+  if (mime.includes('webp')) return 'webp';
+  if (mime.includes('gif')) return 'gif';
+  if (mime.includes('svg')) return 'svg';
+  return 'jpg';
+}
+
+function parseDataUri(dataUri) {
+  const match = /^data:([^;,]+);base64,(.+)$/i.exec(String(dataUri || '').trim());
+  if (!match) return null;
+  return { mime: match[1], buffer: Buffer.from(match[2].replace(/\s/g, ''), 'base64') };
+}
+
+async function saveImageBuffer(req, buffer, mime, filename) {
+  await fs.mkdir(mediaDir, { recursive: true });
+  const id = uuid();
+  const ext = extFromMime(mime);
+  const finalName = `${Date.now()}-${id}-${safeName(filename)}.${ext}`;
+  await fs.writeFile(path.join(mediaDir, finalName), buffer);
+  return {
+    id,
+    url: `${publicBaseUrl(req)}/uploads/media/${finalName}`,
+    filename: finalName,
+    mime: mime || `image/${ext === 'jpg' ? 'jpeg' : ext}`,
+    size: buffer.length,
+  };
+}
 
 // List media (lightweight — no full url)
 router.get('/', requireAuth, asyncH(async (req, res) => {
@@ -61,9 +119,26 @@ const uploadSchema = z.object({
   height: z.number().optional(),
 });
 
-router.post('/', requireAuth, asyncH(async (req, res) => {
-  const d = uploadSchema.parse(req.body);
-  const id = uuid();
+router.post('/', requireAuth, upload.single('file'), asyncH(async (req, res) => {
+  const body = req.file ? req.body : uploadSchema.parse(req.body);
+  let stored = null;
+
+  if (req.file) {
+    stored = await saveImageBuffer(req, req.file.buffer, req.file.mimetype, req.file.originalname);
+  } else {
+    const parsed = parseDataUri(body.url);
+    if (parsed) {
+      stored = await saveImageBuffer(req, parsed.buffer, parsed.mime, body.filename || 'image');
+    }
+  }
+
+  const id = stored?.id || uuid();
+  const imageUrl = stored?.url || body.url;
+  const filename = body.filename || stored?.filename || null;
+  const mime = stored?.mime || body.mime || null;
+  const size = stored?.size || Number(body.size_bytes || 0);
+  const width = Number(body.width || 0);
+  const height = Number(body.height || 0);
   const uploader = req.user && req.user.sub ? req.user.sub : null;
   await pool.execute(
     `INSERT INTO media_library
@@ -71,17 +146,17 @@ router.post('/', requireAuth, asyncH(async (req, res) => {
      VALUES (?,?,?,?,?,?,?,?,?)`,
     [
       id,
-      d.url,
-      d.thumb_url || null,
-      d.filename || null,
-      d.mime || null,
-      d.size_bytes || 0,
-      d.width || 0,
-      d.height || 0,
+      imageUrl,
+      body.thumb_url && !String(body.thumb_url).startsWith('data:') ? body.thumb_url : imageUrl,
+      filename,
+      mime,
+      size,
+      width,
+      height,
       uploader,
     ]
   );
-  res.status(201).json({ id, url: d.url });
+  res.status(201).json({ id, url: imageUrl });
 }));
 
 // Rename (SEO-friendly filename)
