@@ -73,13 +73,13 @@ const Team = () => {
           কোনো সদস্য যোগ করা হয়নি। "নতুন সদস্য" ক্লিক করে শুরু করুন।
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {sorted.map((m) => (
             <div
               key={m.id}
-              className="group relative rounded-2xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="aspect-[4/5] bg-secondary overflow-hidden">
+              <div className="aspect-square bg-secondary overflow-hidden">
                 {m.photo ? (
                   <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
                 ) : (
@@ -88,11 +88,11 @@ const Team = () => {
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <div className="font-bold text-foreground truncate">{m.name}</div>
-                <div className="text-xs text-primary font-medium mt-0.5 truncate">{m.role}</div>
+              <div className="p-3">
+                <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
+                <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
                 {m.bio && (
-                  <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{m.bio}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
                 )}
               </div>
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
