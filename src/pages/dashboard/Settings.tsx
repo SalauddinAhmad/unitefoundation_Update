@@ -447,11 +447,11 @@ const Settings = () => {
               </div>
 
               <div className="grid sm:grid-cols-[1fr_140px_1fr] gap-4 mt-4 items-end">
-                <Field
-                  label="সাইড ইমেজ URL"
+                <ImageField
+                  label="সাইড ইমেজ"
                   value={form.about.sideImage}
                   onChange={(v) => setForm({ ...form, about: { ...form.about, sideImage: v } })}
-                  hint="খালি রাখলে ডিফল্ট"
+                  hint="খালি রাখলে ডিফল্ট ইমেজ দেখাবে"
                 />
                 <Field
                   label="ব্যাজ সংখ্যা"
