@@ -30,6 +30,26 @@ const Team = () => {
   const save = useSaveTeam();
   const del = useDeleteTeam();
   const [editing, setEditing] = useState<TeamMember | null>(null);
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+
+  const reorder = async (fromId: string, toId: string) => {
+    if (fromId === toId) return;
+    const list = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const from = list.findIndex((m) => m.id === fromId);
+    const to = list.findIndex((m) => m.id === toId);
+    if (from < 0 || to < 0) return;
+    const [moved] = list.splice(from, 1);
+    list.splice(to, 0, moved);
+    const changed = list
+      .map((m, idx) => ({ ...m, order: idx + 1 }))
+      .filter((m, idx) => (data.find((d) => d.id === m.id)?.order ?? 0) !== idx + 1);
+    for (const m of changed) {
+      await save.mutateAsync(m);
+    }
+    toast({ title: "ক্রম আপডেট হয়েছে" });
+  };
+
 
   // Photo handling now goes through the Media Library picker.
 
