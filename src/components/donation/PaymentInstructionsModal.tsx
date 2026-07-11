@@ -95,6 +95,14 @@ export const PaymentInstructionsModal = ({ open, onClose, amount, projectTitle, 
                 <span dir="ltr">{site.payments.bank.number}</span>
                 <button onClick={() => copy(site.payments.bank.number, "অ্যাকাউন্ট নম্বর")} className="text-primary hover:bg-accent p-1 rounded"><Copy className="h-3.5 w-3.5" /></button>
               </dd>
+              {site.payments.bank.routing && (<>
+                <dt className="text-muted-foreground">Routing</dt>
+                <dd className="col-span-2 font-mono font-medium" dir="ltr">{site.payments.bank.routing}</dd>
+              </>)}
+              {site.payments.bank.swift && (<>
+                <dt className="text-muted-foreground">SWIFT</dt>
+                <dd className="col-span-2 font-mono font-medium" dir="ltr">{site.payments.bank.swift}</dd>
+              </>)}
             </dl>
           </div>
 
