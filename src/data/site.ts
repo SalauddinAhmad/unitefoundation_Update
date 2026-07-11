@@ -32,7 +32,7 @@ export const site = {
       },
       {
         bank: "City Bank",
-        branch: "Uttara",
+        branch: "Branch : Uttara",
         account: "Unite Training Center",
         number: "1254971392001",
         routing: "225264634",
