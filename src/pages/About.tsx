@@ -28,9 +28,9 @@ const TeamSection = () => {
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {sorted.map((m) => (
               <div key={m.id} className="group text-center">
-                <div className="mx-auto h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden bg-secondary ring-4 ring-accent/40 shadow-sm group-hover:shadow-lg transition-all">
+                <div className="mx-auto h-32 w-32 sm:h-36 sm:w-36 rounded-full overflow-hidden bg-secondary ring-4 ring-accent/40 shadow-sm group-hover:shadow-lg transition-all">
                   {m.photo ? (
-                    <img src={m.photo} alt={m.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                       <Users className="h-12 w-12" />
