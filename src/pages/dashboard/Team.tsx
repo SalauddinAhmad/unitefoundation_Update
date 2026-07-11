@@ -167,7 +167,7 @@ const Team = () => {
           ))}
           </div>
         </>
-        </div>
+
       )}
 
       {/* Edit Drawer */}
