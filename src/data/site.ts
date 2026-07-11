@@ -15,7 +15,7 @@ export const site = {
     rocket: { number: "01759-754265-0", type: "Personal" },
     bank: {
       bank: "Islami Bank Bangladesh Ltd.",
-      branch: "Uttara",
+      branch: "Branch : Uttara",
       account: "Unite Training Center",
       number: "20502070100758906",
       routing: "IBBLBDDH207",
