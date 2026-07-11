@@ -18,7 +18,8 @@ export const site = {
       branch: "Branch : Uttara",
       account: "Unite Training Center",
       number: "20502070100758906",
-      routing: "IBBLBDDH207",
+      routing: "125264639",
+      swift: "IBBLBDDH207",
     },
     banks: [
       {
@@ -26,8 +27,8 @@ export const site = {
         branch: "Uttara",
         account: "Unite Training Center",
         number: "20502070100758906",
-        routing: "",
-        swift: "",
+        routing: "125264639",
+        swift: "IBBLBDDH207",
       },
       {
         bank: "City Bank",
