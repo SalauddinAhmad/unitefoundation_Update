@@ -66,12 +66,8 @@ const generalMenu: MenuItem[] = [
 const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout?: () => void; can: (p: Permission) => boolean }) => (
   <div className="flex h-full flex-col">
     {/* Logo */}
-    <div className="px-6 pt-6 pb-8 flex items-center gap-3">
-      <img src={logo} alt="Unite Foundation" className="h-9 w-9 object-contain" />
-      <div>
-        <div className="font-extrabold text-foreground leading-tight">Unite</div>
-        <div className="text-[11px] text-muted-foreground -mt-0.5">Admin Console</div>
-      </div>
+    <div className="px-6 pt-6 pb-8 flex items-center justify-center">
+      <img src={logo} alt="Unite Foundation" className="h-16 w-auto object-contain" />
     </div>
 
     {/* Menu */}
