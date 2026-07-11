@@ -12,7 +12,7 @@ export const site = {
   payments: {
     bkash: { number: "01759-754265", type: "Personal" },
     nagad: { number: "01759-754265", type: "Personal" },
-    rocket: { number: "01759-754265-1", type: "Personal" },
+    rocket: { number: "01759-754265-0", type: "Personal" },
     bank: {
       bank: "Islami Bank Bangladesh Ltd.",
       branch: "Uttara Branch",
