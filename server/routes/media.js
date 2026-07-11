@@ -23,7 +23,7 @@ const upload = multer({
   },
 });
 
-const uploadsRoot = path.resolve(__dirname, process.env.UPLOAD_DIR || '../uploads');
+const uploadsRoot = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || './uploads');
 const mediaDir = path.join(uploadsRoot, 'media');
 
 function publicBaseUrl(req) {
