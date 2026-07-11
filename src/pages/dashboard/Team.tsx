@@ -88,11 +88,11 @@ const Team = () => {
                   </div>
                 )}
               </div>
-              <div className="p-4">
-                <div className="font-bold text-foreground truncate">{m.name}</div>
-                <div className="text-xs text-primary font-medium mt-0.5 truncate">{m.role}</div>
+              <div className="p-3">
+                <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
+                <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
                 {m.bio && (
-                  <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{m.bio}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
                 )}
               </div>
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
