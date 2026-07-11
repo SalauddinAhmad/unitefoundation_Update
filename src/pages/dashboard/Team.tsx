@@ -73,13 +73,13 @@ const Team = () => {
           কোনো সদস্য যোগ করা হয়নি। "নতুন সদস্য" ক্লিক করে শুরু করুন।
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {sorted.map((m) => (
             <div
               key={m.id}
-              className="group relative rounded-2xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              className="group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="aspect-[4/5] bg-secondary overflow-hidden">
+              <div className="aspect-square bg-secondary overflow-hidden">
                 {m.photo ? (
                   <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
                 ) : (
