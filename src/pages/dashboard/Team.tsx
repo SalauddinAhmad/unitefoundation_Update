@@ -93,15 +93,44 @@ const Team = () => {
           কোনো সদস্য যোগ করা হয়নি। "নতুন সদস্য" ক্লিক করে শুরু করুন।
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <>
+          <p className="text-xs text-muted-foreground -mt-2">
+            টিপ: কার্ডের উপরের বাঁ পাশের হ্যান্ডেল ধরে টেনে ক্রম পরিবর্তন করুন। প্রথমে থাকা সদস্য সবার আগে দেখাবে।
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
           {sorted.map((m) => (
             <div
               key={m.id}
-              className="group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+              draggable
+              onDragStart={(e) => {
+                setDragId(m.id);
+                e.dataTransfer.effectAllowed = "move";
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                if (overId !== m.id) setOverId(m.id);
+              }}
+              onDragLeave={() => {
+                if (overId === m.id) setOverId(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragId) reorder(dragId, m.id);
+                setDragId(null);
+                setOverId(null);
+              }}
+              onDragEnd={() => {
+                setDragId(null);
+                setOverId(null);
+              }}
+              className={`group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-all cursor-move ${
+                dragId === m.id ? "opacity-40" : ""
+              } ${overId === m.id && dragId !== m.id ? "ring-2 ring-primary" : ""}`}
             >
               <div className="aspect-square bg-secondary overflow-hidden">
                 {m.photo ? (
-                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover" />
+                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover" draggable={false} />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center text-muted-foreground">
                     <Users2 className="h-10 w-10" />
@@ -114,6 +143,9 @@ const Team = () => {
                 {m.bio && (
                   <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
                 )}
+              </div>
+              <div className="absolute top-2 left-2 h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                <GripVertical className="h-4 w-4" />
               </div>
               <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -133,6 +165,8 @@ const Team = () => {
               </div>
             </div>
           ))}
+          </div>
+        </>
         </div>
       )}
 
