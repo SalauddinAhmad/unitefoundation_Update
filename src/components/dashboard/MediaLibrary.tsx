@@ -251,7 +251,9 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
                           src={m.thumb_url}
                           alt={m.filename || ""}
                           loading="lazy"
-                          className="h-full w-full object-cover"
+                          decoding="async"
+                          onLoad={(e) => e.currentTarget.classList.add("opacity-100")}
+                          className="h-full w-full object-cover opacity-0 transition-opacity duration-300"
                         />
                         {active && (
                           <div className="absolute top-1.5 left-1.5 bg-primary text-primary-foreground rounded-full p-1">
