@@ -22,13 +22,20 @@ fi
 CPANEL_PORT="${CPANEL_PORT:-2083}"
 API_BASE="https://${CPANEL_HOST}:${CPANEL_PORT}"
 AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_API_TOKEN}"
-CURL_RESOLVE_ARGS=()
+CURL_CONNECT_ARGS=()
 if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
-  CURL_RESOLVE_ARGS=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+  CURL_CONNECT_ARGS+=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+  CURL_CONNECT_ARGS+=(--connect-to "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}:${CPANEL_PORT}")
+
+  if [[ "$CPANEL_HOST" == cpanel.* ]]; then
+    CPANEL_APEX_HOST="${CPANEL_HOST#cpanel.}"
+    CURL_CONNECT_ARGS+=(--resolve "${CPANEL_APEX_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+    CURL_CONNECT_ARGS+=(--connect-to "${CPANEL_APEX_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}:${CPANEL_PORT}")
+  fi
 fi
 
 cpanel_curl() {
-  curl "${CURL_RESOLVE_ARGS[@]}" "$@"
+  curl "${CURL_CONNECT_ARGS[@]}" "$@"
 }
 
 urlencode() {
@@ -115,6 +122,9 @@ upload_file() {
 
 echo "Deploying ${LOCAL_DIR} to cPanel:${REMOTE_DIR} via HTTPS API"
 echo "Remote absolute path: ${CPANEL_HOME%/}/${REMOTE_DIR#/}"
+if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
+  echo "Bypassing Cloudflare: ${CPANEL_HOST}:${CPANEL_PORT} -> ${CPANEL_ORIGIN_IP}:${CPANEL_PORT}"
+fi
 
 mapfile -d '' files < <(find "$LOCAL_DIR" -type f -print0 | sort -z)
 
