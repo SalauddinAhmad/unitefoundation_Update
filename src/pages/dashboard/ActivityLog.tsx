@@ -65,16 +65,27 @@ const ENTITY_LABEL: Record<string, string> = {
   logs: "লগ",
 };
 
+// Backend stores CURRENT_TIMESTAMP in server local time (Asia/Dhaka) but
+// mysql2 serializes it as UTC ISO string. We re-interpret the UTC components
+// as Dhaka wall-clock time so the display matches what actually happened.
+const parseServerTime = (s: string) => {
+  const d = new Date(s);
+  return new Date(
+    d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(),
+    d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()
+  );
+};
+
 const fmtTime = (s: string) => {
   try {
-    const d = new Date(s);
-    return d.toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "medium" });
+    return parseServerTime(s).toLocaleString("bn-BD", { dateStyle: "medium", timeStyle: "medium" });
   } catch { return s; }
 };
 
 const relTime = (s: string) => {
   try {
-    const diff = (Date.now() - new Date(s).getTime()) / 1000;
+    const diff = (Date.now() - parseServerTime(s).getTime()) / 1000;
+    if (diff < 0) return "এইমাত্র";
     if (diff < 60) return `${Math.floor(diff)} সেকেন্ড আগে`;
     if (diff < 3600) return `${Math.floor(diff / 60)} মিনিট আগে`;
     if (diff < 86400) return `${Math.floor(diff / 3600)} ঘণ্টা আগে`;
