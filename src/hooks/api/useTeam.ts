@@ -54,22 +54,26 @@ export const useSaveTeam = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (member: TeamMember) => {
-      const current = loadLocal();
+      // Decide create vs update from the current server-backed cache,
+      // NOT from localStorage (which can be stale on other admins' machines).
+      const current = (qc.getQueryData<TeamMember[]>(["team"]) ?? loadLocal());
       const exists = current.some((m) => m.id === member.id);
-      const next = exists
-        ? current.map((m) => (m.id === member.id ? member : m))
-        : [...current, member];
       try {
         if (exists) await api.patch(`/team/${member.id}`, member);
         else await api.post("/team", member);
-      } catch {
-        // fall back to local persistence
+      } catch (e) {
+        // If the API call fails, persist locally as a last-resort fallback
+        const next = exists
+          ? current.map((m) => (m.id === member.id ? member : m))
+          : [...current, member];
+        saveLocal(next);
+        throw e;
       }
-      saveLocal(next);
-      return next;
+      return member;
     },
-    onSuccess: (next) => {
-      qc.setQueryData(["team"], next);
+    onSuccess: () => {
+      // Always refetch from server so every admin sees the same truth
+      qc.invalidateQueries({ queryKey: ["team"] });
     },
   });
 };
@@ -78,15 +82,17 @@ export const useDeleteTeam = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const next = loadLocal().filter((m) => m.id !== id);
       try {
         await api.delete(`/team/${id}`);
-      } catch {}
-      saveLocal(next);
-      return next;
+      } catch (e) {
+        const next = loadLocal().filter((m) => m.id !== id);
+        saveLocal(next);
+        throw e;
+      }
+      return id;
     },
-    onSuccess: (next) => {
-      qc.setQueryData(["team"], next);
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["team"] });
     },
   });
 };
