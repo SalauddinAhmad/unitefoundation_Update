@@ -202,7 +202,30 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 if (require.main === module) {
-  app.listen(PORT, () => console.log(`API listening on :${PORT}`));
+  const server = app.listen(PORT, () => console.log(`API listening on :${PORT}`));
+
+  // Keep cPanel/Passenger entry processes from being tied up by idle sockets.
+  server.keepAliveTimeout = Number(process.env.HTTP_KEEP_ALIVE_TIMEOUT_MS || 5000);
+  server.headersTimeout = Number(process.env.HTTP_HEADERS_TIMEOUT_MS || 10000);
+  server.requestTimeout = Number(process.env.HTTP_REQUEST_TIMEOUT_MS || 30000);
+
+  const shutdown = async (signal) => {
+    console.log(`${signal} received, shutting down API...`);
+    server.close(async () => {
+      try {
+        await require('./db/pool').end();
+        require('./services/mailer').closeTransporter();
+      } catch (err) {
+        console.error('Graceful shutdown cleanup failed:', err);
+      } finally {
+        process.exit(0);
+      }
+    });
+    setTimeout(() => process.exit(1), 10000).unref();
+  };
+
+  process.once('SIGTERM', () => shutdown('SIGTERM'));
+  process.once('SIGINT', () => shutdown('SIGINT'));
 }
 
 module.exports = app;

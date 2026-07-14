@@ -7,12 +7,13 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
-  // Shared cPanel hosting has tight NPROC/EP limits — keep pool small.
-  connectionLimit: 5,
-  queueLimit: 20,
-  idleTimeout: 60000,
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 10000,
+  // Shared cPanel hosting has tight NPROC/EP limits — keep the DB pool tiny.
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 2),
+  maxIdle: Number(process.env.DB_MAX_IDLE || 1),
+  queueLimit: Number(process.env.DB_QUEUE_LIMIT || 10),
+  idleTimeout: Number(process.env.DB_IDLE_TIMEOUT_MS || 10000),
+  connectTimeout: Number(process.env.DB_CONNECT_TIMEOUT_MS || 5000),
+  enableKeepAlive: false,
   charset: 'utf8mb4_unicode_ci',
   timezone: '+00:00',
 });
