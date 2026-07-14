@@ -89,7 +89,10 @@ export const Footer = () => {
 
         <div className="border-t border-white/10">
           <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
-            <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+              <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
+            </div>
             <a
               href="https://wa.me/message/IKFP3JMMZ66MJ1"
               target="_blank"

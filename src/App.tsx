@@ -17,6 +17,7 @@ const Gallery = lazy(() => import("./pages/Gallery.tsx"));
 const Contact = lazy(() => import("./pages/Contact.tsx"));
 const Volunteer = lazy(() => import("./pages/Volunteer.tsx"));
 const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 
 // Admin dashboard
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/partners/:slug" element={<PartnerDetail />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
             {/* Admin dashboard */}
             <Route path="/login" element={<Login />} />
