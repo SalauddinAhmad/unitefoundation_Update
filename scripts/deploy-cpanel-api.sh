@@ -22,6 +22,14 @@ fi
 CPANEL_PORT="${CPANEL_PORT:-2083}"
 API_BASE="https://${CPANEL_HOST}:${CPANEL_PORT}"
 AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_API_TOKEN}"
+CURL_RESOLVE_ARGS=()
+if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
+  CURL_RESOLVE_ARGS=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+fi
+
+cpanel_curl() {
+  curl "${CURL_RESOLVE_ARGS[@]}" "$@"
+}
 
 urlencode() {
   python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
@@ -52,7 +60,7 @@ cpanel_api2_mkdir() {
   local response
   local endpoint="${API_BASE}/json-api/cpanel?cpanel_jsonapi_user=$(urlencode "$CPANEL_USER")&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=mkdir&path=$(urlencode "$parent")&name=$(urlencode "$name")&permissions=0755"
 
-  response=$(curl --silent --show-error --location --connect-timeout 20 --max-time 90 --retry 3 --retry-delay 5 \
+  response=$(cpanel_curl --silent --show-error --location --connect-timeout 20 --max-time 90 --retry 3 --retry-delay 5 \
     --header "$AUTH_HEADER" "$endpoint" || true)
 
   # mkdir may report an error when the folder already exists; uploads will validate the final state.
@@ -96,7 +104,7 @@ upload_file() {
   local absolute_dir="${CPANEL_HOME%/}/${remote_subdir#/}"
 
   echo "Uploading ${rel} -> ${absolute_dir}/${base}"
-  curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
+  cpanel_curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
     --header "$AUTH_HEADER" \
     --form "dir=${absolute_dir}" \
     --form "overwrite=1" \
