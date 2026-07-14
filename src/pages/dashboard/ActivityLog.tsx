@@ -337,7 +337,7 @@ export default function ActivityLog() {
                 const ua = parseUA(r.user_agent);
                 const isOpen = expanded.has(r.id);
                 return (
-                  <FragmentWithKey key={r.id}>
+                  <Fragment key={r.id}>
                     <tr className="border-t border-border hover:bg-secondary/30 cursor-pointer" onClick={() => toggle(r.id)}>
                       <td className="px-3 py-3 align-top">
                         {isOpen ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
@@ -390,7 +390,7 @@ export default function ActivityLog() {
                         </td>
                       </tr>
                     )}
-                  </FragmentWithKey>
+                  </Fragment>
                 );
               })}
             </tbody>
