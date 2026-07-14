@@ -41,13 +41,15 @@ export const useTeam = () =>
     queryFn: async () => {
       try {
         const remote = await api.get<TeamMember[]>("/team", { auth: false });
-        if (Array.isArray(remote) && remote.length) return remote;
+        // Trust the server even when it returns an empty array — otherwise
+        // deleting the last member would resurrect stale localStorage data.
+        if (Array.isArray(remote)) return remote;
         return loadLocal();
       } catch {
         return loadLocal();
       }
     },
-    staleTime: 60_000,
+    staleTime: 30_000,
   });
 
 export const useSaveTeam = () => {
