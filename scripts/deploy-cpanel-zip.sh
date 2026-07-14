@@ -24,6 +24,14 @@ fi
 CPANEL_PORT="${CPANEL_PORT:-2083}"
 API_BASE="https://${CPANEL_HOST}:${CPANEL_PORT}"
 AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_API_TOKEN}"
+CURL_RESOLVE_ARGS=()
+if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
+  CURL_RESOLVE_ARGS=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+fi
+
+cpanel_curl() {
+  curl "${CURL_RESOLVE_ARGS[@]}" "$@"
+}
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FALLBACK_SCRIPT="${SCRIPT_DIR}/deploy-cpanel-api.sh"
@@ -44,7 +52,7 @@ urlencode() {
 }
 
 trap 'echo "Cleaning up remote staging..."; \
-  curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
+  cpanel_curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
     "${API_BASE}/execute/Fileman/remove_files?files=$(urlencode "${STAGING_ABS}/${ZIP_NAME}")" >/dev/null 2>&1 || true' EXIT
 
 echo "📦 Creating ZIP archive from ${LOCAL_DIR}..."
@@ -55,9 +63,9 @@ echo "   Archive size: ${ZIP_SIZE_MB} MB"
 
 # 1. Ensure staging dir exists (mkdir tmp/deploy-XXX)
 echo "📁 Ensuring remote staging directory..."
-curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
+cpanel_curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
   "${API_BASE}/json-api/cpanel?cpanel_jsonapi_user=$(urlencode "$CPANEL_USER")&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=mkdir&path=$(urlencode "$CPANEL_HOME")&name=tmp" >/dev/null || true
-curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
+cpanel_curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
   "${API_BASE}/json-api/cpanel?cpanel_jsonapi_user=$(urlencode "$CPANEL_USER")&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=mkdir&path=$(urlencode "${CPANEL_HOME}/tmp")&name=$(basename "$STAGING_REL")" >/dev/null || true
 
 # 2. Ensure destination dir exists
@@ -66,14 +74,14 @@ IFS='/' read -r -a parts <<< "${REMOTE_DIR#/}"
 current="$CPANEL_HOME"
 for part in "${parts[@]}"; do
   [[ -z "$part" ]] && continue
-  curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
+  cpanel_curl --silent --show-error --max-time 30 --header "$AUTH_HEADER" \
     "${API_BASE}/json-api/cpanel?cpanel_jsonapi_user=$(urlencode "$CPANEL_USER")&cpanel_jsonapi_apiversion=2&cpanel_jsonapi_module=Fileman&cpanel_jsonapi_func=mkdir&path=$(urlencode "$current")&name=$(urlencode "$part")" >/dev/null || true
   current="${current}/${part}"
 done
 
 # 3. Upload the ZIP to staging
 echo "⬆️  Uploading ZIP (${ZIP_SIZE_MB} MB)..."
-UPLOAD_RES=$(curl --silent --show-error --location \
+UPLOAD_RES=$(cpanel_curl --silent --show-error --location \
   --connect-timeout 30 --max-time 300 --retry 2 --retry-delay 5 \
   --header "$AUTH_HEADER" \
   --form "dir=${STAGING_ABS}" \
@@ -124,7 +132,7 @@ sys.exit(1)
 '
 }
 
-EXTRACT_RES=$(curl --silent --show-error --location \
+EXTRACT_RES=$(cpanel_curl --silent --show-error --location \
   --connect-timeout 30 --max-time 120 --header "$AUTH_HEADER" \
   --data-urlencode "sourcefiles=${STAGING_ABS}/${ZIP_NAME}" \
   --data-urlencode "destfiles=${REMOTE_ABS}" \
@@ -132,7 +140,7 @@ EXTRACT_RES=$(curl --silent --show-error --location \
 
 if ! echo "$EXTRACT_RES" | extract_ok; then
   echo "   UAPI extract unavailable, trying API2 fileop..."
-  EXTRACT_RES=$(curl --silent --show-error --location \
+  EXTRACT_RES=$(cpanel_curl --silent --show-error --location \
     --connect-timeout 30 --max-time 120 --header "$AUTH_HEADER" \
     --data-urlencode "cpanel_jsonapi_user=${CPANEL_USER}" \
     --data-urlencode "cpanel_jsonapi_apiversion=2" \

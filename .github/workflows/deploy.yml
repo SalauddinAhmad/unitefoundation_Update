@@ -45,6 +45,7 @@ jobs:
       - name: Deploy frontend via cPanel API
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
+          CPANEL_ORIGIN_IP: 14.128.15.181
           CPANEL_PORT: '2083'
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
@@ -70,6 +71,7 @@ jobs:
       - name: Deploy backend via cPanel API
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
+          CPANEL_ORIGIN_IP: 14.128.15.181
           CPANEL_PORT: '2083'
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
