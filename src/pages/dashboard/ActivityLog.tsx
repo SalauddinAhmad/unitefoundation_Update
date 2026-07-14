@@ -2,7 +2,7 @@
 // Activity Log page — Super Admin only.
 // Shows who did what across the entire dashboard, with rich details.
 // ============================================================
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import {
   ScrollText, Search, RefreshCw, Download, Filter,
