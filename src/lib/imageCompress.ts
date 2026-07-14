@@ -25,9 +25,22 @@ const loadImage = (file: File | Blob): Promise<HTMLImageElement> =>
     img.src = url;
   });
 
-const hasAlpha = async (file: File): Promise<boolean> => {
-  if (file.type === "image/png") return true;
-  return false;
+// Sample the rendered canvas to detect actual transparency.
+// Many PNGs (screenshots, exports) have no real alpha and can be
+// re-encoded as JPEG, which is 5–20× smaller.
+const canvasHasAlpha = (ctx: CanvasRenderingContext2D, w: number, h: number): boolean => {
+  try {
+    const step = Math.max(1, Math.floor(Math.min(w, h) / 50));
+    const data = ctx.getImageData(0, 0, w, h).data;
+    for (let y = 0; y < h; y += step) {
+      for (let x = 0; x < w; x += step) {
+        if (data[(y * w + x) * 4 + 3] < 255) return true;
+      }
+    }
+    return false;
+  } catch {
+    return false;
+  }
 };
 
 const canvasToBlob = (canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob> =>
