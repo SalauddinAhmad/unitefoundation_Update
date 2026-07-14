@@ -80,7 +80,7 @@ export async function compressImage(file: File, opts: CompressOptions = {}): Pro
     if (opts.mimeType && opts.mimeType !== "auto") {
       outType = opts.mimeType;
     } else {
-      const alpha = await hasAlpha(file);
+      const alpha = canvasHasAlpha(ctx, w, h);
       outType = alpha ? "image/png" : "image/jpeg";
     }
 
