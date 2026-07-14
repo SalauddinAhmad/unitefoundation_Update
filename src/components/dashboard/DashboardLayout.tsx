@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "@/assets/logo.png";
+import logo from "/favicon.svg";
 import { useAuth } from "@/hooks/useAuth";
 import { ROLE_LABEL, type Permission } from "@/lib/permissions";
 import { useMessages } from "@/hooks/api/useDashboardData";
