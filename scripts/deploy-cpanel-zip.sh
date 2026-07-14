@@ -24,13 +24,20 @@ fi
 CPANEL_PORT="${CPANEL_PORT:-2083}"
 API_BASE="https://${CPANEL_HOST}:${CPANEL_PORT}"
 AUTH_HEADER="Authorization: cpanel ${CPANEL_USER}:${CPANEL_API_TOKEN}"
-CURL_RESOLVE_ARGS=()
+CURL_CONNECT_ARGS=()
 if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
-  CURL_RESOLVE_ARGS=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+  CURL_CONNECT_ARGS+=(--resolve "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+  CURL_CONNECT_ARGS+=(--connect-to "${CPANEL_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}:${CPANEL_PORT}")
+
+  if [[ "$CPANEL_HOST" == cpanel.* ]]; then
+    CPANEL_APEX_HOST="${CPANEL_HOST#cpanel.}"
+    CURL_CONNECT_ARGS+=(--resolve "${CPANEL_APEX_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}")
+    CURL_CONNECT_ARGS+=(--connect-to "${CPANEL_APEX_HOST}:${CPANEL_PORT}:${CPANEL_ORIGIN_IP}:${CPANEL_PORT}")
+  fi
 fi
 
 cpanel_curl() {
-  curl "${CURL_RESOLVE_ARGS[@]}" "$@"
+  curl "${CURL_CONNECT_ARGS[@]}" "$@"
 }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -56,6 +63,9 @@ trap 'echo "Cleaning up remote staging..."; \
     "${API_BASE}/execute/Fileman/remove_files?files=$(urlencode "${STAGING_ABS}/${ZIP_NAME}")" >/dev/null 2>&1 || true' EXIT
 
 echo "📦 Creating ZIP archive from ${LOCAL_DIR}..."
+if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
+  echo "Bypassing Cloudflare: ${CPANEL_HOST}:${CPANEL_PORT} -> ${CPANEL_ORIGIN_IP}:${CPANEL_PORT}"
+fi
 TMP_ZIP="$(mktemp -d)/${ZIP_NAME}"
 ( cd "$LOCAL_DIR" && zip -qr "$TMP_ZIP" . ) || fallback "zip creation failed"
 ZIP_SIZE_MB=$(du -m "$TMP_ZIP" | cut -f1)
