@@ -61,20 +61,23 @@ const TeamSection = () => {
       {/* Decorative SVG watermark background */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 select-none"
+        className="pointer-events-none absolute inset-0 select-none opacity-[0.18]"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse at center, hsl(var(--primary) / 0.05), transparent 70%), url('/background-overlay-3.svg')",
-          backgroundRepeat: "no-repeat, no-repeat",
-          backgroundPosition: "center, center",
-          backgroundSize: "cover, min(900px, 90%)",
-          opacity: 0.85,
+          backgroundImage: "url('/background-overlay-3.svg')",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
         }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-background/40"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, transparent 40%, hsl(var(--background) / 0.6) 100%)",
+        }}
       />
+
 
 
 
