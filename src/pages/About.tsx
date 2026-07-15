@@ -404,12 +404,13 @@ const About = () => {
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
               <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
                 {[
-                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", Icon: Facebook },
-                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", Icon: Youtube },
-                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", Icon: Instagram },
+                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", Icon: Facebook, hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]" },
+                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", Icon: Youtube, hover: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]" },
+                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", Icon: Instagram, hover: "hover:bg-[linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)] hover:text-white hover:border-transparent" },
                   {
                     href: "https://www.tiktok.com/@abdullahbinarshad.aba",
                     label: "TikTok",
+                    hover: "hover:bg-black hover:text-white hover:border-black",
                     Icon: (props: { className?: string }) => (
                       <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden><path d="M20.5 8.2a6.7 6.7 0 0 1-3.9-1.25v7.9a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.03.9.08v2.9a2.75 2.75 0 1 0 1.95 2.62V2h2.85a3.85 3.85 0 0 0 3.8 3.4V8.2Z"/></svg>
                     ),
@@ -417,11 +418,12 @@ const About = () => {
                   {
                     href: "https://wa.me/message/QNW22PYYZM4ZN1",
                     label: "WhatsApp",
+                    hover: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
                     Icon: (props: { className?: string }) => (
                       <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden><path d="M12.04 2.5c-5.25 0-9.5 4.25-9.5 9.5 0 1.68.44 3.32 1.28 4.76L2.5 21.5l4.9-1.28a9.5 9.5 0 0 0 4.64 1.19h.01c5.24 0 9.5-4.26 9.5-9.5 0-2.54-.99-4.92-2.79-6.72a9.44 9.44 0 0 0-6.72-2.79Zm5.58 13.6c-.24.67-1.38 1.27-1.93 1.35-.49.07-1.11.1-1.79-.11-.41-.13-.95-.31-1.63-.61-2.87-1.24-4.75-4.13-4.89-4.32-.14-.19-1.17-1.56-1.17-2.97 0-1.41.74-2.1 1-2.39.26-.29.57-.36.76-.36h.55c.18 0 .42-.07.65.5.24.58.82 1.99.89 2.13.07.14.12.31.02.5-.1.19-.14.31-.28.48-.14.17-.3.38-.42.51-.14.14-.29.29-.13.58.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.28 2.3 1.42.29.14.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.1 1.66.78 1.95.92.29.14.48.21.55.33.07.12.07.7-.17 1.37Z"/></svg>
                     ),
                   },
-                ].map(({ href, label, Icon }) => (
+                ].map(({ href, label, Icon, hover }) => (
                   <a
                     key={label}
                     href={href}
@@ -429,12 +431,13 @@ const About = () => {
                     rel="noopener noreferrer"
                     aria-label={label}
                     title={label}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary transition-all hover:bg-primary hover:text-white hover:-translate-y-0.5"
+                    className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary transition-all hover:-translate-y-0.5 ${hover}`}
                   >
                     <Icon className="h-4 w-4" />
                   </a>
                 ))}
               </div>
+
 
 
 
