@@ -23,8 +23,10 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-// Best-effort submit to backend so entries appear in the dashboard.
-const saveApplication = (
+// Save the submission to the backend so it appears in the dashboard.
+// Returns true on success — surfaces server errors so the user sees them
+// instead of an always-green "সফল" card that never actually persisted.
+const saveApplication = async (
   kind: "volunteer" | "career",
   payload: {
     name: string;
@@ -35,8 +37,21 @@ const saveApplication = (
     message?: string;
     extra?: Record<string, unknown>;
   },
-) => {
-  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
+): Promise<boolean> => {
+  try {
+    await api.post(`/applications/${kind}`, payload, { auth: false });
+    return true;
+  } catch (err) {
+    console.error("[volunteer] submit failed:", err);
+    toast({
+      title: "সাবমিট ব্যর্থ",
+      description:
+        (err as { message?: string })?.message ||
+        "সার্ভারে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+      variant: "destructive",
+    });
+    return false;
+  }
 };
 
 type TabKey = "volunteer" | "representative";
