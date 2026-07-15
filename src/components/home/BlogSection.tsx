@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { posts } from "@/data/blog";
+import { usePostsPublic } from "@/hooks/api/usePublic";
 import { useLocaleNum } from "@/hooks/useLocaleNum";
 
 export const BlogSection = () => {
