@@ -126,7 +126,7 @@ const Contact = () => {
         </div>
       </section>
 
-      <style>{`.input-c{width:100%;padding:0.75rem 1rem;border-radius:12px;border:1px solid hsl(var(--input));background:hsl(var(--background));color:hsl(var(--foreground));outline:none;transition:all 0.2s}.input-c:focus{border-color:hsl(var(--primary));box-shadow:0 0 0 3px hsl(var(--primary)/0.1)}`}</style>
+      <style>{`.input-c{width:100%;padding:0.75rem 1rem;border-radius:12px;border:1px solid hsl(var(--input));background:hsl(var(--background));color:hsl(var(--foreground));outline:none;transition:all 0.2s}.input-c:focus{border-color:hsl(var(--primary));box-shadow:0 0 0 3px hsl(var(--primary)/0.1)}.input-c:-webkit-autofill,.input-c:-webkit-autofill:hover,.input-c:-webkit-autofill:focus{-webkit-text-fill-color:hsl(var(--foreground)) !important;caret-color:hsl(var(--foreground));-webkit-box-shadow:0 0 0 1000px hsl(var(--background)) inset !important;transition:background-color 9999s ease-in-out 0s}`}</style>
     </SiteLayout>
   );
 };
