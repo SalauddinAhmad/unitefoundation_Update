@@ -107,6 +107,7 @@ export type ApiPost = {
   status: "draft" | "published";
   published_at?: string | null;
   created_at?: string;
+  views?: number | null;
 };
 
 const bnDate = (iso?: string | null) => {
