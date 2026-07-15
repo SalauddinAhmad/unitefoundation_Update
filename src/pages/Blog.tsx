@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Search, Loader2 } from "lucide-react";
+import { ArrowRight, Calendar, Eye, Search, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { usePostsPublic } from "@/hooks/api/usePublic";
+import { toBnNum } from "@/data/projects";
 import relief from "@/assets/hero-relief.jpg";
 
 const Blog = () => {
@@ -87,6 +88,7 @@ const Blog = () => {
               </div>
               <div className="p-6 md:p-10 flex flex-col justify-center">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary"><Calendar className="h-3.5 w-3.5" />{featured.date}</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground ml-3"><Eye className="h-3.5 w-3.5" />{toBnNum(featured.views ?? 0)} বার পঠিত</span>
                 <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-[1.2] group-hover:text-primary transition-colors">{featured.title}</h2>
                 <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-3">{featured.excerpt}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
@@ -111,7 +113,10 @@ const Blog = () => {
                 <img src={p.cover} alt={p.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
               <div className="p-6 flex-1 flex flex-col">
-                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{p.date}</span>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" />{p.date}</span>
+                  <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" />{toBnNum(p.views ?? 0)}</span>
+                </div>
                 <h3 className="mt-2 text-lg font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm group-hover:gap-2.5 transition-all">

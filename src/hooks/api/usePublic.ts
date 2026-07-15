@@ -107,6 +107,7 @@ export type ApiPost = {
   status: "draft" | "published";
   published_at?: string | null;
   created_at?: string;
+  views?: number | null;
 };
 
 const bnDate = (iso?: string | null) => {
@@ -118,7 +119,7 @@ const bnDate = (iso?: string | null) => {
   }
 };
 
-export type UiBlogPost = StaticBlogPost & { html?: string };
+export type UiBlogPost = StaticBlogPost & { html?: string; views?: number };
 
 export function apiToPost(row: ApiPost): UiBlogPost {
   // content may be plain HTML (from dashboard rich-text editor) OR a JSON ContentBlock[] string
@@ -145,6 +146,7 @@ export function apiToPost(row: ApiPost): UiBlogPost {
     readMin: Math.max(3, Math.round((c.length || 500) / 800)),
     body,
     html,
+    views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
   };
 }
 
@@ -171,6 +173,17 @@ export const usePostPublic = (slug: string) =>
     },
     enabled: !!slug,
     staleTime: STALE,
+  });
+
+export const useIncrementPostView = () =>
+  useMutation({
+    mutationFn: async (slug: string) => {
+      try {
+        return await api.post<{ views: number }>(`/posts/${slug}/view`, {}, { auth: false });
+      } catch {
+        return { views: 0 };
+      }
+    },
   });
 
 // ============================================================

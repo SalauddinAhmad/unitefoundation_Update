@@ -20,6 +20,28 @@ router.get('/:slug', asyncH(async (req, res) => {
   res.json(rows[0]);
 }));
 
+// Increment view counter (public). In-memory throttle per IP+slug (1h).
+const viewThrottle = new Map();
+const _viewGc = setInterval(() => {
+  const now = Date.now();
+  for (const [k, t] of viewThrottle) if (now - t > 60 * 60 * 1000) viewThrottle.delete(k);
+}, 10 * 60 * 1000);
+_viewGc.unref && _viewGc.unref();
+
+router.post('/:slug/view', asyncH(async (req, res) => {
+  const slug = req.params.slug;
+  const ip = (req.headers['x-forwarded-for'] || req.ip || '').toString().split(',')[0].trim();
+  const key = `${ip}|${slug}`;
+  const now = Date.now();
+  const last = viewThrottle.get(key) || 0;
+  if (now - last >= 60 * 60 * 1000) {
+    viewThrottle.set(key, now);
+    await pool.execute('UPDATE posts SET views = COALESCE(views,0) + 1 WHERE slug=? OR id=?', [slug, slug]);
+  }
+  const [rows] = await pool.execute('SELECT views FROM posts WHERE slug=? OR id=?', [slug, slug]);
+  res.json({ views: rows[0]?.views || 0 });
+}));
+
 const schema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),

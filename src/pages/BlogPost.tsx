@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { type ContentBlock } from "@/data/blog";
 import { toBnNum } from "@/data/projects";
-import { usePostPublic, usePostsPublic } from "@/hooks/api/usePublic";
+import { usePostPublic, usePostsPublic, useIncrementPostView } from "@/hooks/api/usePublic";
 import NotFound from "./NotFound";
 
 const normalize = (b: string | ContentBlock): ContentBlock =>
@@ -122,12 +123,27 @@ const BlogPost = () => {
   const { slug = "" } = useParams();
   const { data: post, isLoading } = usePostPublic(slug);
   const { data: allPosts = [] } = usePostsPublic();
+  const incrementView = useIncrementPostView();
+  const [liveViews, setLiveViews] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!slug) return;
+    incrementView.mutate(slug, {
+      onSuccess: (d) => {
+        if (d && typeof d.views === "number") setLiveViews(d.views);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
   if (isLoading) return (
     <SiteLayout>
       <div className="py-32 flex justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>
     </SiteLayout>
   );
   if (!post) return <NotFound />;
+
+  const views = liveViews ?? post.views ?? 0;
 
   const related = allPosts.filter((p) => p.slug !== slug).slice(0, 3);
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -157,6 +173,7 @@ const BlogPost = () => {
               <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">{post.category}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Clock className="h-4 w-4" />{toBnNum(post.readMin)} {t("blogPost.minutesRead")}</span>
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground" title="পঠিত সংখ্যা"><Eye className="h-4 w-4" />{toBnNum(views)} বার পঠিত</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl">{post.title}</h1>
           </div>
