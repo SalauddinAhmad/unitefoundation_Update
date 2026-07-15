@@ -72,9 +72,8 @@ export const useProjectsPublic = () =>
   useQuery({
     queryKey: ["public", "projects"],
     queryFn: async () => {
-      const rows = await tryList<ApiProject>("/projects", []);
-      const mapped = rows.map(apiToProject);
-      return mapped.length ? mapped : staticProjects;
+      const rows = await tryList<ApiProject>("/projects");
+      return rows.map(apiToProject);
     },
     staleTime: STALE,
   });
@@ -87,7 +86,7 @@ export const useProjectPublic = (slug: string) =>
         const row = await api.get<ApiProject>(`/projects/${slug}`, { auth: false });
         return apiToProject(row);
       } catch {
-        return staticProjects.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
