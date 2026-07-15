@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart, Facebook, Linkedin, Twitter, Users, Quote, Info, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { type ContentBlock } from "@/data/blog";
 import { toBnNum } from "@/data/projects";
-import { usePostPublic, usePostsPublic } from "@/hooks/api/usePublic";
+import { usePostPublic, usePostsPublic, useIncrementPostView } from "@/hooks/api/usePublic";
 import NotFound from "./NotFound";
 
 const normalize = (b: string | ContentBlock): ContentBlock =>
