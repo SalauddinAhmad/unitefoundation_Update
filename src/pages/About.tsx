@@ -57,8 +57,30 @@ const TeamSection = () => {
   if (sorted.length === 0) return null;
 
   return (
-    <section className="section-y">
-      <div className="container-page space-y-16">
+    <section className="section-y relative overflow-hidden">
+      {/* Soft Arabic calligraphy watermark background */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 flex items-center justify-center select-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse at center, hsl(var(--primary) / 0.06), transparent 70%)",
+        }}
+      >
+        <span
+          className="font-arabic text-primary/[0.06] whitespace-nowrap"
+          style={{
+            fontSize: "clamp(8rem, 22vw, 20rem)",
+            fontFamily: "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif",
+            lineHeight: 1,
+            letterSpacing: "0.02em",
+          }}
+        >
+          بِسْمِ اللَّهِ
+        </span>
+      </div>
+
+      <div className="container-page relative space-y-16">
         {advisors.length > 0 && (
           <div>
             <div className="text-center max-w-2xl mx-auto">
@@ -83,6 +105,7 @@ const TeamSection = () => {
     </section>
   );
 };
+
 
 
 // Milestones: bilingual data. Kept concise; renders using i18n active language.
