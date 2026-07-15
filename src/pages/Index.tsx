@@ -32,7 +32,7 @@ const Index = () => {
   const { data: settings, isLoading, isError } = useSettings();
 
   return (
-    <SiteLayout>
+    <SiteLayout hideFooter={(isLoading || !settings) && !isError}>
       <Seo
         title="ইউনাইট ফাউন্ডেশন | সুন্নাহর অনুসরণে, মানবতার কল্যাণে"
         description="বাংলাদেশের সবচেয়ে স্বচ্ছ ইসলামিক চ্যারিটি প্ল্যাটফর্ম। খাদ্য, পানি, এতিম স্পনসরশিপ, শিক্ষা ও মসজিদ নির্মাণে সরাসরি দান করুন।"
