@@ -23,8 +23,10 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-// Best-effort submit to backend so entries appear in the dashboard.
-const saveApplication = (
+// Save the submission to the backend so it appears in the dashboard.
+// Returns true on success — surfaces server errors so the user sees them
+// instead of an always-green "সফল" card that never actually persisted.
+const saveApplication = async (
   kind: "volunteer" | "career",
   payload: {
     name: string;
@@ -35,8 +37,21 @@ const saveApplication = (
     message?: string;
     extra?: Record<string, unknown>;
   },
-) => {
-  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
+): Promise<boolean> => {
+  try {
+    await api.post(`/applications/${kind}`, payload, { auth: false });
+    return true;
+  } catch (err) {
+    console.error("[volunteer] submit failed:", err);
+    toast({
+      title: "সাবমিট ব্যর্থ",
+      description:
+        (err as { message?: string })?.message ||
+        "সার্ভারে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+      variant: "destructive",
+    });
+    return false;
+  }
 };
 
 type TabKey = "volunteer" | "representative";
@@ -263,11 +278,9 @@ type SuccessBlock = {
 
 const SuccessCard = ({
   topic,
-  waUrl,
   onReset,
 }: {
   topic: TabKey;
-  waUrl: string;
   onReset: () => void;
 }) => {
   const { t } = useTranslation();
@@ -295,19 +308,11 @@ const SuccessCard = ({
         </ul>
       </div>
 
-      <div className="mt-6 grid sm:grid-cols-2 gap-3">
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3 hover:bg-white/90 transition-colors"
-        >
-          <Send className="h-4 w-4" /> {c.nextStep}
-        </a>
+      <div className="mt-6">
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 hover:bg-white/20 transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 px-6 hover:bg-white/20 transition-colors"
         >
           <RotateCcw className="h-4 w-4" /> {t("volunteerPage.success.newApplication")}
         </button>
@@ -428,13 +433,12 @@ const buildWhatsAppBody = (schema: { fields: { key: string; label: string; type:
 
 const VolunteerForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("volunteer");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="volunteer" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="volunteer" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
 
   return (
     <>
@@ -444,8 +448,8 @@ const VolunteerForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("volunteer", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("volunteer", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
               email: stringVal(vals.email),
@@ -453,7 +457,7 @@ const VolunteerForm = () => {
               message: stringVal(vals.motivation),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.volunteerTitle"), buildWhatsAppBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>
@@ -463,13 +467,12 @@ const VolunteerForm = () => {
 
 const RepresentativeForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("representative");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="representative" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="representative" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
 
   return (
     <>
@@ -479,8 +482,8 @@ const RepresentativeForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("career", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("career", {
               name: stringVal(vals.fullName || vals.name),
               phone: stringVal(vals.whatsapp || vals.phone),
               email: stringVal(vals.email),
@@ -489,7 +492,7 @@ const RepresentativeForm = () => {
               message: stringVal(vals.whyJoin),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.repTitle"), buildWhatsAppBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>
