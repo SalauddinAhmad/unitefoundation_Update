@@ -77,103 +77,121 @@ const Team = () => {
   };
 
   const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const grouped: Record<Category, TeamMember[]> = {
+    "উপদেষ্টা": sorted.filter((m) => categoryOf(m) === "উপদেষ্টা"),
+    "দায়িত্বশীল": sorted.filter((m) => categoryOf(m) === "দায়িত্বশীল"),
+  };
+
+  const renderCard = (m: TeamMember) => (
+    <div
+      key={m.id}
+      draggable
+      onDragStart={(e) => {
+        setDragId(m.id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        if (overId !== m.id) setOverId(m.id);
+      }}
+      onDragLeave={() => {
+        if (overId === m.id) setOverId(null);
+      }}
+      onDrop={(e) => {
+        e.preventDefault();
+        if (dragId) reorder(dragId, m.id);
+        setDragId(null);
+        setOverId(null);
+      }}
+      onDragEnd={() => {
+        setDragId(null);
+        setOverId(null);
+      }}
+      className={`group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-all cursor-move ${
+        dragId === m.id ? "opacity-40" : ""
+      } ${overId === m.id && dragId !== m.id ? "ring-2 ring-primary" : ""}`}
+    >
+      <div className="aspect-square bg-secondary overflow-hidden">
+        {m.photo ? (
+          <img src={m.photo} alt={m.name} className="h-full w-full object-cover" draggable={false} />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+            <Users2 className="h-10 w-10" />
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
+        <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
+        {m.bio && (
+          <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
+        )}
+      </div>
+      <div className="absolute top-2 left-2 h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+        <GripVertical className="h-4 w-4" />
+      </div>
+      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={() => setEditing(m)}
+          className="h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground"
+          aria-label="Edit"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+        <button
+          onClick={() => handleDelete(m.id)}
+          className="h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground"
+          aria-label="Delete"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold">আমাদের টিম</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            About পেজের "আমাদের টিম" সেকশনে দেখানো সদস্যদের যোগ, এডিট বা ডিলিট করুন।
-          </p>
-        </div>
-        <Button onClick={() => setEditing(emptyMember())} className="gap-2">
-          <Plus className="h-4 w-4" /> নতুন সদস্য
-        </Button>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-extrabold">আমাদের টিম</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          About পেজে "উপদেষ্টা" ও "দায়িত্বশীল" — এই দুই সেকশনে দেখানো সদস্যদের পরিচালনা করুন।
+        </p>
       </div>
 
-      {sorted.length === 0 ? (
+      {sorted.length === 0 && (
         <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
           <Users2 className="h-10 w-10 mx-auto mb-3 opacity-40" />
-          কোনো সদস্য যোগ করা হয়নি। "নতুন সদস্য" ক্লিক করে শুরু করুন।
+          কোনো সদস্য যোগ করা হয়নি। নিচের যেকোনো সেকশনের "নতুন সদস্য" ক্লিক করে শুরু করুন।
         </div>
-      ) : (
-        <>
-          <p className="text-xs text-muted-foreground -mt-2">
-            টিপ: কার্ডের উপরের বাঁ পাশের হ্যান্ডেল ধরে টেনে ক্রম পরিবর্তন করুন। প্রথমে থাকা সদস্য সবার আগে দেখাবে।
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-          {sorted.map((m) => (
-            <div
-              key={m.id}
-              draggable
-              onDragStart={(e) => {
-                setDragId(m.id);
-                e.dataTransfer.effectAllowed = "move";
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-                if (overId !== m.id) setOverId(m.id);
-              }}
-              onDragLeave={() => {
-                if (overId === m.id) setOverId(null);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                if (dragId) reorder(dragId, m.id);
-                setDragId(null);
-                setOverId(null);
-              }}
-              onDragEnd={() => {
-                setDragId(null);
-                setOverId(null);
-              }}
-              className={`group relative rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-all cursor-move ${
-                dragId === m.id ? "opacity-40" : ""
-              } ${overId === m.id && dragId !== m.id ? "ring-2 ring-primary" : ""}`}
-            >
-              <div className="aspect-square bg-secondary overflow-hidden">
-                {m.photo ? (
-                  <img src={m.photo} alt={m.name} className="h-full w-full object-cover" draggable={false} />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                    <Users2 className="h-10 w-10" />
-                  </div>
-                )}
-              </div>
-              <div className="p-3">
-                <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
-                <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
-                {m.bio && (
-                  <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
-                )}
-              </div>
-              <div className="absolute top-2 left-2 h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                <GripVertical className="h-4 w-4" />
-              </div>
-              <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => setEditing(m)}
-                  className="h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground"
-                  aria-label="Edit"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={() => handleDelete(m.id)}
-                  className="h-8 w-8 rounded-lg bg-background/95 border shadow-sm flex items-center justify-center hover:bg-destructive hover:text-destructive-foreground"
-                  aria-label="Delete"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
-          </div>
-        </>
-
       )}
+
+      {CATEGORIES.map((cat) => (
+        <section key={cat} className="space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-foreground">{cat}</h2>
+              <span className="text-xs text-muted-foreground bg-secondary rounded-full px-2 py-0.5">
+                {grouped[cat].length} জন
+              </span>
+            </div>
+            <Button size="sm" variant="outline" onClick={() => setEditing(emptyMember(cat))} className="gap-2">
+              <Plus className="h-3.5 w-3.5" /> নতুন {cat}
+            </Button>
+          </div>
+
+          {grouped[cat].length === 0 ? (
+            <p className="text-xs text-muted-foreground py-6 text-center rounded-lg border border-dashed">
+              এই সেকশনে এখনো কেউ নেই।
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              {grouped[cat].map(renderCard)}
+            </div>
+          )}
+        </section>
+      ))}
+
 
       {/* Edit Drawer */}
       {editing && (
