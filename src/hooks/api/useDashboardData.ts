@@ -119,7 +119,7 @@ function toApplication(row: ApiApplication, idPrefix: string): Application {
   };
 }
 
-const fetchApps = async (kind: "volunteers" | "members" | "careers", prefix: string): Promise<Application[]> => {
+const fetchApps = async (kind: "volunteer" | "member" | "career", prefix: string): Promise<Application[]> => {
   try {
     const rows = await api.get<ApiApplication[]>(`/applications/${kind}`, { auth: true });
     return (rows || []).map((r) => toApplication(r, prefix));
@@ -131,21 +131,21 @@ const fetchApps = async (kind: "volunteers" | "members" | "careers", prefix: str
 export const useVolunteerApps = () =>
   useQuery({
     queryKey: ["applications", "volunteers"],
-    queryFn: () => fetchApps("volunteers", "VOL"),
+    queryFn: () => fetchApps("volunteer", "VOL"),
     staleTime: STALE,
   });
 
 export const useMemberApps = () =>
   useQuery({
     queryKey: ["applications", "members"],
-    queryFn: () => fetchApps("members", "MEM"),
+    queryFn: () => fetchApps("member", "MEM"),
     staleTime: STALE,
   });
 
 export const useCareerApps = () =>
   useQuery({
     queryKey: ["applications", "careers"],
-    queryFn: () => fetchApps("careers", "DR"),
+    queryFn: () => fetchApps("career", "DR"),
     staleTime: STALE,
   });
 
