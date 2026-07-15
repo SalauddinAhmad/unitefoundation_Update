@@ -328,9 +328,8 @@ export const usePartnersPublic = () =>
   useQuery({
     queryKey: ["public", "partners"],
     queryFn: async () => {
-      const rows = await tryList<ApiPartner>("/partners", []);
-      const mapped = rows.map(apiToPartner);
-      return mapped.length ? mapped : staticPartners;
+      const rows = await tryList<ApiPartner>("/partners");
+      return rows.map(apiToPartner);
     },
     staleTime: STALE,
   });
@@ -343,7 +342,7 @@ export const usePartnerPublic = (slug: string) =>
         const row = await api.get<ApiPartner>(`/partners/${slug}`, { auth: false });
         return apiToPartner(row);
       } catch {
-        return staticPartners.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
