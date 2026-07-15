@@ -1,4 +1,4 @@
-import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail } from "lucide-react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -397,21 +397,29 @@ const About = () => {
                   <Sparkles className="h-3 w-3" /> Founder
                 </span>
               </div>
-              <div className="mt-5 flex items-center gap-2 px-1">
+              <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 px-1">
                 <h3 className="text-xl md:text-2xl font-extrabold text-primary leading-tight">{founderName}</h3>
+                <span className="text-sm md:text-base font-medium text-foreground/60">(দাঈ ইলাল্লাহ)</span>
               </div>
-              <p className="mt-2 px-1 text-sm text-foreground/70 leading-relaxed">{t("aboutPage.founderTagline")}</p>
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
-              <div className="mt-4 flex items-center gap-5 px-1 pb-1 text-foreground/70 text-sm">
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="font-semibold text-primary">{lang === "en" ? "2017" : "২০১৭"}</span>
-                  <span className="text-foreground/50">— {t("aboutPage.founderStart")}</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <span className="font-semibold text-primary">{lang === "en" ? "5" : "৫"}</span>
-                  <span className="text-foreground/50">{t("aboutPage.founderInstitutions")}</span>
-                </span>
+              <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
+                {[
+                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", cls: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]", icon: <Facebook className="h-4 w-4" /> },
+                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", cls: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]", icon: <Youtube className="h-4 w-4" /> },
+                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", cls: "hover:bg-gradient-to-br hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:text-white hover:border-transparent", icon: <Instagram className="h-4 w-4" /> },
+                  { href: "https://www.tiktok.com/@abdullahbinarshad.aba", label: "TikTok", cls: "hover:bg-black hover:text-white hover:border-black", icon: (
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V9.09a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.52Z"/></svg>
+                  ) },
+                  { href: "https://wa.me/message/QNW22PYYZM4ZN1", label: "WhatsApp", cls: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]", icon: (
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden><path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.5 0 .2 5.3.2 11.85a11.8 11.8 0 0 0 1.6 5.95L0 24l6.35-1.66a11.86 11.86 0 0 0 5.7 1.45h.01c6.55 0 11.85-5.3 11.85-11.85a11.8 11.8 0 0 0-3.49-8.46Zm-8.47 18.24h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.77.99 1-3.67-.23-.38a9.83 9.83 0 0 1-1.51-5.22c0-5.44 4.43-9.87 9.88-9.87 2.64 0 5.11 1.03 6.98 2.9a9.79 9.79 0 0 1 2.89 6.98c0 5.45-4.43 9.86-9.84 9.86Zm5.4-7.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.94 8.94 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.6-.9-2.19-.24-.57-.48-.5-.66-.5l-.57-.01a1.1 1.1 0 0 0-.8.37c-.28.3-1.05 1.03-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.11 3.22 5.11 4.51.72.31 1.27.5 1.71.64.72.23 1.37.2 1.89.12.58-.08 1.75-.71 2-1.4.25-.7.25-1.28.17-1.4-.07-.13-.27-.2-.57-.35Z"/></svg>
+                  ) },
+                ].map((s) => (
+                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary transition-all duration-200 ${s.cls}`}>
+                    {s.icon}
+                  </a>
+                ))}
               </div>
+
             </article>
           </div>
 
