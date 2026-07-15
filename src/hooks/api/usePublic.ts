@@ -1,24 +1,23 @@
 // ============================================================
 // Public data hooks — used by public-facing pages.
-// All hooks fall back to a provided static fallback if the API
-// is unreachable OR returns an empty list. This ensures the site
-// never breaks even if the backend is down or the DB is empty.
+// NO static demo fallback: if API fails or returns empty, we
+// return empty results so the site always reflects live data.
 // ============================================================
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { projects as staticProjects, type Project as StaticProject } from "@/data/projects";
-import { posts as staticPosts, type BlogPost as StaticBlogPost } from "@/data/blog";
-import { partners as staticPartners, type Partner as StaticPartner } from "@/data/partners";
+import { type Project as StaticProject } from "@/data/projects";
+import { type BlogPost as StaticBlogPost } from "@/data/blog";
+import { type Partner as StaticPartner } from "@/data/partners";
 
 const STALE = 60_000;
 
 // ---------- shared helper ----------
-async function tryList<T>(path: string, fallback: T[]): Promise<T[]> {
+async function tryList<T>(path: string): Promise<T[]> {
   try {
     const data = await api.get<T[]>(path, { auth: false });
-    return Array.isArray(data) && data.length ? data : fallback;
+    return Array.isArray(data) ? data : [];
   } catch {
-    return fallback;
+    return [];
   }
 }
 
@@ -73,9 +72,8 @@ export const useProjectsPublic = () =>
   useQuery({
     queryKey: ["public", "projects"],
     queryFn: async () => {
-      const rows = await tryList<ApiProject>("/projects", []);
-      const mapped = rows.map(apiToProject);
-      return mapped.length ? mapped : staticProjects;
+      const rows = await tryList<ApiProject>("/projects");
+      return rows.map(apiToProject);
     },
     staleTime: STALE,
   });
@@ -88,7 +86,7 @@ export const useProjectPublic = (slug: string) =>
         const row = await api.get<ApiProject>(`/projects/${slug}`, { auth: false });
         return apiToProject(row);
       } catch {
-        return staticProjects.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
@@ -154,9 +152,8 @@ export const usePostsPublic = () =>
   useQuery({
     queryKey: ["public", "posts"],
     queryFn: async () => {
-      const rows = await tryList<ApiPost>("/posts?status=published", []);
-      const mapped = rows.map(apiToPost);
-      return mapped.length ? mapped : staticPosts;
+      const rows = await tryList<ApiPost>("/posts?status=published");
+      return rows.map(apiToPost);
     },
     staleTime: STALE,
   });
@@ -169,7 +166,7 @@ export const usePostPublic = (slug: string) =>
         const row = await api.get<ApiPost>(`/posts/${slug}`, { auth: false });
         return apiToPost(row);
       } catch {
-        return staticPosts.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
@@ -331,9 +328,8 @@ export const usePartnersPublic = () =>
   useQuery({
     queryKey: ["public", "partners"],
     queryFn: async () => {
-      const rows = await tryList<ApiPartner>("/partners", []);
-      const mapped = rows.map(apiToPartner);
-      return mapped.length ? mapped : staticPartners;
+      const rows = await tryList<ApiPartner>("/partners");
+      return rows.map(apiToPartner);
     },
     staleTime: STALE,
   });
@@ -346,7 +342,7 @@ export const usePartnerPublic = (slug: string) =>
         const row = await api.get<ApiPartner>(`/partners/${slug}`, { auth: false });
         return apiToPartner(row);
       } catch {
-        return staticPartners.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
