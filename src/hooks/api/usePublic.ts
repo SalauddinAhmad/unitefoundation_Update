@@ -152,9 +152,8 @@ export const usePostsPublic = () =>
   useQuery({
     queryKey: ["public", "posts"],
     queryFn: async () => {
-      const rows = await tryList<ApiPost>("/posts?status=published", []);
-      const mapped = rows.map(apiToPost);
-      return mapped.length ? mapped : staticPosts;
+      const rows = await tryList<ApiPost>("/posts?status=published");
+      return rows.map(apiToPost);
     },
     staleTime: STALE,
   });
@@ -167,7 +166,7 @@ export const usePostPublic = (slug: string) =>
         const row = await api.get<ApiPost>(`/posts/${slug}`, { auth: false });
         return apiToPost(row);
       } catch {
-        return staticPosts.find((p) => p.slug === slug) || null;
+        return null;
       }
     },
     enabled: !!slug,
