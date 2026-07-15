@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, Facebook, Youtube, Instagram, MessageCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Facebook, Youtube, Instagram } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
