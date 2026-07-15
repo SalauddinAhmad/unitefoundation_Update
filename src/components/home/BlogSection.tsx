@@ -32,6 +32,7 @@ export const BlogSection = () => {
                   <span className="px-2 py-1 rounded bg-accent text-accent-foreground font-semibold">{p.category}</span>
                   <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" />{p.date}</span>
                   <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />{fmt(p.readMin)} {t("common.minutes")}</span>
+                  <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />{fmt(p.views ?? 0)}</span>
                 </div>
                 <h3 className="mt-3 text-lg font-bold leading-snug line-clamp-2 hover:text-primary transition-colors">
                   <Link to={`/blog/${p.slug}`}>{p.title}</Link>
