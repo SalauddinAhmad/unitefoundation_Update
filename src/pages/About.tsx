@@ -11,42 +11,76 @@ import { useTeam } from "@/hooks/api/useTeam";
 import { useSettings } from "@/hooks/api/useDashboardData";
 
 const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer U)[] | undefined ? U : never }) => (
-  <div className="group text-center">
-    <div className="mx-auto h-32 w-32 sm:h-36 sm:w-36 rounded-full overflow-hidden bg-secondary ring-4 ring-accent/40 shadow-sm group-hover:shadow-lg transition-all">
-      {m.photo ? (
-        <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-      ) : (
-        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-          <Users className="h-12 w-12" />
+  <article className="group relative">
+    {/* Soft glow behind card */}
+    <div aria-hidden className="pointer-events-none absolute -inset-1 rounded-[26px] bg-gradient-to-br from-primary/20 via-donate-orange/10 to-primary/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
+
+    <div className="relative rounded-[22px] bg-card p-2.5 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.35)] ring-1 ring-border/60 transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-[0_25px_60px_-25px_rgba(0,0,0,0.45)] group-hover:ring-primary/30">
+      {/* Portrait */}
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[16px] bg-secondary ring-1 ring-primary/10">
+        {m.photo ? (
+          <img
+            src={m.photo}
+            alt={m.name}
+            loading="lazy"
+            className="h-full w-full object-cover object-top transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+            <Users className="h-12 w-12" />
+          </div>
+        )}
+
+        {/* Bottom gradient veil */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+
+        {/* Name + role over image */}
+        <div className="absolute inset-x-0 bottom-0 p-3.5 text-left">
+          <div className="text-[15px] font-extrabold leading-tight text-white drop-shadow-sm">
+            {m.name}
+          </div>
+          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.12em] text-white/80">
+            {m.role}
+          </div>
+        </div>
+
+        {/* Corner accent */}
+        <div aria-hidden className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <Sparkles className="h-3.5 w-3.5 text-white" />
+        </div>
+      </div>
+
+      {/* Bio + socials */}
+      {(m.bio || m.facebook || m.linkedin || m.email) && (
+        <div className="px-2 pt-3 pb-1.5 text-left">
+          {m.bio && (
+            <p className="text-[12px] leading-relaxed text-muted-foreground line-clamp-2">{m.bio}</p>
+          )}
+          {(m.facebook || m.linkedin || m.email) && (
+            <div className="mt-2.5 flex items-center gap-1.5">
+              {m.facebook && (
+                <a href={m.facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="h-7 w-7 rounded-full border border-primary/15 bg-primary/5 text-primary flex items-center justify-center transition-all hover:-translate-y-0.5 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]">
+                  <Facebook className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {m.linkedin && (
+                <a href={m.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn" className="h-7 w-7 rounded-full border border-primary/15 bg-primary/5 text-primary flex items-center justify-center transition-all hover:-translate-y-0.5 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2]">
+                  <Linkedin className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {m.email && (
+                <a href={`mailto:${m.email}`} aria-label="Email" className="h-7 w-7 rounded-full border border-primary/15 bg-primary/5 text-primary flex items-center justify-center transition-all hover:-translate-y-0.5 hover:bg-primary hover:text-primary-foreground">
+                  <Mail className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
-    <div className="mt-5">
-      <div className="font-bold text-foreground">{m.name}</div>
-      <div className="text-sm text-primary font-medium mt-1">{m.role}</div>
-      {m.bio && <p className="text-sm text-muted-foreground mt-3 line-clamp-3">{m.bio}</p>}
-      {(m.facebook || m.linkedin || m.email) && (
-        <div className="mt-4 flex items-center justify-center gap-2">
-          {m.facebook && (
-            <a href={m.facebook} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-              <Facebook className="h-4 w-4" />
-            </a>
-          )}
-          {m.linkedin && (
-            <a href={m.linkedin} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-              <Linkedin className="h-4 w-4" />
-            </a>
-          )}
-          {m.email && (
-            <a href={`mailto:${m.email}`} className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-              <Mail className="h-4 w-4" />
-            </a>
-          )}
-        </div>
-      )}
-    </div>
-  </div>
+  </article>
 );
+
 
 const TeamSection = () => {
   const { data = [] } = useTeam();
