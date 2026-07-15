@@ -7,6 +7,7 @@ import { useLocaleNum } from "@/hooks/useLocaleNum";
 export const BlogSection = () => {
   const { t } = useTranslation();
   const { fmt } = useLocaleNum();
+  const { data: posts = [] } = usePostsPublic();
   const latest = posts.slice(0, 3);
   return (
     <section className="section-y bg-secondary/40">
