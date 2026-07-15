@@ -1,24 +1,23 @@
 // ============================================================
 // Public data hooks — used by public-facing pages.
-// All hooks fall back to a provided static fallback if the API
-// is unreachable OR returns an empty list. This ensures the site
-// never breaks even if the backend is down or the DB is empty.
+// NO static demo fallback: if API fails or returns empty, we
+// return empty results so the site always reflects live data.
 // ============================================================
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { projects as staticProjects, type Project as StaticProject } from "@/data/projects";
-import { posts as staticPosts, type BlogPost as StaticBlogPost } from "@/data/blog";
-import { partners as staticPartners, type Partner as StaticPartner } from "@/data/partners";
+import { type Project as StaticProject } from "@/data/projects";
+import { type BlogPost as StaticBlogPost } from "@/data/blog";
+import { type Partner as StaticPartner } from "@/data/partners";
 
 const STALE = 60_000;
 
 // ---------- shared helper ----------
-async function tryList<T>(path: string, fallback: T[]): Promise<T[]> {
+async function tryList<T>(path: string): Promise<T[]> {
   try {
     const data = await api.get<T[]>(path, { auth: false });
-    return Array.isArray(data) && data.length ? data : fallback;
+    return Array.isArray(data) ? data : [];
   } catch {
-    return fallback;
+    return [];
   }
 }
 
