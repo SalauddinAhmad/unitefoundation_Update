@@ -6,6 +6,7 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { usePostsPublic } from "@/hooks/api/usePublic";
+import { toBnNum } from "@/data/projects";
 import relief from "@/assets/hero-relief.jpg";
 
 const Blog = () => {
