@@ -25,7 +25,10 @@ const tabsBase: { key: TabKey; labelKey: string; icon: typeof HeartHandshake }[]
   { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
 ];
 
-const saveApplication = (
+// Save to backend and surface errors so users know when submission actually
+// failed (previously .catch(()=>{}) silently swallowed failures — records
+// never reached the DB and the dashboard stayed empty).
+const saveApplication = async (
   kind: "member" | "donor",
   payload: {
     name: string;
@@ -36,13 +39,21 @@ const saveApplication = (
     message?: string;
     extra?: Record<string, unknown>;
   },
-) => {
-  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
-};
-
-const buildWhatsAppUrl = (title: string, body: string, orgName: string) => {
-  const text = `*${title} — ${orgName}*\n\n${body}`;
-  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+): Promise<boolean> => {
+  try {
+    await api.post(`/applications/${kind}`, payload, { auth: false });
+    return true;
+  } catch (err) {
+    console.error("[donation] submit failed:", err);
+    toast({
+      title: "সাবমিট ব্যর্থ",
+      description:
+        (err as { message?: string })?.message ||
+        "সার্ভারে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+      variant: "destructive",
+    });
+    return false;
+  }
 };
 
 type LeftBlock = {
