@@ -96,7 +96,7 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
 
   const isDark = variant === "dark";
   const inputCls = isDark
-    ? "w-full rounded-lg px-3 py-2.5 text-sm bg-white/12 border border-white/25 text-white placeholder:text-white/60 focus:bg-white/20 focus:border-white outline-none transition"
+    ? "w-full rounded-lg px-3 py-2.5 text-sm bg-primary-foreground/10 border border-primary-foreground/25 text-primary-foreground placeholder:text-primary-foreground/60 focus:bg-primary-foreground/20 focus:border-primary-foreground outline-none transition"
     : "w-full rounded-lg px-3 py-2.5 text-sm bg-background border border-input text-foreground placeholder:text-muted-foreground focus:border-primary outline-none transition";
   const labelCls = isDark ? "text-xs font-semibold text-white/90 mb-1.5 block" : "text-xs font-semibold text-foreground/80 mb-1.5 block";
 
