@@ -401,24 +401,16 @@ const About = () => {
           </div>
 
           <div className="order-1 md:order-2 text-center md:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/[0.06] px-4 py-1.5 text-[11px] font-bold tracking-[0.28em] uppercase text-amber-200/90 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-amber-300" /> {t("aboutPage.founderEyebrow")}
-            </span>
-            <h2 className="mt-5 text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
               {t("aboutPage.founderTitle")}
             </h2>
-            <p className="mt-4 text-lg md:text-xl font-semibold text-amber-200/90">
-              {founderName}
-            </p>
             <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
               <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70 md:bg-gradient-to-l md:from-amber-300/70 md:to-transparent" />
               <span className="h-2 w-2 rotate-45 bg-amber-300" />
               <span className="h-px w-16 bg-gradient-to-l from-transparent to-amber-300/70 md:bg-gradient-to-r md:from-amber-300/70 md:to-transparent" />
             </div>
-            <p className="mt-6 max-w-xl mx-auto md:mx-0 text-white/75 text-base md:text-lg leading-[1.9]">
-              {t("aboutPage.founderTagline")}
-            </p>
           </div>
+
 
 
         </div>
