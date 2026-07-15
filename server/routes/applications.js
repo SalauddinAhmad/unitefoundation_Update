@@ -116,6 +116,11 @@ router.post('/:kind', asyncH(async (req, res) => {
     [id, req.params.kind, data.name, data.phone || null, data.email || null, data.address || null,
      data.profession || null, data.message || null, data.extra ? JSON.stringify(data.extra) : null]
   );
+
+  // Send confirmation + admin notification in background (never blocks response)
+  try { sendConfirmationEmails(req.params.kind, data); }
+  catch (err) { console.error('[applications] email dispatch error:', err && err.message); }
+
   res.status(201).json({ id, status: 'new' });
 }));
 
