@@ -88,6 +88,7 @@ const Blog = () => {
               </div>
               <div className="p-6 md:p-10 flex flex-col justify-center">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary"><Calendar className="h-3.5 w-3.5" />{featured.date}</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground ml-3"><Eye className="h-3.5 w-3.5" />{toBnNum(featured.views ?? 0)} বার পঠিত</span>
                 <h2 className="mt-3 text-2xl md:text-4xl font-extrabold leading-[1.2] group-hover:text-primary transition-colors">{featured.title}</h2>
                 <p className="mt-4 text-muted-foreground leading-relaxed line-clamp-3">{featured.excerpt}</p>
                 <span className="mt-6 inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-3 transition-all">
