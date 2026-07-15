@@ -104,8 +104,8 @@ const Contact = () => {
             <Field label={t("contactPage.message")}>
               <textarea required maxLength={2000} rows={6} value={form.message} onChange={upd("message")} className="input-c resize-none" />
             </Field>
-            <button type="submit" className="btn-donate w-full text-base">
-              <Send className="h-4 w-4" /> {t("contactPage.send")}
+            <button type="submit" disabled={sending} className="btn-donate w-full text-base disabled:opacity-60">
+              <Send className="h-4 w-4" /> {sending ? "পাঠানো হচ্ছে…" : t("contactPage.send")}
             </button>
           </form>
         </div>
