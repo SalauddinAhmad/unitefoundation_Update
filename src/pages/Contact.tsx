@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, Facebook, Youtube, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Facebook, Youtube, Instagram, MessageCircle } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
@@ -9,7 +9,7 @@ import contactImg from "@/assets/hero-mosque.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
-import whatsappIcon from "@/assets/whatsapp-icon.svg";
+
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -71,7 +71,7 @@ const Contact = () => {
           <div className="space-y-4 lg:col-span-1">
             <InfoCard icon={Phone} title={t("contactPage.phone")} lines={[site.phone]} href={`tel:${site.phone.replace(/\s/g, "")}`} />
             <InfoCard icon={Mail} title={t("contactPage.email")} lines={[site.email]} href={`mailto:${site.email}`} />
-            <InfoCard iconSrc={whatsappIcon} title={t("contactPage.whatsapp")} lines={[t("contactPage.whatsappNote")]} href={`https://wa.me/${site.whatsapp}`} accent />
+            <InfoCard icon={MessageCircle} title={t("contactPage.whatsapp")} lines={[t("contactPage.whatsappNote")]} href={`https://wa.me/${site.whatsapp}`} accent />
             <InfoCard icon={MapPin} title={t("contactPage.address")} lines={[site.address, t("contactPage.officeHours")]} />
 
             <div className="card-base p-6">
