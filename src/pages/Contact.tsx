@@ -71,7 +71,7 @@ const Contact = () => {
           <div className="space-y-4 lg:col-span-1">
             <InfoCard icon={Phone} title={t("contactPage.phone")} lines={[site.phone]} href={`tel:${site.phone.replace(/\s/g, "")}`} />
             <InfoCard icon={Mail} title={t("contactPage.email")} lines={[site.email]} href={`mailto:${site.email}`} />
-            <InfoCard icon={MessageCircle} title={t("contactPage.whatsapp")} lines={[t("contactPage.whatsappNote")]} href={`https://wa.me/${site.whatsapp}`} accent />
+            <InfoCard icon={WhatsAppIcon} title={t("contactPage.whatsapp")} lines={[t("contactPage.whatsappNote")]} href={`https://wa.me/${site.whatsapp}`} accent />
             <InfoCard icon={MapPin} title={t("contactPage.address")} lines={[site.address, t("contactPage.officeHours")]} />
 
             <div className="card-base p-6">
