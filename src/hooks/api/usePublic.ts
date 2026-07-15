@@ -175,6 +175,17 @@ export const usePostPublic = (slug: string) =>
     staleTime: STALE,
   });
 
+export const useIncrementPostView = () =>
+  useMutation({
+    mutationFn: async (slug: string) => {
+      try {
+        return await api.post<{ views: number }>(`/posts/${slug}/view`, {}, { auth: false } as any);
+      } catch {
+        return { views: 0 };
+      }
+    },
+  });
+
 // ============================================================
 // GALLERY
 // ============================================================
