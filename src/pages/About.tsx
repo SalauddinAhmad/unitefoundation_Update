@@ -58,27 +58,34 @@ const TeamSection = () => {
 
   return (
     <section className="section-y relative overflow-hidden">
-      {/* Soft Arabic calligraphy watermark background */}
+      {/* Decorative Islamic geometric watermark (ornamental — not Arabic text) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 flex items-center justify-center select-none"
+        className="pointer-events-none absolute inset-0 select-none"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse at center, hsl(var(--primary) / 0.06), transparent 70%)",
+            "radial-gradient(ellipse at center, hsl(var(--primary) / 0.05), transparent 70%)",
         }}
       >
-        <span
-          className="font-arabic text-primary/[0.06] whitespace-nowrap"
-          style={{
-            fontSize: "clamp(8rem, 22vw, 20rem)",
-            fontFamily: "'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif",
-            lineHeight: 1,
-            letterSpacing: "0.02em",
-          }}
+        <svg
+          className="absolute inset-0 h-full w-full text-primary/[0.07]"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden
         >
-          بِسْمِ اللَّهِ
-        </span>
+          <defs>
+            <pattern id="islamic-star" x="0" y="0" width="120" height="120" patternUnits="userSpaceOnUse">
+              <g fill="none" stroke="currentColor" strokeWidth="1.2">
+                {/* 8-point star */}
+                <path d="M60 15 L71 49 L105 49 L78 70 L89 104 L60 83 L31 104 L42 70 L15 49 L49 49 Z" />
+                <path d="M60 15 L49 49 L15 49 L42 70 L31 104 L60 83 L89 104 L78 70 L105 49 L71 49 Z" />
+                <circle cx="60" cy="60" r="10" />
+              </g>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#islamic-star)" />
+        </svg>
       </div>
+
 
       <div className="container-page relative space-y-16">
         {advisors.length > 0 && (
