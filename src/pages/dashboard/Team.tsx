@@ -13,10 +13,15 @@ import {
   type TeamMember,
 } from "@/hooks/api/useTeam";
 
-const emptyMember = (): TeamMember => ({
+type Category = "উপদেষ্টা" | "দায়িত্বশীল";
+const CATEGORIES: Category[] = ["উপদেষ্টা", "দায়িত্বশীল"];
+const categoryOf = (m: TeamMember): Category =>
+  /উপদেষ্টা|advisor/i.test(m.role || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+
+const emptyMember = (category: Category = "দায়িত্বশীল"): TeamMember => ({
   id: `TM-${Date.now()}`,
   name: "",
-  role: "",
+  role: category,
   bio: "",
   photo: "",
   order: 0,
