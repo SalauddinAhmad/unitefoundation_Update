@@ -180,9 +180,9 @@ const Overview = () => {
         safe(api.get<ChannelRow[]>(`/stats/channels${q}`), [] as ChannelRow[]),
         safe(api.get<DonationRow[]>(`/donations${q}`), [] as DonationRow[]),
         safe(api.get<ProjectRow[]>("/projects", { auth: false }), [] as ProjectRow[]),
-        safe(api.get<ApplicationRow[]>(`/applications/volunteers${q}`), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>(`/applications/members${q}`), [] as ApplicationRow[]),
-        safe(api.get<ApplicationRow[]>(`/applications/careers${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/volunteer${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/member${q}`), [] as ApplicationRow[]),
+        safe(api.get<ApplicationRow[]>(`/applications/career${q}`), [] as ApplicationRow[]),
         safe(api.get<any[]>("/posts", { auth: false }), [] as any[]),
         safe(api.get<any[]>("/messages"), [] as any[]),
       ]);

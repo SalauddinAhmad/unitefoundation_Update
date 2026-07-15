@@ -83,12 +83,6 @@ function sendConfirmationEmails(kind, payload) {
   }
 }
 
-router.get('/:kind', requireAuth, asyncH(async (req, res) => {
-  if (!KINDS.includes(req.params.kind)) return res.status(400).json({ message: 'Invalid kind' });
-  const [rows] = await pool.execute('SELECT * FROM applications WHERE kind=? ORDER BY created_at DESC', [req.params.kind]);
-  res.json(rows);
-}));
-
 // pluralised list endpoints for spec compatibility
 ['volunteers','members','careers','donors'].forEach(p => {
   const kind = p.replace(/s$/, '');
@@ -97,6 +91,12 @@ router.get('/:kind', requireAuth, asyncH(async (req, res) => {
     res.json(rows);
   }));
 });
+
+router.get('/:kind', requireAuth, asyncH(async (req, res) => {
+  if (!KINDS.includes(req.params.kind)) return res.status(400).json({ message: 'Invalid kind' });
+  const [rows] = await pool.execute('SELECT * FROM applications WHERE kind=? ORDER BY created_at DESC', [req.params.kind]);
+  res.json(rows);
+}));
 
 router.post('/:kind', asyncH(async (req, res) => {
   if (!KINDS.includes(req.params.kind)) return res.status(400).json({ message: 'Invalid kind' });

@@ -136,9 +136,9 @@ export const donationsApi = {
 };
 
 export const applicationsApi = {
-  volunteers: () => api.get("/applications/volunteers"),
-  members: () => api.get("/applications/members"),
-  careers: () => api.get("/applications/careers"),
+  volunteers: () => api.get("/applications/volunteer"),
+  members: () => api.get("/applications/member"),
+  careers: () => api.get("/applications/career"),
   submit: (kind: "volunteer" | "member" | "career" | "donor", data: unknown) =>
     api.post(`/applications/${kind}`, data, { auth: false }),
   updateStatus: (kind: string, id: string, status: string) =>
