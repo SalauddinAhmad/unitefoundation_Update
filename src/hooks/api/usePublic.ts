@@ -119,7 +119,7 @@ const bnDate = (iso?: string | null) => {
   }
 };
 
-export type UiBlogPost = StaticBlogPost & { html?: string };
+export type UiBlogPost = StaticBlogPost & { html?: string; views?: number };
 
 export function apiToPost(row: ApiPost): UiBlogPost {
   // content may be plain HTML (from dashboard rich-text editor) OR a JSON ContentBlock[] string
@@ -146,6 +146,7 @@ export function apiToPost(row: ApiPost): UiBlogPost {
     readMin: Math.max(3, Math.round((c.length || 500) / 800)),
     body,
     html,
+    views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
   };
 }
 
