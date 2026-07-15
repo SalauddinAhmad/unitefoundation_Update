@@ -10,9 +10,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { api } from "@/lib/api";
 import { EXTRAS, mergeExtras } from "@/lib/localExtras";
-import heroMosque from "@/assets/hero-mosque.jpg";
-import heroRelief from "@/assets/hero-relief.jpg";
-import heroWater from "@/assets/hero-water.jpg";
 import {
   donations as mockDonations,
   volunteerApps as mockVolunteers,
@@ -449,47 +446,7 @@ const defaultSettings: SiteSettings = {
     { value: 3450, label: "স্বেচ্ছাসেবক", suffix: "" },
     { value: 14, label: "দেশে কার্যক্রম", suffix: "" },
   ],
-  hero_slides: [
-    {
-      image: heroMosque,
-      eyebrow: "সুন্নাহর অনুসরণে",
-      title: "মানবতার কল্যাণে, একসাথে এগিয়ে চলি",
-      subtitle: "ইউনাইট ফাউন্ডেশন — দাওয়াহ, শিক্ষা, ত্রাণ ও সমাজকল্যাণে নিবেদিত একটি অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম।",
-      primaryCtaLabel: "এখনই দান করুন",
-      primaryCtaTo: "/donate",
-      secondaryCtaLabel: "আমাদের সম্পর্কে",
-      secondaryCtaTo: "/about",
-      align: "left",
-      overlay: "dark",
-      enabled: true,
-    },
-    {
-      image: heroRelief,
-      eyebrow: "জরুরি ত্রাণ",
-      title: "দুর্যোগে দাঁড়াই অসহায়দের পাশে",
-      subtitle: "বন্যা, শীত ও সংকটে ক্ষতিগ্রস্ত পরিবারের কাছে আপনার দান পৌঁছে দিচ্ছি সরাসরি ও স্বচ্ছভাবে।",
-      primaryCtaLabel: "ত্রাণে দান করুন",
-      primaryCtaTo: "/donate",
-      secondaryCtaLabel: "প্রকল্প দেখুন",
-      secondaryCtaTo: "/projects",
-      align: "left",
-      overlay: "dark",
-      enabled: true,
-    },
-    {
-      image: heroWater,
-      eyebrow: "বিশুদ্ধ পানি প্রকল্প",
-      title: "প্রতিটি ফোঁটায় সাদাকায়ে জারিয়াহ",
-      subtitle: "গ্রামে গ্রামে গভীর নলকূপ ও পানির প্ল্যান্ট স্থাপন করে নিরাপদ পানির সুযোগ পৌঁছে দিচ্ছি।",
-      primaryCtaLabel: "পানির প্রকল্পে দান",
-      primaryCtaTo: "/donate",
-      secondaryCtaLabel: "বিস্তারিত জানুন",
-      secondaryCtaTo: "/projects",
-      align: "left",
-      overlay: "medium",
-      enabled: true,
-    },
-  ],
+  hero_slides: [],
   about: {
     heading: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
     highlight: "ইউনাইট ফাউন্ডেশন",
@@ -593,12 +550,8 @@ export const useSettings = () =>
   useQuery({
     queryKey: ["settings"],
     queryFn: async () => {
-      try {
-        const remote = await api.get<Partial<SiteSettings>>("/settings", { auth: false });
-        return withDefaults(remote);
-      } catch {
-        return loadLocalSettings();
-      }
+      const remote = await api.get<Partial<SiteSettings>>("/settings", { auth: false });
+      return withDefaults(remote);
     },
     staleTime: STALE,
   });

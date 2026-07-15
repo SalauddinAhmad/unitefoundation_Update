@@ -9,16 +9,44 @@ import { PartnersSection } from "@/components/home/PartnersSection";
 import { VisitorCounter } from "@/components/home/VisitorCounter";
 import { HomeDonationChannelsSection } from "@/components/home/HomeDonationChannelsSection";
 import { SiteLayout } from "@/components/layout/SiteLayout";
+import { useSettings } from "@/hooks/api/useDashboardData";
+
+const HomeLoadingState = () => (
+  <>
+    <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-muted to-primary/5 animate-pulse" />
+    <section className="section-y bg-background" aria-hidden>
+      <div className="container-page grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="h-[420px] rounded-card bg-muted animate-pulse" />
+        <div className="space-y-5">
+          <div className="h-10 w-3/4 rounded bg-muted animate-pulse" />
+          <div className="h-4 w-full rounded bg-muted animate-pulse" />
+          <div className="h-4 w-11/12 rounded bg-muted animate-pulse" />
+          <div className="h-4 w-4/5 rounded bg-muted animate-pulse" />
+        </div>
+      </div>
+    </section>
+  </>
+);
 
 const Index = () => {
+  const { data: settings, isLoading, isError } = useSettings();
+
   return (
-    <SiteLayout>
+    <SiteLayout hideFooter={(isLoading || !settings) && !isError}>
       <Seo
         title="ইউনাইট ফাউন্ডেশন | সুন্নাহর অনুসরণে, মানবতার কল্যাণে"
         description="বাংলাদেশের সবচেয়ে স্বচ্ছ ইসলামিক চ্যারিটি প্ল্যাটফর্ম। খাদ্য, পানি, এতিম স্পনসরশিপ, শিক্ষা ও মসজিদ নির্মাণে সরাসরি দান করুন।"
         canonical="/"
       />
       <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — সুন্নাহর অনুসরণে, মানবতার কল্যাণে</h1>
+      {(isLoading || !settings) && !isError ? (
+        <HomeLoadingState />
+      ) : isError ? (
+        <section className="min-h-[70vh] flex items-center justify-center bg-background px-6 text-center">
+          <p className="text-muted-foreground">তথ্য লোড করা যাচ্ছে না। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।</p>
+        </section>
+      ) : (
+        <>
       <Hero />
       
       <AboutSection />
@@ -29,6 +57,8 @@ const Index = () => {
       <GallerySection />
       <PartnersSection />
       <VisitorCounter />
+        </>
+      )}
     </SiteLayout>
   );
 };
