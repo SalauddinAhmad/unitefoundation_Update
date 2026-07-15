@@ -123,12 +123,27 @@ const BlogPost = () => {
   const { slug = "" } = useParams();
   const { data: post, isLoading } = usePostPublic(slug);
   const { data: allPosts = [] } = usePostsPublic();
+  const incrementView = useIncrementPostView();
+  const [liveViews, setLiveViews] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!slug) return;
+    incrementView.mutate(slug, {
+      onSuccess: (d) => {
+        if (d && typeof d.views === "number") setLiveViews(d.views);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
+
   if (isLoading) return (
     <SiteLayout>
       <div className="py-32 flex justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div>
     </SiteLayout>
   );
   if (!post) return <NotFound />;
+
+  const views = liveViews ?? post.views ?? 0;
 
   const related = allPosts.filter((p) => p.slug !== slug).slice(0, 3);
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
