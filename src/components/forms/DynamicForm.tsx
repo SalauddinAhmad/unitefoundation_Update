@@ -101,7 +101,32 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
   const labelCls = isDark ? "text-xs font-semibold text-white/90 mb-1.5 block" : "text-xs font-semibold text-foreground/80 mb-1.5 block";
 
   return (
-    <form onSubmit={submit} className="space-y-3">
+    <form onSubmit={submit} className={"space-y-3 " + (isDark ? "dyn-form-dark" : "dyn-form-light")}>
+      <style>{`
+        /* Neutralize browser autofill white background that hides typed text */
+        .dyn-form-dark input:-webkit-autofill,
+        .dyn-form-dark input:-webkit-autofill:hover,
+        .dyn-form-dark input:-webkit-autofill:focus,
+        .dyn-form-dark textarea:-webkit-autofill,
+        .dyn-form-dark select:-webkit-autofill {
+          -webkit-text-fill-color: #ffffff !important;
+          caret-color: #ffffff;
+          -webkit-box-shadow: 0 0 0 1000px hsl(var(--primary)) inset !important;
+          box-shadow: 0 0 0 1000px hsl(var(--primary)) inset !important;
+          transition: background-color 9999s ease-in-out 0s;
+        }
+        .dyn-form-light input:-webkit-autofill,
+        .dyn-form-light input:-webkit-autofill:hover,
+        .dyn-form-light input:-webkit-autofill:focus,
+        .dyn-form-light textarea:-webkit-autofill,
+        .dyn-form-light select:-webkit-autofill {
+          -webkit-text-fill-color: hsl(var(--foreground)) !important;
+          caret-color: hsl(var(--foreground));
+          -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+          box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+          transition: background-color 9999s ease-in-out 0s;
+        }
+      `}</style>
       <div className="grid sm:grid-cols-2 gap-3">
         {schema.fields.map((f) => renderField(f, values, set, inputCls, labelCls, isDark))}
       </div>
