@@ -179,7 +179,7 @@ export const useIncrementPostView = () =>
   useMutation({
     mutationFn: async (slug: string) => {
       try {
-        return await api.post<{ views: number }>(`/posts/${slug}/view`, {}, { auth: false } as any);
+        return await api.post<{ views: number }>(`/posts/${slug}/view`, {}, { auth: false });
       } catch {
         return { views: 0 };
       }
