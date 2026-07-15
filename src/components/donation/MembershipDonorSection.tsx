@@ -108,11 +108,9 @@ type SuccessBlock = {
 
 const SuccessCard = ({
   topic,
-  waUrl,
   onReset,
 }: {
   topic: TabKey;
-  waUrl: string;
   onReset: () => void;
 }) => {
   const { t } = useTranslation();
@@ -140,19 +138,11 @@ const SuccessCard = ({
         </ul>
       </div>
 
-      <div className="mt-6 grid sm:grid-cols-2 gap-3">
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3 hover:bg-white/90 transition-colors"
-        >
-          <Send className="h-4 w-4" /> {c.nextStep}
-        </a>
+      <div className="mt-6">
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 hover:bg-white/20 transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 px-6 hover:bg-white/20 transition-colors"
         >
           <RotateCcw className="h-4 w-4" /> {t("volunteerPage.success.newApplication")}
         </button>
