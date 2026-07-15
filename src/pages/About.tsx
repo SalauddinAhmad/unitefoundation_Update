@@ -10,65 +10,80 @@ import t3 from "@/assets/team-3.jpg";
 import { useTeam } from "@/hooks/api/useTeam";
 import { useSettings } from "@/hooks/api/useDashboardData";
 
-const TeamSection = () => {
-  const { data = [] } = useTeam();
-  const { t } = useTranslation();
-  const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  return (
-    <section className="section-y">
-      <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">{t("aboutPage.teamEyebrow")}</span>
-          <h2 className="heading-display mt-3">{t("aboutPage.teamHeading")}</h2>
-          {sorted.length === 0 && (
-            <p className="mt-4 text-muted-foreground">{t("aboutPage.teamEmpty")}</p>
+const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer U)[] | undefined ? U : never }) => (
+  <div className="group text-center">
+    <div className="mx-auto h-32 w-32 sm:h-36 sm:w-36 rounded-full overflow-hidden bg-secondary ring-4 ring-accent/40 shadow-sm group-hover:shadow-lg transition-all">
+      {m.photo ? (
+        <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+      ) : (
+        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+          <Users className="h-12 w-12" />
+        </div>
+      )}
+    </div>
+    <div className="mt-5">
+      <div className="font-bold text-foreground">{m.name}</div>
+      <div className="text-sm text-primary font-medium mt-1">{m.role}</div>
+      {m.bio && <p className="text-sm text-muted-foreground mt-3 line-clamp-3">{m.bio}</p>}
+      {(m.facebook || m.linkedin || m.email) && (
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {m.facebook && (
+            <a href={m.facebook} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+              <Facebook className="h-4 w-4" />
+            </a>
+          )}
+          {m.linkedin && (
+            <a href={m.linkedin} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+              <Linkedin className="h-4 w-4" />
+            </a>
+          )}
+          {m.email && (
+            <a href={`mailto:${m.email}`} className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
+              <Mail className="h-4 w-4" />
+            </a>
           )}
         </div>
-        {sorted.length > 0 && (
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
-            {sorted.map((m) => (
-              <div key={m.id} className="group text-center">
-                <div className="mx-auto h-32 w-32 sm:h-36 sm:w-36 rounded-full overflow-hidden bg-secondary ring-4 ring-accent/40 shadow-sm group-hover:shadow-lg transition-all">
-                  {m.photo ? (
-                    <img src={m.photo} alt={m.name} className="h-full w-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                      <Users className="h-12 w-12" />
-                    </div>
-                  )}
-                </div>
-                <div className="mt-5">
-                  <div className="font-bold text-foreground">{m.name}</div>
-                  <div className="text-sm text-primary font-medium mt-1">{m.role}</div>
-                  {m.bio && <p className="text-sm text-muted-foreground mt-3 line-clamp-3">{m.bio}</p>}
-                  {(m.facebook || m.linkedin || m.email) && (
-                    <div className="mt-4 flex items-center justify-center gap-2">
-                      {m.facebook && (
-                        <a href={m.facebook} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-                          <Facebook className="h-4 w-4" />
-                        </a>
-                      )}
-                      {m.linkedin && (
-                        <a href={m.linkedin} target="_blank" rel="noreferrer" className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-                          <Linkedin className="h-4 w-4" />
-                        </a>
-                      )}
-                      {m.email && (
-                        <a href={`mailto:${m.email}`} className="h-8 w-8 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition-colors">
-                          <Mail className="h-4 w-4" />
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
+      )}
+    </div>
+  </div>
+);
+
+const TeamSection = () => {
+  const { data = [] } = useTeam();
+  const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const advisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
+  const officers = sorted.filter((m) => !/উপদেষ্টা|advisor/i.test(m.role || ""));
+
+  if (sorted.length === 0) return null;
+
+  return (
+    <section className="section-y">
+      <div className="container-page space-y-16">
+        {advisors.length > 0 && (
+          <div>
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="heading-display">উপদেষ্টা</h2>
+            </div>
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+              {advisors.map((m) => <TeamCard key={m.id} m={m} />)}
+            </div>
+          </div>
+        )}
+        {officers.length > 0 && (
+          <div>
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="heading-display">দায়িত্বশীল</h2>
+            </div>
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+              {officers.map((m) => <TeamCard key={m.id} m={m} />)}
+            </div>
           </div>
         )}
       </div>
     </section>
   );
 };
+
 
 // Milestones: bilingual data. Kept concise; renders using i18n active language.
 type Milestone = { y: { bn: string; en: string }; t: { bn: string; en: string }; items: { bn: string; en: string }[] };
