@@ -229,12 +229,19 @@ const Team = () => {
                   />
                 </div>
                 <div>
-                  <Label>পদবি *</Label>
-                  <Input
-                    value={editing.role}
+                  <Label>ক্যাটাগরি *</Label>
+                  <select
+                    value={categoryOf(editing)}
                     onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                    placeholder="প্রোগ্রাম ডিরেক্টর"
-                  />
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    About পেজে সদস্য কোন সেকশনে দেখাবে সেটি নির্ধারণ করে।
+                  </p>
                 </div>
               </div>
 
