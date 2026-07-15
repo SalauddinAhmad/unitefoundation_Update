@@ -5,7 +5,7 @@ const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
-const { tplWrapContent } = require('../services/emailTemplate');
+const { tplWrapContent, renderEmail } = require('../services/emailTemplate');
 
 router.get('/', requireAuth, asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM messages ORDER BY created_at DESC');
