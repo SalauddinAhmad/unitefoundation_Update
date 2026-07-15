@@ -9,7 +9,7 @@ import contactImg from "@/assets/hero-mosque.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
-import whatsappIcon from "@/assets/whatsapp-icon.svg";
+
 
 const Contact = () => {
   const { t } = useTranslation();
