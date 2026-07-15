@@ -563,7 +563,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       Array.isArray(s?.impact_stats) && s!.impact_stats!.length
         ? s!.impact_stats!
         : defaultSettings.impact_stats,
-    hero_slides: Array.isArray(s?.hero_slides) && s!.hero_slides!.length ? s!.hero_slides! : defaultSettings.hero_slides,
+    hero_slides: Array.isArray(s?.hero_slides) ? s!.hero_slides! : defaultSettings.hero_slides,
     about: { ...defaultSettings.about, ...(s?.about || {}), points: (s?.about?.points && s.about.points.length ? s.about.points : defaultSettings.about.points) },
     trust:
       Array.isArray(s?.trust) && s!.trust!.length ? s!.trust! : defaultSettings.trust,

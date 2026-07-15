@@ -17,7 +17,7 @@ const alignClasses = {
 
 export const Hero = () => {
   const { t } = useTranslation();
-  const { data: settings } = useSettings();
+  const { data: settings, isLoading, isFetching } = useSettings();
   const raw = settings?.hero_slides || [];
   const slides = raw
     .filter((s) => s.enabled !== false && s.image && s.image.trim())
@@ -34,6 +34,13 @@ export const Hero = () => {
     const t = setInterval(() => setI((v) => (v + 1) % slides.length), 6500);
     return () => clearInterval(t);
   }, [slides.length]);
+
+  // Prevent flash of default/build-time content — show skeleton until API resolves
+  if (isLoading || (!settings && isFetching)) {
+    return (
+      <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-muted to-primary/5 animate-pulse" />
+    );
+  }
 
   if (!slides.length) return null;
   const current = slides[Math.min(i, slides.length - 1)];
