@@ -93,14 +93,7 @@ export const Footer = () => {
               <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
               <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
             </div>
-            <a
-              href="https://wa.me/message/IKFP3JMMZ66MJ1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-en hover:text-white transition-colors"
-            >
-              Designed & Developed by Salauddin Ahmad
-            </a>
+            <span aria-hidden className="sr-only" />
           </div>
         </div>
       </div>

@@ -76,7 +76,7 @@ export const Hero = () => {
           </div>
           <h1
             key={`t-${i}`}
-            className="animate-fade-up mt-5 text-4xl md:text-6xl font-extrabold leading-[1.1] text-white"
+            className="animate-fade-up mt-5 text-4xl md:text-6xl font-extrabold leading-[1.4] pt-2 text-white"
           >
             {current.title}
           </h1>
