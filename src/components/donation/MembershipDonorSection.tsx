@@ -242,13 +242,12 @@ const buildBody = (schema: { fields: { key: string; label: string; type: string 
 
 const RegularForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("donor");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -257,8 +256,8 @@ const RegularForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("donor", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
               email: stringVal(vals.email),
@@ -266,7 +265,7 @@ const RegularForm = () => {
               message: stringVal(vals.note),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.regularTitle"), buildBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>
@@ -276,13 +275,12 @@ const RegularForm = () => {
 
 const MemberForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("member");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -291,8 +289,8 @@ const MemberForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("member", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("member", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
               email: stringVal(vals.email),
@@ -301,7 +299,7 @@ const MemberForm = () => {
               message: stringVal(vals.note),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.memberTitle"), buildBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>
