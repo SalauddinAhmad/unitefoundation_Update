@@ -402,23 +402,74 @@ const About = () => {
                 <span className="text-sm md:text-base font-medium italic text-foreground/60">দাঈ ইলাল্লাহ</span>
               </div>
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
-              <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
+              <div className="mt-4 flex flex-wrap items-center gap-2.5 px-1 pb-1">
                 {[
-                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", cls: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]", icon: <Facebook className="h-4 w-4" /> },
-                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", cls: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]", icon: <Youtube className="h-4 w-4" /> },
-                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", cls: "hover:bg-gradient-to-br hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:text-white hover:border-transparent", icon: <Instagram className="h-4 w-4" /> },
-                  { href: "https://www.tiktok.com/@abdullahbinarshad.aba", label: "TikTok", cls: "hover:bg-black hover:text-white hover:border-black", icon: (
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V9.09a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.52Z"/></svg>
-                  ) },
-                  { href: "https://wa.me/message/QNW22PYYZM4ZN1", label: "WhatsApp", cls: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]", icon: (
-                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden><path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.5 0 .2 5.3.2 11.85a11.8 11.8 0 0 0 1.6 5.95L0 24l6.35-1.66a11.86 11.86 0 0 0 5.7 1.45h.01c6.55 0 11.85-5.3 11.85-11.85a11.8 11.8 0 0 0-3.49-8.46Zm-8.47 18.24h-.01a9.86 9.86 0 0 1-5.03-1.38l-.36-.21-3.77.99 1-3.67-.23-.38a9.83 9.83 0 0 1-1.51-5.22c0-5.44 4.43-9.87 9.88-9.87 2.64 0 5.11 1.03 6.98 2.9a9.79 9.79 0 0 1 2.89 6.98c0 5.45-4.43 9.86-9.84 9.86Zm5.4-7.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.94 8.94 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.6-.9-2.19-.24-.57-.48-.5-.66-.5l-.57-.01a1.1 1.1 0 0 0-.8.37c-.28.3-1.05 1.03-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.11 3.22 5.11 4.51.72.31 1.27.5 1.71.64.72.23 1.37.2 1.89.12.58-.08 1.75-.71 2-1.4.25-.7.25-1.28.17-1.4-.07-.13-.27-.2-.57-.35Z"/></svg>
-                  ) },
+                  {
+                    href: "https://www.facebook.com/AbdullahBinArshad",
+                    label: "Facebook",
+                    bg: "bg-[#1877F2]",
+                    ring: "shadow-[0_8px_20px_-8px_rgba(24,119,242,0.7)]",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor" aria-hidden><path d="M13.5 21.95v-8.32h2.79l.42-3.24H13.5V8.32c0-.94.26-1.58 1.6-1.58h1.72V3.84a22.9 22.9 0 0 0-2.5-.13c-2.48 0-4.18 1.51-4.18 4.29v2.39H7.34v3.24h2.8v8.32h3.36Z"/></svg>
+                    ),
+                  },
+                  {
+                    href: "https://youtube.com/@abdullahbinarshad",
+                    label: "YouTube",
+                    bg: "bg-[#FF0000]",
+                    ring: "shadow-[0_8px_20px_-8px_rgba(255,0,0,0.7)]",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor" aria-hidden><path d="M23.5 6.5a3 3 0 0 0-2.1-2.12C19.53 3.87 12 3.87 12 3.87s-7.53 0-9.4.51A3 3 0 0 0 .5 6.5 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.5 3 3 0 0 0 2.1 2.12c1.87.51 9.4.51 9.4.51s7.53 0 9.4-.51a3 3 0 0 0 2.1-2.12A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.5ZM9.6 15.57V8.43L15.82 12 9.6 15.57Z"/></svg>
+                    ),
+                  },
+                  {
+                    href: "https://www.instagram.com/abdullahbinarshad.tv",
+                    label: "Instagram",
+                    bg: "bg-[linear-gradient(135deg,#F58529_0%,#DD2A7B_50%,#8134AF_100%)]",
+                    ring: "shadow-[0_8px_20px_-8px_rgba(221,42,123,0.7)]",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+                    ),
+                  },
+                  {
+                    href: "https://www.tiktok.com/@abdullahbinarshad.aba",
+                    label: "TikTok",
+                    bg: "bg-black",
+                    ring: "shadow-[0_8px_20px_-8px_rgba(0,0,0,0.7)]",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" aria-hidden>
+                        <path d="M20.5 8.2a6.7 6.7 0 0 1-3.9-1.25v7.9a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.03.9.08v2.9a2.75 2.75 0 1 0 1.95 2.62V2h2.85a3.85 3.85 0 0 0 3.8 3.4V8.2Z" fill="#fff"/>
+                        <path d="M20.5 6.7a6.7 6.7 0 0 1-3.9-1.25v7.9a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.03.9.08v2.9a2.75 2.75 0 1 0 1.95 2.62V.5h2.85a3.85 3.85 0 0 0 3.8 3.4V6.7Z" fill="#25F4EE" opacity="0.9" transform="translate(-1.2 0.5)"/>
+                        <path d="M20.5 7.4a6.7 6.7 0 0 1-3.9-1.25v7.9a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.03.9.08v2.9a2.75 2.75 0 1 0 1.95 2.62V1.2h2.85a3.85 3.85 0 0 0 3.8 3.4V7.4Z" fill="#FE2C55" opacity="0.9" transform="translate(1.2 -0.4)"/>
+                        <path d="M20.5 7.1a6.7 6.7 0 0 1-3.9-1.25v7.9a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6.03.9.08v2.9a2.75 2.75 0 1 0 1.95 2.62V.9h2.85a3.85 3.85 0 0 0 3.8 3.4V7.1Z" fill="#fff"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    href: "https://wa.me/message/QNW22PYYZM4ZN1",
+                    label: "WhatsApp",
+                    bg: "bg-[#25D366]",
+                    ring: "shadow-[0_8px_20px_-8px_rgba(37,211,102,0.7)]",
+                    icon: (
+                      <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="currentColor" aria-hidden><path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.5 0 .2 5.3.2 11.85a11.8 11.8 0 0 0 1.6 5.95L0 24l6.35-1.66a11.86 11.86 0 0 0 5.7 1.45h.01c6.55 0 11.85-5.3 11.85-11.85a11.8 11.8 0 0 0-3.49-8.46Zm-3.07 10.76c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.66.15-.2.3-.76.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47a8.94 8.94 0 0 1-1.65-2.05c-.17-.3-.02-.46.13-.6.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.66-1.6-.9-2.19-.24-.57-.48-.5-.66-.5l-.57-.01a1.1 1.1 0 0 0-.8.37c-.28.3-1.05 1.03-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.11 3.22 5.11 4.51.72.31 1.27.5 1.71.64.72.23 1.37.2 1.89.12.58-.08 1.75-.71 2-1.4.25-.7.25-1.28.17-1.4-.07-.13-.27-.2-.57-.35Z"/></svg>
+                    ),
+                  },
                 ].map((s) => (
-                  <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-primary/15 bg-primary/5 text-primary transition-all duration-200 ${s.cls}`}>
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    title={s.label}
+                    className={`group/soc relative inline-flex h-10 w-10 items-center justify-center rounded-xl text-white ${s.bg} ${s.ring} transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.08] hover:rotate-[-4deg]`}
+                  >
+                    <span aria-hidden className="pointer-events-none absolute inset-0 rounded-xl bg-white/0 group-hover/soc:bg-white/10 transition-colors" />
                     {s.icon}
                   </a>
                 ))}
               </div>
+
 
             </article>
           </div>
