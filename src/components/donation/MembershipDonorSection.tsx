@@ -25,7 +25,10 @@ const tabsBase: { key: TabKey; labelKey: string; icon: typeof HeartHandshake }[]
   { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
 ];
 
-const saveApplication = (
+// Save to backend and surface errors so users know when submission actually
+// failed (previously .catch(()=>{}) silently swallowed failures — records
+// never reached the DB and the dashboard stayed empty).
+const saveApplication = async (
   kind: "member" | "donor",
   payload: {
     name: string;
@@ -36,13 +39,21 @@ const saveApplication = (
     message?: string;
     extra?: Record<string, unknown>;
   },
-) => {
-  api.post(`/applications/${kind}`, payload, { auth: false }).catch(() => {});
-};
-
-const buildWhatsAppUrl = (title: string, body: string, orgName: string) => {
-  const text = `*${title} — ${orgName}*\n\n${body}`;
-  return `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+): Promise<boolean> => {
+  try {
+    await api.post(`/applications/${kind}`, payload, { auth: false });
+    return true;
+  } catch (err) {
+    console.error("[donation] submit failed:", err);
+    toast({
+      title: "সাবমিট ব্যর্থ",
+      description:
+        (err as { message?: string })?.message ||
+        "সার্ভারে সংরক্ষণ করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।",
+      variant: "destructive",
+    });
+    return false;
+  }
 };
 
 type LeftBlock = {
@@ -97,11 +108,9 @@ type SuccessBlock = {
 
 const SuccessCard = ({
   topic,
-  waUrl,
   onReset,
 }: {
   topic: TabKey;
-  waUrl: string;
   onReset: () => void;
 }) => {
   const { t } = useTranslation();
@@ -129,19 +138,11 @@ const SuccessCard = ({
         </ul>
       </div>
 
-      <div className="mt-6 grid sm:grid-cols-2 gap-3">
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white text-primary font-bold py-3 hover:bg-white/90 transition-colors"
-        >
-          <Send className="h-4 w-4" /> {c.nextStep}
-        </a>
+      <div className="mt-6">
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 hover:bg-white/20 transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-btn bg-white/10 border border-white/30 text-white font-semibold py-3 px-6 hover:bg-white/20 transition-colors"
         >
           <RotateCcw className="h-4 w-4" /> {t("volunteerPage.success.newApplication")}
         </button>
@@ -241,13 +242,12 @@ const buildBody = (schema: { fields: { key: string; label: string; type: string 
 
 const RegularForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("donor");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="regular" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -256,8 +256,8 @@ const RegularForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("donor", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
               email: stringVal(vals.email),
@@ -265,7 +265,7 @@ const RegularForm = () => {
               message: stringVal(vals.note),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.regularTitle"), buildBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>
@@ -275,13 +275,12 @@ const RegularForm = () => {
 
 const MemberForm = () => {
   const { t } = useTranslation();
-  const orgName = t("volunteerPage.orgName");
   const { data: schema } = useFormSchema("member");
-  const [waUrl, setWaUrl] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   if (!schema) return null;
-  if (waUrl) return <SuccessCard topic="member" waUrl={waUrl} onReset={() => { setWaUrl(null); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -290,8 +289,8 @@ const MemberForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          onSubmit={(vals) => {
-            saveApplication("member", {
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("member", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
               email: stringVal(vals.email),
@@ -300,7 +299,7 @@ const MemberForm = () => {
               message: stringVal(vals.note),
               extra: vals,
             });
-            setWaUrl(buildWhatsAppUrl(t("volunteerPage.wa.memberTitle"), buildBody(schema, vals), orgName));
+            if (ok) setDone(true);
           }}
         />
       </div>

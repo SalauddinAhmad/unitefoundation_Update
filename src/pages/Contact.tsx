@@ -8,6 +8,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import contactImg from "@/assets/hero-mosque.jpg";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 import whatsappIcon from "@/assets/whatsapp-icon.svg";
 
 const Contact = () => {
@@ -21,19 +22,37 @@ const Contact = () => {
   });
 
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
   const upd = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm({ ...form, [k]: e.target.value });
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const r = schema.safeParse(form);
     if (!r.success) {
       toast({ title: t("common.verifyInfo"), description: r.error.issues[0]?.message, variant: "destructive" });
       return;
     }
-    const text = `${t("contactPage.name").replace(" *", "")}: ${form.name}\n${t("contactPage.emailLabel").replace(" *", "")}: ${form.email}\n${t("contactPage.mobile")}: ${form.phone}\n${t("contactPage.subject").replace(" *", "")}: ${form.subject}\n\n${form.message}`;
-    window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-    toast({ title: t("contactPage.successTitle"), description: t("contactPage.successDesc") });
-    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    setSending(true);
+    try {
+      await api.post("/messages", {
+        name: form.name,
+        email: form.email,
+        phone: form.phone || undefined,
+        subject: form.subject,
+        body: form.message,
+      }, { auth: false });
+      toast({ title: t("contactPage.successTitle"), description: t("contactPage.successDesc") });
+      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (err) {
+      console.error("[contact] submit failed:", err);
+      toast({
+        title: "পাঠাতে ব্যর্থ",
+        description: (err as { message?: string })?.message || "সার্ভারে পাঠানো যায়নি। কিছুক্ষণ পর আবার চেষ্টা করুন।",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -85,8 +104,8 @@ const Contact = () => {
             <Field label={t("contactPage.message")}>
               <textarea required maxLength={2000} rows={6} value={form.message} onChange={upd("message")} className="input-c resize-none" />
             </Field>
-            <button type="submit" className="btn-donate w-full text-base">
-              <Send className="h-4 w-4" /> {t("contactPage.send")}
+            <button type="submit" disabled={sending} className="btn-donate w-full text-base disabled:opacity-60">
+              <Send className="h-4 w-4" /> {sending ? "পাঠানো হচ্ছে…" : t("contactPage.send")}
             </button>
           </form>
         </div>
