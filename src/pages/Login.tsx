@@ -134,10 +134,6 @@ const Login = () => {
           <div className="relative rounded-3xl border border-border bg-card shadow-[0_30px_80px_-30px_rgba(0,40,20,0.25)] p-7 sm:p-9">
             <div className="absolute -top-px left-8 right-8 h-px" style={{ background: "linear-gradient(90deg, transparent, hsl(var(--primary)/0.6), transparent)" }} />
 
-            <div className="hidden lg:flex items-center gap-3 mb-1">
-              <img src={logo} alt="" className="h-8 w-8" />
-              <span className="text-sm font-bold text-foreground">Unite Foundation</span>
-            </div>
 
             {step === "credentials" ? (
               <>
