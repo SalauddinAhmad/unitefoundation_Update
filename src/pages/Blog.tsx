@@ -113,7 +113,10 @@ const Blog = () => {
                 <img src={p.cover} alt={p.title} loading="lazy" className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-700" />
               </div>
               <div className="p-6 flex-1 flex flex-col">
-                <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" />{p.date}</span>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" />{p.date}</span>
+                  <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" />{toBnNum(p.views ?? 0)}</span>
+                </div>
                 <h3 className="mt-2 text-lg font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm group-hover:gap-2.5 transition-all">
