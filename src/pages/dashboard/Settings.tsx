@@ -743,7 +743,43 @@ const Settings = () => {
             </Card>
           )}
 
+          {active === "page_heroes" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+                <div>
+                  <h3 className="font-bold">পেজ হেডার ইমেজ</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    প্রতিটি পেজের উপরের হিরো ব্যানারে যে ইমেজ দেখাবে তা মিডিয়া লাইব্রেরি থেকে বাছুন। খালি রাখলে শুধু গ্র‍্যাডিয়েন্ট ব্যাকগ্রাউন্ড দেখাবে।
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
 
+              <div className="grid sm:grid-cols-2 gap-5">
+                {([
+                  { key: "about", label: "About পেজ" },
+                  { key: "projects", label: "Projects পেজ" },
+                  { key: "blog", label: "Blog পেজ" },
+                  { key: "contact", label: "Contact পেজ" },
+                  { key: "volunteer", label: "Volunteer পেজ" },
+                  { key: "privacy", label: "Privacy Policy পেজ" },
+                ] as const).map((p) => (
+                  <ImagePickerButton
+                    key={p.key}
+                    label={p.label}
+                    value={form.page_heroes?.[p.key] || ""}
+                    onChange={(v) =>
+                      setForm({
+                        ...form,
+                        page_heroes: { ...form.page_heroes, [p.key]: v },
+                      })
+                    }
+                    aspect="wide"
+                  />
+                ))}
+              </div>
+            </Card>
+          )}
 
 
           {active === "notifications" && (
