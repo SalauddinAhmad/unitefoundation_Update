@@ -1,6 +1,7 @@
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 import { site } from "@/data/site";
 import { Shield, Lock, FileText, UserCheck, Mail, Phone, MapPin, Cookie, Database, Share2, AlertTriangle, RefreshCw } from "lucide-react";
@@ -165,6 +166,7 @@ const sections = [
 ];
 
 const PrivacyPolicy = () => {
+  const { data: settings } = useSettings();
   return (
     <SiteLayout>
       <Seo
@@ -173,6 +175,7 @@ const PrivacyPolicy = () => {
         canonical="/privacy-policy"
       />
       <PageHero
+        image={settings?.page_heroes?.privacy || undefined}
         eyebrow="আইনগত"
         title="প্রাইভেসি পলিসি"
         subtitle="আপনার গোপনীয়তা আমাদের কাছে অত্যন্ত গুরুত্বপূর্ণ। এই পৃষ্ঠায় আমাদের তথ্য সংগ্রহ ও ব্যবহারের বিস্তারিত নীতিমালা তুলে ধরা হয়েছে।"
