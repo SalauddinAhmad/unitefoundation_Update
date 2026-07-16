@@ -15,13 +15,25 @@ import {
 
 type Category = "উপদেষ্টা" | "দায়িত্বশীল";
 const CATEGORIES: Category[] = ["উপদেষ্টা", "দায়িত্বশীল"];
-const categoryOf = (m: TeamMember): Category =>
-  /উপদেষ্টা|advisor/i.test(m.role || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+
+// role is stored as "<category>|<designation>". Legacy rows without "|" are
+// treated as the category with an empty designation.
+const parseRole = (role: string): { category: Category; designation: string } => {
+  const raw = role || "";
+  const [head, ...rest] = raw.split("|");
+  const desig = rest.join("|").trim();
+  const cat: Category = /উপদেষ্টা|advisor/i.test(head || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+  return { category: cat, designation: desig };
+};
+const formatRole = (category: Category, designation: string) =>
+  `${category}|${(designation || "").trim()}`;
+const categoryOf = (m: TeamMember): Category => parseRole(m.role || "").category;
+const designationOf = (m: TeamMember): string => parseRole(m.role || "").designation;
 
 const emptyMember = (category: Category = "দায়িত্বশীল"): TeamMember => ({
   id: `TM-${Date.now()}`,
   name: "",
-  role: category,
+  role: formatRole(category, ""),
   bio: "",
   photo: "",
   order: 0,
