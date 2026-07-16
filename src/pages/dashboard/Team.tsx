@@ -15,13 +15,25 @@ import {
 
 type Category = "উপদেষ্টা" | "দায়িত্বশীল";
 const CATEGORIES: Category[] = ["উপদেষ্টা", "দায়িত্বশীল"];
-const categoryOf = (m: TeamMember): Category =>
-  /উপদেষ্টা|advisor/i.test(m.role || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+
+// role is stored as "<category>|<designation>". Legacy rows without "|" are
+// treated as the category with an empty designation.
+const parseRole = (role: string): { category: Category; designation: string } => {
+  const raw = role || "";
+  const [head, ...rest] = raw.split("|");
+  const desig = rest.join("|").trim();
+  const cat: Category = /উপদেষ্টা|advisor/i.test(head || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+  return { category: cat, designation: desig };
+};
+const formatRole = (category: Category, designation: string) =>
+  `${category}|${(designation || "").trim()}`;
+const categoryOf = (m: TeamMember): Category => parseRole(m.role || "").category;
+const designationOf = (m: TeamMember): string => parseRole(m.role || "").designation;
 
 const emptyMember = (category: Category = "দায়িত্বশীল"): TeamMember => ({
   id: `TM-${Date.now()}`,
   name: "",
-  role: category,
+  role: formatRole(category, ""),
   bio: "",
   photo: "",
   order: 0,
@@ -61,8 +73,8 @@ const Team = () => {
 
   const handleSave = async () => {
     if (!editing) return;
-    if (!editing.name.trim() || !editing.role.trim()) {
-      toast({ title: "নাম ও পদবি আবশ্যক", variant: "destructive" });
+    if (!editing.name.trim()) {
+      toast({ title: "নাম আবশ্যক", variant: "destructive" });
       return;
     }
     await save.mutateAsync(editing);
@@ -123,7 +135,9 @@ const Team = () => {
       </div>
       <div className="p-3">
         <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
-        <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
+        <div className="text-[11px] text-primary font-medium mt-0.5 truncate">
+          {designationOf(m) || categoryOf(m)}
+        </div>
         {m.bio && (
           <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
         )}
@@ -229,18 +243,19 @@ const Team = () => {
                   />
                 </div>
                 <div>
-                  <Label>ক্যাটাগরি *</Label>
-                  <select
-                    value={categoryOf(editing)}
-                    onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <Label>পদবি / ডেজিগনেশন</Label>
+                  <Input
+                    value={designationOf(editing)}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        role: formatRole(categoryOf(editing), e.target.value),
+                      })
+                    }
+                    placeholder="যেমন: সভাপতি, সাধারণ সম্পাদক..."
+                  />
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    About পেজে সদস্য কোন সেকশনে দেখাবে সেটি নির্ধারণ করে।
+                    ফাঁকা রাখলে শুধু "{categoryOf(editing)}" দেখাবে।
                   </p>
                 </div>
               </div>
