@@ -503,11 +503,11 @@ const About = () => {
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
               <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
                 {[
-                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", Icon: Facebook, hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]" },
-                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", Icon: Youtube, hover: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]" },
-                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", Icon: Instagram, hover: "hover:bg-[linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)] hover:text-white hover:border-transparent" },
+                  { href: founderCfg?.facebook ?? "", label: "Facebook", Icon: Facebook, hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]" },
+                  { href: founderCfg?.youtube ?? "", label: "YouTube", Icon: Youtube, hover: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]" },
+                  { href: founderCfg?.instagram ?? "", label: "Instagram", Icon: Instagram, hover: "hover:bg-[linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)] hover:text-white hover:border-transparent" },
                   {
-                    href: "https://www.tiktok.com/@abdullahbinarshad.aba",
+                    href: founderCfg?.tiktok ?? "",
                     label: "TikTok",
                     hover: "hover:bg-black hover:text-white hover:border-black",
                     Icon: (props: { className?: string }) => (
@@ -515,7 +515,7 @@ const About = () => {
                     ),
                   },
                   {
-                    href: "https://wa.me/message/QNW22PYYZM4ZN1",
+                    href: founderCfg?.whatsapp ?? "",
                     label: "WhatsApp",
                     hover: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
                     Icon: (props: { className?: string }) => (
@@ -523,14 +523,14 @@ const About = () => {
                     ),
                   },
                   {
-                    href: "https://x.com/abdullah6852443",
+                    href: founderCfg?.x ?? "",
                     label: "X (Twitter)",
                     hover: "hover:bg-black hover:text-white hover:border-black",
                     Icon: (props: { className?: string }) => (
                       <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden><path d="M17.53 3H20.9l-7.36 8.41L22 21h-6.79l-5.32-6.96L3.8 21H.42l7.87-8.99L0 3h6.96l4.81 6.36L17.53 3Zm-1.19 16h1.87L7.75 4.9H5.75L16.34 19Z"/></svg>
                     ),
                   },
-                ].map(({ href, label, Icon, hover }) => (
+                ].filter((s) => s.href && s.href.trim() !== "").map(({ href, label, Icon, hover }) => (
                   <a
                     key={label}
                     href={href}
