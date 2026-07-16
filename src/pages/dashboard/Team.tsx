@@ -77,9 +77,17 @@ const Team = () => {
       toast({ title: "নাম আবশ্যক", variant: "destructive" });
       return;
     }
-    await save.mutateAsync(editing);
-    toast({ title: "সংরক্ষণ হয়েছে" });
-    setEditing(null);
+    try {
+      await save.mutateAsync(editing);
+      toast({ title: "সংরক্ষণ হয়েছে" });
+      setEditing(null);
+    } catch (e: any) {
+      toast({
+        title: "সংরক্ষণ ব্যর্থ",
+        description: e?.message || "সার্ভারে সংরক্ষণ করা যায়নি",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDelete = async (id: string) => {
