@@ -62,6 +62,7 @@ const Contact = () => {
       <Seo title={t("contactPage.seoTitle")} description={t("contactPage.seoDesc")} canonical="/contact" />
 
       <PageHero
+        image={settings?.page_heroes?.contact || undefined}
         eyebrow={t("contactPage.eyebrow")}
         title={t("contactPage.title")}
         subtitle={t("contactPage.subtitle")}
