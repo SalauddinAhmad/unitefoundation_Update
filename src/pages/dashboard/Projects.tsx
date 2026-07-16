@@ -3,7 +3,7 @@ import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import type { Project } from "@/data/dashboardMock";
 import {
-  Plus, Edit3, Eye, Users, Download, Search, Filter, ChevronDown, X, Save,
+  Plus, Edit3, Eye, Users, Search, Filter, ChevronDown, X, Save,
   Image as ImageIcon, Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
   Quote, Heading1, Heading2, FolderKanban, BarChart3, CheckCircle2, Clock,
   Sparkles, Calendar, MapPin, Target, Trash2, Copy, Globe, Archive, Loader2,
