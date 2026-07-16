@@ -161,23 +161,8 @@ app.get('/health/auth', (req, res) => {
 });
 
 // --- Auto-audit (records mutating requests from authenticated users) ---
-const { autoAuditMiddleware, logActivity } = require('./services/audit');
+const { autoAuditMiddleware } = require('./services/audit');
 app.use(autoAuditMiddleware);
-
-// Log successful/failed logins explicitly (auto-audit needs req.user which is not set on /auth/login)
-app.use((req, res, next) => {
-  if (req.method === 'POST' && (req.path === '/auth/login' || req.path === '/login')) {
-    res.on('finish', () => {
-      const email = req.body && req.body.email;
-      if (res.statusCode === 200) {
-        logActivity({ req, action: 'login', entity: 'auth', summary: `Login: ${email}`, status: 200, meta: { email } });
-      } else if (res.statusCode === 401) {
-        logActivity({ req, action: 'login_failed', entity: 'auth', summary: `Failed login: ${email}`, status: 401, meta: { email } });
-      }
-    });
-  }
-  next();
-});
 
 // --- Routes ---
 app.use('/auth', require('./routes/auth'));

@@ -15,7 +15,7 @@ router.get('/', asyncH(async (req, res) => {
 
   const where = [];
   const args = [];
-  if (req.query.user_id) { where.push('user_id = ?'); args.push(Number(req.query.user_id)); }
+  if (req.query.user_id) { where.push('user_id = ?'); args.push(String(req.query.user_id)); }
   if (req.query.entity)  { where.push('entity = ?');  args.push(String(req.query.entity)); }
   if (req.query.action)  { where.push('action = ?');  args.push(String(req.query.action)); }
   if (req.query.from)    { where.push('created_at >= ?'); args.push(String(req.query.from)); }

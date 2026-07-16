@@ -9,6 +9,7 @@ const { authLimiter } = require('../middleware/rateLimit');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 const { tplLoginOtp, tplForgotPassword } = require('../services/emailTemplate');
+const { logActivity } = require('../services/audit');
 
 const signToken = (u) => jwt.sign(
   { sub: u.id, role: u.role, email: u.email, name: u.name },
@@ -17,6 +18,10 @@ const signToken = (u) => jwt.sign(
 );
 
 const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role });
+
+function attachAuditUser(req, user) {
+  req.user = { sub: user.id, id: user.id, email: user.email, name: user.name, role: user.role };
+}
 
 // POST /auth/login
 router.post('/login', authLimiter, asyncH(async (req, res) => {
@@ -27,6 +32,7 @@ router.post('/login', authLimiter, asyncH(async (req, res) => {
   const [rows] = await pool.execute('SELECT * FROM users WHERE email=? LIMIT 1', [email]);
   const user = rows[0];
   if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+    logActivity({ req, action: 'login_failed', entity: 'auth', summary: `Failed login: ${email}`, status: 401, meta: { email } });
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 
@@ -44,6 +50,8 @@ router.post('/login', authLimiter, asyncH(async (req, res) => {
     return res.json({ requiresOtp: true });
   }
 
+  attachAuditUser(req, user);
+  logActivity({ req, action: 'login', entity: 'auth', summary: `${user.name || user.email} লগইন করেছেন`, status: 200, meta: { email: user.email } });
   res.json({ token: signToken(user), user: publicUser(user) });
 }));
 
@@ -59,6 +67,8 @@ router.post('/verify-otp', authLimiter, asyncH(async (req, res) => {
   );
   if (!otps[0]) return res.status(401).json({ message: 'Invalid or expired code' });
   await pool.execute('UPDATE otp_codes SET used=1 WHERE id=?', [otps[0].id]);
+  attachAuditUser(req, user);
+  logActivity({ req, action: 'login', entity: 'auth', summary: `${user.name || user.email} 2FA দিয়ে লগইন করেছেন`, status: 200, meta: { email: user.email, two_factor: true } });
   res.json({ token: signToken(user), user: publicUser(user) });
 }));
 
