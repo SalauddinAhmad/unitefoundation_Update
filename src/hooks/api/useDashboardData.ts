@@ -591,6 +591,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       goalsEn: (s?.mission_section?.goalsEn && s.mission_section.goalsEn.length ? s.mission_section.goalsEn : defaultSettings.mission_section.goalsEn),
     },
     page_heroes: { ...defaultSettings.page_heroes, ...(s?.page_heroes || {}) },
+    founder: { ...defaultSettings.founder, ...(s?.founder || {}) },
   };
 }
 
