@@ -135,7 +135,9 @@ const Team = () => {
       </div>
       <div className="p-3">
         <div className="font-bold text-foreground text-sm truncate">{m.name}</div>
-        <div className="text-[11px] text-primary font-medium mt-0.5 truncate">{m.role}</div>
+        <div className="text-[11px] text-primary font-medium mt-0.5 truncate">
+          {designationOf(m) || categoryOf(m)}
+        </div>
         {m.bio && (
           <p className="text-[11px] text-muted-foreground mt-1.5 line-clamp-2">{m.bio}</p>
         )}
