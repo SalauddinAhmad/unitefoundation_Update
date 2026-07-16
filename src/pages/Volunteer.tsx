@@ -22,6 +22,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 // Save the submission to the backend so it appears in the dashboard.
 // Returns true on success — surfaces server errors so the user sees them
@@ -71,6 +72,8 @@ const buildWhatsAppUrl = (title: string, body: string, orgName: string) => {
 const Volunteer = () => {
   const { t } = useTranslation();
   const [active, setActive] = useState<TabKey>("volunteer");
+  const { data: settings } = useSettings();
+  const heroImage = settings?.page_heroes?.volunteer || "";
 
   return (
     <SiteLayout>
@@ -82,13 +85,24 @@ const Volunteer = () => {
 
       {/* HERO */}
       <section className="relative isolate">
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            background:
-              "linear-gradient(180deg, hsl(var(--primary) / 0.92) 0%, hsl(var(--primary)) 100%)",
-          }}
-        />
+        <div className="absolute inset-0 -z-10">
+          {heroImage && (
+            <img
+              src={heroImage}
+              alt={t("volunteerPage.heroTitle")}
+              className="h-full w-full object-cover"
+              loading="eager"
+            />
+          )}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: heroImage
+                ? "linear-gradient(180deg, hsl(var(--primary) / 0.78) 0%, hsl(var(--primary) / 0.88) 100%)"
+                : "linear-gradient(180deg, hsl(var(--primary) / 0.92) 0%, hsl(var(--primary)) 100%)",
+            }}
+          />
+        </div>
         <div className="container-page py-20 md:py-28 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight">
             {t("volunteerPage.heroTitle")}
@@ -96,6 +110,7 @@ const Volunteer = () => {
           <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-white/70" />
         </div>
       </section>
+
 
       {/* TABS + FORMS */}
       <section className="py-14 md:py-20">

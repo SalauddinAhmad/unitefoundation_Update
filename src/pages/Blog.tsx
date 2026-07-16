@@ -6,11 +6,13 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { usePostsPublic } from "@/hooks/api/usePublic";
+import { useSettings } from "@/hooks/api/useDashboardData";
 import { toBnNum } from "@/data/projects";
 
 
 const Blog = () => {
   const { t } = useTranslation();
+  const { data: settings } = useSettings();
   const ALL = t("blogPage.all");
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>(ALL);
@@ -33,6 +35,7 @@ const Blog = () => {
       <Seo title={t("blogPage.seoTitle")} description={t("blogPage.seoDesc")} canonical="/blog" />
 
       <PageHero
+        image={settings?.page_heroes?.blog || undefined}
         eyebrow={t("blogPage.eyebrow")}
         title={t("blogPage.title")}
         subtitle={t("blogPage.subtitle")}

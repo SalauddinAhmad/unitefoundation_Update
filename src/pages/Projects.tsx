@@ -6,10 +6,12 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { useProjectsPublic } from "@/hooks/api/usePublic";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 
 const Projects = () => {
   const { t } = useTranslation();
+  const { data: settings } = useSettings();
   const { data: projects = [], isLoading } = useProjectsPublic();
   const ALL = t("projectsPage.all");
 
@@ -30,6 +32,7 @@ const Projects = () => {
       <Seo title={t("projectsPage.seoTitle")} description={t("projectsPage.seoDesc")} canonical="/projects" />
 
       <PageHero
+        image={settings?.page_heroes?.projects || undefined}
         eyebrow={t("projectsPage.eyebrow")}
         title={t("projectsPage.title")}
         subtitle={t("projectsPage.subtitle")}

@@ -239,6 +239,7 @@ const About = () => {
     <Seo title={t("aboutPage.seoTitle")} description={t("aboutPage.seoDesc")} canonical="/about" />
 
     <PageHero
+      image={settings?.page_heroes?.about || undefined}
       eyebrow={t("aboutPage.eyebrow")}
       title={t("aboutPage.heroTitle")}
       subtitle={t("aboutPage.heroSubtitle")}

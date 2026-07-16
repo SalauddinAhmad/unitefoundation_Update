@@ -1,5 +1,5 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target, Layers } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 
@@ -99,6 +99,8 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[
   { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
   { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
   { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
+  { k: "page_heroes", icon: Layers, l: "পেজ হেডার ইমেজ", perm: "settings" },
+  
   
   { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
   { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
@@ -741,7 +743,43 @@ const Settings = () => {
             </Card>
           )}
 
+          {active === "page_heroes" && (
+            <Card>
+              <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
+                <div>
+                  <h3 className="font-bold">পেজ হেডার ইমেজ</h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    প্রতিটি পেজের উপরের হিরো ব্যানারে যে ইমেজ দেখাবে তা মিডিয়া লাইব্রেরি থেকে বাছুন। খালি রাখলে শুধু গ্র‍্যাডিয়েন্ট ব্যাকগ্রাউন্ড দেখাবে।
+                  </p>
+                </div>
+                <SaveBar />
+              </div>
 
+              <div className="grid sm:grid-cols-2 gap-5">
+                {([
+                  { key: "about", label: "About পেজ" },
+                  { key: "projects", label: "Projects পেজ" },
+                  { key: "blog", label: "Blog পেজ" },
+                  { key: "contact", label: "Contact পেজ" },
+                  { key: "volunteer", label: "Volunteer পেজ" },
+                  { key: "privacy", label: "Privacy Policy পেজ" },
+                ] as const).map((p) => (
+                  <ImagePickerButton
+                    key={p.key}
+                    label={p.label}
+                    value={form.page_heroes?.[p.key] || ""}
+                    onChange={(v) =>
+                      setForm({
+                        ...form,
+                        page_heroes: { ...form.page_heroes, [p.key]: v },
+                      })
+                    }
+                    aspect="wide"
+                  />
+                ))}
+              </div>
+            </Card>
+          )}
 
 
           {active === "notifications" && (

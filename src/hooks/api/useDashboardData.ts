@@ -308,7 +308,18 @@ export type SiteSettings = {
   milestones: Milestone[];
   milestones_section: MilestonesSection;
   mission_section: MissionSection;
+  page_heroes: PageHeroes;
 };
+
+export type PageHeroes = {
+  about: string;
+  projects: string;
+  blog: string;
+  contact: string;
+  volunteer: string;
+  privacy: string;
+};
+
 
 const defaultMilestones: Milestone[] = [
   { yearBn: "২০১৭", yearEn: "2017", titleBn: "যাত্রা শুরু", titleEn: "Journey begins",
@@ -507,6 +518,14 @@ const defaultSettings: SiteSettings = {
       "Carry out social welfare activities.",
     ],
   },
+  page_heroes: {
+    about: "",
+    projects: "",
+    blog: "",
+    contact: "",
+    volunteer: "",
+    privacy: "",
+  },
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -533,6 +552,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       goalsBn: (s?.mission_section?.goalsBn && s.mission_section.goalsBn.length ? s.mission_section.goalsBn : defaultSettings.mission_section.goalsBn),
       goalsEn: (s?.mission_section?.goalsEn && s.mission_section.goalsEn.length ? s.mission_section.goalsEn : defaultSettings.mission_section.goalsEn),
     },
+    page_heroes: { ...defaultSettings.page_heroes, ...(s?.page_heroes || {}) },
   };
 }
 
