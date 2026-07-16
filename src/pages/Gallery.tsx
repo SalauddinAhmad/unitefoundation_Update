@@ -77,6 +77,7 @@ function extractYouTubeId(url: string): string | null {
 const Gallery = () => {
   const { t } = useTranslation();
   const { data } = useGalleryPublic();
+  const { data: settings } = useSettings();
   const ALL = t("galleryPage.all");
 
   // Build a map: album_id -> album for category lookup
@@ -148,7 +149,7 @@ const Gallery = () => {
       <Seo title={t("galleryPage.seoTitle")} description={t("galleryPage.seoDesc")} canonical="/gallery" />
 
       <PageHero
-        image={g1}
+        image={settings?.page_heroes?.gallery || g1}
         eyebrow={t("galleryPage.eyebrow")}
         title={t("galleryPage.title")}
         subtitle={t("galleryPage.subtitle")}
