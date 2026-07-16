@@ -243,18 +243,19 @@ const Team = () => {
                   />
                 </div>
                 <div>
-                  <Label>ক্যাটাগরি *</Label>
-                  <select
-                    value={categoryOf(editing)}
-                    onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <Label>পদবি / ডেজিগনেশন</Label>
+                  <Input
+                    value={designationOf(editing)}
+                    onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        role: formatRole(categoryOf(editing), e.target.value),
+                      })
+                    }
+                    placeholder="যেমন: সভাপতি, সাধারণ সম্পাদক..."
+                  />
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    About পেজে সদস্য কোন সেকশনে দেখাবে সেটি নির্ধারণ করে।
+                    ফাঁকা রাখলে শুধু "{categoryOf(editing)}" দেখাবে।
                   </p>
                 </div>
               </div>
