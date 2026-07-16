@@ -553,7 +553,7 @@ const About = () => {
 
           <div className="order-1 md:order-2 text-center md:text-left">
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
-              {t("aboutPage.founderTitle")}
+              {founderSectionTitle}
             </h2>
             <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
               <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70 md:bg-gradient-to-l md:from-amber-300/70 md:to-transparent" />
