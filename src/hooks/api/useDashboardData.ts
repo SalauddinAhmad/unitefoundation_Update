@@ -308,7 +308,18 @@ export type SiteSettings = {
   milestones: Milestone[];
   milestones_section: MilestonesSection;
   mission_section: MissionSection;
+  page_heroes: PageHeroes;
 };
+
+export type PageHeroes = {
+  about: string;
+  projects: string;
+  blog: string;
+  contact: string;
+  volunteer: string;
+  privacy: string;
+};
+
 
 const defaultMilestones: Milestone[] = [
   { yearBn: "২০১৭", yearEn: "2017", titleBn: "যাত্রা শুরু", titleEn: "Journey begins",
@@ -506,6 +517,14 @@ const defaultSettings: SiteSettings = {
       "Publish books and authentic translations on Islamic topics.",
       "Carry out social welfare activities.",
     ],
+  },
+  page_heroes: {
+    about: "",
+    projects: "",
+    blog: "",
+    contact: "",
+    volunteer: "",
+    privacy: "",
   },
 };
 
