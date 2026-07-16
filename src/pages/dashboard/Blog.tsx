@@ -50,7 +50,8 @@ function apiToUi(row: ApiPost): Post {
     title: row.title,
     author: "এডিটোরিয়াল টিম",
     category: row.category || DEFAULT_CATEGORIES[0],
-    views: 0,
+    views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
+
     date: dateStr || new Date().toISOString().slice(0, 10),
     status: (row.status as Post["status"]) || "draft",
     excerpt: row.excerpt || "",
