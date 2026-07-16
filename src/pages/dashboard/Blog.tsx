@@ -176,70 +176,9 @@ export default function Blog() {
     }
   };
 
-  const [importing, setImporting] = useState(false);
-  const importDefaults = async () => {
-    if (!confirm("ওয়েবসাইটের ডিফল্ট ব্লগ পোস্টগুলো DB-তে ইমপোর্ট করবেন?")) return;
-    setImporting(true);
-    try {
-      const { posts: defaults } = await import("@/data/blog");
-      const { compressImageToDataURL } = await import("@/lib/imageCompress");
-      const blockToHtml = async (b: any): Promise<string> => {
-        if (typeof b === "string") return `<p>${b}</p>`;
-        switch (b.type) {
-          case "paragraph": return `<p${b.lead ? ' class="lead"' : ""}>${b.text}</p>`;
-          case "heading": return `<h${b.level || 2}>${b.text}</h${b.level || 2}>`;
-          case "quote": return `<blockquote>${b.text}${b.author ? `<cite> — ${b.author}</cite>` : ""}</blockquote>`;
-          case "list": {
-            const tag = b.ordered ? "ol" : "ul";
-            return `<${tag}>${b.items.map((i: string) => `<li>${i}</li>`).join("")}</${tag}>`;
-          }
-          case "callout": return `<div class="callout"><strong>${b.title || ""}</strong><p>${b.text}</p></div>`;
-          case "stats": return `<div class="stats">${b.items.map((s: any) => `<div><b>${s.value}</b><span>${s.label}</span></div>`).join("")}</div>`;
-          case "cta": return `<div class="cta"><h3>${b.title}</h3>${b.text ? `<p>${b.text}</p>` : ""}<a href="${b.href}" class="btn">${b.buttonLabel}</a></div>`;
-          case "divider": return `<hr/>`;
-          case "image": {
-            try {
-              const res = await fetch(b.src);
-              const blob = await res.blob();
-              const url = await compressImageToDataURL(new File([blob], "img.jpg", { type: blob.type || "image/jpeg" }), { maxWidth: 1400, quality: 0.8 });
-              return `<figure><img src="${url}" alt="${b.alt || ""}" style="max-width:100%;border-radius:10px"/>${b.caption ? `<figcaption>${b.caption}</figcaption>` : ""}</figure>`;
-            } catch { return ""; }
-          }
-          default: return "";
-        }
-      };
-      let ok = 0;
-      for (const post of defaults) {
-        if (list.some((x) => x.slug === post.slug || x.title === post.title)) continue;
-        let cover = "";
-        try {
-          const res = await fetch(post.cover);
-          const blob = await res.blob();
-          cover = await compressImageToDataURL(new File([blob], `${post.slug}.jpg`, { type: blob.type || "image/jpeg" }), { maxWidth: 1400, quality: 0.8 });
-        } catch { /* skip */ }
-        const parts: string[] = [];
-        for (const b of post.body) parts.push(await blockToHtml(b));
-        const html = parts.join("\n");
-        await saveMut.mutateAsync({
-          data: {
-            title: post.title,
-            slug: post.slug,
-            excerpt: post.excerpt,
-            content: html,
-            cover_image_url: cover,
-            category: post.category,
-            status: "published",
-          } as any,
-        });
-        ok++;
-      }
-      toast.success(`ইমপোর্ট সম্পন্ন — ${ok}টি পোস্ট যুক্ত হয়েছে`);
-    } catch (e: any) {
-      toast.error(e?.message || "ইমপোর্ট ব্যর্থ");
-    } finally {
-      setImporting(false);
-    }
-  };
+  // NOTE: The "Import default posts" feature was removed intentionally.
+  // Demo posts must never be pushed into the live database.
+
 
   return (
     <>
@@ -249,13 +188,6 @@ export default function Blog() {
         actions={
           <>
             <button
-              onClick={importDefaults}
-              disabled={importing}
-              className="inline-flex items-center gap-2 border border-border bg-card font-semibold px-3.5 py-2 rounded-lg text-sm hover:bg-secondary disabled:opacity-60"
-            >
-              <FileText className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট পোস্ট ইমপোর্ট"}
-            </button>
-            <button
               onClick={() => setEditor({ open: true })}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition"
             >
@@ -264,6 +196,7 @@ export default function Blog() {
           </>
         }
       />
+
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
