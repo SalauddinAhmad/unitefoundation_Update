@@ -228,6 +228,11 @@ const About = () => {
     : (t("aboutPage.goals", { returnObjects: true }) as string[]));
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
   const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
+  const { data: teamData = [] } = useTeam();
+  const founderMember = teamData.find((m) =>
+    /প্রতিষ্ঠাতা|চেয়ারম্যান|founder|chairman/i.test(m.role || "")
+  ) || teamData.find((m) => m.name === founderName);
+  const founderPhoto = founderMember?.photo || "";
 
   return (
   <SiteLayout>
@@ -453,8 +458,19 @@ const About = () => {
           <div className="flex justify-center md:justify-start order-2 md:order-1">
             <article className="group relative w-full max-w-sm rounded-[32px] bg-white p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1">
               <div aria-hidden className="pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-br from-donate-red/25 via-donate-orange/15 to-primary/25 opacity-60 blur-xl -z-10" />
-              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10 h-[360px] md:h-[420px] flex items-center justify-center">
-                <Users className="h-20 w-20 text-primary/40" aria-label={founderName} />
+              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10 h-[360px] md:h-[420px]">
+                {founderPhoto ? (
+                  <img
+                    src={founderPhoto}
+                    alt={founderName}
+                    loading="lazy"
+                    className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <Users className="h-20 w-20 text-primary/40" />
+                  </div>
+                )}
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
                   <Sparkles className="h-3 w-3" /> Founder
                 </span>
