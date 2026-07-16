@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
-import contactImg from "@/assets/hero-mosque.jpg";
+
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
@@ -60,7 +60,6 @@ const Contact = () => {
       <Seo title={t("contactPage.seoTitle")} description={t("contactPage.seoDesc")} canonical="/contact" />
 
       <PageHero
-        image={contactImg}
         eyebrow={t("contactPage.eyebrow")}
         title={t("contactPage.title")}
         subtitle={t("contactPage.subtitle")}

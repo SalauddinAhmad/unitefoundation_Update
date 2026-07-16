@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
-import { projects } from "@/data/projects";
+import { useProjectsPublic } from "@/hooks/api/usePublic";
 import { useLocaleNum } from "@/hooks/useLocaleNum";
 import { toast } from "@/hooks/use-toast";
 
@@ -13,7 +13,8 @@ export const QuickDonate = () => {
   const { t } = useTranslation();
   const { fmt } = useLocaleNum();
   const navigate = useNavigate();
-  const [project, setProject] = useState(projects[0].slug);
+  const { data: projects = [] } = useProjectsPublic();
+  const [project, setProject] = useState("");
   const [amount, setAmount] = useState<number>(1000);
   const [custom, setCustom] = useState("");
   const [name, setName] = useState("");
@@ -64,6 +65,7 @@ export const QuickDonate = () => {
             onChange={(e) => setProject(e.target.value)}
             className="w-full rounded-btn border border-input bg-background px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           >
+            <option value="">{t("quickDonate.selectProject")}</option>
             {projects.map((p) => (
               <option key={p.id} value={p.slug}>{p.title}</option>
             ))}

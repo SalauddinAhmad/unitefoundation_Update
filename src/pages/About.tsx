@@ -3,10 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
-import about from "@/assets/about-mission.jpg";
-import t1 from "@/assets/team-founder.jpg";
-import t2 from "@/assets/team-2.jpg";
-import t3 from "@/assets/team-3.jpg";
 import { useTeam } from "@/hooks/api/useTeam";
 import { useSettings } from "@/hooks/api/useDashboardData";
 
@@ -198,7 +194,7 @@ const valueIcons = [Heart, CheckCircle2, Target, Users];
 const About = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
-  const { data: settings, isLoading: settingsLoading } = useSettings();
+  const { data: settings } = useSettings();
   const dynamicMilestones: Milestone[] = (settings?.milestones && settings.milestones.length)
     ? settings.milestones.map((m) => ({
         y: { bn: m.yearBn || m.yearEn, en: m.yearEn || m.yearBn },
@@ -219,7 +215,7 @@ const About = () => {
   const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
   const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
   const mss = settings?.mission_section;
-  const missionImage = mss?.image && mss.image.trim() ? mss.image : (settingsLoading ? "" : about);
+  const missionImage = mss?.image && mss.image.trim() ? mss.image : "";
   const missionEyebrow = pick(mss?.eyebrowBn, mss?.eyebrowEn, t("aboutPage.mission"));
   const missionHeading = pick(mss?.headingBn, mss?.headingEn, "যে পথে আমরা");
   const missionHighlight = pick(mss?.headingHighlightBn, mss?.headingHighlightEn, "এগিয়ে যাচ্ছি");
@@ -238,7 +234,6 @@ const About = () => {
     <Seo title={t("aboutPage.seoTitle")} description={t("aboutPage.seoDesc")} canonical="/about" />
 
     <PageHero
-      image={about}
       eyebrow={t("aboutPage.eyebrow")}
       title={t("aboutPage.heroTitle")}
       subtitle={t("aboutPage.heroSubtitle")}
@@ -458,8 +453,8 @@ const About = () => {
           <div className="flex justify-center md:justify-start order-2 md:order-1">
             <article className="group relative w-full max-w-sm rounded-[32px] bg-white p-4 md:p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] ring-1 ring-white/10 transition-transform duration-500 hover:-translate-y-1">
               <div aria-hidden className="pointer-events-none absolute -inset-px rounded-[32px] bg-gradient-to-br from-donate-red/25 via-donate-orange/15 to-primary/25 opacity-60 blur-xl -z-10" />
-              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10">
-                <img src={t1} alt={founderName} loading="lazy" width={520} height={560} className="h-[360px] md:h-[420px] w-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]" />
+              <div className="relative overflow-hidden rounded-[22px] bg-primary/10 ring-1 ring-primary/10 h-[360px] md:h-[420px] flex items-center justify-center">
+                <Users className="h-20 w-20 text-primary/40" aria-label={founderName} />
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
                   <Sparkles className="h-3 w-3" /> Founder
                 </span>

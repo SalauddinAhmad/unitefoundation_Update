@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 interface PageHeroProps {
-  image: string;
+  image?: string;
   eyebrow?: string;
   title: string;
   subtitle?: string;
@@ -23,12 +23,15 @@ export const PageHero = ({
     <section
       className={`relative ${height} w-full overflow-hidden -mt-28 md:-mt-32 pt-28 md:pt-32`}
     >
-      <img
-        src={image}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover"
-      />
+      {image && (
+        <img
+          src={image}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/80 to-primary/95" />
+
       {/* Soft radial spotlight to make the headline pop without losing the image */}
       <div
         className="absolute inset-0"
