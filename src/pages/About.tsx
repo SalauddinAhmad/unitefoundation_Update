@@ -198,7 +198,7 @@ const valueIcons = [Heart, CheckCircle2, Target, Users];
 const About = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
-  const { data: settings } = useSettings();
+  const { data: settings, isLoading: settingsLoading } = useSettings();
   const dynamicMilestones: Milestone[] = (settings?.milestones && settings.milestones.length)
     ? settings.milestones.map((m) => ({
         y: { bn: m.yearBn || m.yearEn, en: m.yearEn || m.yearBn },
@@ -219,7 +219,7 @@ const About = () => {
   const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
   const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
   const mss = settings?.mission_section;
-  const missionImage = mss?.image && mss.image.trim() ? mss.image : about;
+  const missionImage = mss?.image && mss.image.trim() ? mss.image : (settingsLoading ? "" : about);
   const missionEyebrow = pick(mss?.eyebrowBn, mss?.eyebrowEn, t("aboutPage.mission"));
   const missionHeading = pick(mss?.headingBn, mss?.headingEn, "যে পথে আমরা");
   const missionHighlight = pick(mss?.headingHighlightBn, mss?.headingHighlightEn, "এগিয়ে যাচ্ছি");
@@ -281,12 +281,16 @@ const About = () => {
               className="relative overflow-hidden shadow-card-hover ring-1 ring-primary/10"
               style={{ borderRadius: "50% 50% 16px 16px / 40% 40% 16px 16px" }}
             >
-              <img
-                src={missionImage}
-                alt={missionEyebrow}
-                className="w-full h-[480px] md:h-[540px] object-cover"
-                loading="lazy"
-              />
+              {missionImage ? (
+                <img
+                  src={missionImage}
+                  alt={missionEyebrow}
+                  className="w-full h-[480px] md:h-[540px] object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="w-full h-[480px] md:h-[540px] bg-muted animate-pulse" />
+              )}
               <div
                 aria-hidden
                 className="absolute inset-0 bg-gradient-to-t from-primary/25 via-transparent to-transparent"
