@@ -215,7 +215,7 @@ const About = () => {
   const msIntro = pick(ms?.introBn, ms?.introEn, t("aboutPage.milestonesIntro"));
   const msQuote = pick(ms?.quoteBn, ms?.quoteEn, t("aboutPage.milestonesQuote"));
   const mss = settings?.mission_section;
-  const missionImage = mss?.image && mss.image.trim() ? mss.image : (settingsLoading ? "" : about);
+  const missionImage = mss?.image && mss.image.trim() ? mss.image : "";
   const missionEyebrow = pick(mss?.eyebrowBn, mss?.eyebrowEn, t("aboutPage.mission"));
   const missionHeading = pick(mss?.headingBn, mss?.headingEn, "যে পথে আমরা");
   const missionHighlight = pick(mss?.headingHighlightBn, mss?.headingHighlightEn, "এগিয়ে যাচ্ছি");
@@ -234,7 +234,6 @@ const About = () => {
     <Seo title={t("aboutPage.seoTitle")} description={t("aboutPage.seoDesc")} canonical="/about" />
 
     <PageHero
-      image={about}
       eyebrow={t("aboutPage.eyebrow")}
       title={t("aboutPage.heroTitle")}
       subtitle={t("aboutPage.heroSubtitle")}
