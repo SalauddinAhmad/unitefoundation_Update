@@ -1,6 +1,7 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target, Layers } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target, Layers, Pencil, X as XIcon } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
+import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 
 import { useSettings, useUpdateSettings, type SiteSettings, type Milestone } from "@/hooks/api/useDashboardData";
@@ -55,6 +56,66 @@ const ImageField = ({
     hint={hint}
   />
 );
+
+// Compact page-hero tile: small aspect-video thumbnail + hover overlay
+// with change/remove actions. Opens the MediaLibrary modal on click.
+const PageHeroTile = ({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="group relative rounded-xl overflow-hidden border border-border bg-secondary/60 aspect-[16/10] shadow-sm hover:shadow-md transition">
+      {value ? (
+        <img src={value} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-muted-foreground/70">
+          <ImageIcon className="h-6 w-6" />
+          <span className="text-[11px] font-medium">ইমেজ নেই</span>
+        </div>
+      )}
+      {/* gradient + label always visible */}
+      <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/75 via-black/40 to-transparent" />
+      <div className="absolute left-2.5 bottom-2 right-2 text-white text-xs font-semibold tracking-wide drop-shadow">
+        {label}
+      </div>
+      {/* hover actions */}
+      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/45 opacity-0 group-hover:opacity-100 transition">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white text-foreground text-[11px] font-semibold shadow hover:bg-white/90"
+        >
+          <Pencil className="h-3 w-3" />
+          {value ? "পরিবর্তন" : "বাছুন"}
+        </button>
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="inline-flex items-center justify-center h-7 w-7 rounded-md bg-white/90 text-destructive hover:bg-destructive hover:text-destructive-foreground shadow"
+            title="সরান"
+          >
+            <XIcon className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+      {open && (
+        <MediaLibrary
+          onClose={() => setOpen(false)}
+          onSelect={(url) => { onChange(url); setOpen(false); }}
+          hint="প্রস্তাবিত: 1600×900 px, JPG/WebP"
+        />
+      )}
+    </div>
+  );
+};
+
 
 
 const Toggle = ({
