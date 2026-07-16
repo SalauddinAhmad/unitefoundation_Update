@@ -227,12 +227,25 @@ const About = () => {
     ? missionGoalsSetting
     : (t("aboutPage.goals", { returnObjects: true }) as string[]));
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
-  const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
-  const { data: teamData = [] } = useTeam();
-  const founderMember = teamData.find((m) =>
-    /প্রতিষ্ঠাতা|চেয়ারম্যান|founder|chairman/i.test(m.role || "")
-  ) || teamData.find((m) => m.name === founderName);
-  const founderPhoto = founderMember?.photo || "";
+    const founderCfg = settings?.founder;
+    const founderName = founderCfg
+      ? (lang === "en" ? (founderCfg.nameEn || founderCfg.nameBn) : (founderCfg.nameBn || founderCfg.nameEn))
+      : (lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ");
+    const founderSubtitle = founderCfg
+      ? (lang === "en" ? (founderCfg.subtitleEn || founderCfg.subtitleBn) : (founderCfg.subtitleBn || founderCfg.subtitleEn))
+      : "দাঈ ইলাল্লাহ";
+    const founderBadge = founderCfg?.badgeLabel || "Founder";
+    const founderSectionTitle = founderCfg
+      ? (lang === "en" ? (founderCfg.sectionTitleEn || founderCfg.sectionTitleBn) : (founderCfg.sectionTitleBn || founderCfg.sectionTitleEn))
+      : t("aboutPage.founderTitle");
+    const founderBio = founderCfg
+      ? (lang === "en" ? (founderCfg.bioEn || founderCfg.bioBn) : (founderCfg.bioBn || founderCfg.bioEn))
+      : "";
+    const { data: teamData = [] } = useTeam();
+    const founderMember = teamData.find((m) =>
+      /প্রতিষ্ঠাতা|চেয়ারম্যান|founder|chairman/i.test(m.role || "")
+    ) || teamData.find((m) => m.name === founderName);
+    const founderPhoto = founderCfg?.photo || founderMember?.photo || "";
 
   return (
   <SiteLayout>
