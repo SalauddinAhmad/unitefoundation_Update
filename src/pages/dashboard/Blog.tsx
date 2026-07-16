@@ -195,16 +195,8 @@ export default function Blog() {
             </button>
           </>
         }
-
-            <button
-              onClick={() => setEditor({ open: true })}
-              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition"
-            >
-              <Plus className="h-4 w-4" /> নতুন পোস্ট
-            </button>
-          </>
-        }
       />
+
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
