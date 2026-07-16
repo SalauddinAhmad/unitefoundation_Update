@@ -319,6 +319,7 @@ export type PageHeroes = {
   contact: string;
   volunteer: string;
   privacy: string;
+  gallery: string;
 };
 
 export type FounderContent = {
@@ -545,6 +546,7 @@ const defaultSettings: SiteSettings = {
     contact: "",
     volunteer: "",
     privacy: "",
+    gallery: "",
   },
   founder: {
     nameBn: "আব্দুল্লাহ বিন এরশাদ",
