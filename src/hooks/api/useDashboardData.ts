@@ -309,6 +309,7 @@ export type SiteSettings = {
   milestones_section: MilestonesSection;
   mission_section: MissionSection;
   page_heroes: PageHeroes;
+  founder: FounderContent;
 };
 
 export type PageHeroes = {
@@ -318,6 +319,25 @@ export type PageHeroes = {
   contact: string;
   volunteer: string;
   privacy: string;
+};
+
+export type FounderContent = {
+  nameBn: string;
+  nameEn: string;
+  subtitleBn: string;
+  subtitleEn: string;
+  badgeLabel: string;
+  sectionTitleBn: string;
+  sectionTitleEn: string;
+  photo: string;
+  bioBn: string;
+  bioEn: string;
+  facebook: string;
+  youtube: string;
+  instagram: string;
+  tiktok: string;
+  whatsapp: string;
+  x: string;
 };
 
 
