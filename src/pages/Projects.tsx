@@ -6,7 +6,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { useProjectsPublic } from "@/hooks/api/usePublic";
-import heroImg from "@/assets/program-food.jpg";
+
 
 const Projects = () => {
   const { t } = useTranslation();
@@ -30,7 +30,6 @@ const Projects = () => {
       <Seo title={t("projectsPage.seoTitle")} description={t("projectsPage.seoDesc")} canonical="/projects" />
 
       <PageHero
-        image={heroImg}
         eyebrow={t("projectsPage.eyebrow")}
         title={t("projectsPage.title")}
         subtitle={t("projectsPage.subtitle")}

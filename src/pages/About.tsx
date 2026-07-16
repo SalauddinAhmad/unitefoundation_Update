@@ -3,10 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
-import about from "@/assets/about-mission.jpg";
-import t1 from "@/assets/team-founder.jpg";
-import t2 from "@/assets/team-2.jpg";
-import t3 from "@/assets/team-3.jpg";
 import { useTeam } from "@/hooks/api/useTeam";
 import { useSettings } from "@/hooks/api/useDashboardData";
 

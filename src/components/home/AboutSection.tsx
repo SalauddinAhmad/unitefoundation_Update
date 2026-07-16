@@ -1,11 +1,10 @@
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import aboutFallback from "@/assets/about-mission.jpg";
 import { useSettings } from "@/hooks/api/useDashboardData";
 
 export const AboutSection = () => {
   const { t } = useTranslation();
-  const { data: settings } = useSettings();
+  const { data: settings, isLoading } = useSettings();
   const a = settings?.about;
   const heading = a?.heading || t("about.headingFallback");
   const highlight = a?.highlight || t("about.highlightFallback");
@@ -13,7 +12,7 @@ export const AboutSection = () => {
   const quoteText = a?.quoteText || "";
   const quoteSource = a?.quoteSource || "";
   const points = a?.points?.length ? a.points : [];
-  const sideImage = a?.sideImage && a.sideImage.trim() ? a.sideImage : aboutFallback;
+  const sideImage = a?.sideImage && a.sideImage.trim() ? a.sideImage : "";
   const expNumber = a?.expNumber || t("about.expNumber");
   const expLabel = a?.expLabel || t("about.expLabel");
 
@@ -21,9 +20,16 @@ export const AboutSection = () => {
     <section className="section-y bg-background">
       <div className="container-page grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         <div className="relative order-2 lg:order-1">
-          <div className="rounded-card overflow-hidden shadow-card">
-            <img src={sideImage} alt={highlight} loading="lazy" width={1200} height={900} className="w-full h-auto" />
+          <div className="rounded-card overflow-hidden shadow-card bg-muted">
+            {sideImage ? (
+              <img src={sideImage} alt={highlight} loading="lazy" width={1200} height={900} className="w-full h-auto" />
+            ) : (
+              <div className={`w-full aspect-[4/3] flex items-center justify-center ${isLoading ? "animate-pulse" : ""}`}>
+                {!isLoading && <ImageIcon className="h-12 w-12 text-muted-foreground/40" />}
+              </div>
+            )}
           </div>
+
           <div className="absolute -bottom-6 -right-2 md:-right-6 hidden sm:block bg-card rounded-card p-5 shadow-card-hover max-w-[240px]">
             <div className="text-3xl font-bold text-primary">{expNumber}</div>
             <div className="text-sm text-muted-foreground mt-1">{expLabel}</div>

@@ -18,7 +18,7 @@ import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
-import volunteerImg from "@/assets/program-food.jpg";
+
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
@@ -82,16 +82,13 @@ const Volunteer = () => {
 
       {/* HERO */}
       <section className="relative isolate">
-        <div className="absolute inset-0 -z-10">
-          <img src={volunteerImg} alt={t("volunteerPage.heroTitle")} className="h-full w-full object-cover" loading="eager" />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, hsl(var(--primary) / 0.78) 0%, hsl(var(--primary) / 0.88) 100%)",
-            }}
-          />
-        </div>
+        <div
+          className="absolute inset-0 -z-10"
+          style={{
+            background:
+              "linear-gradient(180deg, hsl(var(--primary) / 0.92) 0%, hsl(var(--primary)) 100%)",
+          }}
+        />
         <div className="container-page py-20 md:py-28 text-center">
           <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight">
             {t("volunteerPage.heroTitle")}

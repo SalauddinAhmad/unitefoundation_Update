@@ -7,7 +7,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { usePostsPublic } from "@/hooks/api/usePublic";
 import { toBnNum } from "@/data/projects";
-import relief from "@/assets/hero-relief.jpg";
+
 
 const Blog = () => {
   const { t } = useTranslation();
@@ -33,7 +33,6 @@ const Blog = () => {
       <Seo title={t("blogPage.seoTitle")} description={t("blogPage.seoDesc")} canonical="/blog" />
 
       <PageHero
-        image={relief}
         eyebrow={t("blogPage.eyebrow")}
         title={t("blogPage.title")}
         subtitle={t("blogPage.subtitle")}
