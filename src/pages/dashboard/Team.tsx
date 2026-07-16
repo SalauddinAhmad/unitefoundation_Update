@@ -354,4 +354,125 @@ const Team = () => {
   );
 };
 
+const FounderTab = () => {
+  const { data: settings } = useSettings();
+  const update = useUpdateSettings();
+  const [form, setForm] = useState<FounderContent | null>(null);
+
+  useEffect(() => {
+    if (settings?.founder) setForm(settings.founder);
+  }, [settings?.founder]);
+
+  if (!settings || !form) {
+    return <div className="text-sm text-muted-foreground p-6">লোড হচ্ছে...</div>;
+  }
+
+  const set = <K extends keyof FounderContent>(k: K, v: FounderContent[K]) =>
+    setForm({ ...form, [k]: v });
+
+  const handleSave = async () => {
+    try {
+      await update.mutateAsync({ ...settings, founder: form });
+      toast({ title: "সংরক্ষণ হয়েছে" });
+    } catch (e: any) {
+      toast({ title: "সংরক্ষণ ব্যর্থ", description: e?.message, variant: "destructive" });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-xl border bg-card p-5 md:p-6 space-y-5">
+        <div>
+          <h2 className="font-bold text-lg">প্রতিষ্ঠাতা / চেয়ারম্যান</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            About পেজের "প্রতিষ্ঠাতা ও চেয়ারম্যান" সেকশনে যে তথ্য দেখানো হবে।
+          </p>
+        </div>
+
+        <ImagePickerButton
+          label="ছবি"
+          value={form.photo}
+          onChange={(url) => set("photo", url)}
+          aspect="square"
+          hint="প্রস্তাবিত: 600×600 px পোর্ট্রেট"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label>সেকশনের শিরোনাম (বাংলা)</Label>
+            <Input value={form.sectionTitleBn} onChange={(e) => set("sectionTitleBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Section Title (English)</Label>
+            <Input value={form.sectionTitleEn} onChange={(e) => set("sectionTitleEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>নাম (বাংলা)</Label>
+            <Input value={form.nameBn} onChange={(e) => set("nameBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Name (English)</Label>
+            <Input value={form.nameEn} onChange={(e) => set("nameEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>পদবী / সাব-টাইটেল (বাংলা)</Label>
+            <Input value={form.subtitleBn} onChange={(e) => set("subtitleBn", e.target.value)} placeholder="যেমন: দাঈ ইলাল্লাহ" />
+          </div>
+          <div>
+            <Label>Subtitle (English)</Label>
+            <Input value={form.subtitleEn} onChange={(e) => set("subtitleEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>ব্যাজ লেবেল</Label>
+            <Input value={form.badgeLabel} onChange={(e) => set("badgeLabel", e.target.value)} placeholder="Founder" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label>সংক্ষিপ্ত পরিচিতি (বাংলা)</Label>
+            <Textarea rows={4} value={form.bioBn} onChange={(e) => set("bioBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Bio (English)</Label>
+            <Textarea rows={4} value={form.bioEn} onChange={(e) => set("bioEn", e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border bg-card p-5 md:p-6 space-y-4">
+        <h3 className="font-bold">সোশ্যাল লিংক</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(
+            [
+              ["facebook", "Facebook"],
+              ["youtube", "YouTube"],
+              ["instagram", "Instagram"],
+              ["tiktok", "TikTok"],
+              ["whatsapp", "WhatsApp"],
+              ["x", "X (Twitter)"],
+            ] as [keyof FounderContent, string][]
+          ).map(([k, label]) => (
+            <div key={k}>
+              <Label>{label}</Label>
+              <Input
+                value={(form[k] as string) || ""}
+                onChange={(e) => set(k, e.target.value as any)}
+                placeholder="https://..."
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button onClick={handleSave} disabled={update.isPending}>
+          {update.isPending ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export default Team;
+
