@@ -546,6 +546,24 @@ const defaultSettings: SiteSettings = {
     volunteer: "",
     privacy: "",
   },
+  founder: {
+    nameBn: "আব্দুল্লাহ বিন এরশাদ",
+    nameEn: "Abdullah bin Ershad",
+    subtitleBn: "দাঈ ইলাল্লাহ",
+    subtitleEn: "Da'i Ilallah",
+    badgeLabel: "Founder",
+    sectionTitleBn: "প্রতিষ্ঠাতা ও চেয়ারম্যান",
+    sectionTitleEn: "Founder & Chairman",
+    photo: "",
+    bioBn: "",
+    bioEn: "",
+    facebook: "https://www.facebook.com/AbdullahBinArshad",
+    youtube: "https://youtube.com/@abdullahbinarshad",
+    instagram: "https://www.instagram.com/abdullahbinarshad.tv",
+    tiktok: "https://www.tiktok.com/@abdullahbinarshad.aba",
+    whatsapp: "https://wa.me/message/QNW22PYYZM4ZN1",
+    x: "https://x.com/abdullah6852443",
+  },
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
