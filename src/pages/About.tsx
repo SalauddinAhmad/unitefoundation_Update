@@ -227,12 +227,25 @@ const About = () => {
     ? missionGoalsSetting
     : (t("aboutPage.goals", { returnObjects: true }) as string[]));
   const values = t("aboutPage.values", { returnObjects: true }) as { t: string; d: string }[];
-  const founderName = lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ";
-  const { data: teamData = [] } = useTeam();
-  const founderMember = teamData.find((m) =>
-    /প্রতিষ্ঠাতা|চেয়ারম্যান|founder|chairman/i.test(m.role || "")
-  ) || teamData.find((m) => m.name === founderName);
-  const founderPhoto = founderMember?.photo || "";
+    const founderCfg = settings?.founder;
+    const founderName = founderCfg
+      ? (lang === "en" ? (founderCfg.nameEn || founderCfg.nameBn) : (founderCfg.nameBn || founderCfg.nameEn))
+      : (lang === "en" ? "Abdullah bin Ershad" : "আব্দুল্লাহ বিন এরশাদ");
+    const founderSubtitle = founderCfg
+      ? (lang === "en" ? (founderCfg.subtitleEn || founderCfg.subtitleBn) : (founderCfg.subtitleBn || founderCfg.subtitleEn))
+      : "দাঈ ইলাল্লাহ";
+    const founderBadge = founderCfg?.badgeLabel || "Founder";
+    const founderSectionTitle = founderCfg
+      ? (lang === "en" ? (founderCfg.sectionTitleEn || founderCfg.sectionTitleBn) : (founderCfg.sectionTitleBn || founderCfg.sectionTitleEn))
+      : t("aboutPage.founderTitle");
+    const founderBio = founderCfg
+      ? (lang === "en" ? (founderCfg.bioEn || founderCfg.bioBn) : (founderCfg.bioBn || founderCfg.bioEn))
+      : "";
+    const { data: teamData = [] } = useTeam();
+    const founderMember = teamData.find((m) =>
+      /প্রতিষ্ঠাতা|চেয়ারম্যান|founder|chairman/i.test(m.role || "")
+    ) || teamData.find((m) => m.name === founderName);
+    const founderPhoto = founderCfg?.photo || founderMember?.photo || "";
 
   return (
   <SiteLayout>
@@ -473,21 +486,28 @@ const About = () => {
                   </div>
                 )}
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
-                  <Sparkles className="h-3 w-3" /> Founder
+                  <Sparkles className="h-3 w-3" /> {founderBadge}
                 </span>
               </div>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 px-1">
                 <h3 className="text-xl md:text-2xl font-extrabold text-primary leading-tight">{founderName}</h3>
-                <span className="text-sm md:text-base font-medium italic text-foreground/60">দাঈ ইলাল্লাহ</span>
+                {founderSubtitle && (
+                  <span className="text-sm md:text-base font-medium italic text-foreground/60">{founderSubtitle}</span>
+                )}
               </div>
+              {founderBio && (
+                <p className="mt-3 px-1 text-sm leading-[1.8] text-foreground/75 whitespace-pre-line">
+                  {founderBio}
+                </p>
+              )}
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
               <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
                 {[
-                  { href: "https://www.facebook.com/AbdullahBinArshad", label: "Facebook", Icon: Facebook, hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]" },
-                  { href: "https://youtube.com/@abdullahbinarshad", label: "YouTube", Icon: Youtube, hover: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]" },
-                  { href: "https://www.instagram.com/abdullahbinarshad.tv", label: "Instagram", Icon: Instagram, hover: "hover:bg-[linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)] hover:text-white hover:border-transparent" },
+                  { href: founderCfg?.facebook ?? "", label: "Facebook", Icon: Facebook, hover: "hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]" },
+                  { href: founderCfg?.youtube ?? "", label: "YouTube", Icon: Youtube, hover: "hover:bg-[#FF0000] hover:text-white hover:border-[#FF0000]" },
+                  { href: founderCfg?.instagram ?? "", label: "Instagram", Icon: Instagram, hover: "hover:bg-[linear-gradient(135deg,#F58529,#DD2A7B,#8134AF)] hover:text-white hover:border-transparent" },
                   {
-                    href: "https://www.tiktok.com/@abdullahbinarshad.aba",
+                    href: founderCfg?.tiktok ?? "",
                     label: "TikTok",
                     hover: "hover:bg-black hover:text-white hover:border-black",
                     Icon: (props: { className?: string }) => (
@@ -495,7 +515,7 @@ const About = () => {
                     ),
                   },
                   {
-                    href: "https://wa.me/message/QNW22PYYZM4ZN1",
+                    href: founderCfg?.whatsapp ?? "",
                     label: "WhatsApp",
                     hover: "hover:bg-[#25D366] hover:text-white hover:border-[#25D366]",
                     Icon: (props: { className?: string }) => (
@@ -503,14 +523,14 @@ const About = () => {
                     ),
                   },
                   {
-                    href: "https://x.com/abdullah6852443",
+                    href: founderCfg?.x ?? "",
                     label: "X (Twitter)",
                     hover: "hover:bg-black hover:text-white hover:border-black",
                     Icon: (props: { className?: string }) => (
                       <svg viewBox="0 0 24 24" fill="currentColor" className={props.className} aria-hidden><path d="M17.53 3H20.9l-7.36 8.41L22 21h-6.79l-5.32-6.96L3.8 21H.42l7.87-8.99L0 3h6.96l4.81 6.36L17.53 3Zm-1.19 16h1.87L7.75 4.9H5.75L16.34 19Z"/></svg>
                     ),
                   },
-                ].map(({ href, label, Icon, hover }) => (
+                ].filter((s) => s.href && s.href.trim() !== "").map(({ href, label, Icon, hover }) => (
                   <a
                     key={label}
                     href={href}
@@ -533,7 +553,7 @@ const About = () => {
 
           <div className="order-1 md:order-2 text-center md:text-left">
             <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-[1.1]">
-              {t("aboutPage.founderTitle")}
+              {founderSectionTitle}
             </h2>
             <div className="mt-5 flex items-center gap-3 justify-center md:justify-start">
               <span className="h-px w-16 bg-gradient-to-r from-transparent to-amber-300/70 md:bg-gradient-to-l md:from-amber-300/70 md:to-transparent" />

@@ -309,6 +309,7 @@ export type SiteSettings = {
   milestones_section: MilestonesSection;
   mission_section: MissionSection;
   page_heroes: PageHeroes;
+  founder: FounderContent;
 };
 
 export type PageHeroes = {
@@ -318,6 +319,25 @@ export type PageHeroes = {
   contact: string;
   volunteer: string;
   privacy: string;
+};
+
+export type FounderContent = {
+  nameBn: string;
+  nameEn: string;
+  subtitleBn: string;
+  subtitleEn: string;
+  badgeLabel: string;
+  sectionTitleBn: string;
+  sectionTitleEn: string;
+  photo: string;
+  bioBn: string;
+  bioEn: string;
+  facebook: string;
+  youtube: string;
+  instagram: string;
+  tiktok: string;
+  whatsapp: string;
+  x: string;
 };
 
 
@@ -526,6 +546,24 @@ const defaultSettings: SiteSettings = {
     volunteer: "",
     privacy: "",
   },
+  founder: {
+    nameBn: "আব্দুল্লাহ বিন এরশাদ",
+    nameEn: "Abdullah bin Ershad",
+    subtitleBn: "দাঈ ইলাল্লাহ",
+    subtitleEn: "Da'i Ilallah",
+    badgeLabel: "Founder",
+    sectionTitleBn: "প্রতিষ্ঠাতা ও চেয়ারম্যান",
+    sectionTitleEn: "Founder & Chairman",
+    photo: "",
+    bioBn: "",
+    bioEn: "",
+    facebook: "https://www.facebook.com/AbdullahBinArshad",
+    youtube: "https://youtube.com/@abdullahbinarshad",
+    instagram: "https://www.instagram.com/abdullahbinarshad.tv",
+    tiktok: "https://www.tiktok.com/@abdullahbinarshad.aba",
+    whatsapp: "https://wa.me/message/QNW22PYYZM4ZN1",
+    x: "https://x.com/abdullah6852443",
+  },
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -553,6 +591,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
       goalsEn: (s?.mission_section?.goalsEn && s.mission_section.goalsEn.length ? s.mission_section.goalsEn : defaultSettings.mission_section.goalsEn),
     },
     page_heroes: { ...defaultSettings.page_heroes, ...(s?.page_heroes || {}) },
+    founder: { ...defaultSettings.founder, ...(s?.founder || {}) },
   };
 }
 

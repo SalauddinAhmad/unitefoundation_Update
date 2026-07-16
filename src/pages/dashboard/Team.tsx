@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Plus, Pencil, Trash2, X, Users2, GripVertical } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, X, Users2, GripVertical, User, Users as UsersIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import {
@@ -12,6 +13,7 @@ import {
   useDeleteTeam,
   type TeamMember,
 } from "@/hooks/api/useTeam";
+import { useSettings, useUpdateSettings, type FounderContent } from "@/hooks/api/useDashboardData";
 
 type Category = "উপদেষ্টা" | "দায়িত্বশীল";
 const CATEGORIES: Category[] = ["উপদেষ্টা", "দায়িত্বশীল"];
@@ -173,46 +175,65 @@ const Team = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold">আমাদের টিম</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          About পেজে "উপদেষ্টা" ও "দায়িত্বশীল" — এই দুই সেকশনে দেখানো সদস্যদের পরিচালনা করুন।
+          টিম সদস্য এবং About পেজের "প্রতিষ্ঠাতা ও চেয়ারম্যান" সেকশনের সব তথ্য এখান থেকে পরিচালনা করুন।
         </p>
       </div>
 
-      {sorted.length === 0 && (
-        <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
-          <Users2 className="h-10 w-10 mx-auto mb-3 opacity-40" />
-          কোনো সদস্য যোগ করা হয়নি। নিচের যেকোনো সেকশনের "নতুন সদস্য" ক্লিক করে শুরু করুন।
-        </div>
-      )}
+      <Tabs defaultValue="members" className="space-y-6">
+        <TabsList className="grid w-full sm:w-auto sm:inline-grid grid-cols-2">
+          <TabsTrigger value="members" className="gap-2">
+            <UsersIcon className="h-4 w-4" /> টিম সদস্য
+          </TabsTrigger>
+          <TabsTrigger value="founder" className="gap-2">
+            <User className="h-4 w-4" /> প্রতিষ্ঠাতা / চেয়ারম্যান
+          </TabsTrigger>
+        </TabsList>
 
-      {CATEGORIES.map((cat) => (
-        <section key={cat} className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-foreground">{cat}</h2>
-              <span className="text-xs text-muted-foreground bg-secondary rounded-full px-2 py-0.5">
-                {grouped[cat].length} জন
-              </span>
-            </div>
-            <Button size="sm" variant="outline" onClick={() => setEditing(emptyMember(cat))} className="gap-2">
-              <Plus className="h-3.5 w-3.5" /> নতুন {cat}
-            </Button>
-          </div>
-
-          {grouped[cat].length === 0 ? (
-            <p className="text-xs text-muted-foreground py-6 text-center rounded-lg border border-dashed">
-              এই সেকশনে এখনো কেউ নেই।
-            </p>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {grouped[cat].map(renderCard)}
+        <TabsContent value="members" className="space-y-6 mt-0">
+          {sorted.length === 0 && (
+            <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
+              <Users2 className="h-10 w-10 mx-auto mb-3 opacity-40" />
+              কোনো সদস্য যোগ করা হয়নি। নিচের যেকোনো সেকশনের "নতুন সদস্য" ক্লিক করে শুরু করুন।
             </div>
           )}
-        </section>
-      ))}
+
+          {CATEGORIES.map((cat) => (
+            <section key={cat} className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-foreground">{cat}</h2>
+                  <span className="text-xs text-muted-foreground bg-secondary rounded-full px-2 py-0.5">
+                    {grouped[cat].length} জন
+                  </span>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setEditing(emptyMember(cat))} className="gap-2">
+                  <Plus className="h-3.5 w-3.5" /> নতুন {cat}
+                </Button>
+              </div>
+
+              {grouped[cat].length === 0 ? (
+                <p className="text-xs text-muted-foreground py-6 text-center rounded-lg border border-dashed">
+                  এই সেকশনে এখনো কেউ নেই।
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {grouped[cat].map(renderCard)}
+                </div>
+              )}
+            </section>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="founder" className="mt-0">
+          <FounderTab />
+        </TabsContent>
+      </Tabs>
+
+
 
 
       {/* Edit Drawer */}
@@ -333,4 +354,125 @@ const Team = () => {
   );
 };
 
+const FounderTab = () => {
+  const { data: settings } = useSettings();
+  const update = useUpdateSettings();
+  const [form, setForm] = useState<FounderContent | null>(null);
+
+  useEffect(() => {
+    if (settings?.founder) setForm(settings.founder);
+  }, [settings?.founder]);
+
+  if (!settings || !form) {
+    return <div className="text-sm text-muted-foreground p-6">লোড হচ্ছে...</div>;
+  }
+
+  const set = <K extends keyof FounderContent>(k: K, v: FounderContent[K]) =>
+    setForm({ ...form, [k]: v });
+
+  const handleSave = async () => {
+    try {
+      await update.mutateAsync({ ...settings, founder: form });
+      toast({ title: "সংরক্ষণ হয়েছে" });
+    } catch (e: any) {
+      toast({ title: "সংরক্ষণ ব্যর্থ", description: e?.message, variant: "destructive" });
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-xl border bg-card p-5 md:p-6 space-y-5">
+        <div>
+          <h2 className="font-bold text-lg">প্রতিষ্ঠাতা / চেয়ারম্যান</h2>
+          <p className="text-xs text-muted-foreground mt-1">
+            About পেজের "প্রতিষ্ঠাতা ও চেয়ারম্যান" সেকশনে যে তথ্য দেখানো হবে।
+          </p>
+        </div>
+
+        <ImagePickerButton
+          label="ছবি"
+          value={form.photo}
+          onChange={(url) => set("photo", url)}
+          aspect="square"
+          hint="প্রস্তাবিত: 600×600 px পোর্ট্রেট"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label>সেকশনের শিরোনাম (বাংলা)</Label>
+            <Input value={form.sectionTitleBn} onChange={(e) => set("sectionTitleBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Section Title (English)</Label>
+            <Input value={form.sectionTitleEn} onChange={(e) => set("sectionTitleEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>নাম (বাংলা)</Label>
+            <Input value={form.nameBn} onChange={(e) => set("nameBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Name (English)</Label>
+            <Input value={form.nameEn} onChange={(e) => set("nameEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>পদবী / সাব-টাইটেল (বাংলা)</Label>
+            <Input value={form.subtitleBn} onChange={(e) => set("subtitleBn", e.target.value)} placeholder="যেমন: দাঈ ইলাল্লাহ" />
+          </div>
+          <div>
+            <Label>Subtitle (English)</Label>
+            <Input value={form.subtitleEn} onChange={(e) => set("subtitleEn", e.target.value)} />
+          </div>
+          <div>
+            <Label>ব্যাজ লেবেল</Label>
+            <Input value={form.badgeLabel} onChange={(e) => set("badgeLabel", e.target.value)} placeholder="Founder" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label>সংক্ষিপ্ত পরিচিতি (বাংলা)</Label>
+            <Textarea rows={4} value={form.bioBn} onChange={(e) => set("bioBn", e.target.value)} />
+          </div>
+          <div>
+            <Label>Bio (English)</Label>
+            <Textarea rows={4} value={form.bioEn} onChange={(e) => set("bioEn", e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-xl border bg-card p-5 md:p-6 space-y-4">
+        <h3 className="font-bold">সোশ্যাল লিংক</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(
+            [
+              ["facebook", "Facebook"],
+              ["youtube", "YouTube"],
+              ["instagram", "Instagram"],
+              ["tiktok", "TikTok"],
+              ["whatsapp", "WhatsApp"],
+              ["x", "X (Twitter)"],
+            ] as [keyof FounderContent, string][]
+          ).map(([k, label]) => (
+            <div key={k}>
+              <Label>{label}</Label>
+              <Input
+                value={(form[k] as string) || ""}
+                onChange={(e) => set(k, e.target.value as any)}
+                placeholder="https://..."
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button onClick={handleSave} disabled={update.isPending}>
+          {update.isPending ? "সংরক্ষণ হচ্ছে..." : "সংরক্ষণ"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 export default Team;
+
