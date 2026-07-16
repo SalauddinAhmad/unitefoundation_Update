@@ -73,8 +73,8 @@ const Team = () => {
 
   const handleSave = async () => {
     if (!editing) return;
-    if (!editing.name.trim() || !editing.role.trim()) {
-      toast({ title: "নাম ও পদবি আবশ্যক", variant: "destructive" });
+    if (!editing.name.trim()) {
+      toast({ title: "নাম আবশ্যক", variant: "destructive" });
       return;
     }
     await save.mutateAsync(editing);
