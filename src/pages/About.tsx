@@ -40,7 +40,12 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
             {m.name}
           </div>
           <div className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.12em] text-white/80">
-            {m.role}
+            {(() => {
+              const raw = m.role || "";
+              const [head, ...rest] = raw.split("|");
+              const desig = rest.join("|").trim();
+              return desig || head;
+            })()}
           </div>
         </div>
 
