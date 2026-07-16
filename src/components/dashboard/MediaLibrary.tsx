@@ -111,7 +111,9 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
         const saved = await upload.mutateAsync(form);
         lastUrl = saved.url;
       } catch (e: any) {
-        toast.error(`${f.name}: আপলোড ব্যর্থ`);
+        const detail = e?.message || e?.data?.message || "অজানা ত্রুটি";
+        console.error("[MediaLibrary] upload failed", { file: f.name, error: e });
+        toast.error(`${f.name}: আপলোড ব্যর্থ — ${detail}`);
       } finally {
         setProgress((p) => (p ? { ...p, done: p.done + 1 } : p));
       }
