@@ -9,7 +9,7 @@ const db = require('../db/pool');
  * Persist one activity row.
  * @param {object} p
  * @param {object} [p.req]        Express req (used for user + ip + UA when present)
- * @param {string} p.action       create|update|delete|login|logout|password_change|role_change|export|other
+ * @param {string} p.action       create|update|delete|login|login_failed|logout|password_change|role_change|export|other
  * @param {string} p.entity       Domain object e.g. "posts", "settings"
  * @param {string|number} [p.entityId]
  * @param {string} [p.summary]    Short human message
@@ -67,14 +67,50 @@ const ENTITY_BN = {
 
 const ACTION_BN = {
   create: 'তৈরি করেছেন', update: 'আপডেট করেছেন', delete: 'ডিলিট করেছেন',
-  login: 'লগইন করেছেন', logout: 'লগআউট করেছেন',
+  login: 'লগইন করেছেন', login_failed: 'লগইন ব্যর্থ হয়েছে', logout: 'লগআউট করেছেন',
+  password_change: 'পাসওয়ার্ড পরিবর্তন করেছেন', role_change: 'রোল পরিবর্তন করেছেন',
 };
+
+const SENSITIVE_KEY_RE = /(password|pass|token|secret|otp|hash|authorization|cookie)/i;
+
+function sanitizeAuditBody(body) {
+  if (!body || typeof body !== 'object') return null;
+  return Object.keys(body).reduce((acc, k) => {
+    const v = body[k];
+    if (v == null) return acc;
+    if (SENSITIVE_KEY_RE.test(k)) {
+      acc[k] = '[redacted]';
+      return acc;
+    }
+    acc[k] = v;
+    return acc;
+  }, {});
+}
+
+function readAuditBody(req, initialBody) {
+  const base = sanitizeAuditBody(initialBody || req.body);
+  const out = base ? { ...base } : {};
+
+  // Multer parses multipart/form-data after this middleware has registered,
+  // so file details are only available at finish time. Keep only safe metadata.
+  if (req.file) {
+    out.filename = req.file.originalname || req.file.filename || out.filename;
+    out.file_mime = req.file.mimetype || null;
+    out.file_size = req.file.size || (req.file.buffer && req.file.buffer.length) || null;
+  }
+  if (Array.isArray(req.files)) {
+    out.files_count = req.files.length;
+    const first = req.files[0];
+    if (first) out.filename = first.originalname || first.filename || out.filename;
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 // Pick a short "identifier" from a request body — a name/title we can show
 // in the log so the row is meaningful ("Ali-এর টিম মেম্বার আপডেট করেছেন").
 function pickBodyLabel(body) {
   if (!body || typeof body !== 'object') return null;
-  const keys = ['name', 'title', 'title_bn', 'title_en', 'subject', 'label', 'email'];
+  const keys = ['name', 'title', 'title_bn', 'title_en', 'subject', 'label', 'filename', 'email'];
   for (const k of keys) {
     if (body[k] && typeof body[k] === 'string' && body[k].trim()) {
       return body[k].trim().slice(0, 80);
@@ -115,6 +151,40 @@ function buildSummary(action, entity, entityId, body) {
   return base;
 }
 
+function detectAuditTarget(req, method) {
+  const seg = (req.originalUrl || req.url || '').split('?')[0].split('/').filter(Boolean);
+  const first = seg[0] || 'unknown';
+  const second = seg[1] || '';
+  let entity = first;
+  let entityId = seg.length > 1 ? seg[seg.length - 1] : null;
+
+  if (first === 'admin' && second === 'users') {
+    entity = 'admins';
+    entityId = seg[2] || null;
+  } else if (first === 'gallery' && second === 'albums') {
+    entity = 'albums';
+    entityId = seg[2] || null;
+  } else if (first === 'gallery' && second === 'items') {
+    entity = 'gallery';
+    entityId = seg[2] || null;
+  } else if (first === 'gallery' && second === 'upload') {
+    entity = 'media';
+    entityId = null;
+  }
+
+  let action =
+    method === 'POST' ? 'create' :
+    method === 'DELETE' ? 'delete' :
+    method === 'PUT' || method === 'PATCH' ? 'update' : 'other';
+
+  if (first === 'auth' && second === 'logout') action = 'logout';
+  if (first === 'auth' && second === 'change-password') action = 'password_change';
+  if (first === 'admin' && second === 'users' && seg[3] === 'role') action = 'role_change';
+  if (first === 'admin' && second === 'users' && seg[3] === 'reset-credentials') action = 'password_change';
+
+  return { entity, entityId, action };
+}
+
 /**
  * Express middleware — automatically logs every authenticated
  * mutating request (POST/PUT/PATCH/DELETE) after the response is sent.
@@ -124,36 +194,32 @@ function autoAuditMiddleware(req, res, next) {
   const method = req.method;
   if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return next();
 
-  // Snapshot body now — some routes mutate/clear req.body before finish fires.
-  const bodySnapshot = req.body && typeof req.body === 'object' ? { ...req.body } : null;
-  // Redact obviously sensitive fields before we ever look at them
-  if (bodySnapshot) {
-    ['password', 'password_hash', 'new_password', 'old_password', 'otp', 'token', 'reset_token']
-      .forEach(k => { if (k in bodySnapshot) bodySnapshot[k] = '[redacted]'; });
+  const pathOnly = (req.originalUrl || req.url || '').split('?')[0];
+  // Login and OTP login are logged inside auth.js where the real user row is known.
+  if (['/auth/login', '/auth/verify-otp', '/auth/forgot-password', '/auth/reset-password'].includes(pathOnly)) {
+    return next();
   }
+
+  // Snapshot body now — some routes mutate/clear req.body before finish fires.
+  const bodySnapshot = req.body && typeof req.body === 'object' ? sanitizeAuditBody(req.body) : null;
 
   res.on('finish', () => {
     if (!req.user) return;
-    if (res.statusCode >= 500) return;
-    // Skip failed auth/permission responses — noisy and not useful
-    if (res.statusCode === 401 || res.statusCode === 403) return;
+    // Only record actions that actually succeeded. Failed logins are logged manually.
+    if (res.statusCode >= 400) return;
 
-    const seg = (req.originalUrl || req.url || '').split('?')[0].split('/').filter(Boolean);
-    const entity = seg[0] || 'unknown';
-    // Handle nested resources like /gallery/albums/:id → entity=gallery, id=last segment
-    const entityId = seg.length > 1 ? seg[seg.length - 1] : null;
-
-    const action =
-      method === 'POST' ? 'create' :
-      method === 'DELETE' ? 'delete' :
-      method === 'PUT' || method === 'PATCH' ? 'update' : 'other';
-
-    const summary = buildSummary(action, entity, entityId, bodySnapshot);
+    const { entity, entityId, action } = detectAuditTarget(req, method);
+    const safeBody = readAuditBody(req, bodySnapshot);
+    const summary = buildSummary(action, entity, entityId, safeBody);
 
     // Include a small, safe body preview in meta for the detail view
-    const metaBody = bodySnapshot ? Object.keys(bodySnapshot).reduce((acc, k) => {
-      const v = bodySnapshot[k];
+    const metaBody = safeBody ? Object.keys(safeBody).reduce((acc, k) => {
+      const v = safeBody[k];
       if (v == null) return acc;
+      if (SENSITIVE_KEY_RE.test(k)) {
+        acc[k] = '[redacted]';
+        return acc;
+      }
       if (typeof v === 'string') {
         // Strip base64 data URLs — they'd bloat the log table
         acc[k] = v.length > 200 || /^data:/.test(v) ? `[${typeof v}, ${v.length} chars]` : v;

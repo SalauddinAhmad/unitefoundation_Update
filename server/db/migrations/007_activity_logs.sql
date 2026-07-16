@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS activity_logs (
   id          BIGINT AUTO_INCREMENT PRIMARY KEY,
-  user_id     INT NULL,
+  user_id     CHAR(36) NULL,
   user_email  VARCHAR(191) NULL,
   user_name   VARCHAR(191) NULL,
   user_role   VARCHAR(32)  NULL,

@@ -12,7 +12,7 @@ import {
 
 type LogRow = {
   id: number;
-  user_id: number | null;
+  user_id: string | null;
   user_email: string | null;
   user_name: string | null;
   user_role: string | null;
@@ -32,7 +32,7 @@ type LogRow = {
 type Summary = {
   days: number;
   byAction: { action: string; n: number }[];
-  byUser: { user_id: number; user_email: string; user_name: string; n: number }[];
+  byUser: { user_id: string; user_email: string; user_name: string; n: number }[];
   byEntity: { entity: string; n: number }[];
 };
 
