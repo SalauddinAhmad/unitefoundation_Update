@@ -9,10 +9,12 @@ import { PageHero } from "@/components/layout/PageHero";
 import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
+import { useSettings } from "@/hooks/api/useDashboardData";
 
 
 const Contact = () => {
   const { t } = useTranslation();
+  const { data: settings } = useSettings();
   const schema = z.object({
     name: z.string().trim().min(2, t("contactPage.errName")).max(80),
     email: z.string().trim().email(t("contactPage.errEmail")).max(255),
