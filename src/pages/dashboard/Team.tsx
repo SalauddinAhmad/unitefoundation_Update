@@ -175,46 +175,65 @@ const Team = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold">আমাদের টিম</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          About পেজে "উপদেষ্টা" ও "দায়িত্বশীল" — এই দুই সেকশনে দেখানো সদস্যদের পরিচালনা করুন।
+          টিম সদস্য এবং About পেজের "প্রতিষ্ঠাতা ও চেয়ারম্যান" সেকশনের সব তথ্য এখান থেকে পরিচালনা করুন।
         </p>
       </div>
 
-      {sorted.length === 0 && (
-        <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
-          <Users2 className="h-10 w-10 mx-auto mb-3 opacity-40" />
-          কোনো সদস্য যোগ করা হয়নি। নিচের যেকোনো সেকশনের "নতুন সদস্য" ক্লিক করে শুরু করুন।
-        </div>
-      )}
+      <Tabs defaultValue="members" className="space-y-6">
+        <TabsList className="grid w-full sm:w-auto sm:inline-grid grid-cols-2">
+          <TabsTrigger value="members" className="gap-2">
+            <UsersIcon className="h-4 w-4" /> টিম সদস্য
+          </TabsTrigger>
+          <TabsTrigger value="founder" className="gap-2">
+            <User className="h-4 w-4" /> প্রতিষ্ঠাতা / চেয়ারম্যান
+          </TabsTrigger>
+        </TabsList>
 
-      {CATEGORIES.map((cat) => (
-        <section key={cat} className="space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-foreground">{cat}</h2>
-              <span className="text-xs text-muted-foreground bg-secondary rounded-full px-2 py-0.5">
-                {grouped[cat].length} জন
-              </span>
-            </div>
-            <Button size="sm" variant="outline" onClick={() => setEditing(emptyMember(cat))} className="gap-2">
-              <Plus className="h-3.5 w-3.5" /> নতুন {cat}
-            </Button>
-          </div>
-
-          {grouped[cat].length === 0 ? (
-            <p className="text-xs text-muted-foreground py-6 text-center rounded-lg border border-dashed">
-              এই সেকশনে এখনো কেউ নেই।
-            </p>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {grouped[cat].map(renderCard)}
+        <TabsContent value="members" className="space-y-6 mt-0">
+          {sorted.length === 0 && (
+            <div className="rounded-xl border border-dashed p-12 text-center text-muted-foreground">
+              <Users2 className="h-10 w-10 mx-auto mb-3 opacity-40" />
+              কোনো সদস্য যোগ করা হয়নি। নিচের যেকোনো সেকশনের "নতুন সদস্য" ক্লিক করে শুরু করুন।
             </div>
           )}
-        </section>
-      ))}
+
+          {CATEGORIES.map((cat) => (
+            <section key={cat} className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-foreground">{cat}</h2>
+                  <span className="text-xs text-muted-foreground bg-secondary rounded-full px-2 py-0.5">
+                    {grouped[cat].length} জন
+                  </span>
+                </div>
+                <Button size="sm" variant="outline" onClick={() => setEditing(emptyMember(cat))} className="gap-2">
+                  <Plus className="h-3.5 w-3.5" /> নতুন {cat}
+                </Button>
+              </div>
+
+              {grouped[cat].length === 0 ? (
+                <p className="text-xs text-muted-foreground py-6 text-center rounded-lg border border-dashed">
+                  এই সেকশনে এখনো কেউ নেই।
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {grouped[cat].map(renderCard)}
+                </div>
+              )}
+            </section>
+          ))}
+        </TabsContent>
+
+        <TabsContent value="founder" className="mt-0">
+          <FounderTab />
+        </TabsContent>
+      </Tabs>
+
+
 
 
       {/* Edit Drawer */}
