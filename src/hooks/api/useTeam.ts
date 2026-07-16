@@ -27,7 +27,7 @@ const teamMemberSchema = z.object({
   name: z.string().trim().min(1).max(120),
   role: z.string().trim().min(1).max(160),
   bio: z.string().trim().max(1000),
-  photo: z.string().trim().max(5000),
+  photo: z.string().trim().max(10_000_000),
   order: z.number().finite(),
   facebook: z.string().trim().max(500),
   linkedin: z.string().trim().max(500),
