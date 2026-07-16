@@ -3,6 +3,7 @@
 // Backend endpoint: /team  (GET, POST, PATCH /:id, DELETE /:id)
 // ============================================================
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 import { api } from "@/lib/api";
 
 export type TeamMember = {
@@ -20,6 +21,18 @@ export type TeamMember = {
 const LOCAL_KEY = "uf_team_members";
 
 const defaultTeam: TeamMember[] = [];
+
+const teamMemberSchema = z.object({
+  id: z.string().trim().min(1).max(100),
+  name: z.string().trim().min(1).max(120),
+  role: z.string().trim().min(1).max(160),
+  bio: z.string().trim().max(1000),
+  photo: z.string().trim().max(5000),
+  order: z.number().finite(),
+  facebook: z.string().trim().max(500),
+  linkedin: z.string().trim().max(500),
+  email: z.string().trim().max(255),
+});
 
 const normalizeTeamMember = (member: Partial<TeamMember>): TeamMember => ({
   id: String(member.id ?? `TM-${Date.now()}`),
@@ -68,7 +81,7 @@ export const useSaveTeam = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (member: TeamMember) => {
-      const normalized = normalizeTeamMember(member);
+      const normalized = teamMemberSchema.parse(normalizeTeamMember(member));
       // Decide create vs update from the current server-backed cache,
       // NOT from localStorage (which can be stale on other admins' machines).
       const current = (qc.getQueryData<TeamMember[]>(["team"]) ?? loadLocal());
