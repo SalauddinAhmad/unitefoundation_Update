@@ -96,19 +96,28 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
       const f = list[i];
       try {
         const compressed = await compressImage(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.85 });
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result));
+          r.onerror = reject;
+          r.readAsDataURL(compressed);
+        });
         const thumb = await compressImageToDataURL(compressed, { maxWidth: 400, maxHeight: 400, quality: 0.75 });
         const meta = await fileToMeta(compressed);
 
-        const form = new FormData();
-        form.append("file", compressed, compressed.name || f.name);
-        form.append("thumb_url", thumb);
-        form.append("filename", f.name);
-        form.append("mime", compressed.type);
-        form.append("size_bytes", String(compressed.size));
-        form.append("width", String(meta.width));
-        form.append("height", String(meta.height));
-
-        const saved = await upload.mutateAsync(form);
+        // Send as JSON (base64 data URI) — cPanel/LiteSpeed proxies often block
+        // multipart/form-data uploads, causing "Failed to fetch". The server
+        // accepts data-URI JSON via express.json({limit:'25mb'}) and stores
+        // the file to disk on its side.
+        const saved = await upload.mutateAsync({
+          url: dataUrl,
+          thumb_url: thumb,
+          filename: f.name,
+          mime: compressed.type,
+          size_bytes: compressed.size,
+          width: meta.width,
+          height: meta.height,
+        });
         lastUrl = saved.url;
       } catch (e: any) {
         const detail = e?.message || e?.data?.message || "অজানা ত্রুটি";
