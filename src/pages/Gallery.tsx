@@ -5,6 +5,7 @@ import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { useGalleryPublic } from "@/hooks/api/usePublic";
+import { useSettings } from "@/hooks/api/useDashboardData";
 import g1Asset from "@/assets/gallery/01.jpg.asset.json"; const g1 = g1Asset.url;
 import g2Asset from "@/assets/gallery/02.jpg.asset.json"; const g2 = g2Asset.url;
 import g3Asset from "@/assets/gallery/03.jpg.asset.json"; const g3 = g3Asset.url;
@@ -76,6 +77,7 @@ function extractYouTubeId(url: string): string | null {
 const Gallery = () => {
   const { t } = useTranslation();
   const { data } = useGalleryPublic();
+  const { data: settings } = useSettings();
   const ALL = t("galleryPage.all");
 
   // Build a map: album_id -> album for category lookup
@@ -147,7 +149,7 @@ const Gallery = () => {
       <Seo title={t("galleryPage.seoTitle")} description={t("galleryPage.seoDesc")} canonical="/gallery" />
 
       <PageHero
-        image={g1}
+        image={settings?.page_heroes?.gallery || g1}
         eyebrow={t("galleryPage.eyebrow")}
         title={t("galleryPage.title")}
         subtitle={t("galleryPage.subtitle")}
