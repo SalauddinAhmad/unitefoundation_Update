@@ -486,13 +486,20 @@ const About = () => {
                   </div>
                 )}
                 <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full gradient-donate-bg px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-donate">
-                  <Sparkles className="h-3 w-3" /> Founder
+                  <Sparkles className="h-3 w-3" /> {founderBadge}
                 </span>
               </div>
               <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1 px-1">
                 <h3 className="text-xl md:text-2xl font-extrabold text-primary leading-tight">{founderName}</h3>
-                <span className="text-sm md:text-base font-medium italic text-foreground/60">দাঈ ইলাল্লাহ</span>
+                {founderSubtitle && (
+                  <span className="text-sm md:text-base font-medium italic text-foreground/60">{founderSubtitle}</span>
+                )}
               </div>
+              {founderBio && (
+                <p className="mt-3 px-1 text-sm leading-[1.8] text-foreground/75 whitespace-pre-line">
+                  {founderBio}
+                </p>
+              )}
               <div className="mt-4 mx-1 h-px bg-gradient-to-r from-primary/20 via-donate-orange/30 to-transparent" />
               <div className="mt-4 flex flex-wrap items-center gap-2 px-1 pb-1">
                 {[
