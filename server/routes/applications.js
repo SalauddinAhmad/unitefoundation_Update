@@ -6,6 +6,7 @@ const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 const { renderEmail } = require('../services/emailTemplate');
+const { validateEmail } = require('../utils/emailValidator');
 
 const KINDS = ['volunteer','member','career','donor'];
 
@@ -109,6 +110,10 @@ router.post('/:kind', asyncH(async (req, res) => {
     message: z.string().optional(),
     extra: z.any().optional(),
   }).parse(req.body);
+  if (data.email) {
+    const ev = validateEmail(data.email);
+    if (!ev.ok) return res.status(400).json({ message: ev.message, code: ev.code });
+  }
   const id = uuid();
   await pool.execute(
     `INSERT INTO applications (id,kind,name,phone,email,address,profession,message,extra)
