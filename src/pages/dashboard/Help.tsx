@@ -32,7 +32,7 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { site } from "@/data/site";
+
 
 // ------------------------------------------------------------
 // TYPES
