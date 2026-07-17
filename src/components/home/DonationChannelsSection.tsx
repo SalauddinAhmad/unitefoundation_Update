@@ -167,13 +167,14 @@ export const DonationChannelsSection = () => {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="mx-auto w-52 max-w-full rounded-[24px] bg-card p-3 shadow-2xl">
                     <div className="aspect-square rounded-2xl bg-secondary flex items-center justify-center overflow-hidden">
-                      {site.payments.qrImage ? (
+                      {payments.qrImage ? (
                         <img
-                          src={site.payments.qrImage}
+                          src={payments.qrImage}
                           alt="Unite Foundation Bangla QR"
                           className="h-full w-full object-contain"
                           loading="lazy"
                         />
+
                       ) : (
                         <div className="h-full w-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-primary/25 rounded-2xl p-3">
                           <QrCode className="h-12 w-12 text-primary/45" strokeWidth={1.4} />
