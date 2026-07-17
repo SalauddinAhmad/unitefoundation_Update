@@ -6,7 +6,7 @@ import { z, type ZodTypeAny } from "zod";
 import { toast } from "@/hooks/use-toast";
 import type { FormField, FormSchema } from "@/data/formDefaults";
 import { ChevronRight, Send, ShieldCheck } from "lucide-react";
-import { isAcceptableEmail, emailRejectionReason } from "@/lib/emailValidator";
+import { emailRejectionReason } from "@/lib/emailValidator";
 
 type Values = Record<string, string | number | boolean | string[]>;
 
@@ -24,10 +24,11 @@ function buildZod(fields: FormField[]) {
     let s: ZodTypeAny;
     switch (f.type) {
       case "email": {
-        const emailBase = z.string().trim().email("সঠিক ইমেইল দিন").refine(
-          (v) => v === "" || isAcceptableEmail(v),
-          (v) => ({ message: emailRejectionReason(v) || "এই ইমেইল গ্রহণযোগ্য নয়" }),
-        );
+        const emailBase = z.string().trim().email("সঠিক ইমেইল দিন").superRefine((v, ctx) => {
+          if (v === "") return;
+          const reason = emailRejectionReason(v);
+          if (reason) ctx.addIssue({ code: z.ZodIssueCode.custom, message: reason });
+        });
         s = f.required ? emailBase.refine((v) => v !== "", "সঠিক ইমেইল দিন") : emailBase.or(z.literal(""));
         break;
       }
