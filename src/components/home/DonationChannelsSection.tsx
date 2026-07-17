@@ -1,20 +1,21 @@
 import { Copy, CreditCard, QrCode, Smartphone } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
-
-const mobileNumbers = [
-  { brand: "bKash", number: site.payments.bkash.number },
-  { brand: "Nagad", number: site.payments.nagad.number },
-  { brand: "Rocket", number: site.payments.rocket.number },
-];
+import { usePaymentsData } from "@/hooks/usePaymentsData";
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 
 export const DonationChannelsSection = () => {
   const { t } = useTranslation();
+  const payments = usePaymentsData();
 
-  const bankCards = site.payments.banks.map((b) => ({
+  const mobileNumbers = [
+    { brand: "bKash", number: payments.mobiles.bkash },
+    { brand: "Nagad", number: payments.mobiles.nagad },
+    { brand: "Rocket", number: payments.mobiles.rocket },
+  ];
+
+  const bankCards = payments.banks.map((b) => ({
     title: b.bank,
     accountName: b.account,
     accountNumber: b.number,
@@ -27,6 +28,7 @@ export const DonationChannelsSection = () => {
     navigator.clipboard.writeText(text);
     toast({ title: t("common.copied"), description: t("common.copiedDesc", { label }) });
   };
+
 
   return (
     <section
@@ -165,13 +167,14 @@ export const DonationChannelsSection = () => {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="mx-auto w-52 max-w-full rounded-[24px] bg-card p-3 shadow-2xl">
                     <div className="aspect-square rounded-2xl bg-secondary flex items-center justify-center overflow-hidden">
-                      {site.payments.qrImage ? (
+                      {payments.qrImage ? (
                         <img
-                          src={site.payments.qrImage}
+                          src={payments.qrImage}
                           alt="Unite Foundation Bangla QR"
                           className="h-full w-full object-contain"
                           loading="lazy"
                         />
+
                       ) : (
                         <div className="h-full w-full flex flex-col items-center justify-center text-center gap-2 border-2 border-dashed border-primary/25 rounded-2xl p-3">
                           <QrCode className="h-12 w-12 text-primary/45" strokeWidth={1.4} />

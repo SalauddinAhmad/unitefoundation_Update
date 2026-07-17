@@ -1,23 +1,25 @@
 import { Copy, CreditCard, Heart, QrCode, Smartphone } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
-
-const mobileNumbers = [
-  { brand: "bKash", number: site.payments.bkash.number },
-  { brand: "Nagad", number: site.payments.nagad.number },
-  { brand: "Rocket", number: site.payments.rocket.number },
-];
+import { usePaymentsData } from "@/hooks/usePaymentsData";
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 
 export const HomeDonationChannelsSection = () => {
   const { t } = useTranslation();
+  const payments = usePaymentsData();
+
+  const mobileNumbers = [
+    { brand: "bKash", number: payments.mobiles.bkash },
+    { brand: "Nagad", number: payments.mobiles.nagad },
+    { brand: "Rocket", number: payments.mobiles.rocket },
+  ];
 
   const copy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: t("common.copied"), description: t("common.copiedDesc", { label }) });
   };
+
 
   const cardBg =
     "linear-gradient(160deg, hsl(152 55% 13%) 0%, hsl(152 65% 8%) 100%)";
@@ -64,7 +66,7 @@ export const HomeDonationChannelsSection = () => {
         {/* 2-column grid, large cards */}
         <div className="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           {/* Bank cards */}
-          {site.payments.banks.map((bank) => (
+          {payments.banks.map((bank) => (
             <article
               key={bank.bank}
               className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8"
@@ -191,7 +193,7 @@ export const HomeDonationChannelsSection = () => {
 
             <button
               onClick={() =>
-                copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))
+                copy(payments.mobiles.bkash, t("channels.toast.mobileNumber"))
               }
               className="relative mt-8 w-full rounded-2xl border border-donate-highlight/15 bg-black/30 px-5 py-6 text-center transition-colors hover:bg-black/40"
             >
@@ -199,7 +201,7 @@ export const HomeDonationChannelsSection = () => {
                 className="font-mono text-2xl md:text-3xl font-extrabold text-primary-foreground tracking-wider"
                 dir="ltr"
               >
-                {site.payments.bkash.number}
+                {payments.mobiles.bkash}
               </p>
               <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-donate-highlight">
                 <Copy className="h-3 w-3" />
@@ -251,9 +253,9 @@ export const HomeDonationChannelsSection = () => {
 
             <div className="relative mt-8 mx-auto w-44 rounded-2xl bg-card p-3 border border-donate-highlight/20">
               <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
-                {site.payments.qrImage ? (
+                {payments.qrImage ? (
                   <img
-                    src={site.payments.qrImage}
+                    src={payments.qrImage}
                     alt="Unite Foundation Bangla QR"
                     className="h-full w-full object-contain"
                     loading="lazy"
