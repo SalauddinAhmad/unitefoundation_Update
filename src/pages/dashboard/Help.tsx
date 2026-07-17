@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   LifeBuoy,
   Search,
@@ -18,65 +18,379 @@ import {
   Sparkles,
   Send,
   CheckCircle2,
+  AlertTriangle,
+  KeyRound,
+  RefreshCcw,
+  ImageIcon,
+  Inbox,
+  Wifi,
+  MonitorSmartphone,
+  ShieldAlert,
+  Lightbulb,
+  ArrowRight,
+  Copy,
+  Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-const categories = [
-  { icon: Rocket, label: "শুরু করুন", desc: "ড্যাশবোর্ড সেটআপ ও বেসিক", color: "from-emerald-500/20 to-emerald-500/5", iconBg: "bg-emerald-500/15 text-emerald-700" },
-  { icon: HandCoins, label: "দান ব্যবস্থাপনা", desc: "ডোনেশন, রিসিট, রিপোর্ট", color: "from-amber-500/20 to-amber-500/5", iconBg: "bg-amber-500/15 text-amber-700" },
-  { icon: Users2, label: "সদস্য ও স্বেচ্ছাসেবক", desc: "প্রোফাইল, যোগ ও যাচাই", color: "from-sky-500/20 to-sky-500/5", iconBg: "bg-sky-500/15 text-sky-700" },
-  { icon: FileText, label: "কনটেন্ট ও ব্লগ", desc: "পোস্ট, গ্যালারি, প্রকল্প", color: "from-violet-500/20 to-violet-500/5", iconBg: "bg-violet-500/15 text-violet-700" },
-  { icon: Shield, label: "নিরাপত্তা ও রোল", desc: "2FA, অ্যাডমিন ও পারমিশন", color: "from-rose-500/20 to-rose-500/5", iconBg: "bg-rose-500/15 text-rose-700" },
-  { icon: SettingsIcon, label: "সেটিংস", desc: "পেমেন্ট, নোটিফিকেশন, SMTP", color: "from-teal-500/20 to-teal-500/5", iconBg: "bg-teal-500/15 text-teal-700" },
+// ------------------------------------------------------------
+// TYPES
+// ------------------------------------------------------------
+type Step = { title: string; detail?: string };
+type Topic = {
+  id: string;
+  title: string;
+  summary: string;
+  steps: Step[];
+  tip?: string;
+};
+type Category = {
+  key: string;
+  icon: typeof Rocket;
+  label: string;
+  desc: string;
+  color: string;
+  iconBg: string;
+  topics: Topic[];
+};
+
+// ------------------------------------------------------------
+// DETAILED CONTENT (Bangla, non-technical, step-by-step)
+// ------------------------------------------------------------
+const categories: Category[] = [
+  {
+    key: "getting-started",
+    icon: Rocket,
+    label: "শুরু করুন",
+    desc: "প্রথমবার ড্যাশবোর্ড ব্যবহারের গাইড",
+    color: "from-emerald-500/20 to-emerald-500/5",
+    iconBg: "bg-emerald-500/15 text-emerald-700",
+    topics: [
+      {
+        id: "first-login",
+        title: "প্রথমবার লগইন কীভাবে করব?",
+        summary: "আপনি ইমেইলে একটি স্বয়ংক্রিয় পাসওয়ার্ড পেয়েছেন — সেটি দিয়ে ঢুকুন এবং নিজের পাসওয়ার্ড সেট করুন।",
+        steps: [
+          { title: "ইমেইল খুলুন", detail: "‘Unite Foundation Admin Access’ বিষয়ের ইমেইলটি খুঁজুন। না পেলে Spam / Junk ফোল্ডার দেখুন।" },
+          { title: "লগইন পেজে যান", detail: "ব্রাউজারে সাইটের ঠিকানা লিখুন → ডান পাশে ‘লগইন’ বাটন। অথবা সরাসরি /login পেজে যান।" },
+          { title: "ইমেইল ও অস্থায়ী পাসওয়ার্ড দিন", detail: "ইমেইল ফিল্ডে আপনার ইমেইল, পাসওয়ার্ড ফিল্ডে ইমেইলে পাওয়া কোডটি কপি-পেস্ট করুন।" },
+          { title: "নতুন পাসওয়ার্ড সেট করুন", detail: "সেটিংস → অ্যাকাউন্ট → ‘পাসওয়ার্ড পরিবর্তন’ থেকে অন্তত ৮ অক্ষরের একটি শক্ত পাসওয়ার্ড দিন।" },
+        ],
+        tip: "পাসওয়ার্ডে অন্তত একটি বড় হাতের অক্ষর, একটি সংখ্যা ও একটি বিশেষ চিহ্ন (!@#$) রাখুন।",
+      },
+      {
+        id: "dashboard-tour",
+        title: "ড্যাশবোর্ডের কোন অংশে কী আছে?",
+        summary: "বাম পাশের সাইডবারে সব মেনু, উপরে সার্চ ও নোটিফিকেশন, মাঝখানে মূল কনটেন্ট।",
+        steps: [
+          { title: "সাইডবার (বাম)", detail: "প্রতিটি সেকশনে (দান, স্বেচ্ছাসেবক, ব্লগ ইত্যাদি) যেতে ক্লিক করুন। আপনার রোল অনুযায়ী শুধু অনুমোদিত মেনু দেখাবে।" },
+          { title: "টপবার (উপর)", detail: "সার্চ বক্স, মেসেজ আইকন, নোটিফিকেশন ঘণ্টা এবং প্রোফাইল ড্রপডাউন থেকে দ্রুত লগআউট করা যায়।" },
+          { title: "মূল কনটেন্ট", detail: "যেই মেনুতে ক্লিক করবেন, তার তথ্য মাঝখানে দেখাবে — এখান থেকে যোগ, সম্পাদনা বা রিপোর্ট করা যাবে।" },
+        ],
+      },
+      {
+        id: "role-limits",
+        title: "কিছু মেনু আমি কেন দেখছি না?",
+        summary: "প্রতিটি অ্যাডমিনের একটি রোল (Admin / Editor / Moderator / Viewer) থাকে — শুধু অনুমোদিত অংশই দেখা যায়।",
+        steps: [
+          { title: "নিজের রোল দেখুন", detail: "উপরের ডান কোণে প্রোফাইল আইকনে ক্লিক করুন — নাম ও ইমেইলের নিচে রোল লেখা থাকবে।" },
+          { title: "অ্যাক্সেস প্রয়োজন হলে", detail: "সুপার অ্যাডমিনকে অনুরোধ করুন — তিনি সেটিংস → নিরাপত্তা ও রোল থেকে আপনার রোল পরিবর্তন করতে পারেন।" },
+        ],
+        tip: "‘Forbidden’ বা ‘আপনার অনুমতি নেই’ মেসেজ আসলে বুঝবেন — এই কাজের জন্য আপনার রোলে অনুমতি নেই।",
+      },
+    ],
+  },
+  {
+    key: "donations",
+    icon: HandCoins,
+    label: "দান ব্যবস্থাপনা",
+    desc: "ডোনেশন, রিসিট, পেমেন্ট চ্যানেল",
+    color: "from-amber-500/20 to-amber-500/5",
+    iconBg: "bg-amber-500/15 text-amber-700",
+    topics: [
+      {
+        id: "donation-not-showing",
+        title: "একজন দাতা টাকা পাঠিয়েছেন কিন্তু ড্যাশবোর্ডে দেখাচ্ছে না",
+        summary: "মোবাইল ব্যাংকিং / ব্যাংক ট্রান্সফার স্বয়ংক্রিয়ভাবে যুক্ত হয় না — ম্যানুয়ালি এন্ট্রি দিতে হয়।",
+        steps: [
+          { title: "ট্রানজেকশন নিশ্চিত করুন", detail: "bKash/Nagad/ব্যাংক থেকে SMS বা স্টেটমেন্টে টাকা পাওয়া গেছে কিনা যাচাই করুন।" },
+          { title: "দানসমূহ পেজে যান", detail: "ড্যাশবোর্ড → দানসমূহ → উপরে ডানে ‘ম্যানুয়াল এন্ট্রি’ বাটনে ক্লিক করুন।" },
+          { title: "তথ্য দিন", detail: "দাতার নাম, ফোন, পরিমাণ, মাধ্যম (bKash/Nagad/Bank), ট্রানজেকশন ID এবং তারিখ পূরণ করুন।" },
+          { title: "সংরক্ষণ করুন", detail: "‘যোগ করুন’ চাপলে সাথে সাথে তালিকায় দেখাবে ও রিপোর্টে যুক্ত হবে।" },
+        ],
+        tip: "SSLCommerz গেটওয়ে দিয়ে আসা দান স্বয়ংক্রিয়ভাবে যুক্ত হয় — সেগুলোর জন্য ম্যানুয়াল এন্ট্রির দরকার নেই।",
+      },
+      {
+        id: "payment-account-update",
+        title: "bKash / ব্যাংক অ্যাকাউন্ট নম্বর পরিবর্তন করব কীভাবে?",
+        summary: "সেটিংস → পেমেন্ট অ্যাকাউন্ট ট্যাব থেকে সব পেমেন্ট চ্যানেল একসাথে আপডেট করা যায়।",
+        steps: [
+          { title: "সেটিংসে যান", detail: "সাইডবার → সেটিংস → উপরে ‘পেমেন্ট অ্যাকাউন্ট’ ট্যাব বেছে নিন।" },
+          { title: "চ্যানেল আপডেট করুন", detail: "bKash, Nagad, Rocket — প্রতিটির নতুন নম্বর দিন। ব্যাংকের জন্য ‘ব্যাংক যোগ করুন’ বাটন ব্যবহার করুন।" },
+          { title: "QR কোড আপডেট", detail: "‘বাংলা QR’ সেকশনে ইমেজ পিকার থেকে নতুন QR ছবি আপলোড করুন।" },
+          { title: "সংরক্ষণ করুন", detail: "নিচে ‘সংরক্ষণ করুন’ চাপলেই হোম, দান পেজ ও মোডালে সব জায়গায় আপডেট হয়ে যাবে।" },
+        ],
+        tip: "পরিবর্তনের পর ব্রাউজার রিফ্রেশ (Ctrl+F5 / Cmd+Shift+R) করে নিশ্চিত হোন।",
+      },
+      {
+        id: "download-report",
+        title: "মাসিক / বার্ষিক দানের রিপোর্ট ডাউনলোড",
+        summary: "দানসমূহ পেজ থেকে যেকোনো তারিখের রেঞ্জ বেছে PDF বা Excel এক্সপোর্ট করা যায়।",
+        steps: [
+          { title: "দানসমূহ পেজে যান" },
+          { title: "ফিল্টার প্রয়োগ করুন", detail: "উপরে ডেট রেঞ্জ, মাধ্যম, স্ট্যাটাস অনুযায়ী ফিল্টার করুন।" },
+          { title: "এক্সপোর্ট বাটন", detail: "উপরে ডানে ‘এক্সপোর্ট’ ড্রপডাউন → PDF বা CSV / Excel বেছে নিন। ফাইল স্বয়ংক্রিয়ভাবে ডাউনলোড হবে।" },
+        ],
+      },
+    ],
+  },
+  {
+    key: "members",
+    icon: Users2,
+    label: "সদস্য ও স্বেচ্ছাসেবক",
+    desc: "আবেদন যাচাই, অনুমোদন ও যোগাযোগ",
+    color: "from-sky-500/20 to-sky-500/5",
+    iconBg: "bg-sky-500/15 text-sky-700",
+    topics: [
+      {
+        id: "verify-application",
+        title: "নতুন আবেদন যাচাই ও অনুমোদন",
+        summary: "স্বেচ্ছাসেবক / সদস্য / জেলা প্রতিনিধি — প্রতিটির আবেদন একই পদ্ধতিতে যাচাই করা যায়।",
+        steps: [
+          { title: "নতুন আবেদন খুলুন", detail: "সাইডবার → স্বেচ্ছাসেবক / সদস্যপদ / জেলা প্রতিনিধি পেজে যান। নতুন আবেদনগুলোতে ‘Pending’ ব্যাজ থাকবে।" },
+          { title: "বিস্তারিত দেখুন", detail: "সারিতে ক্লিক করলে ডান পাশে ফুল প্রোফাইল, ছবি ও উত্তরসমূহ দেখাবে।" },
+          { title: "সিদ্ধান্ত নিন", detail: "‘অনুমোদন’ বা ‘বাতিল’ বাটনে ক্লিক করুন — বাতিল করলে কারণ লিখতে পারবেন।" },
+          { title: "ইমেইল যাবে", detail: "সিদ্ধান্ত হলে আবেদনকারীর কাছে স্বয়ংক্রিয়ভাবে ইমেইল যাবে।" },
+        ],
+        tip: "ভুয়া মনে হলে ইমেইল ও ফোন দুটোই যাচাই করুন — সিস্টেম test@, temp mail স্বয়ংক্রিয়ভাবে ব্লক করে, কিন্তু নতুন প্যাটার্ন আসতে পারে।",
+      },
+      {
+        id: "contact-applicant",
+        title: "কোনো আবেদনকারীর সাথে যোগাযোগ",
+        summary: "প্রতিটি আবেদনে ইমেইল / ফোন আইকন থাকে — সরাসরি ক্লিক করে যোগাযোগ করা যায়।",
+        steps: [
+          { title: "আবেদনকারীর প্রোফাইল খুলুন" },
+          { title: "যোগাযোগ পদ্ধতি বেছে নিন", detail: "ইমেইল আইকন → ডিফল্ট ইমেইল অ্যাপে খুলবে। ফোন আইকন → মোবাইল হলে সরাসরি কল যাবে।" },
+          { title: "ইন্টারনাল নোট", detail: "প্রোফাইলের নিচে ‘নোট যোগ করুন’ থেকে অন্য অ্যাডমিনদের জন্য নোট রাখতে পারবেন।" },
+        ],
+      },
+    ],
+  },
+  {
+    key: "content",
+    icon: FileText,
+    label: "কনটেন্ট ও ব্লগ",
+    desc: "ব্লগ, প্রকল্প, গ্যালারি ও টিম",
+    color: "from-violet-500/20 to-violet-500/5",
+    iconBg: "bg-violet-500/15 text-violet-700",
+    topics: [
+      {
+        id: "publish-blog",
+        title: "নতুন ব্লগ পোস্ট প্রকাশ করব কীভাবে?",
+        summary: "ব্লগ ও কনটেন্ট মেনু থেকে একটি নতুন পোস্ট তৈরি, ছবি যোগ ও প্রকাশ করা যায়।",
+        steps: [
+          { title: "ব্লগ পেজে যান", detail: "সাইডবার → ব্লগ ও কনটেন্ট → উপরে ‘নতুন পোস্ট’ বাটন।" },
+          { title: "শিরোনাম ও বিবরণ", detail: "শিরোনাম, সংক্ষিপ্ত বিবরণ (সর্বোচ্চ ১৬০ অক্ষর — SEO-এর জন্য) ও মূল কনটেন্ট লিখুন।" },
+          { title: "কভার ছবি", detail: "‘কভার ইমেজ’ বাটন → মিডিয়া লাইব্রেরি থেকে বেছে নিন বা নতুন আপলোড করুন। ল্যান্ডস্কেপ (16:9) সবচেয়ে ভালো।" },
+          { title: "প্রকাশ", detail: "‘Draft’ = শুধু সংরক্ষণ, ‘Publish’ = সরাসরি লাইভ। যেকোনো সময় আবার সম্পাদনা করা যাবে।" },
+        ],
+        tip: "শিরোনামে মূল কীওয়ার্ড রাখুন। ছবির সাইজ 500KB-এর কম হলে পেজ দ্রুত লোড হয়।",
+      },
+      {
+        id: "upload-gallery",
+        title: "গ্যালারিতে নতুন ছবি যোগ",
+        summary: "একাধিক ছবি একসাথে আপলোড করা যায়। বড় ছবি স্বয়ংক্রিয়ভাবে কমপ্রেস হয়।",
+        steps: [
+          { title: "গ্যালারি পেজে যান" },
+          { title: "‘ছবি যোগ করুন’ বাটন" },
+          { title: "ফাইল বেছে নিন", detail: "একাধিক ছবি একসাথে সিলেক্ট করা যায় (Ctrl/Cmd চেপে ধরে)। JPG, PNG, WebP সাপোর্টেড।" },
+          { title: "ক্যাপশন ও ক্যাটাগরি দিন", detail: "প্রতিটি ছবিতে বাংলা ক্যাপশন ও ক্যাটাগরি দিন — ওয়েবসাইটে ফিল্টার করার জন্য দরকার।" },
+        ],
+        tip: "১০ MB-এর বেশি ছবি আপলোড হবে না — আগে অনলাইন কমপ্রেসর দিয়ে ছোট করুন।",
+      },
+      {
+        id: "edit-project",
+        title: "চলমান প্রকল্পের অগ্রগতি আপডেট",
+        summary: "প্রকল্পের রেইজড অ্যামাউন্ট, স্ট্যাটাস ও ছবি নিয়মিত আপডেট করা যায়।",
+        steps: [
+          { title: "প্রকল্প পেজ → প্রকল্প বেছে নিন" },
+          { title: "‘সম্পাদনা’ বাটন" },
+          { title: "সংগৃহীত অর্থ আপডেট করুন", detail: "‘Raised Amount’ ফিল্ডে নতুন মোট লিখুন — প্রোগ্রেস বার স্বয়ংক্রিয়ভাবে পরিবর্তন হবে।" },
+          { title: "সংরক্ষণ করুন" },
+        ],
+      },
+    ],
+  },
+  {
+    key: "security",
+    icon: Shield,
+    label: "নিরাপত্তা ও রোল",
+    desc: "পাসওয়ার্ড, 2FA, অ্যাডমিন ব্যবস্থাপনা",
+    color: "from-rose-500/20 to-rose-500/5",
+    iconBg: "bg-rose-500/15 text-rose-700",
+    topics: [
+      {
+        id: "forgot-password",
+        title: "পাসওয়ার্ড ভুলে গেছি — কী করব?",
+        summary: "লগইন পেজ থেকেই রিসেট লিংক ইমেইলে পাঠানো যায়। ৩০ মিনিটের মধ্যে ব্যবহার করতে হবে।",
+        steps: [
+          { title: "লগইন পেজে যান" },
+          { title: "‘পাসওয়ার্ড ভুলে গেছেন?’", detail: "ফর্মের নিচে এই লিংকে ক্লিক করুন।" },
+          { title: "ইমেইল দিন", detail: "আপনার অ্যাডমিন ইমেইল লিখে ‘রিসেট লিংক পাঠান’ চাপুন।" },
+          { title: "ইমেইল চেক করুন", detail: "১-২ মিনিটের মধ্যে ইনবক্সে লিংক আসবে। না এলে Spam ফোল্ডার দেখুন।" },
+          { title: "নতুন পাসওয়ার্ড সেট করুন" },
+        ],
+        tip: "লিংক ৩০ মিনিটে এক্সপায়ার হয়। এক লিংক শুধু একবারই কাজ করে।",
+      },
+      {
+        id: "enable-2fa",
+        title: "2FA (দ্বি-স্তর নিরাপত্তা) চালু",
+        summary: "চালু করলে প্রতিবার লগইনে ইমেইলে একটি 6-digit OTP পাঠানো হবে।",
+        steps: [
+          { title: "সেটিংস → নিরাপত্তা ও রোল" },
+          { title: "‘2FA চালু করুন’ টগল অন করুন" },
+          { title: "একটি টেস্ট OTP পাবেন", detail: "সেটি বসিয়ে নিশ্চিত করুন — সিস্টেম যাচাই হয়ে গেলে 2FA সক্রিয়।" },
+        ],
+        tip: "পাবলিক কম্পিউটার / শেয়ার্ড ডিভাইস ব্যবহার করলে 2FA অবশ্যই চালু রাখুন।",
+      },
+      {
+        id: "add-admin",
+        title: "নতুন অ্যাডমিন যোগ (শুধু সুপার অ্যাডমিন)",
+        summary: "নাম, ইমেইল ও রোল দিয়ে অ্যাডমিন তৈরি — সিস্টেম স্বয়ংক্রিয়ভাবে পাসওয়ার্ড ইমেইল করবে।",
+        steps: [
+          { title: "সেটিংস → নিরাপত্তা ও রোল → ‘নতুন অ্যাডমিন যোগ’" },
+          { title: "তথ্য পূরণ করুন", detail: "নাম, ইমেইল, এবং রোল (Admin / Editor / Moderator / Viewer) বেছে নিন।" },
+          { title: "সাবমিট করুন", detail: "সিস্টেম একটি স্বয়ংক্রিয় পাসওয়ার্ড তৈরি করে ওই ইমেইলে পাঠাবে।" },
+        ],
+        tip: "রোল সম্পর্কে নিশ্চিত না হলে ‘Viewer’ দিন — পরে বাড়ানো যাবে, কিন্তু ভুল করে বেশি অনুমতি দিলে সমস্যা।",
+      },
+      {
+        id: "suspicious-activity",
+        title: "সন্দেহজনক লগইন দেখলে",
+        summary: "অ্যাক্টিভিটি লগে অচেনা IP বা সময় দেখলে সাথে সাথে পাসওয়ার্ড বদলান।",
+        steps: [
+          { title: "সাইডবার → অ্যাক্টিভিটি লগে যান" },
+          { title: "সাম্প্রতিক লগইন দেখুন", detail: "IP, সময় ও ডিভাইস অনুযায়ী সাজানো থাকবে।" },
+          { title: "সন্দেহ হলে", detail: "১) পাসওয়ার্ড পরিবর্তন করুন। ২) 2FA চালু করুন। ৩) সুপার অ্যাডমিনকে জানান।" },
+        ],
+      },
+    ],
+  },
+  {
+    key: "settings",
+    icon: SettingsIcon,
+    label: "সেটিংস ও কনফিগ",
+    desc: "সাইট তথ্য, SMTP, নোটিফিকেশন",
+    color: "from-teal-500/20 to-teal-500/5",
+    iconBg: "bg-teal-500/15 text-teal-700",
+    topics: [
+      {
+        id: "update-site-info",
+        title: "সাইটের নাম / লোগো / যোগাযোগ পরিবর্তন",
+        summary: "সেটিংস → সাধারণ ট্যাব থেকে সব সাইট-ব্যাপী তথ্য একসাথে বদলানো যায়।",
+        steps: [
+          { title: "সেটিংস → সাধারণ" },
+          { title: "লোগো / ফেভিকন আপলোড", detail: "PNG / SVG ফরম্যাট, সর্বোচ্চ 1 MB।" },
+          { title: "যোগাযোগ তথ্য", detail: "ঠিকানা, ফোন, ইমেইল, সোশ্যাল লিংক আপডেট করুন।" },
+          { title: "সংরক্ষণ করুন — সাইটে সাথে সাথে পরিবর্তন দেখাবে" },
+        ],
+      },
+      {
+        id: "smtp-issue",
+        title: "ইমেইল যাচ্ছে না — SMTP ঠিক আছে তো?",
+        summary: "SMTP তথ্য ভুল থাকলে পাসওয়ার্ড রিসেট, রিপ্লাই, নতুন অ্যাডমিন — কোনো ইমেইলই যাবে না।",
+        steps: [
+          { title: "সেটিংস → SMTP ট্যাব খুলুন" },
+          { title: "তথ্য যাচাই করুন", detail: "Host (যেমন smtp.gmail.com), Port (587 বা 465), Username, Password।" },
+          { title: "‘টেস্ট ইমেইল পাঠান’ বাটন", detail: "নিজের ইমেইলে টেস্ট মেইল পাঠান — না এলে Password বা App-Password ভুল।" },
+          { title: "Gmail ব্যবহার করলে", detail: "Gmail-এ App Password তৈরি করে ব্যবহার করুন, নিজের সাধারণ পাসওয়ার্ড দিলে হবে না।" },
+        ],
+        tip: "টেস্ট মেইল পেলেই বুঝবেন — সব ধরনের সিস্টেম মেইল কাজ করবে।",
+      },
+    ],
+  },
 ];
 
-const faqs = [
+// ------------------------------------------------------------
+// COMMON ISSUES (Quick fix cards)
+// ------------------------------------------------------------
+const quickFixes = [
   {
-    q: "নতুন অ্যাডমিন কীভাবে যোগ করব?",
-    a: "সেটিংস → নিরাপত্তা ও রোল → 'নতুন অ্যাডমিন যোগ করুন' এ যান। নাম, ইমেইল ও রোল দিন — সিস্টেম স্বয়ংক্রিয়ভাবে পাসওয়ার্ড তৈরি করে SMTP-এর মাধ্যমে ইমেইলে পাঠাবে।",
+    icon: KeyRound,
+    title: "লগইন করতে পারছি না",
+    fix: "পাসওয়ার্ড ভুলে গেছেন লিংক থেকে রিসেট করুন। ৩০ মিনিটে লিংক এক্সপায়ার হয়।",
+    color: "bg-rose-500/10 text-rose-600 border-rose-500/20",
   },
   {
-    q: "টু-ফ্যাক্টর অথেন্টিকেশন (2FA) কীভাবে চালু করব?",
-    a: "সেটিংস → নিরাপত্তা ও রোল → '2FA চালু করুন' টগল অন করুন। এরপর লগইনের সময় আপনার ইমেইলে 6-digit OTP পাঠানো হবে।",
+    icon: RefreshCcw,
+    title: "পরিবর্তন সাইটে দেখাচ্ছে না",
+    fix: "ব্রাউজারে Ctrl+F5 (Windows) বা Cmd+Shift+R (Mac) চেপে হার্ড রিফ্রেশ দিন।",
+    color: "bg-amber-500/10 text-amber-700 border-amber-500/20",
   },
   {
-    q: "ডোনেশনের রিপোর্ট কীভাবে ডাউনলোড করব?",
-    a: "ড্যাশবোর্ড → দানসমূহ পেজে যান, ডেট রেঞ্জ সিলেক্ট করে 'PDF/Excel এক্সপোর্ট' বাটনে ক্লিক করুন।",
+    icon: ImageIcon,
+    title: "ছবি আপলোড হচ্ছে না",
+    fix: "ফাইল সাইজ 10 MB-এর নিচে ও ফরম্যাট JPG/PNG/WebP হওয়া লাগবে।",
+    color: "bg-sky-500/10 text-sky-700 border-sky-500/20",
   },
   {
-    q: "পেমেন্ট গেটওয়ে কনফিগার করব কীভাবে?",
-    a: "সেটিংস → পেমেন্ট গেটওয়ে ট্যাবে গিয়ে bKash, Nagad, Rocket, Islami Bank ও SSLCommerz এর Merchant/API তথ্য দিন এবং সংরক্ষণ করুন।",
+    icon: Inbox,
+    title: "মেসেজের ইমেইল যাচ্ছে না",
+    fix: "সেটিংস → SMTP থেকে ‘টেস্ট ইমেইল’ পাঠিয়ে যাচাই করুন।",
+    color: "bg-violet-500/10 text-violet-700 border-violet-500/20",
   },
   {
-    q: "মেসেজের উত্তর দেওয়া যায় কি?",
-    a: "হ্যাঁ, ড্যাশবোর্ড → মেসেজ থেকে যেকোনো মেসেজ খুলে 'রিপ্লাই' করুন — ইমেইল SMTP-এর মাধ্যমে পাঠানো হবে। 'কম্পোজ' দিয়ে নতুন মেসেজও পাঠানো যায়।",
+    icon: Wifi,
+    title: "পেজ লোড হচ্ছে না / স্লো",
+    fix: "ইন্টারনেট চেক করুন। VPN বন্ধ করুন। অন্য ব্রাউজার (Chrome/Edge) দিয়ে চেষ্টা করুন।",
+    color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/20",
   },
   {
-    q: "পাসওয়ার্ড ভুলে গেলে কী করব?",
-    a: "লগইন পেজ → 'পাসওয়ার্ড ভুলে গেছেন?' এ ক্লিক করুন। আপনার ইমেইল দিন — রিসেট লিংক পাঠানো হবে।",
+    icon: ShieldAlert,
+    title: "‘Forbidden’ / অনুমতি নেই",
+    fix: "আপনার রোলে এই কাজের অনুমতি নেই। সুপার অ্যাডমিনকে অনুরোধ করুন।",
+    color: "bg-slate-500/10 text-slate-700 border-slate-500/20",
   },
 ];
 
-const guides = [
-  { title: "ড্যাশবোর্ড দ্রুত শুরু", time: "৫ মিনিট", icon: Rocket },
-  { title: "প্রথম প্রকল্প তৈরি করুন", time: "৩ মিনিট", icon: FolderIcon },
-  { title: "ডোনেশন রিপোর্ট তৈরি", time: "৪ মিনিট", icon: HandCoins },
-  { title: "অ্যাডমিন রোল ম্যানেজ করুন", time: "৬ মিনিট", icon: Shield },
+// ------------------------------------------------------------
+// GLOSSARY (Non-tech friendly)
+// ------------------------------------------------------------
+const glossary = [
+  { term: "রোল (Role)", def: "একজন অ্যাডমিন কী কী করতে পারবেন — যেমন Admin সব পারে, Viewer শুধু দেখতে পারে।" },
+  { term: "2FA", def: "দ্বি-স্তর নিরাপত্তা — পাসওয়ার্ডের সাথে ইমেইলে আসা OTP দিয়ে লগইন।" },
+  { term: "SMTP", def: "সিস্টেম থেকে ইমেইল পাঠানোর সেটিং (যেমন Gmail-এর মাধ্যমে)।" },
+  { term: "OTP", def: "One-Time Password — শুধু একবার ব্যবহারযোগ্য 6-digit কোড।" },
+  { term: "Draft / Publish", def: "Draft = খসড়া (গোপন), Publish = ওয়েবসাইটে সবার জন্য প্রকাশিত।" },
+  { term: "কমপ্রেস (Compress)", def: "ছবির মান ঠিক রেখে ফাইলের আকার ছোট করা।" },
 ];
 
-function FolderIcon(props: any) {
-  return <BookOpen {...props} />;
-}
-
+// ------------------------------------------------------------
+// COMPONENT
+// ------------------------------------------------------------
 export default function Help() {
-  const [openIdx, setOpenIdx] = useState<number | null>(0);
   const [query, setQuery] = useState("");
+  const [activeCat, setActiveCat] = useState<string>("getting-started");
+  const [openTopic, setOpenTopic] = useState<string | null>("first-login");
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const filtered = faqs.filter(
-    (f) => !query || f.q.toLowerCase().includes(query.toLowerCase()) || f.a.toLowerCase().includes(query.toLowerCase()),
-  );
+  // Filter topics across categories by search
+  const searchResults = useMemo(() => {
+    if (!query.trim()) return null;
+    const q = query.toLowerCase();
+    const out: Array<{ cat: Category; topic: Topic }> = [];
+    categories.forEach((c) =>
+      c.topics.forEach((t) => {
+        const hay = (t.title + " " + t.summary + " " + t.steps.map((s) => s.title + " " + (s.detail || "")).join(" ")).toLowerCase();
+        if (hay.includes(q)) out.push({ cat: c, topic: t });
+      }),
+    );
+    return out;
+  }, [query]);
+
+  const current = categories.find((c) => c.key === activeCat)!;
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,9 +404,16 @@ export default function Help() {
     setTimeout(() => setSent(false), 4000);
   };
 
+  const copyEmail = () => {
+    navigator.clipboard.writeText("support@unitefoundation.bd");
+    setCopied(true);
+    toast({ title: "ইমেইল কপি হয়েছে" });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="space-y-8 pb-8">
-      {/* Hero */}
+    <div className="space-y-8 pb-10">
+      {/* ============ HERO ============ */}
       <div className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary via-primary to-emerald-900 text-primary-foreground p-8 md:p-12">
         <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute -left-10 -bottom-20 h-64 w-64 rounded-full bg-emerald-400/20 blur-3xl" />
@@ -101,171 +422,272 @@ export default function Help() {
             <Sparkles className="h-3.5 w-3.5" />
             সাহায্য কেন্দ্র
           </div>
-          <h1 className="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+          <h1 className="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight leading-[1.3]">
             কীভাবে সাহায্য করতে পারি?
           </h1>
-          <p className="mt-3 text-white/80 text-base md:text-lg">
-            গাইড, প্রায়শই জিজ্ঞাসিত প্রশ্ন এবং সাপোর্ট টিমের সাথে সরাসরি যোগাযোগ — সবকিছু এক জায়গায়।
+          <p className="mt-3 text-white/85 text-base md:text-lg leading-relaxed">
+            টেকনিক্যাল জ্ঞান ছাড়াই সমস্যার সমাধান খুঁজুন — নিচের যেকোনো ক্যাটাগরি বেছে নিন, অথবা সরাসরি সার্চ করুন।
           </p>
           <div className="mt-6 relative max-w-xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/50" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="অনুসন্ধান করুন — দান, রিপোর্ট, পাসওয়ার্ড..."
+              placeholder="যেমন — পাসওয়ার্ড, দান যোগ, ছবি আপলোড, SMTP..."
               className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white text-foreground placeholder:text-muted-foreground shadow-2xl focus:outline-none focus:ring-4 focus:ring-white/30"
             />
           </div>
+          {searchResults && (
+            <div className="mt-2 text-xs text-white/80">
+              {searchResults.length} টি ফলাফল পাওয়া গেছে
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Categories */}
-      <div>
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-primary" /> বিষয় অনুযায়ী খুঁজুন
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categories.map((c) => (
-            <button
-              key={c.label}
-              className={`group text-left rounded-2xl border border-border bg-gradient-to-br ${c.color} p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all`}
-            >
-              <div className={`h-11 w-11 rounded-xl ${c.iconBg} flex items-center justify-center mb-3`}>
-                <c.icon className="h-5 w-5" />
-              </div>
-              <div className="font-bold text-foreground">{c.label}</div>
-              <div className="text-xs text-muted-foreground mt-1">{c.desc}</div>
-              <div className="mt-3 text-xs font-semibold text-primary inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
-                বিস্তারিত দেখুন <ExternalLink className="h-3 w-3" />
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Two-column: FAQ + Side */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* FAQ */}
-        <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-6 md:p-8">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-bold flex items-center gap-2">
-              <LifeBuoy className="h-5 w-5 text-primary" /> প্রায়শই জিজ্ঞাসিত প্রশ্ন
-            </h2>
-            <span className="text-xs text-muted-foreground">{filtered.length} টি প্রশ্ন</span>
-          </div>
-          <div className="space-y-3">
-            {filtered.map((f, i) => {
-              const open = openIdx === i;
-              return (
-                <div
-                  key={i}
-                  className={`rounded-xl border transition-all ${open ? "border-primary/40 bg-primary/5" : "border-border bg-background"}`}
-                >
-                  <button
-                    onClick={() => setOpenIdx(open ? null : i)}
-                    className="w-full flex items-center justify-between gap-3 p-4 text-left"
-                  >
-                    <span className="font-semibold text-sm md:text-base">{f.q}</span>
-                    <ChevronDown
-                      className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180 text-primary" : "text-muted-foreground"}`}
-                    />
-                  </button>
-                  {open && (
-                    <div className="px-4 pb-4 text-sm text-muted-foreground leading-relaxed">{f.a}</div>
-                  )}
-                </div>
-              );
-            })}
-            {filtered.length === 0 && (
-              <div className="text-center py-10 text-muted-foreground text-sm">
-                কোনো ফলাফল পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে চেষ্টা করুন।
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Side */}
-        <div className="space-y-6">
-          {/* Quick guides */}
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <h3 className="font-bold flex items-center gap-2 mb-4">
-              <PlayCircle className="h-5 w-5 text-primary" /> দ্রুত গাইড
-            </h3>
-            <div className="space-y-2">
-              {guides.map((g) => (
+      {/* ============ SEARCH RESULTS ============ */}
+      {searchResults && (
+        <div className="rounded-2xl border border-border bg-card p-6">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Search className="h-5 w-5 text-primary" /> সার্চ ফলাফল — “{query}”
+          </h2>
+          {searchResults.length === 0 ? (
+            <div className="text-center py-10 text-muted-foreground text-sm">
+              কোনো ফলাফল পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে চেষ্টা করুন অথবা নিচের যোগাযোগ ফর্ম ব্যবহার করুন।
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {searchResults.map(({ cat, topic }) => (
                 <button
-                  key={g.title}
-                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-secondary text-left transition"
+                  key={topic.id}
+                  onClick={() => {
+                    setQuery("");
+                    setActiveCat(cat.key);
+                    setOpenTopic(topic.id);
+                    window.scrollTo({ top: 500, behavior: "smooth" });
+                  }}
+                  className="w-full text-left rounded-xl border border-border p-4 hover:border-primary/40 hover:bg-primary/5 transition group"
                 >
-                  <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <g.icon className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                    <cat.icon className="h-3.5 w-3.5" /> {cat.label}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">{g.title}</div>
-                    <div className="text-[11px] text-muted-foreground">{g.time}</div>
+                  <div className="mt-1 font-bold group-hover:text-primary transition">{topic.title}</div>
+                  <div className="mt-1 text-sm text-muted-foreground line-clamp-2">{topic.summary}</div>
+                  <div className="mt-2 text-xs font-semibold text-primary inline-flex items-center gap-1">
+                    বিস্তারিত পড়ুন <ArrowRight className="h-3 w-3" />
                   </div>
-                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ============ QUICK FIX CARDS ============ */}
+      {!searchResults && (
+        <div>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-amber-600" /> সাধারণ সমস্যার দ্রুত সমাধান
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {quickFixes.map((q) => (
+              <div key={q.title} className={`rounded-2xl border p-4 ${q.color}`}>
+                <div className="flex items-start gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-white/60 flex items-center justify-center shrink-0">
+                    <q.icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm">{q.title}</div>
+                    <div className="text-xs mt-1 text-foreground/70 leading-relaxed">{q.fix}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ============ CATEGORY TABS + TOPICS ============ */}
+      {!searchResults && (
+        <div>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" /> বিষয় অনুযায়ী গাইড
+          </h2>
+
+          {/* Category chips */}
+          <div className="flex flex-wrap gap-2 mb-5">
+            {categories.map((c) => {
+              const active = c.key === activeCat;
+              return (
+                <button
+                  key={c.key}
+                  onClick={() => {
+                    setActiveCat(c.key);
+                    setOpenTopic(c.topics[0]?.id || null);
+                  }}
+                  className={
+                    "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition border " +
+                    (active
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-card text-foreground/70 border-border hover:border-primary/40 hover:text-foreground")
+                  }
+                >
+                  <c.icon className="h-4 w-4" /> {c.label}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Contact channels */}
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <h3 className="font-bold mb-4">সরাসরি যোগাযোগ</h3>
+          {/* Topics for current category */}
+          <div className="rounded-2xl border border-border bg-card p-6 md:p-8">
+            <div className="flex items-start gap-4 mb-6 pb-6 border-b border-border">
+              <div className={`h-12 w-12 rounded-xl ${current.iconBg} flex items-center justify-center shrink-0`}>
+                <current.icon className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">{current.label}</h3>
+                <p className="text-sm text-muted-foreground mt-0.5">{current.desc}</p>
+                <div className="text-[11px] font-semibold text-primary mt-2">
+                  {current.topics.length} টি বিষয়
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-3">
-              <a
-                href="https://wa.me/8801XXXXXXXXX"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-3 p-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/15 transition"
-              >
-                <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center">
-                  <MessageCircle className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold">হোয়াটসঅ্যাপ</div>
-                  <div className="text-[11px] text-muted-foreground">২৪/৭ চ্যাট সাপোর্ট</div>
-                </div>
-              </a>
-              <a
-                href="mailto:contact@unitefoundation.bd"
-                className="flex items-center gap-3 p-3 rounded-xl bg-primary/10 hover:bg-primary/15 transition"
-              >
-                <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold">ইমেইল</div>
-                  <div className="text-[11px] text-muted-foreground">contact@unitefoundation.bd</div>
-                </div>
-              </a>
-              <a
-                href="tel:+8801XXXXXXXXX"
-                className="flex items-center gap-3 p-3 rounded-xl bg-secondary hover:bg-secondary/70 transition"
-              >
-                <div className="h-10 w-10 rounded-xl bg-foreground/90 text-background flex items-center justify-center">
-                  <Phone className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-bold">ফোন</div>
-                  <div className="text-[11px] text-muted-foreground">সকাল ৯টা — রাত ৯টা</div>
-                </div>
-              </a>
+              {current.topics.map((t) => {
+                const open = openTopic === t.id;
+                return (
+                  <div
+                    key={t.id}
+                    className={`rounded-xl border transition-all ${open ? "border-primary/40 bg-primary/5" : "border-border bg-background"}`}
+                  >
+                    <button
+                      onClick={() => setOpenTopic(open ? null : t.id)}
+                      className="w-full flex items-start justify-between gap-3 p-4 text-left"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-sm md:text-base">{t.title}</div>
+                        {!open && (
+                          <div className="text-xs text-muted-foreground mt-1 line-clamp-1">{t.summary}</div>
+                        )}
+                      </div>
+                      <ChevronDown
+                        className={`h-4 w-4 shrink-0 mt-1 transition-transform ${open ? "rotate-180 text-primary" : "text-muted-foreground"}`}
+                      />
+                    </button>
+                    {open && (
+                      <div className="px-4 pb-5">
+                        <p className="text-sm text-foreground/80 leading-relaxed mb-4">{t.summary}</p>
+
+                        <ol className="space-y-3">
+                          {t.steps.map((s, i) => (
+                            <li key={i} className="flex gap-3">
+                              <div className="h-7 w-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shrink-0">
+                                {i + 1}
+                              </div>
+                              <div className="pt-0.5">
+                                <div className="text-sm font-semibold">{s.title}</div>
+                                {s.detail && (
+                                  <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{s.detail}</div>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ol>
+
+                        {t.tip && (
+                          <div className="mt-4 flex items-start gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
+                            <Lightbulb className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                            <div className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed">
+                              <span className="font-bold">টিপস: </span>{t.tip}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
+      )}
+
+      {/* ============ GLOSSARY ============ */}
+      {!searchResults && (
+        <div>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <MonitorSmartphone className="h-5 w-5 text-primary" /> শব্দকোষ — কঠিন কথার সহজ মানে
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {glossary.map((g) => (
+              <div key={g.term} className="rounded-xl border border-border bg-card p-4">
+                <div className="font-bold text-sm text-primary">{g.term}</div>
+                <div className="text-xs text-muted-foreground mt-1 leading-relaxed">{g.def}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ============ CONTACT CHANNELS ============ */}
+      <div className="grid lg:grid-cols-3 gap-4">
+        <a
+          href="https://wa.me/8801XXXXXXXXX"
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-2xl border border-border bg-card p-5 hover:border-emerald-500/40 hover:shadow-md transition group"
+        >
+          <div className="h-11 w-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center mb-3">
+            <MessageCircle className="h-5 w-5" />
+          </div>
+          <div className="font-bold">হোয়াটসঅ্যাপ চ্যাট</div>
+          <div className="text-xs text-muted-foreground mt-1">দ্রুত উত্তরের জন্য — সাধারণত ১-২ ঘন্টায় উত্তর</div>
+          <div className="mt-3 text-xs font-semibold text-emerald-600 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+            শুরু করুন <ArrowRight className="h-3 w-3" />
+          </div>
+        </a>
+
+        <button
+          type="button"
+          onClick={copyEmail}
+          className="text-left rounded-2xl border border-border bg-card p-5 hover:border-primary/40 hover:shadow-md transition group"
+        >
+          <div className="h-11 w-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mb-3">
+            <Mail className="h-5 w-5" />
+          </div>
+          <div className="font-bold flex items-center gap-2">
+            ইমেইল সাপোর্ট
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-muted-foreground" />}
+          </div>
+          <div className="text-xs text-muted-foreground mt-1">support@unitefoundation.bd (ক্লিক করে কপি করুন)</div>
+          <div className="mt-3 text-xs font-semibold text-primary">২৪ ঘন্টার মধ্যে উত্তর</div>
+        </button>
+
+        <a
+          href="tel:+8801XXXXXXXXX"
+          className="rounded-2xl border border-border bg-card p-5 hover:border-foreground/30 hover:shadow-md transition group"
+        >
+          <div className="h-11 w-11 rounded-xl bg-foreground/90 text-background flex items-center justify-center mb-3">
+            <Phone className="h-5 w-5" />
+          </div>
+          <div className="font-bold">ফোন কল</div>
+          <div className="text-xs text-muted-foreground mt-1">শুক্রবার ছাড়া প্রতিদিন সকাল ৯টা — রাত ৯টা</div>
+          <div className="mt-3 text-xs font-semibold text-foreground/80 inline-flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+            কল করুন <ArrowRight className="h-3 w-3" />
+          </div>
+        </a>
       </div>
 
-      {/* Contact form */}
+      {/* ============ CONTACT FORM ============ */}
       <div className="rounded-3xl overflow-hidden border border-border bg-gradient-to-br from-card to-secondary/40">
         <div className="grid md:grid-cols-5">
           <div className="md:col-span-2 p-8 md:p-10 bg-primary text-primary-foreground relative overflow-hidden">
             <div className="absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
             <div className="relative">
-              <h3 className="text-2xl font-extrabold leading-tight">এখনও সমাধান<br />পাননি?</h3>
-              <p className="mt-3 text-white/80 text-sm">
-                আমাদের সাপোর্ট টিমের কাছে বিস্তারিত লিখে পাঠান — গড় উত্তর প্রদানের সময় ২৪ ঘন্টার মধ্যে।
+              <h3 className="text-2xl font-extrabold leading-[1.3]">এখনও সমাধান<br />পাননি?</h3>
+              <p className="mt-3 text-white/85 text-sm leading-relaxed">
+                সাপোর্ট টিমের কাছে বিস্তারিত লিখে পাঠান। যত বেশি বিস্তারিত (কোন পেজ, কী চাপলেন, কী মেসেজ এসেছে), তত দ্রুত সমাধান।
               </p>
               <div className="mt-8 space-y-3 text-sm">
                 <div className="flex items-center gap-2 text-white/90">
@@ -308,17 +730,20 @@ export default function Help() {
                 value={form.subject}
                 onChange={(e) => setForm({ ...form, subject: e.target.value })}
                 className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-                placeholder="সংক্ষেপে বিষয়"
+                placeholder="যেমন: দান রিপোর্ট ডাউনলোড হচ্ছে না"
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-foreground/70 mb-1.5 block">বার্তা</label>
+              <label className="text-xs font-bold text-foreground/70 mb-1.5 block">
+                বিস্তারিত বার্তা
+                <span className="text-muted-foreground font-normal ml-2">(যত বিস্তারিত, তত দ্রুত সমাধান)</span>
+              </label>
               <textarea
                 rows={5}
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
                 className="w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
-                placeholder="আপনার সমস্যা বা প্রশ্ন বিস্তারিত লিখুন..."
+                placeholder="কোন পেজে সমস্যা, কী বাটন চাপলেন, কী মেসেজ দেখলেন — বিস্তারিত লিখুন..."
               />
             </div>
             <button
