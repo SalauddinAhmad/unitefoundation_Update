@@ -10,6 +10,7 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { useSettings } from "@/hooks/api/useDashboardData";
+import { emailRejectionReason } from "@/lib/emailValidator";
 
 
 const Contact = () => {
@@ -17,7 +18,10 @@ const Contact = () => {
   const { data: settings } = useSettings();
   const schema = z.object({
     name: z.string().trim().min(2, t("contactPage.errName")).max(80),
-    email: z.string().trim().email(t("contactPage.errEmail")).max(255),
+    email: z.string().trim().email(t("contactPage.errEmail")).max(255).superRefine((v, ctx) => {
+      const reason = emailRejectionReason(v);
+      if (reason) ctx.addIssue({ code: z.ZodIssueCode.custom, message: reason });
+    }),
     phone: z.string().trim().regex(/^01[3-9]\d{8}$/, t("contactPage.errPhone")).or(z.literal("")),
     subject: z.string().trim().min(2).max(120),
     message: z.string().trim().min(10, t("contactPage.errMessage")).max(2000),
