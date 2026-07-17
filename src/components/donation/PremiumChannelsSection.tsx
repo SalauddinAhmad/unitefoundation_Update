@@ -312,7 +312,7 @@ export const PremiumChannelsSection = () => {
                 {t("channels.labels.accountName")}
               </div>
               <div className="text-sm font-semibold" style={{ color: CREAM }}>
-                {site.payments.bank.account}
+                {payments.primaryBank.account}
               </div>
             </div>
 
@@ -329,10 +329,10 @@ export const PremiumChannelsSection = () => {
                   style={{ color: CREAM }}
                   dir="ltr"
                 >
-                  {site.payments.bkash.number}
+                  {payments.mobiles.bkash}
                 </div>
                 <button
-                  onClick={() => copy(site.payments.bkash.number, t("channels.toast.mobileNumber"))}
+                  onClick={() => copy(payments.mobiles.bkash, t("channels.toast.mobileNumber"))}
                   aria-label={t("channels.copyMobile")}
                   className="shrink-0 h-8 w-8 rounded-md flex items-center justify-center transition-colors"
                   style={{
@@ -423,9 +423,9 @@ export const PremiumChannelsSection = () => {
                 border: `1px solid ${EMERALD_DEEP}1A`,
               }}
             >
-              {site.payments.qrImage ? (
+              {payments.qrImage ? (
                 <img
-                  src={site.payments.qrImage}
+                  src={payments.qrImage}
                   alt="Unite Foundation Bangla QR"
                   className="w-full h-full object-contain"
                 />
