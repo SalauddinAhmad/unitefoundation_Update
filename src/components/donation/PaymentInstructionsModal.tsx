@@ -64,51 +64,65 @@ export const PaymentInstructionsModal = ({ open, onClose, amount, projectTitle, 
           {/* bKash */}
           <PaymentRow
             label="bKash (পার্সোনাল)"
-            number={site.payments.bkash.number}
-            note={`Send Money → "${site.payments.bkash.number}" → Reference: আপনার মোবাইল`}
+            number={payments.mobiles.bkash}
+            note={`Send Money → "${payments.mobiles.bkash}" → Reference: আপনার মোবাইল`}
             color="bg-pink-50 text-pink-700"
             onCopy={copy}
           />
           <PaymentRow
             label="Nagad (পার্সোনাল)"
-            number={site.payments.nagad.number}
+            number={payments.mobiles.nagad}
             note="Send Money অপশন ব্যবহার করুন"
             color="bg-orange-50 text-orange-700"
             onCopy={copy}
           />
           <PaymentRow
             label="Rocket"
-            number={site.payments.rocket.number}
+            number={payments.mobiles.rocket}
             note="Send Money অপশন ব্যবহার করুন"
             color="bg-purple-50 text-purple-700"
             onCopy={copy}
           />
 
-          {/* Bank */}
-          <div className="rounded-card border border-border p-4">
-            <div className="font-bold text-foreground">ব্যাংক ট্রান্সফার</div>
-            <dl className="mt-2 grid grid-cols-3 gap-y-1.5 text-sm">
-              <dt className="text-muted-foreground">ব্যাংক</dt>
-              <dd className="col-span-2 font-medium">{site.payments.bank.bank}</dd>
-              <dt className="text-muted-foreground">শাখা</dt>
-              <dd className="col-span-2 font-medium">{site.payments.bank.branch}</dd>
-              <dt className="text-muted-foreground">A/C নাম</dt>
-              <dd className="col-span-2 font-medium">{site.payments.bank.account}</dd>
-              <dt className="text-muted-foreground">A/C নং</dt>
-              <dd className="col-span-2 font-mono font-medium flex items-center gap-2">
-                <span dir="ltr">{site.payments.bank.number}</span>
-                <button onClick={() => copy(site.payments.bank.number, "অ্যাকাউন্ট নম্বর")} className="text-primary hover:bg-accent p-1 rounded"><Copy className="h-3.5 w-3.5" /></button>
-              </dd>
-              {site.payments.bank.routing && (<>
-                <dt className="text-muted-foreground">Routing</dt>
-                <dd className="col-span-2 font-mono font-medium" dir="ltr">{site.payments.bank.routing}</dd>
-              </>)}
-              {site.payments.bank.swift && (<>
-                <dt className="text-muted-foreground">SWIFT</dt>
-                <dd className="col-span-2 font-mono font-medium" dir="ltr">{site.payments.bank.swift}</dd>
-              </>)}
-            </dl>
-          </div>
+          {/* QR */}
+          {payments.qrImage && (
+            <div className="rounded-card border border-border p-4 flex items-center gap-4">
+              <img src={payments.qrImage} alt="Bangla QR" className="h-24 w-24 object-contain rounded-md border border-border bg-white" />
+              <div className="min-w-0">
+                <div className="font-bold text-foreground">Bangla QR স্ক্যান</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  যেকোনো MFS অ্যাপ (bKash, Nagad, Rocket, Bank App) থেকে QR স্ক্যান করে দান করুন।
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Banks */}
+          {payments.banks.map((bank, i) => (
+            <div key={i} className="rounded-card border border-border p-4">
+              <div className="font-bold text-foreground">ব্যাংক ট্রান্সফার · {bank.bank}</div>
+              <dl className="mt-2 grid grid-cols-3 gap-y-1.5 text-sm">
+                <dt className="text-muted-foreground">শাখা</dt>
+                <dd className="col-span-2 font-medium">{bank.branch}</dd>
+                <dt className="text-muted-foreground">A/C নাম</dt>
+                <dd className="col-span-2 font-medium">{bank.account}</dd>
+                <dt className="text-muted-foreground">A/C নং</dt>
+                <dd className="col-span-2 font-mono font-medium flex items-center gap-2">
+                  <span dir="ltr">{bank.number}</span>
+                  <button onClick={() => copy(bank.number, "অ্যাকাউন্ট নম্বর")} className="text-primary hover:bg-accent p-1 rounded"><Copy className="h-3.5 w-3.5" /></button>
+                </dd>
+                {bank.routing && (<>
+                  <dt className="text-muted-foreground">Routing</dt>
+                  <dd className="col-span-2 font-mono font-medium" dir="ltr">{bank.routing}</dd>
+                </>)}
+                {bank.swift && (<>
+                  <dt className="text-muted-foreground">SWIFT</dt>
+                  <dd className="col-span-2 font-mono font-medium" dir="ltr">{bank.swift}</dd>
+                </>)}
+              </dl>
+            </div>
+          ))}
+
 
           <div className="rounded-card bg-accent/60 border border-primary/20 p-4">
             <p className="text-sm text-foreground">
