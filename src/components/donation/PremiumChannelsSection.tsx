@@ -1,7 +1,7 @@
 import { Copy, CreditCard, QrCode, Smartphone } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
+import { usePaymentsData } from "@/hooks/usePaymentsData";
 
 /**
  * Premium editorial donation channels — deep emerald + cream, gold hairlines,
@@ -16,11 +16,6 @@ const GOLD = "#C9A84C";
 
 const formatAccount = (n: string) => n.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
 
-const mobileBrands = [
-  { brand: "bKash", number: site.payments.bkash.number },
-  { brand: "Nagad", number: site.payments.nagad.number },
-  { brand: "Rocket", number: site.payments.rocket.number },
-];
 
 // Small SVG ornament — 8-point Islamic star inside a circle
 const Ornament = ({ className = "" }: { className?: string }) => (
