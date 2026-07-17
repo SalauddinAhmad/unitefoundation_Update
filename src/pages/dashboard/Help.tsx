@@ -32,7 +32,7 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { site } from "@/data/site";
+
 
 // ------------------------------------------------------------
 // TYPES
@@ -632,40 +632,87 @@ export default function Help() {
       )}
 
       {/* ============ WHATSAPP SUPPORT ============ */}
-      <div className="rounded-3xl overflow-hidden border border-border bg-gradient-to-br from-emerald-50 to-card dark:from-emerald-950/30">
-        <div className="grid md:grid-cols-5">
-          <div className="md:col-span-2 p-8 md:p-10 bg-emerald-600 text-white relative overflow-hidden">
-            <div className="absolute -bottom-10 -right-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative">
-              <div className="h-12 w-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center mb-4">
-                <MessageCircle className="h-6 w-6" />
+      {(() => {
+        const waNumber = "8801866090980";
+        const waDisplay = "০১৮৬৬-০৯০৯৮০";
+        const waMessage = encodeURIComponent("আসসালামু আলাইকুম, আমার ড্যাশবোর্ডে একটি সমস্যা হয়েছে —");
+        return (
+          <div className="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 text-white shadow-2xl shadow-emerald-900/20">
+            {/* decorative blobs */}
+            <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-emerald-300/20 blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+
+            <div className="relative grid lg:grid-cols-2 gap-8 p-8 md:p-12 items-center">
+              {/* LEFT — pitch */}
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/15 backdrop-blur px-3 py-1 text-xs font-semibold">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75 animate-ping" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                  </span>
+                  লাইভ সাপোর্ট
+                </div>
+                <h3 className="mt-4 text-3xl md:text-4xl font-extrabold leading-[1.3] tracking-tight">
+                  এখনও সমাধান পাননি?
+                </h3>
+                <p className="mt-3 text-white/90 text-sm md:text-base leading-relaxed max-w-md">
+                  সরাসরি হোয়াটসঅ্যাপে আমাদের সাথে চ্যাট করুন। সাধারণত <span className="font-bold">১-২ ঘন্টার</span> মধ্যে বাংলায় ব্যক্তিগত উত্তর দেওয়া হয়।
+                </p>
+
+                <div className="mt-6 grid grid-cols-3 gap-2 max-w-md">
+                  <div className="rounded-xl bg-white/10 backdrop-blur px-3 py-2.5 text-center">
+                    <div className="text-lg font-extrabold">২৪/৭</div>
+                    <div className="text-[10px] text-white/80 mt-0.5">উপলব্ধ</div>
+                  </div>
+                  <div className="rounded-xl bg-white/10 backdrop-blur px-3 py-2.5 text-center">
+                    <div className="text-lg font-extrabold">১-২ ঘণ্টা</div>
+                    <div className="text-[10px] text-white/80 mt-0.5">গড় উত্তর</div>
+                  </div>
+                  <div className="rounded-xl bg-white/10 backdrop-blur px-3 py-2.5 text-center">
+                    <div className="text-lg font-extrabold">বাংলায়</div>
+                    <div className="text-[10px] text-white/80 mt-0.5">কথা বলুন</div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-2xl font-extrabold leading-[1.3]">এখনও সমাধান<br />পাননি?</h3>
-              <p className="mt-3 text-white/90 text-sm leading-relaxed">
-                সরাসরি হোয়াটসঅ্যাপে আমাদের সাপোর্ট টিমের সাথে চ্যাট করুন — সাধারণত ১-২ ঘন্টার মধ্যে উত্তর দেওয়া হয়।
-              </p>
+
+              {/* RIGHT — number card + CTA */}
+              <div className="relative">
+                <div className="rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 p-6 md:p-7 shadow-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-2xl bg-white text-emerald-600 flex items-center justify-center shrink-0 shadow-lg">
+                      {/* WhatsApp glyph */}
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden="true">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.83 9.83 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.82 11.82 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.88 11.88 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold uppercase tracking-widest text-white/70">হোয়াটসঅ্যাপ নাম্বার</div>
+                      <div className="text-2xl md:text-3xl font-extrabold tracking-tight mt-0.5">{waDisplay}</div>
+                    </div>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/${waNumber}?text=${waMessage}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white text-emerald-700 font-extrabold px-6 py-3.5 text-sm md:text-base hover:bg-emerald-50 transition shadow-lg"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    হোয়াটসঅ্যাপে চ্যাট শুরু করুন
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  </a>
+
+                  <div className="mt-4 flex items-start gap-2 text-xs text-white/80 leading-relaxed">
+                    <Lightbulb className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+                    <span>দ্রুত সমাধানের জন্য বার্তায় কোন পেজে সমস্যা, কী চাপলেন এবং স্ক্রিনশট দিন।</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="md:col-span-3 p-8 md:p-10 flex flex-col justify-center gap-5">
-            <div>
-              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">হোয়াটসঅ্যাপ নাম্বার</div>
-              <div className="mt-2 text-2xl md:text-3xl font-extrabold tracking-tight" dir="ltr">{site.phone}</div>
-            </div>
-            <a
-              href={`https://wa.me/${site.whatsapp}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 text-white font-bold px-6 py-3.5 text-sm hover:bg-emerald-700 transition w-full sm:w-auto"
-            >
-              <MessageCircle className="h-4 w-4" /> হোয়াটসঅ্যাপে চ্যাট শুরু করুন
-              <ArrowRight className="h-4 w-4" />
-            </a>
-            <div className="text-xs text-muted-foreground leading-relaxed">
-              টিপস: বার্তায় সমস্যার পেজ, কী চাপলেন এবং স্ক্রিনশট দিলে সমাধান দ্রুত হয়।
-            </div>
-          </div>
-        </div>
-      </div>
+        );
+      })()}
     </div>
   );
 }
