@@ -15,6 +15,7 @@ interface Props {
 }
 
 export const PaymentInstructionsModal = ({ open, onClose, amount, projectTitle, donorName, donorPhone }: Props) => {
+  const payments = usePaymentsData();
   if (!open) return null;
 
   const message = `আসসালামু আলাইকুম। আমি ${donorName} (${donorPhone}) "${projectTitle}" প্রকল্পে ৳${toBnNum(amount)} দান করতে চাই। অনুগ্রহ করে পেমেন্ট নিশ্চিত করুন।`;
@@ -24,6 +25,7 @@ export const PaymentInstructionsModal = ({ open, onClose, amount, projectTitle, 
     navigator.clipboard.writeText(text);
     toast({ title: "কপি হয়েছে", description: `${label} কপি করা হয়েছে।` });
   };
+
 
   return (
     <div
