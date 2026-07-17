@@ -35,13 +35,20 @@ const Ornament = ({ className = "" }: { className?: string }) => (
 
 export const PremiumChannelsSection = () => {
   const { t } = useTranslation();
+  const payments = usePaymentsData();
 
   const copy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast({ title: t("common.copied"), description: t("common.copiedDesc", { label }) });
   };
 
-  const banks = site.payments.banks;
+  const banks = payments.banks;
+  const mobileBrands = [
+    { brand: "bKash", number: payments.mobiles.bkash },
+    { brand: "Nagad", number: payments.mobiles.nagad },
+    { brand: "Rocket", number: payments.mobiles.rocket },
+  ];
+
 
   return (
     <section
