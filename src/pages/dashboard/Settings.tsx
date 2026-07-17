@@ -264,25 +264,154 @@ const Settings = () => {
           )}
 
           {active === "payment" && (
-            <Card>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h3 className="font-bold">পেমেন্ট অ্যাকাউন্ট</h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    দান গ্রহণের জন্য মোবাইল ব্যাংকিং, ব্যাংক ও গেটওয়ে তথ্য
-                  </p>
+            <div className="space-y-4">
+              {/* Personal Mobile Banking */}
+              <Card>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h3 className="font-bold">পার্সোনাল মোবাইল ব্যাংকিং</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      দাতাদের জন্য bKash / Nagad / Rocket নম্বর — ডোনেট পেজ ও হোম পেজে দেখাবে
+                    </p>
+                  </div>
+                  <SaveBar />
                 </div>
-                <SaveBar />
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Field label="bKash (পার্সোনাল)" value={form.payments.bkash} onChange={(v) => setPay("bkash", v)} />
-                <Field label="Nagad (পার্সোনাল)" value={form.payments.nagad} onChange={(v) => setPay("nagad", v)} />
-                <Field label="Rocket (পার্সোনাল)" value={form.payments.rocket} onChange={(v) => setPay("rocket", v)} />
-                <Field label="ব্যাংক একাউন্ট নম্বর" value={form.payments.bank_account} onChange={(v) => setPay("bank_account", v)} />
-                <Field label="ব্যাংকের নাম" value={form.payments.bank_name} onChange={(v) => setPay("bank_name", v)} />
-                <Field label="SSLCommerz Store ID" value={form.payments.sslcommerz_store_id} onChange={(v) => setPay("sslcommerz_store_id", v)} />
-              </div>
-            </Card>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  <Field label="bKash (পার্সোনাল)" value={form.payments.bkash} onChange={(v) => setPay("bkash", v)} />
+                  <Field label="Nagad (পার্সোনাল)" value={form.payments.nagad} onChange={(v) => setPay("nagad", v)} />
+                  <Field label="Rocket (পার্সোনাল)" value={form.payments.rocket} onChange={(v) => setPay("rocket", v)} />
+                </div>
+              </Card>
+
+              {/* QR Code */}
+              <Card>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h3 className="font-bold">Bangla QR (স্ক্যান করে দান)</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      QR ইমেজ আপলোড করুন — যেকোনো MFS অ্যাপ থেকে স্ক্যান করা যাবে
+                    </p>
+                  </div>
+                  <SaveBar />
+                </div>
+                <div className="grid sm:grid-cols-[260px_1fr] gap-5 items-start">
+                  <div className="rounded-xl border border-border bg-secondary/40 p-3">
+                    <div className="aspect-square rounded-lg bg-card flex items-center justify-center overflow-hidden">
+                      {form.payments.qr_image ? (
+                        <img src={form.payments.qr_image} alt="QR Preview" className="h-full w-full object-contain" />
+                      ) : (
+                        <div className="text-xs text-muted-foreground text-center px-4">
+                          QR ইমেজ নেই — ডানের বাটন থেকে বাছুন
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <ImagePickerButton
+                      label="QR কোড ইমেজ"
+                      value={form.payments.qr_image}
+                      onChange={(v) => setPay("qr_image" as any, v)}
+                      aspect="square"
+                      hint="স্কয়ার ইমেজ প্রস্তাবিত — কমপক্ষে 600×600 px, PNG/JPG"
+                    />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      বিকাশ / নগদ / রকেট বা যেকোনো ব্যাংকের Bangla QR এখানে আপলোড করুন। নতুন QR
+                      আপডেট করলে সেভ চাপার সাথে সাথে হোম ও ডোনেট পেজে আপডেট হয়ে যাবে।
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Bank Accounts */}
+              <Card>
+                <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
+                  <div>
+                    <h3 className="font-bold">ব্যাংক অ্যাকাউন্টসমূহ</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      একাধিক ব্যাংক যোগ, সম্পাদনা বা মুছে ফেলুন। ডোনেট পেজে সব ব্যাংক দেখানো হবে।
+                    </p>
+                  </div>
+                  <SaveBar />
+                </div>
+
+                <div className="space-y-4">
+                  {(form.payments.banks || []).map((b, idx) => {
+                    const upd = (patch: Partial<typeof b>) => {
+                      const next = [...(form.payments.banks || [])];
+                      next[idx] = { ...next[idx], ...patch };
+                      setForm({ ...form, payments: { ...form.payments, banks: next } });
+                    };
+                    const move = (dir: -1 | 1) => {
+                      const next = [...(form.payments.banks || [])];
+                      const j = idx + dir;
+                      if (j < 0 || j >= next.length) return;
+                      [next[idx], next[j]] = [next[j], next[idx]];
+                      setForm({ ...form, payments: { ...form.payments, banks: next } });
+                    };
+                    const remove = () => {
+                      if (!confirm("এই ব্যাংক অ্যাকাউন্টটি মুছবেন?")) return;
+                      setForm({
+                        ...form,
+                        payments: { ...form.payments, banks: (form.payments.banks || []).filter((_, i) => i !== idx) },
+                      });
+                    };
+                    return (
+                      <div key={idx} className="rounded-xl border border-border p-4 bg-card">
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <div className="text-xs font-bold text-muted-foreground">ব্যাংক #{idx + 1}</div>
+                          <div className="flex items-center gap-1">
+                            <button type="button" onClick={() => move(-1)} className="p-1.5 rounded-md hover:bg-secondary" title="উপরে"><ArrowUp className="h-4 w-4" /></button>
+                            <button type="button" onClick={() => move(1)} className="p-1.5 rounded-md hover:bg-secondary" title="নিচে"><ArrowDown className="h-4 w-4" /></button>
+                            <button type="button" onClick={remove} className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive" title="মুছুন"><Trash2 className="h-4 w-4" /></button>
+                          </div>
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          <Field label="ব্যাংকের নাম" value={b.bank} onChange={(v) => upd({ bank: v })} />
+                          <Field label="শাখা" value={b.branch} onChange={(v) => upd({ branch: v })} hint="যেমন: Branch : Uttara" />
+                          <Field label="অ্যাকাউন্ট নাম" value={b.account} onChange={(v) => upd({ account: v })} />
+                          <Field label="অ্যাকাউন্ট নম্বর" value={b.number} onChange={(v) => upd({ number: v })} />
+                          <Field label="Routing" value={b.routing} onChange={(v) => upd({ routing: v })} />
+                          <Field label="SWIFT" value={b.swift} onChange={(v) => upd({ swift: v })} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      payments: {
+                        ...form.payments,
+                        banks: [
+                          ...(form.payments.banks || []),
+                          { bank: "নতুন ব্যাংক", branch: "", account: "", number: "", routing: "", swift: "" },
+                        ],
+                      },
+                    })
+                  }
+                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+                >
+                  <Plus className="h-4 w-4" /> নতুন ব্যাংক যোগ করুন
+                </button>
+              </Card>
+
+              {/* Gateway */}
+              <Card>
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h3 className="font-bold">গেটওয়ে</h3>
+                    <p className="text-xs text-muted-foreground mt-1">অনলাইন পেমেন্ট গেটওয়ে কনফিগারেশন</p>
+                  </div>
+                  <SaveBar />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="SSLCommerz Store ID" value={form.payments.sslcommerz_store_id} onChange={(v) => setPay("sslcommerz_store_id", v)} />
+                </div>
+              </Card>
+            </div>
           )}
 
           {active === "socials" && (
