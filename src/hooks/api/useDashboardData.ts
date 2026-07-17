@@ -278,6 +278,15 @@ export type SiteSettings = {
     bank_name: string;
     bank_account: string;
     sslcommerz_store_id: string;
+    qr_image: string;
+    banks: Array<{
+      bank: string;
+      branch: string;
+      account: string;
+      number: string;
+      routing: string;
+      swift: string;
+    }>;
   };
   socials: {
     facebook: string;
@@ -449,6 +458,25 @@ const defaultSettings: SiteSettings = {
     bank_name: "Islami Bank Bangladesh Ltd.",
     bank_account: "20502070205708118",
     sslcommerz_store_id: "unitefoundation",
+    qr_image: "",
+    banks: [
+      {
+        bank: "Islami Bank Bangladesh",
+        branch: "Branch : Uttara",
+        account: "Unite Training Center",
+        number: "20502070100758906",
+        routing: "125264639",
+        swift: "IBBLBDDH207",
+      },
+      {
+        bank: "City Bank",
+        branch: "Branch : Uttara",
+        account: "Unite Training Center",
+        number: "1254971392001",
+        routing: "225264634",
+        swift: "CIBLBDDH",
+      },
+    ],
   },
   socials: {
     facebook: "https://www.facebook.com/UniteFoundation.UniteTv",
