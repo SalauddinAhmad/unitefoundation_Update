@@ -2,6 +2,8 @@ import { CheckCircle2, Copy, MessageCircle, X } from "lucide-react";
 import { site } from "@/data/site";
 import { toBnNum } from "@/data/projects";
 import { toast } from "@/hooks/use-toast";
+import { usePaymentsData } from "@/hooks/usePaymentsData";
+
 
 interface Props {
   open: boolean;
