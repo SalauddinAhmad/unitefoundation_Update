@@ -56,5 +56,6 @@ export function isAcceptableEmail(email: string): boolean {
 /** Human-readable Bangla reason, or empty string if fine. */
 export function emailRejectionReason(email: string): string {
   const r = checkEmail(email);
-  return r.ok ? "" : r.message;
+  if (r.ok) return "";
+  return r.message;
 }
