@@ -125,7 +125,7 @@
     @apply inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary text-center;
   }
   .heading-display {
-    @apply text-3xl md:text-5xl font-bold leading-[1.15] text-center;
+    @apply text-3xl md:text-5xl font-bold leading-[1.4] text-center;
   }
   .prose-bn p { @apply leading-[1.85] text-muted-foreground; }
   /* Force site's Bornomala BN font on ALL pasted blog content, overriding any inline font-family */
@@ -153,6 +153,10 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    /* Bangla matra (top diacritics) can clip under background-clip: text; give room */
+    display: inline-block;
+    padding-top: 0.15em;
+    line-height: 1.5;
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
