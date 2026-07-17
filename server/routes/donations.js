@@ -4,6 +4,7 @@ const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { shortId } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
+const { validateEmail } = require('../utils/emailValidator');
 
 router.get('/', requireAuth, asyncH(async (req, res) => {
   const from = /^\d{4}-\d{2}-\d{2}$/.test(req.query.from) ? req.query.from : null;
@@ -39,6 +40,10 @@ router.post('/', asyncH(async (req, res) => {
     transaction_id: z.string().optional(),
     note: z.string().optional(),
   }).parse(req.body);
+  if (data.email) {
+    const ev = validateEmail(data.email);
+    if (!ev.ok) return res.status(400).json({ message: ev.message, code: ev.code });
+  }
   const id = shortId('TXN-');
   await pool.execute(
     `INSERT INTO donations (id,name,phone,email,amount,method,area,transaction_id,note,status)

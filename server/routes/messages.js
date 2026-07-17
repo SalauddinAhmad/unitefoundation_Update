@@ -6,6 +6,7 @@ const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 const { tplWrapContent, renderEmail } = require('../services/emailTemplate');
+const { validateEmail } = require('../utils/emailValidator');
 
 router.get('/', requireAuth, asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM messages ORDER BY created_at DESC');
@@ -20,6 +21,8 @@ router.post('/', asyncH(async (req, res) => {
     subject: z.string().optional(),
     body: z.string().min(1),
   }).parse(req.body);
+  const ev = validateEmail(d.email);
+  if (!ev.ok) return res.status(400).json({ message: ev.message, code: ev.code });
   const id = uuid();
   await pool.execute(
     'INSERT INTO messages (id,name,email,phone,subject,body) VALUES (?,?,?,?,?,?)',
