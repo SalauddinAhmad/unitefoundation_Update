@@ -57,6 +57,7 @@ const Index = () => {
       <HomeDonationChannelsSection />
       <GallerySection />
       <PartnersSection />
+      <PrayerTimes />
       <VisitorCounter />
         </>
       )}
