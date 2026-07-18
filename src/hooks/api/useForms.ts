@@ -17,12 +17,14 @@ function writeCache(key: FormKey, schema: FormSchema) {
 
 async function fetchOne(key: FormKey): Promise<FormSchema> {
   try {
-    const r = await api.get<FormSchema>(`/forms/${key}`, { auth: false });
+    const r = await api.get<FormSchema & { extras?: FormSchema["extras"] }>(`/forms/${key}`, { auth: false });
+    const def = FORM_DEFAULTS[key];
     const schema: FormSchema = {
       form_key: key,
-      title: r.title || FORM_DEFAULTS[key].title,
-      subtitle: r.subtitle || FORM_DEFAULTS[key].subtitle,
-      fields: Array.isArray(r.fields) && r.fields.length ? r.fields : FORM_DEFAULTS[key].fields,
+      title: r.title || def.title,
+      subtitle: r.subtitle || def.subtitle,
+      fields: Array.isArray(r.fields) && r.fields.length ? r.fields : def.fields,
+      extras: { ...(def.extras || {}), ...(r.extras || {}) },
     };
     writeCache(key, schema);
     return schema;
