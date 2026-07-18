@@ -7,6 +7,7 @@ import { GallerySection } from "@/components/home/GallerySection";
 import { ImpactStats } from "@/components/home/ImpactStats";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { VisitorCounter } from "@/components/home/VisitorCounter";
+import { PrayerTimes } from "@/components/home/PrayerTimes";
 import { HomeDonationChannelsSection } from "@/components/home/HomeDonationChannelsSection";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { useSettings } from "@/hooks/api/useDashboardData";
@@ -56,6 +57,7 @@ const Index = () => {
       <HomeDonationChannelsSection />
       <GallerySection />
       <PartnersSection />
+      <PrayerTimes />
       <VisitorCounter />
         </>
       )}
