@@ -355,20 +355,55 @@ export default function Gallery() {
   };
 
 
+  const [mainTab, setMainTab] = useState<"albums" | "videos">("albums");
+
   return (
     <>
       <PageHeader
         title="গ্যালারি ম্যানেজমেন্ট"
         subtitle="অ্যালবাম, ছবি ও ভিডিও তৈরি, এডিট ও প্রকাশ করুন"
         actions={
-          <>
-            <Btn variant="outline" onClick={importDefaults} disabled={importing}>
-              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
-            </Btn>
-            <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
-          </>
+          mainTab === "albums" ? (
+            <>
+              <Btn variant="outline" onClick={importDefaults} disabled={importing}>
+                <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
+              </Btn>
+              <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
+            </>
+          ) : null
         }
       />
+
+      {/* Main tabs */}
+      <div className="mb-5 inline-flex p-1 rounded-lg border border-border bg-card shadow-sm">
+        {([
+          { k: "albums", label: "অ্যালবাম", icon: FolderOpen },
+          { k: "videos", label: "ভিডিও", icon: Film },
+        ] as const).map(({ k, label, icon: Icon }) => (
+          <button
+            key={k}
+            onClick={() => setMainTab(k)}
+            className={
+              "inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold transition-colors " +
+              (mainTab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")
+            }
+          >
+            <Icon className="h-4 w-4" /> {label}
+          </button>
+        ))}
+      </div>
+
+      {mainTab === "videos" ? (
+        <VideoManager
+          albums={data?.albums || []}
+          items={data?.items || []}
+          onSaveAlbum={(d) => saveAlbumMut.mutateAsync({ data: d })}
+          onSaveItem={(d) => saveItemMut.mutateAsync({ data: d })}
+          onDeleteItem={(id) => deleteItemMut.mutateAsync(id)}
+        />
+      ) : (
+      <>
+
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
