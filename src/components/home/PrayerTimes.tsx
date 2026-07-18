@@ -1,19 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MapPin, Loader2 } from "lucide-react";
 import {
   Coordinates,
   CalculationMethod,
   PrayerTimes as AdhanPrayerTimes,
-  SunnahTimes,
   Prayer,
 } from "adhan";
 
-// Dhaka coordinates as default
-const COORDS = new Coordinates(23.8103, 90.4125);
+const DEFAULT_COORDS = { lat: 23.8103, lng: 90.4125, label: "ঢাকা, বাংলাদেশ" };
 
-const METHODS: { value: keyof typeof CalculationMethod | string; label: string }[] = [
+const METHODS: { value: string; label: string }[] = [
   { value: "MuslimWorldLeague", label: "মুসলিম ওয়ার্ল্ড লীগ" },
   { value: "Karachi", label: "করাচি (দক্ষিণ এশিয়া)" },
-  { value: "Egyptian", label: "মিশরীয় (Egyptian)" },
+  { value: "Egyptian", label: "মিশরীয়" },
   { value: "UmmAlQura", label: "উম্মুল কুরা (মক্কা)" },
   { value: "Dubai", label: "দুবাই" },
   { value: "NorthAmerica", label: "উত্তর আমেরিকা (ISNA)" },
@@ -33,14 +32,12 @@ const BN_MONTHS_BONGABDO = [
   "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র",
 ];
 
-// Approximate Bengali calendar (Bangladesh reformed): 14 April = 1 Boishakh
 function toBengaliDate(d: Date) {
   const year = d.getFullYear();
-  const boishakhStart = new Date(year, 3, 14); // April 14
+  const boishakhStart = new Date(year, 3, 14);
   const start = d >= boishakhStart ? boishakhStart : new Date(year - 1, 3, 14);
   const bnYear = (d >= boishakhStart ? year : year - 1) - 593;
   const dayOfYear = Math.floor((d.getTime() - start.getTime()) / 86400000);
-  // Month lengths (reformed Bangla calendar, non-leap simplification)
   const lens = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
   let remaining = dayOfYear;
   let m = 0;
@@ -51,7 +48,6 @@ function toBengaliDate(d: Date) {
   return { day: remaining + 1, month: BN_MONTHS_BONGABDO[Math.min(m, 11)], year: bnYear };
 }
 
-// Hijri via Intl
 function toHijri(d: Date) {
   try {
     const parts = new Intl.DateTimeFormat("en-TN-u-ca-islamic-umalqura", {
@@ -65,20 +61,14 @@ function toHijri(d: Date) {
   }
 }
 
-function fmtTime12(d: Date) {
+function fmtHM(d: Date) {
   let h = d.getHours();
   const m = d.getMinutes();
   const ampm = h >= 12 ? "PM" : "AM";
   h = h % 12 || 12;
-  return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))} ${ampm === "AM" ? "AM" : "PM"}`;
+  return { time: `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}`, ampm };
 }
-function fmtTime12NoAmPm(d: Date) {
-  let h = d.getHours();
-  const m = d.getMinutes();
-  h = h % 12 || 12;
-  return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}`;
-}
-function fmtTimeWithSec(d: Date) {
+function fmtHMS(d: Date) {
   let h = d.getHours();
   const m = d.getMinutes();
   const s = d.getSeconds();
@@ -87,53 +77,90 @@ function fmtTimeWithSec(d: Date) {
   return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}:${toBn(String(s).padStart(2, "0"))} ${ampm}`;
 }
 
-const PRAYER_LABELS: Record<string, { label: string; icon: string; prefix?: string }> = {
-  fajr: { label: "ফজর", icon: "🌅", prefix: "ভোর" },
-  sunrise: { label: "সূর্যোদয়", icon: "🌤️", prefix: "সকাল" },
-  dhuhr: { label: "যোহর", icon: "☀️", prefix: "দুপুর" },
-  asr: { label: "আছর", icon: "🌇", prefix: "বিকাল" },
-  maghrib: { label: "মাগরিব", icon: "🌄", prefix: "সন্ধ্যা" },
-  isha: { label: "এশা", icon: "🌔", prefix: "রাত" },
-};
+const PRAYERS: { key: string; label: string; icon: JSX.Element }[] = [
+  { key: "fajr", label: "ফজর", icon: <FajrIcon /> },
+  { key: "sunrise", label: "সূর্যোদয়", icon: <SunriseIcon /> },
+  { key: "dhuhr", label: "যোহর", icon: <DhuhrIcon /> },
+  { key: "asr", label: "আছর", icon: <AsrIcon /> },
+  { key: "maghrib", label: "মাগরিব", icon: <MaghribIcon /> },
+  { key: "isha", label: "এশা", icon: <IshaIcon /> },
+];
+
+function FajrIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 18h18M6 18a6 6 0 0112 0M12 4v3M4.2 8.2l2.1 2.1M19.8 8.2l-2.1 2.1"/></svg>; }
+function SunriseIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 20h18M12 4v4M5.5 8.5l1.5 1.5M18.5 8.5L17 10M8 14a4 4 0 018 0"/></svg>; }
+function DhuhrIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><circle cx="12" cy="12" r="4"/><path strokeLinecap="round" d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>; }
+function AsrIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><circle cx="10" cy="12" r="3.5"/><path strokeLinecap="round" d="M10 4v2M10 18v2M2 12h2M17 12h2M4.5 6.5L6 8M14.5 15.5L16 17M4.5 17.5L6 16"/><path d="M17 20l4-4-3-1z"/></svg>; }
+function MaghribIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 18h18M6 18a6 6 0 0112 0"/><path strokeLinecap="round" d="M12 14v-4M10 12l2 2 2-2"/></svg>; }
+function IshaIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M20 14.5A8 8 0 019.5 4a7 7 0 108.5 10.5z"/><path strokeLinecap="round" d="M5 5l.5 1.5L7 7l-1.5.5L5 9l-.5-1.5L3 7l1.5-.5z"/></svg>; }
 
 export const PrayerTimes = () => {
   const [now, setNow] = useState(new Date());
-  const [method, setMethod] = useState<string>(() => {
-    return localStorage.getItem("uf_prayer_method") ?? "MuslimWorldLeague";
+  const [method, setMethod] = useState<string>(() => localStorage.getItem("uf_prayer_method") ?? "MuslimWorldLeague");
+  const [coords, setCoords] = useState(() => {
+    try {
+      const raw = localStorage.getItem("uf_prayer_coords");
+      if (raw) return JSON.parse(raw);
+    } catch { /* ignore */ }
+    return DEFAULT_COORDS;
   });
+  const [locating, setLocating] = useState(false);
+  const [locError, setLocError] = useState<string | null>(null);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
+  useEffect(() => localStorage.setItem("uf_prayer_method", method), [method]);
+  useEffect(() => localStorage.setItem("uf_prayer_coords", JSON.stringify(coords)), [coords]);
 
-  useEffect(() => {
-    localStorage.setItem("uf_prayer_method", method);
-  }, [method]);
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setLocError("এই ব্রাউজারে লোকেশন সাপোর্ট নেই");
+      return;
+    }
+    setLocating(true);
+    setLocError(null);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        let label = `${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=bn`);
+          const j = await res.json();
+          const a = j.address ?? {};
+          label = a.city || a.town || a.village || a.county || a.state || label;
+          if (a.country) label = `${label}, ${a.country}`;
+        } catch { /* ignore */ }
+        setCoords({ lat: latitude, lng: longitude, label });
+        setLocating(false);
+      },
+      (err) => {
+        setLocError(err.code === 1 ? "লোকেশন অনুমতি দেয়া হয়নি" : "লোকেশন পাওয়া যায়নি");
+        setLocating(false);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+    );
+  };
 
   const params = useMemo(() => {
     const fn = (CalculationMethod as any)[method] ?? CalculationMethod.MuslimWorldLeague;
     return fn();
   }, [method]);
-
-  const today = useMemo(() => new AdhanPrayerTimes(COORDS, new Date(), params), [params, now.toDateString()]);
+  const adhCoords = useMemo(() => new Coordinates(coords.lat, coords.lng), [coords]);
+  const today = useMemo(() => new AdhanPrayerTimes(adhCoords, new Date(), params), [adhCoords, params, now.toDateString()]);
   const tomorrow = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return new AdhanPrayerTimes(COORDS, d, params);
-  }, [params, now.toDateString()]);
-  const sunnah = useMemo(() => new SunnahTimes(today), [today]);
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    return new AdhanPrayerTimes(adhCoords, d, params);
+  }, [adhCoords, params, now.toDateString()]);
 
-  const nextPrayer = today.nextPrayer(now);
-  let nextTime: Date;
-  let nextName: string;
-  if (nextPrayer === Prayer.None) {
-    nextTime = tomorrow.fajr;
-    nextName = "fajr";
-  } else {
-    nextTime = today.timeForPrayer(nextPrayer)!;
-    nextName = String(nextPrayer).toLowerCase();
-  }
+  const nextPrayerKey = today.nextPrayer(now);
+  const nextTime = nextPrayerKey === Prayer.None ? tomorrow.fajr : today.timeForPrayer(nextPrayerKey)!;
+  const nextName = nextPrayerKey === Prayer.None ? "fajr" : String(nextPrayerKey).toLowerCase();
+  const nextLabel = PRAYERS.find((p) => p.key === nextName)?.label ?? nextName;
+
+  const currentKey = today.currentPrayer(now);
+  const currentName = currentKey === Prayer.None ? null : String(currentKey).toLowerCase();
+
   const diff = Math.max(0, Math.floor((nextTime.getTime() - now.getTime()) / 1000));
   const hh = Math.floor(diff / 3600);
   const mm = Math.floor((diff % 3600) / 60);
@@ -141,15 +168,19 @@ export const PrayerTimes = () => {
 
   const bn = toBengaliDate(now);
   const hijri = toHijri(now);
-  const gregorian = now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
-
-  const nextLabel = PRAYER_LABELS[nextName]?.label ?? nextName;
-  const nextPrefix = PRAYER_LABELS[nextName]?.prefix ?? "";
-
-  // Sehri = fajr - 3 min, Iftar = maghrib
   const sehri = new Date(today.fajr.getTime() - 3 * 60000);
 
-  const prayers: { key: string; time: Date }[] = [
+  // Sun-arc position: percentage of day from sunrise to sunset
+  const dayStart = today.sunrise.getTime();
+  const dayEnd = today.maghrib.getTime();
+  const rawPct = (now.getTime() - dayStart) / (dayEnd - dayStart);
+  const dayPct = Math.max(0, Math.min(1, rawPct));
+  const isDaytime = rawPct >= 0 && rawPct <= 1;
+  // Arc math: semicircle from (10, 100) to (390, 100), peak at (200, 20)
+  const arcX = 10 + dayPct * 380;
+  const arcY = 100 - Math.sin(dayPct * Math.PI) * 80;
+
+  const prayerTimes = [
     { key: "fajr", time: today.fajr },
     { key: "sunrise", time: today.sunrise },
     { key: "dhuhr", time: today.dhuhr },
@@ -161,77 +192,175 @@ export const PrayerTimes = () => {
   return (
     <section className="section-y bg-gradient-to-b from-primary/5 via-background to-background">
       <div className="container-page">
-        <div className="rounded-card border border-border/60 bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="px-6 py-5 border-b border-border/60 bg-primary/5 flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
-              </span>
-              <span className="text-sm font-semibold text-emerald-700">Live · এখনই সক্রিয়</span>
-            </div>
-            <select
-              value={method}
-              onChange={(e) => setMethod(e.target.value)}
-              className="text-sm rounded-md border border-input bg-background px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary/40"
-              aria-label="হিসাব পদ্ধতি"
-            >
-              {METHODS.map((m) => (
-                <option key={m.value} value={m.value}>{m.label}</option>
-              ))}
-            </select>
+        <div className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
+          {/* Decorative arch pattern watermark */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.04]" aria-hidden>
+            <svg viewBox="0 0 400 400" className="w-full h-full">
+              <defs>
+                <pattern id="pt-mihrab" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M40 10 C60 10 70 25 70 45 L70 70 L10 70 L10 45 C10 25 20 10 40 10 Z" fill="none" stroke="currentColor" strokeWidth="1" className="text-primary" />
+                </pattern>
+              </defs>
+              <rect width="400" height="400" fill="url(#pt-mihrab)" />
+            </svg>
           </div>
 
-          {/* Date + Countdown */}
-          <div className="px-6 py-6 grid gap-6 md:grid-cols-2 items-center border-b border-border/60">
-            <div className="space-y-2 text-center md:text-left">
-              <p className="text-sm text-muted-foreground">
-                {BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month}, {toBn(bn.year)} বঙ্গাব্দ
-              </p>
-              <p className="text-sm text-muted-foreground">{gregorian}</p>
-              {hijri && (
-                <p className="text-sm text-muted-foreground">
-                  {toBn(hijri.day)} {hijri.month}, {toBn(hijri.year)} হিজরি
-                </p>
-              )}
-              <p className="text-3xl md:text-4xl font-bold text-primary tabular-nums pt-2">
-                {fmtTimeWithSec(now)}
-              </p>
+          {/* HERO: dark emerald mihrab with sun arc */}
+          <div className="relative bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground overflow-hidden">
+            {/* Radial glow behind sun */}
+            <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary-foreground)/0.15),transparent_70%)]" />
+
+            <div className="relative px-5 sm:px-8 pt-6 pb-4 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-foreground/70 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-foreground"></span>
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-primary-foreground/90">Live · এখনই সক্রিয়</span>
+              </div>
+              <button
+                onClick={detectLocation}
+                disabled={locating}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 backdrop-blur-sm px-3 py-1.5 text-[11px] font-medium transition-colors disabled:opacity-60 border border-primary-foreground/20"
+              >
+                {locating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
+                <span className="truncate max-w-[140px]">{locating ? "খোঁজা হচ্ছে..." : coords.label}</span>
+              </button>
             </div>
-            <div className="text-center md:text-right space-y-1">
-              <p className="text-sm text-muted-foreground">পরবর্তী: <span className="font-semibold text-foreground">{nextLabel}</span> · {nextPrefix} {fmtTime12NoAmPm(nextTime)}</p>
-              <p className="text-lg font-semibold text-primary tabular-nums">
-                {toBn(hh)} ঘন্টা {toBn(mm)} মিনিট {toBn(ss)} সেকেন্ড বাকি
-              </p>
-              <div className="flex flex-wrap justify-center md:justify-end gap-4 pt-2 text-sm">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">সাহরী {fmtTime12NoAmPm(sehri)}</span>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">ইফতার {fmtTime12NoAmPm(today.maghrib)}</span>
+
+            {/* Sun arc timeline */}
+            <div className="relative px-4 sm:px-8">
+              <svg viewBox="0 0 400 110" className="w-full h-24 sm:h-28" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="pt-arc-grad" x1="0" x2="1">
+                    <stop offset="0" stopColor="currentColor" stopOpacity="0.25" />
+                    <stop offset="0.5" stopColor="currentColor" stopOpacity="0.6" />
+                    <stop offset="1" stopColor="currentColor" stopOpacity="0.25" />
+                  </linearGradient>
+                </defs>
+                <path d="M10 100 Q 200 -60 390 100" fill="none" stroke="url(#pt-arc-grad)" strokeWidth="1.5" strokeDasharray="3 4" />
+                {/* Horizon */}
+                <line x1="0" y1="100" x2="400" y2="100" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1" />
+                {/* Sunrise + Sunset markers */}
+                <circle cx="10" cy="100" r="3" fill="currentColor" opacity="0.6" />
+                <circle cx="390" cy="100" r="3" fill="currentColor" opacity="0.6" />
+                {/* Sun marker */}
+                {isDaytime && (
+                  <>
+                    <circle cx={arcX} cy={arcY} r="14" fill="currentColor" opacity="0.15" />
+                    <circle cx={arcX} cy={arcY} r="7" fill="hsl(var(--primary-foreground))" />
+                  </>
+                )}
+                {!isDaytime && (
+                  <text x="200" y="60" textAnchor="middle" className="fill-current" opacity="0.6" fontSize="14">☾</text>
+                )}
+              </svg>
+              <div className="flex justify-between text-[10px] font-medium text-primary-foreground/70 -mt-2 px-1">
+                <span>সূর্যোদয় {fmtHM(today.sunrise).time}</span>
+                <span>সূর্যাস্ত {fmtHM(today.maghrib).time}</span>
+              </div>
+            </div>
+
+            {/* Time + countdown */}
+            <div className="relative px-5 sm:px-8 py-6 text-center">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-primary-foreground/70 mb-2">এখন</p>
+              <div className="text-4xl sm:text-5xl font-bold tabular-nums tracking-tight">
+                {fmtHMS(now)}
+              </div>
+              <div className="mt-3 inline-flex flex-col items-center gap-0.5 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 px-5 py-3">
+                <span className="text-[10px] uppercase tracking-widest text-primary-foreground/70">পরবর্তী · {nextLabel}</span>
+                <span className="text-lg sm:text-xl font-bold tabular-nums">
+                  {toBn(hh)}<span className="text-primary-foreground/60 text-sm mx-0.5">ঘ</span>
+                  {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-primary-foreground/60 text-sm mx-0.5">মি</span>
+                  {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-primary-foreground/60 text-sm mx-0.5">সে</span>
+                </span>
+                <span className="text-[11px] text-primary-foreground/80 mt-0.5">শুরু {fmtHM(nextTime).time} {fmtHM(nextTime).ampm}</span>
+              </div>
+            </div>
+
+            {/* Date ribbon */}
+            <div className="relative px-5 sm:px-8 pb-5">
+              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] sm:text-xs text-primary-foreground/85 text-center">
+                <span>{BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month} {toBn(bn.year)} বঙ্গাব্দ</span>
+                <span className="opacity-40">·</span>
+                <span>{now.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</span>
+                {hijri && (<>
+                  <span className="opacity-40">·</span>
+                  <span>{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} হিজরি</span>
+                </>)}
               </div>
             </div>
           </div>
 
-          {/* Prayer grid */}
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-px bg-border/50">
-            {prayers.map(({ key, time }) => {
-              const active = nextName === key;
-              return (
-                <div
-                  key={key}
-                  className={`p-4 text-center bg-card transition-colors ${active ? "bg-primary/10" : ""}`}
-                >
-                  <div className="text-2xl">{PRAYER_LABELS[key].icon}</div>
-                  <div className="text-sm font-semibold mt-1">{PRAYER_LABELS[key].label}</div>
-                  <div className="text-base font-bold text-primary tabular-nums mt-1">
-                    {fmtTime12NoAmPm(time)}
-                  </div>
-                </div>
-              );
-            })}
+          {/* Sehri / Iftar band */}
+          <div className="relative -mt-4 mx-4 sm:mx-8 grid grid-cols-2 gap-3 z-10">
+            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
+              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
+            </div>
+            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
+              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
+              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
+            </div>
           </div>
 
-          <div className="px-6 py-3 text-center text-xs text-muted-foreground bg-muted/30">
-            সময়গুলি অটোম্যাটিক হিসাবের ভিত্তিতে, ১-২ মিনিট (+/-) হতে পারে।
+          {/* Prayer arch cards */}
+          <div className="relative p-4 sm:p-6 pt-6">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+              {prayerTimes.map(({ key, time }) => {
+                const meta = PRAYERS.find((p) => p.key === key)!;
+                const isNext = nextName === key;
+                const isCurrent = currentName === key;
+                const highlight = isCurrent || isNext;
+                return (
+                  <div
+                    key={key}
+                    className={[
+                      "relative group flex flex-col items-center text-center px-2 py-4 transition-all",
+                      // Mihrab arch shape via border-radius
+                      "rounded-t-[3rem] rounded-b-xl border",
+                      highlight
+                        ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 -translate-y-1"
+                        : "bg-muted/40 text-foreground border-border/60 hover:bg-primary/5 hover:border-primary/30",
+                    ].join(" ")}
+                  >
+                    {isCurrent && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">চলমান</span>
+                    )}
+                    {isNext && !isCurrent && (
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
+                    )}
+                    <div className={["w-7 h-7 sm:w-8 sm:h-8 mb-1.5 mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
+                      {meta.icon}
+                    </div>
+                    <div className={["text-xs sm:text-sm font-semibold", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
+                    <div className={["text-sm sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
+                      {fmtHM(time).time}
+                    </div>
+                    <div className={["text-[9px] uppercase tracking-wider", highlight ? "text-primary-foreground/75" : "text-muted-foreground"].join(" ")}>{fmtHM(time).ampm}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Method selector + disclaimer */}
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border/60">
+              <div className="relative w-full sm:w-auto">
+                <select
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value)}
+                  className="w-full sm:w-auto appearance-none text-xs font-medium rounded-full border border-input bg-background pl-4 pr-9 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+                  aria-label="হিসাব পদ্ধতি"
+                >
+                  {METHODS.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
+                </select>
+                <svg className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center sm:text-right">
+                {locError ? <span className="text-destructive">{locError} · </span> : null}
+                সময়গুলি অটোম্যাটিক হিসাবের ভিত্তিতে, ১-২ মিনিট (+/-) হতে পারে।
+              </p>
+            </div>
           </div>
         </div>
       </div>
