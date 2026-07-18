@@ -7,7 +7,7 @@ const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { requireAuth } = require('../middleware/auth');
 
-const KEYS = ['volunteer', 'representative', 'donor', 'member'];
+const KEYS = ['volunteer', 'representative', 'donor', 'monthly', 'member'];
 
 const fieldSchema = z.object({
   key: z.string().min(1).max(64),
