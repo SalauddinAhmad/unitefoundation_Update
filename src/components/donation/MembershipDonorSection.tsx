@@ -388,6 +388,7 @@ export const MembershipDonorSection = () => {
           >
             <div className="p-7 md:p-9 text-white">
               {active === "regular" && <RegularForm />}
+              {active === "monthly" && <MonthlyForm />}
               {active === "member" && <MemberForm />}
             </div>
           </div>
