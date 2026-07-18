@@ -64,6 +64,7 @@ export function useSaveFormSchema() {
           title: schema.title,
           subtitle: schema.subtitle,
           fields: schema.fields,
+          extras: schema.extras || {},
         });
       } catch (e) {
         // surface but do not throw — local cache still applied
