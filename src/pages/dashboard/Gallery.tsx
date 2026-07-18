@@ -355,20 +355,55 @@ export default function Gallery() {
   };
 
 
+  const [mainTab, setMainTab] = useState<"albums" | "videos">("albums");
+
   return (
     <>
       <PageHeader
         title="গ্যালারি ম্যানেজমেন্ট"
         subtitle="অ্যালবাম, ছবি ও ভিডিও তৈরি, এডিট ও প্রকাশ করুন"
         actions={
-          <>
-            <Btn variant="outline" onClick={importDefaults} disabled={importing}>
-              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
-            </Btn>
-            <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
-          </>
+          mainTab === "albums" ? (
+            <>
+              <Btn variant="outline" onClick={importDefaults} disabled={importing}>
+                <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
+              </Btn>
+              <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
+            </>
+          ) : null
         }
       />
+
+      {/* Main tabs */}
+      <div className="mb-5 inline-flex p-1 rounded-lg border border-border bg-card shadow-sm">
+        {([
+          { k: "albums", label: "অ্যালবাম", icon: FolderOpen },
+          { k: "videos", label: "ভিডিও", icon: Film },
+        ] as const).map(({ k, label, icon: Icon }) => (
+          <button
+            key={k}
+            onClick={() => setMainTab(k)}
+            className={
+              "inline-flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-semibold transition-colors " +
+              (mainTab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")
+            }
+          >
+            <Icon className="h-4 w-4" /> {label}
+          </button>
+        ))}
+      </div>
+
+      {mainTab === "videos" ? (
+        <VideoManager
+          albums={data?.albums || []}
+          items={data?.items || []}
+          onSaveAlbum={(d) => saveAlbumMut.mutateAsync({ data: d })}
+          onSaveItem={(d) => saveItemMut.mutateAsync({ data: d })}
+          onDeleteItem={(id) => deleteItemMut.mutateAsync(id)}
+        />
+      ) : (
+      <>
+
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4 mb-6">
@@ -536,6 +571,8 @@ export default function Gallery() {
           onClose={() => setLightbox(null)}
           onNav={(i) => setLightbox({ album: lightbox.album, idx: i })}
         />
+      )}
+      </>
       )}
     </>
   );
@@ -855,3 +892,209 @@ function Lightbox({ album, idx, onClose, onNav }: { album: Album; idx: number; o
     </div>
   );
 }
+
+/* ------------- Video Manager ------------- */
+function VideoManager({
+  albums,
+  items,
+  onSaveAlbum,
+  onSaveItem,
+  onDeleteItem,
+}: {
+  albums: ApiGalleryAlbum[];
+  items: ApiGalleryItem[];
+  onSaveAlbum: (data: Partial<ApiGalleryAlbum>) => Promise<any>;
+  onSaveItem: (data: Partial<ApiGalleryItem>) => Promise<any>;
+  onDeleteItem: (id: string) => Promise<any>;
+}) {
+  const [url, setUrl] = useState("");
+  const [caption, setCaption] = useState("");
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [busy, setBusy] = useState(false);
+  const [filterCat, setFilterCat] = useState<"all" | string>("all");
+
+  const albumById = useMemo(() => {
+    const m = new Map<string, ApiGalleryAlbum>();
+    albums.forEach((a) => m.set(a.id, a));
+    return m;
+  }, [albums]);
+
+  const videos = useMemo(() => {
+    return items
+      .filter((it) => it.kind === "video")
+      .map((it) => {
+        const yid =
+          it.youtube_id ||
+          (it.url?.match(/(?:youtube\.com\/(?:.*v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/)?.[1]) ||
+          "";
+        const alb = it.album_id ? albumById.get(it.album_id) : undefined;
+        return {
+          id: it.id,
+          youtubeId: yid,
+          caption: it.caption || it.title || "",
+          category: alb?.category || "অন্যান্য",
+          thumb: it.thumb_url || (yid ? `https://img.youtube.com/vi/${yid}/hqdefault.jpg` : ""),
+          url: it.url,
+        };
+      })
+      .filter((v) => v.youtubeId);
+  }, [items, albumById]);
+
+  const filtered = filterCat === "all" ? videos : videos.filter((v) => v.category === filterCat);
+  const activeCats = useMemo(() => Array.from(new Set(videos.map((v) => v.category))), [videos]);
+
+  const ensureAlbumFor = async (cat: string): Promise<string> => {
+    const existing = albums.find((a) => (a.category || "") === cat);
+    if (existing) return existing.id;
+    const res: any = await onSaveAlbum({
+      title: cat,
+      slug: cat.toLowerCase().replace(/[^\w\u0980-\u09FF]+/g, "-"),
+      category: cat,
+      status: "published",
+      date: new Date().toISOString().slice(0, 10),
+    });
+    return res?.id;
+  };
+
+  const add = async () => {
+    const yid = extractYT(url.trim());
+    if (!yid) { toast.error("সঠিক YouTube লিংক দিন"); return; }
+    setBusy(true);
+    try {
+      const albumId = await ensureAlbumFor(category);
+      await onSaveItem({
+        album_id: albumId,
+        kind: "video",
+        url: `https://youtube.com/watch?v=${yid}`,
+        youtube_id: yid,
+        caption: caption.trim() || null,
+        thumb_url: `https://img.youtube.com/vi/${yid}/hqdefault.jpg`,
+      });
+      toast.success("ভিডিও যুক্ত হয়েছে");
+      setUrl(""); setCaption("");
+    } catch (e: any) {
+      toast.error(e?.message || "যুক্ত করা যায়নি");
+    } finally { setBusy(false); }
+  };
+
+  const remove = async (id: string) => {
+    if (!confirm("এই ভিডিওটি মুছে ফেলতে চান?")) return;
+    try { await onDeleteItem(id); toast.success("মুছে ফেলা হয়েছে"); }
+    catch (e: any) { toast.error(e?.message || "ডিলিট ব্যর্থ"); }
+  };
+
+  const [preview, setPreview] = useState<string | null>(null);
+
+  return (
+    <>
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+        <KpiCard label="মোট ভিডিও" value={String(videos.length)} icon={Film} highlight />
+        <KpiCard label="ক্যাটাগরি" value={String(activeCats.length)} icon={FolderOpen} />
+        <KpiCard label="সর্বশেষ যুক্ত" value={videos[0]?.caption?.slice(0, 12) || "—"} icon={Sparkles} />
+        <KpiCard label="প্লেয়েবল" value={String(videos.filter((v) => v.youtubeId).length)} icon={Play} />
+      </div>
+
+      {/* Add form */}
+      <Card className="mb-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Video className="h-4 w-4 text-primary" />
+          <h3 className="font-bold">নতুন ভিডিও যুক্ত করুন</h3>
+        </div>
+        <div className="grid md:grid-cols-[1fr_180px_auto] gap-3">
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="YouTube লিংক পেস্ট করুন — https://youtube.com/watch?v=..."
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="px-3 py-2.5 rounded-lg border border-border bg-background text-sm font-medium"
+          >
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <Btn onClick={add} disabled={busy || !url.trim()}>
+            <Plus className="h-4 w-4" /> {busy ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
+          </Btn>
+        </div>
+        <input
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          placeholder="ভিডিওর শিরোনাম / ক্যাপশন (ঐচ্ছিক)"
+          className="mt-3 w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm"
+        />
+        <p className="mt-2 text-xs text-muted-foreground">
+          লিংক দিলে থাম্বনেইল আপনা-আপনি বসবে এবং ওয়েবসাইটের গ্যালারি → ভিডিও ট্যাবে দেখা যাবে। ক্লিক করলে ভিডিও প্লে হবে।
+        </p>
+      </Card>
+
+      {/* Category filter */}
+      {activeCats.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          <button
+            onClick={() => setFilterCat("all")}
+            className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === "all" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
+          >
+            সকল ({videos.length})
+          </button>
+          {activeCats.map((c) => (
+            <button
+              key={c}
+              onClick={() => setFilterCat(c)}
+              className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === c ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
+            >
+              {c} ({videos.filter((v) => v.category === c).length})
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <Card className="text-center py-16">
+          <Film className="h-12 w-12 mx-auto text-muted-foreground/40" />
+          <p className="mt-3 text-muted-foreground">কোনো ভিডিও যুক্ত হয়নি।</p>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.map((v) => (
+            <Card key={v.id} pad={false} className="overflow-hidden group">
+              <button onClick={() => setPreview(v.youtubeId)} className="relative block w-full aspect-video bg-black">
+                <img src={v.thumb} alt={v.caption} className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="h-14 w-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play className="h-6 w-6 text-primary ml-0.5" fill="currentColor" />
+                  </span>
+                </div>
+                <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[11px] font-bold bg-white/95 text-primary">{v.category}</span>
+              </button>
+              <div className="p-4">
+                <p className="text-sm font-semibold line-clamp-2 min-h-[2.5rem]">{v.caption || "শিরোনামহীন ভিডিও"}</p>
+                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="truncate">ID: {v.youtubeId}</span>
+                  <button onClick={() => remove(v.id)} className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive" title="ডিলিট">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Preview modal */}
+      {preview && (
+        <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4" onClick={() => setPreview(null)}>
+          <button onClick={() => setPreview(null)} className="absolute top-4 right-4 h-11 w-11 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"><X className="h-5 w-5" /></button>
+          <div className="w-full max-w-5xl aspect-video rounded-xl overflow-hidden shadow-2xl bg-black" onClick={(e) => e.stopPropagation()}>
+            <iframe src={`https://www.youtube.com/embed/${preview}?autoplay=1&rel=0`} title="ভিডিও" allow="autoplay; encrypted-media" allowFullScreen className="w-full h-full" />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
