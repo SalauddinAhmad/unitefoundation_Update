@@ -38,6 +38,7 @@ export const ImpactStats = () => {
   const { t } = useTranslation();
   const { data: settings } = useSettings();
   const impactStats = settings?.impact_stats || [];
+  const section = settings?.impact_section || {};
   const ref = useRef<HTMLDivElement>(null);
   const [start, setStart] = useState(false);
   useEffect(() => {
@@ -53,10 +54,10 @@ export const ImpactStats = () => {
     <section className="section-y bg-background">
       <div ref={ref} className="container-page">
         <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">{t("impact.eyebrow")}</span>
-          <h2 className="heading-display mt-3">{t("impact.heading")}</h2>
+          <span className="eyebrow">{section.eyebrow || t("impact.eyebrow")}</span>
+          <h2 className="heading-display mt-3">{section.heading || t("impact.heading")}</h2>
           <p className="mt-4 text-muted-foreground">
-            {t("impact.subtitle")}
+            {section.subtitle || t("impact.subtitle")}
           </p>
         </div>
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
