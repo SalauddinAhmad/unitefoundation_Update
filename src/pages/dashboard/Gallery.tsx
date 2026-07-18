@@ -944,11 +944,21 @@ function VideoManager({
   const activeCats = useMemo(() => Array.from(new Set(videos.map((v) => v.category))), [videos]);
 
   const ensureAlbumFor = async (cat: string): Promise<string> => {
-    const existing = albums.find((a) => (a.category || "") === cat);
-    if (existing) return existing.id;
+    // Prefer existing album with matching category
+    const byCat = albums.find((a) => (a.category || "") === cat);
+    if (byCat) return byCat.id;
+    // Reuse existing album with matching title/slug (avoid duplicate slug errors)
+    const baseSlug = cat.toLowerCase().replace(/[^\w\u0980-\u09FF]+/g, "-").replace(/^-|-$/g, "") || `cat-${Date.now()}`;
+    const byTitle = albums.find((a) => a.title === cat || a.slug === baseSlug);
+    if (byTitle) return byTitle.id;
+    // Ensure slug is unique against current albums
+    const used = new Set(albums.map((a) => a.slug).filter(Boolean));
+    let slug = baseSlug;
+    let n = 2;
+    while (used.has(slug)) slug = `${baseSlug}-${n++}`;
     const res: any = await onSaveAlbum({
       title: cat,
-      slug: cat.toLowerCase().replace(/[^\w\u0980-\u09FF]+/g, "-"),
+      slug,
       category: cat,
       status: "published",
       date: new Date().toISOString().slice(0, 10),
@@ -984,6 +994,9 @@ function VideoManager({
   };
 
   const [preview, setPreview] = useState<string | null>(null);
+  const previewYid = useMemo(() => extractYT(url.trim()), [url]);
+  const [playPreview, setPlayPreview] = useState(false);
+  useEffect(() => { setPlayPreview(false); }, [previewYid]);
 
   return (
     <>
@@ -1001,33 +1014,73 @@ function VideoManager({
           <Video className="h-4 w-4 text-primary" />
           <h3 className="font-bold">নতুন ভিডিও যুক্ত করুন</h3>
         </div>
-        <div className="grid md:grid-cols-[1fr_180px_auto] gap-3">
-          <input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="YouTube লিংক পেস্ট করুন — https://youtube.com/watch?v=..."
-            className="w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="px-3 py-2.5 rounded-lg border border-border bg-background text-sm font-medium"
-          >
-            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <Btn onClick={add} disabled={busy || !url.trim()}>
-            <Plus className="h-4 w-4" /> {busy ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
-          </Btn>
+        <div className="grid gap-4 md:grid-cols-[200px_1fr]">
+          {/* Live preview */}
+          <div className="relative aspect-video rounded-lg overflow-hidden border border-border bg-secondary/40 flex items-center justify-center">
+            {previewYid ? (
+              playPreview ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${previewYid}?autoplay=1&rel=0`}
+                  title="প্রিভিউ"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              ) : (
+                <button type="button" onClick={() => setPlayPreview(true)} className="group relative block w-full h-full">
+                  <img
+                    src={`https://img.youtube.com/vi/${previewYid}/hqdefault.jpg`}
+                    alt="প্রিভিউ"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <span className="h-10 w-10 rounded-full bg-white/95 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                      <Play className="h-4 w-4 text-primary ml-0.5" fill="currentColor" />
+                    </span>
+                  </span>
+                  <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/95 text-primary">প্রিভিউ</span>
+                </button>
+              )
+            ) : (
+              <div className="text-center text-muted-foreground px-3">
+                <Film className="h-8 w-8 mx-auto opacity-40" />
+                <p className="mt-1.5 text-[11px]">লিংক দিলে এখানে প্রিভিউ দেখাবে</p>
+              </div>
+            )}
+          </div>
+
+          {/* Fields */}
+          <div className="grid gap-2.5">
+            <input
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="YouTube লিংক — https://youtube.com/watch?v=..."
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            />
+            <input
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="ভিডিওর শিরোনাম / ক্যাপশন (ঐচ্ছিক)"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
+            />
+            <div className="grid grid-cols-[1fr_auto] gap-2.5">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium"
+              >
+                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <Btn onClick={add} disabled={busy || !previewYid}>
+                <Plus className="h-4 w-4" /> {busy ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
+              </Btn>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              থাম্বনেইল অটো বসবে; ওয়েবসাইটে ক্লিক করলে ভিডিও প্লে হবে।
+            </p>
+          </div>
         </div>
-        <input
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          placeholder="ভিডিওর শিরোনাম / ক্যাপশন (ঐচ্ছিক)"
-          className="mt-3 w-full px-3 py-2.5 rounded-lg border border-border bg-background text-sm"
-        />
-        <p className="mt-2 text-xs text-muted-foreground">
-          লিংক দিলে থাম্বনেইল আপনা-আপনি বসবে এবং ওয়েবসাইটের গ্যালারি → ভিডিও ট্যাবে দেখা যাবে। ক্লিক করলে ভিডিও প্লে হবে।
-        </p>
       </Card>
 
       {/* Category filter */}
