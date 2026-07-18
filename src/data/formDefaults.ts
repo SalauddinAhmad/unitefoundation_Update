@@ -17,11 +17,36 @@ export type FormField = {
   system?: boolean; // system fields: key locked, cannot delete
 };
 
+export type FormStat = { v: string; l: string };
+
+export type FormExtras = {
+  intro?: string;
+  bullets_title?: string;
+  bullets?: string[];
+  quote_text?: string;
+  quote_source?: string;
+  stats?: FormStat[];
+  banner_type?: "none" | "image" | "video";
+  banner_url?: string; // data URI, absolute URL, or YouTube URL for video
+};
+
 export type FormSchema = {
   form_key: string;
   title: string;
   subtitle: string;
   fields: FormField[];
+  extras?: FormExtras;
+};
+
+export const EMPTY_EXTRAS: FormExtras = {
+  intro: "",
+  bullets_title: "",
+  bullets: [],
+  quote_text: "",
+  quote_source: "",
+  stats: [],
+  banner_type: "none",
+  banner_url: "",
 };
 
 export const FORM_KEYS = [
