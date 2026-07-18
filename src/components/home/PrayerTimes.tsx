@@ -311,7 +311,7 @@ export const PrayerTimes = () => {
 
 
           {/* Sehri / Iftar band */}
-          <div className="relative -mt-4 mx-4 sm:mx-8 grid grid-cols-2 gap-3 z-10">
+          <div className="relative -mt-4 sm:mt-4 mx-4 sm:mx-6 grid grid-cols-2 gap-3 z-10">
             <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
               <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
