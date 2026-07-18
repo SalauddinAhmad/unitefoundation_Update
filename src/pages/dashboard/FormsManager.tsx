@@ -11,6 +11,7 @@ import { FORM_KEYS, FORM_LABEL, type FormField, type FormKey, type FormSchema } 
 import { resetToDefault, useAllFormSchemas, useSaveFormSchema } from "@/hooks/api/useForms";
 import { FormFieldEditor } from "@/components/dashboard/FormFieldEditor";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { FormExtrasEditor, FormExtrasPreview } from "@/components/dashboard/FormExtrasEditor";
 
 export default function FormsManager() {
   const { data: all, isLoading } = useAllFormSchemas();
@@ -113,6 +114,12 @@ export default function FormsManager() {
                     </label>
                   </div>
 
+                  <FormExtrasEditor
+                    value={current.extras}
+                    onChange={(extras) => patch({ ...current, extras })}
+                  />
+
+
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-bold text-foreground">ফিল্ডসমূহ ({current.fields.length})</div>
                     <Button size="sm" variant="outline" onClick={addField}><Plus className="h-4 w-4 mr-1" /> ফিল্ড যোগ</Button>
@@ -145,8 +152,9 @@ export default function FormsManager() {
                 </div>
 
                 {/* Live preview */}
-                <div className="xl:sticky xl:top-4 h-max">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">লাইভ প্রিভিউ</div>
+                <div className="xl:sticky xl:top-4 h-max space-y-4">
+                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">লাইভ প্রিভিউ</div>
+                  <FormExtrasPreview value={current.extras} />
                   <div className="rounded-xl overflow-hidden shadow-lg" style={{ background: "linear-gradient(160deg, hsl(var(--primary)) 0%, hsl(142 56% 18%) 100%)" }}>
                     <div className="p-6 text-white">
                       <h3 className="text-lg font-bold">{current.title}</h3>

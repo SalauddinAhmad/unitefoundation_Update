@@ -17,11 +17,36 @@ export type FormField = {
   system?: boolean; // system fields: key locked, cannot delete
 };
 
+export type FormStat = { v: string; l: string };
+
+export type FormExtras = {
+  intro?: string;
+  bullets_title?: string;
+  bullets?: string[];
+  quote_text?: string;
+  quote_source?: string;
+  stats?: FormStat[];
+  banner_type?: "none" | "image" | "video";
+  banner_url?: string; // data URI, absolute URL, or YouTube URL for video
+};
+
 export type FormSchema = {
   form_key: string;
   title: string;
   subtitle: string;
   fields: FormField[];
+  extras?: FormExtras;
+};
+
+export const EMPTY_EXTRAS: FormExtras = {
+  intro: "",
+  bullets_title: "",
+  bullets: [],
+  quote_text: "",
+  quote_source: "",
+  stats: [],
+  banner_type: "none",
+  banner_url: "",
 };
 
 export const FORM_KEYS = [
@@ -56,6 +81,27 @@ const volunteer: FormSchema = {
       options: ["১-৩ ঘণ্টা", "৪-৭ ঘণ্টা", "৮-১৫ ঘণ্টা", "১৫+ ঘণ্টা"] },
     { key: "motivation", label: "কেন যুক্ত হতে চান?", placeholder: "সংক্ষেপে বলুন…", type: "textarea", required: true, full: true },
   ],
+  extras: {
+    intro: "স্বেচ্ছাসেবা শুধু সময়দান নয় — এটি একটি ইবাদত। আপনার ছোট প্রচেষ্টা বদলে দিতে পারে কারো জীবনের গল্প।",
+    bullets_title: "স্বেচ্ছাসেবকের কাজের ক্ষেত্র",
+    bullets: [
+      "বন্যা, শীত ও দুর্যোগে মাঠপর্যায়ে ত্রাণ",
+      "এতিম শিশুদের শিক্ষায় সাপ্তাহিক সময়দান",
+      "ফ্রি মেডিকেল ক্যাম্পে অংশগ্রহণ",
+      "ফান্ডরাইজিং প্রচারণায় সহযোগিতা",
+      "ফটোগ্রাফি, ভিডিও ও সোশ্যাল মিডিয়া",
+      "দাওয়াহ ও মসজিদ কেন্দ্রিক কার্যক্রম",
+    ],
+    quote_text: "আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়।",
+    quote_source: "(সহীহ বুখারী, হাদীস ৬৪৬৪)",
+    stats: [
+      { v: "৩,৪৫০+", l: "স্বেচ্ছাসেবক" },
+      { v: "১৪", l: "জেলা নেটওয়ার্ক" },
+      { v: "১২৮০+", l: "প্রকল্প" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
 };
 
 const representative: FormSchema = {
@@ -96,6 +142,26 @@ const representative: FormSchema = {
 
     { key: "agree", label: "আমি নিয়ম-শর্তে সম্মত এবং প্রদত্ত তথ্য সঠিক", type: "checkbox", required: true, full: true },
   ],
+  extras: {
+    intro: "আল-হামদুলিল্লাহ! ইউনাইট ফাউন্ডেশনের পরিবারে নতুন করে যুক্ত হওয়ার সুযোগ তৈরি হয়েছে। দেশব্যাপী আমাদের সেবামূলক কাজগুলোকে আরও বেগবান করতে প্রতিটি জেলা থেকে ১ জন করে নিবেদিত প্রাণ প্রতিনিধি খুঁজে নিচ্ছি আমরা। মহান আল্লাহর সন্তুষ্টির জন্য নিজ এলাকায় মানবতার সেবায় এগিয়ে আসুন।",
+    bullets_title: "জেলা প্রতিনিধি",
+    bullets: [
+      "দ্বীনি জ্ঞান: ইসলামের মৌলিক ইলম ও দ্বীনি বিষয়ে জ্ঞান",
+      "সমকালীন সচেতনতা: মিডিয়া ও প্রচারমাধ্যম সম্পর্কে স্বচ্ছ ধারণা",
+      "আমল ও সুন্নাহ: মুত্তাকি এবং সুন্নাহর একনিষ্ঠ অনুসারী",
+      "নিষ্ঠা: মুখলিস, আত্মপ্রচারণা ও পার্থিব মোহমুক্ত",
+      "প্রতিটি জেলা থেকে মাত্র ১ জন — আবেদন গুরুত্বের সাথে পূরণ করুন",
+    ],
+    quote_text: "তোমাদের মধ্যে সেই ব্যক্তিই শ্রেষ্ঠ, যে মানুষের কল্যাণে নিয়োজিত থাকে।",
+    quote_source: "(হাদীস)",
+    stats: [
+      { v: "৬৪", l: "জেলা" },
+      { v: "১ জন", l: "প্রতি জেলা" },
+      { v: "১০০%", l: "গোপনীয়তা" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
 };
 
 const donor: FormSchema = {
@@ -115,6 +181,25 @@ const donor: FormSchema = {
       options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
     { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
   ],
+  extras: {
+    intro: "আপনার মাসিক ছোট অবদানই আমাদের কার্যক্রমকে টেকসই করে — এতিম শিশুর শিক্ষা, খাদ্য সহায়তা ও চিকিৎসা নিরবচ্ছিন্ন রাখে।",
+    bullets_title: "নিয়মিত দাতার গুরুত্ব",
+    bullets: [
+      "প্রতি মাসে স্বয়ংক্রিয় রিমাইন্ডার",
+      "প্রতিটি দানের রসিদ ও প্রমাণ",
+      "যেকোনো সময় বন্ধ বা পরিবর্তনের সুযোগ",
+      "মাসিক ইমপ্যাক্ট রিপোর্ট",
+    ],
+    quote_text: "আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়।",
+    quote_source: "(সহীহ বুখারী, হাদীস ৬৪৬৪)",
+    stats: [
+      { v: "১২,০০০+", l: "নিয়মিত দাতা" },
+      { v: "৬৪", l: "জেলা কাভারেজ" },
+      { v: "১০০%", l: "স্বচ্ছতা" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
 };
 
 const member: FormSchema = {
@@ -132,6 +217,26 @@ const member: FormSchema = {
     { key: "address", label: "সম্পূর্ণ ঠিকানা", type: "textarea", required: true, full: true },
     { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
   ],
+  extras: {
+    intro: "এককালীন অবদানের মাধ্যমে আপনি ফাউন্ডেশনের স্থায়ী অংশীদার হবেন এবং দীর্ঘমেয়াদি সকল প্রকল্পে আপনার নাম যুক্ত থাকবে।",
+    bullets_title: "আজীবন ও দাতা সদস্য",
+    bullets: [
+      "সদস্যপদ কার্ড ও সার্টিফিকেট",
+      "বার্ষিক সাধারণ সভায় অংশগ্রহণ",
+      "প্রকল্প পরিদর্শনের সুযোগ",
+      "ত্রৈমাসিক বিস্তারিত প্রতিবেদন",
+      "ফাউন্ডেশনের সিদ্ধান্ত প্রক্রিয়ায় মতামত",
+    ],
+    quote_text: "",
+    quote_source: "",
+    stats: [
+      { v: "২৪০+", l: "আজীবন সদস্য" },
+      { v: "১৮০+", l: "দাতা সদস্য" },
+      { v: "১২৮০+", l: "প্রকল্প" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
 };
 
 export const FORM_DEFAULTS: Record<FormKey, FormSchema> = {

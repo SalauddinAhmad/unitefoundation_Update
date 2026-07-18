@@ -56,46 +56,15 @@ const saveApplication = async (
   }
 };
 
-type LeftBlock = {
-  title: string;
-  intro: string;
-  list: string[];
-  stats: { v: string; l: string }[];
-  quoteText?: string;
-  quoteSource?: string;
-};
+// Left panel content is now driven by the dashboard's Form Manager
+// (extras). "regular" tab → donor schema, "member" tab → member schema.
+import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
+import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const { t } = useTranslation();
-  const c = t(`volunteerPage.left.${active}`, { returnObjects: true }) as LeftBlock;
-  return (
-    <div>
-      <p className="text-base md:text-lg leading-relaxed text-foreground/85">{c.intro}</p>
-      {c.quoteText && (
-        <blockquote className="mt-6 rounded-card border-l-4 border-primary bg-accent/40 p-5 text-foreground/80 italic leading-relaxed">
-          {c.quoteText}{" "}
-          <span className="not-italic text-sm text-muted-foreground">{c.quoteSource}</span>
-        </blockquote>
-      )}
-      <h3 className="mt-8 text-xl font-bold">{c.title}</h3>
-      <ul className="mt-4 space-y-3">
-        {c.list.map((s) => (
-          <li key={s} className="flex items-start gap-3">
-            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-            <span className="text-foreground/80 leading-relaxed">{s}</span>
-          </li>
-        ))}
-      </ul>
-      <div className="mt-8 grid grid-cols-3 gap-3">
-        {c.stats.map((s) => (
-          <div key={s.l} className="rounded-card bg-secondary/60 p-4 text-center">
-            <div className="text-xl md:text-2xl font-extrabold text-primary">{s.v}</div>
-            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const key = active === "regular" ? "donor" : "member";
+  const { data: schema } = useSchemaForLeft(key);
+  return <FormSideContent extras={schema?.extras} />;
 };
 
 type SuccessBlock = {
