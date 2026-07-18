@@ -217,6 +217,26 @@ const member: FormSchema = {
     { key: "address", label: "সম্পূর্ণ ঠিকানা", type: "textarea", required: true, full: true },
     { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
   ],
+  extras: {
+    intro: "এককালীন অবদানের মাধ্যমে আপনি ফাউন্ডেশনের স্থায়ী অংশীদার হবেন এবং দীর্ঘমেয়াদি সকল প্রকল্পে আপনার নাম যুক্ত থাকবে।",
+    bullets_title: "আজীবন ও দাতা সদস্য",
+    bullets: [
+      "সদস্যপদ কার্ড ও সার্টিফিকেট",
+      "বার্ষিক সাধারণ সভায় অংশগ্রহণ",
+      "প্রকল্প পরিদর্শনের সুযোগ",
+      "ত্রৈমাসিক বিস্তারিত প্রতিবেদন",
+      "ফাউন্ডেশনের সিদ্ধান্ত প্রক্রিয়ায় মতামত",
+    ],
+    quote_text: "",
+    quote_source: "",
+    stats: [
+      { v: "২৪০+", l: "আজীবন সদস্য" },
+      { v: "১৮০+", l: "দাতা সদস্য" },
+      { v: "১২৮০+", l: "প্রকল্প" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
 };
 
 export const FORM_DEFAULTS: Record<FormKey, FormSchema> = {
