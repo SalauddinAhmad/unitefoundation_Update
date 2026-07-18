@@ -11,6 +11,7 @@ import { FORM_KEYS, FORM_LABEL, type FormField, type FormKey, type FormSchema } 
 import { resetToDefault, useAllFormSchemas, useSaveFormSchema } from "@/hooks/api/useForms";
 import { FormFieldEditor } from "@/components/dashboard/FormFieldEditor";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { FormExtrasEditor, FormExtrasPreview } from "@/components/dashboard/FormExtrasEditor";
 
 export default function FormsManager() {
   const { data: all, isLoading } = useAllFormSchemas();
