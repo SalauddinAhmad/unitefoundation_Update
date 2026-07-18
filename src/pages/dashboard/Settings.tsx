@@ -265,23 +265,6 @@ const Settings = () => {
 
           {active === "payment" && (
             <div className="space-y-4">
-              {/* Personal Mobile Banking */}
-              <Card>
-                <div className="flex items-center justify-between mb-5">
-                  <div>
-                    <h3 className="font-bold">পার্সোনাল মোবাইল ব্যাংকিং</h3>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      দাতাদের জন্য bKash / Nagad / Rocket নম্বর — ডোনেট পেজ ও হোম পেজে দেখাবে
-                    </p>
-                  </div>
-                  <SaveBar />
-                </div>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <Field label="bKash (পার্সোনাল)" value={form.payments.bkash} onChange={(v) => setPay("bkash", v)} />
-                  <Field label="Nagad (পার্সোনাল)" value={form.payments.nagad} onChange={(v) => setPay("nagad", v)} />
-                  <Field label="Rocket (পার্সোনাল)" value={form.payments.rocket} onChange={(v) => setPay("rocket", v)} />
-                </div>
-              </Card>
 
               {/* QR Code */}
               <Card>
