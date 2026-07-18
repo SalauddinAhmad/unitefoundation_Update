@@ -502,6 +502,31 @@ const Settings = () => {
                 <SaveBar />
               </div>
 
+              <div className="mb-6 rounded-lg border border-border p-4 space-y-3 bg-muted/30">
+                <div className="text-sm font-bold">সেকশন হেডিং</div>
+                <Field
+                  label="আইব্রো (উপরের ছোট লেখা)"
+                  value={form.impact_section?.eyebrow || ""}
+                  onChange={(v) =>
+                    setForm({ ...form, impact_section: { ...(form.impact_section || {}), eyebrow: v } })
+                  }
+                />
+                <Field
+                  label="হেডিং"
+                  value={form.impact_section?.heading || ""}
+                  onChange={(v) =>
+                    setForm({ ...form, impact_section: { ...(form.impact_section || {}), heading: v } })
+                  }
+                />
+                <Field
+                  label="সাবটাইটেল"
+                  value={form.impact_section?.subtitle || ""}
+                  onChange={(v) =>
+                    setForm({ ...form, impact_section: { ...(form.impact_section || {}), subtitle: v } })
+                  }
+                />
+              </div>
+
               <div className="space-y-3">
                 {(form.impact_stats || []).map((stat, idx) => (
                   <div key={idx} className="grid grid-cols-[1fr_1fr_80px_40px] gap-3 items-end rounded-lg border border-border p-3">
