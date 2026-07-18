@@ -311,6 +311,7 @@ export type SiteSettings = {
     notify_email: string;
   };
   impact_stats: ImpactStat[];
+  impact_section?: { eyebrow?: string; heading?: string; subtitle?: string };
   hero_slides: HeroSlide[];
   about: AboutContent;
   trust: TrustItem[];
