@@ -323,7 +323,7 @@ export const MembershipDonorSection = () => {
                   >
                     <Icon className="h-5 w-5" />
                   </span>
-                  <span>{t(tb.labelKey)}</span>
+                  <span>{tb.label}</span>
                 </button>
               );
             })}
