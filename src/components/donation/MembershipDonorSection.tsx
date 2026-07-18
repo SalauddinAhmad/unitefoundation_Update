@@ -296,7 +296,7 @@ export const MembershipDonorSection = () => {
 
         {/* Tabs */}
         <div className="mt-10 rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {tabsBase.map((tb) => {
               const isActive = tb.key === active;
               const Icon = tb.icon;
