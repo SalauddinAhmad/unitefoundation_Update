@@ -114,6 +114,12 @@ export default function FormsManager() {
                     </label>
                   </div>
 
+                  <FormExtrasEditor
+                    value={current.extras}
+                    onChange={(extras) => patch({ ...current, extras })}
+                  />
+
+
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-bold text-foreground">ফিল্ডসমূহ ({current.fields.length})</div>
                     <Button size="sm" variant="outline" onClick={addField}><Plus className="h-4 w-4 mr-1" /> ফিল্ড যোগ</Button>
