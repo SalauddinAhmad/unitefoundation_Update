@@ -64,7 +64,7 @@ import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
 import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const key = active === "regular" ? "donor" : "member";
+  const key = active === "regular" ? "donor" : active === "monthly" ? "monthly" : "member";
   const { data: schema } = useSchemaForLeft(key);
   return <FormSideContent extras={schema?.extras} />;
 };
