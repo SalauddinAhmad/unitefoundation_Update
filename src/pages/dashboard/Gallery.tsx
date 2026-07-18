@@ -571,6 +571,7 @@ export default function Gallery() {
           onClose={() => setLightbox(null)}
           onNav={(i) => setLightbox({ album: lightbox.album, idx: i })}
         />
+      </>
       )}
     </>
   );
