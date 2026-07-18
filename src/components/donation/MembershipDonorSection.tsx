@@ -244,6 +244,39 @@ const RegularForm = () => {
   );
 };
 
+const MonthlyForm = () => {
+  const { t } = useTranslation();
+  const { data: schema } = useFormSchema("monthly");
+  const [done, setDone] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  if (!schema) return null;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  return (
+    <>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("donor", {
+              name: stringVal(vals.name),
+              phone: stringVal(vals.phone),
+              email: stringVal(vals.email),
+              profession: stringVal(vals.area),
+              message: stringVal(vals.note),
+              extra: { ...vals, plan: "monthly" },
+            });
+            if (ok) setDone(true);
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
 const MemberForm = () => {
   const { t } = useTranslation();
   const { data: schema } = useFormSchema("member");
