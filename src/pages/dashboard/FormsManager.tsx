@@ -152,8 +152,9 @@ export default function FormsManager() {
                 </div>
 
                 {/* Live preview */}
-                <div className="xl:sticky xl:top-4 h-max">
-                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">লাইভ প্রিভিউ</div>
+                <div className="xl:sticky xl:top-4 h-max space-y-4">
+                  <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground">লাইভ প্রিভিউ</div>
+                  <FormExtrasPreview value={current.extras} />
                   <div className="rounded-xl overflow-hidden shadow-lg" style={{ background: "linear-gradient(160deg, hsl(var(--primary)) 0%, hsl(142 56% 18%) 100%)" }}>
                     <div className="p-6 text-white">
                       <h3 className="text-lg font-bold">{current.title}</h3>
