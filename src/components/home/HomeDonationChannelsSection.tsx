@@ -107,13 +107,15 @@ export const HomeDonationChannelsSection = () => {
             </p>
 
             {/* Smart CTA to full donate page */}
-            <div className="relative mt-6 flex justify-center">
+            <div className="relative mt-7 flex justify-center">
               <Link
                 to="/donate"
-                className="group inline-flex items-center gap-2 rounded-full bg-donate-highlight px-5 py-2.5 text-sm font-bold text-[hsl(152_65%_8%)] shadow-lg shadow-donate-highlight/20 transition-all hover:shadow-donate-highlight/40 hover:-translate-y-0.5"
+                className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-full bg-gradient-to-r from-donate-highlight via-donate-orange to-donate-highlight bg-[length:200%_100%] px-6 py-3 text-sm font-extrabold text-[hsl(152_65%_8%)] shadow-[0_10px_30px_-8px_hsl(var(--donate-highlight)/0.6)] transition-all duration-500 hover:bg-[position:100%_0] hover:-translate-y-0.5 hover:shadow-[0_16px_40px_-8px_hsl(var(--donate-highlight)/0.75)]"
               >
-                সব দানের মাধ্যম দেখুন
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                <span className="relative z-10">সব দানের মাধ্যম দেখুন</span>
+                <span className="relative z-10 flex h-6 w-6 items-center justify-center rounded-full bg-[hsl(152_65%_8%)] text-donate-highlight transition-transform group-hover:translate-x-0.5">
+                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.8} />
+                </span>
               </Link>
             </div>
           </article>
