@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   HeartHandshake,
   Repeat,
+  CalendarClock,
   Send,
   ShieldCheck,
   Clock,
@@ -18,11 +19,12 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-type TabKey = "regular" | "member";
+type TabKey = "regular" | "monthly" | "member";
 
-const tabsBase: { key: TabKey; labelKey: string; icon: typeof HeartHandshake }[] = [
-  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
-  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
+const tabsBase: { key: TabKey; label: string; icon: typeof HeartHandshake }[] = [
+  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
+  { key: "monthly", label: "মাসিক দাতা", icon: CalendarClock },
+  { key: "member", label: "আজীবন দাতা", icon: HeartHandshake },
 ];
 
 // Save to backend and surface errors so users know when submission actually
