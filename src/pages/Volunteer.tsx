@@ -242,40 +242,15 @@ const Volunteer = () => {
   );
 };
 
-// ============================================================
-// Left panel
-type LeftBlock = {
-  title: string;
-  intro: string;
-  list: string[];
-  stats: { v: string; l: string }[];
-  quoteText?: string;
-  quoteSource?: string;
-};
+// Left panel — reads the editorial copy + banner from the dashboard-managed
+// form schema (extras). Falls back to translation for the older `intro/list/
+// quote` values only when the schema is still loading.
+import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
+import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const { t } = useTranslation();
-  const c = t(`volunteerPage.left.${active}`, { returnObjects: true }) as LeftBlock;
-  return (
-    <div>
-      <p className="text-base md:text-lg leading-relaxed text-foreground/85">{c.intro}</p>
-      {c.quoteText && (
-        <blockquote className="mt-6 rounded-card border-l-4 border-primary bg-accent/40 p-5 text-foreground/80 italic leading-relaxed">
-          {c.quoteText}{" "}
-          <span className="not-italic text-sm text-muted-foreground">{c.quoteSource}</span>
-        </blockquote>
-      )}
-      <h3 className="mt-8 text-xl font-bold">{c.title}</h3>
-      <ul className="mt-4 space-y-3">
-        {c.list.map((s) => (
-          <li key={s} className="flex items-start gap-3">
-            <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-            <span className="text-foreground/80 leading-relaxed">{s}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  const { data: schema } = useSchemaForLeft(active);
+  return <FormSideContent extras={schema?.extras} />;
 };
 
 // ============================================================
