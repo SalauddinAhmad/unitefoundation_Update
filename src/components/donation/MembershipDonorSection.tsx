@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   HeartHandshake,
   Repeat,
+  CalendarClock,
   Send,
   ShieldCheck,
   Clock,
@@ -18,11 +19,12 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-type TabKey = "regular" | "member";
+type TabKey = "regular" | "monthly" | "member";
 
-const tabsBase: { key: TabKey; labelKey: string; icon: typeof HeartHandshake }[] = [
-  { key: "regular", labelKey: "volunteerPage.tabRegular", icon: Repeat },
-  { key: "member", labelKey: "volunteerPage.tabMember", icon: HeartHandshake },
+const tabsBase: { key: TabKey; label: string; icon: typeof HeartHandshake }[] = [
+  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
+  { key: "monthly", label: "মাসিক দাতা", icon: CalendarClock },
+  { key: "member", label: "আজীবন দাতা", icon: HeartHandshake },
 ];
 
 // Save to backend and surface errors so users know when submission actually
@@ -62,7 +64,7 @@ import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
 import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const key = active === "regular" ? "donor" : "member";
+  const key = active === "regular" ? "donor" : active === "monthly" ? "monthly" : "member";
   const { data: schema } = useSchemaForLeft(key);
   return <FormSideContent extras={schema?.extras} />;
 };
@@ -242,6 +244,39 @@ const RegularForm = () => {
   );
 };
 
+const MonthlyForm = () => {
+  const { t } = useTranslation();
+  const { data: schema } = useFormSchema("monthly");
+  const [done, setDone] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  if (!schema) return null;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  return (
+    <>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          onSubmit={async (vals) => {
+            const ok = await saveApplication("donor", {
+              name: stringVal(vals.name),
+              phone: stringVal(vals.phone),
+              email: stringVal(vals.email),
+              profession: stringVal(vals.area),
+              message: stringVal(vals.note),
+              extra: { ...vals, plan: "monthly" },
+            });
+            if (ok) setDone(true);
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
 const MemberForm = () => {
   const { t } = useTranslation();
   const { data: schema } = useFormSchema("member");
@@ -294,7 +329,7 @@ export const MembershipDonorSection = () => {
 
         {/* Tabs */}
         <div className="mt-10 rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {tabsBase.map((tb) => {
               const isActive = tb.key === active;
               const Icon = tb.icon;
@@ -321,7 +356,7 @@ export const MembershipDonorSection = () => {
                   >
                     <Icon className="h-5 w-5" />
                   </span>
-                  <span>{t(tb.labelKey)}</span>
+                  <span>{tb.label}</span>
                 </button>
               );
             })}
@@ -353,6 +388,7 @@ export const MembershipDonorSection = () => {
           >
             <div className="p-7 md:p-9 text-white">
               {active === "regular" && <RegularForm />}
+              {active === "monthly" && <MonthlyForm />}
               {active === "member" && <MemberForm />}
             </div>
           </div>

@@ -53,6 +53,7 @@ export const FORM_KEYS = [
   "volunteer",
   "representative",
   "donor",
+  "monthly",
   "member",
 ] as const;
 export type FormKey = (typeof FORM_KEYS)[number];
@@ -61,7 +62,8 @@ export const FORM_LABEL: Record<FormKey, string> = {
   volunteer: "স্বেচ্ছাসেবক আবেদন",
   representative: "জেলা প্রতিনিধি আবেদন",
   donor: "নিয়মিত দাতা",
-  member: "সদস্যপদ (আজীবন / দাতা)",
+  monthly: "মাসিক দাতা",
+  member: "আজীবন দাতা",
 };
 
 const volunteer: FormSchema = {
@@ -239,9 +241,51 @@ const member: FormSchema = {
   },
 };
 
+const monthly: FormSchema = {
+  form_key: "monthly",
+  title: "মাসিক দাতা নিবন্ধন",
+  subtitle: "প্রতি মাসে একটি নির্দিষ্ট পরিমাণ দান করে টেকসই সহায়তায় অংশ নিন।",
+  fields: [
+    { key: "name", label: "পূর্ণ নাম", type: "text", required: true, system: true },
+    { key: "phone", label: "মোবাইল নম্বর", type: "tel", required: true, system: true },
+    { key: "email", label: "ইমেইল (ঐচ্ছিক)", type: "email", system: true },
+    { key: "city", label: "শহর / জেলা", type: "text", required: true },
+    { key: "area", label: "দানের ক্ষেত্র", type: "select", required: true, full: true,
+      options: ["এতিম শিশু", "শিক্ষা", "খাদ্য সহায়তা", "চিকিৎসা", "মসজিদ নির্মাণ", "যেখানে প্রয়োজন"] },
+    { key: "amount", label: "মাসিক দানের পরিমাণ (৳)", type: "select", required: true,
+      options: ["৳ ৫০০", "৳ ১,০০০", "৳ ২,৫০০", "৳ ৫,০০০", "৳ ১০,০০০", "কাস্টম"] },
+    { key: "method", label: "পেমেন্ট মাধ্যম", type: "select", required: true,
+      options: ["bKash", "Nagad", "Rocket", "ব্যাংক", "কার্ড"] },
+    { key: "start_month", label: "কোন মাস থেকে শুরু?", type: "text", placeholder: "যেমন: জানুয়ারি ২০২৬" },
+    { key: "note", label: "বার্তা (ঐচ্ছিক)", type: "textarea", full: true },
+  ],
+  extras: {
+    intro: "মাসিক দান একটি ছোট অথচ শক্তিশালী অভ্যাস — আপনার প্রতি মাসের নির্ধারিত অবদান একটি এতিম শিশুর শিক্ষা, একটি পরিবারের খাদ্য নিরবচ্ছিন্ন রাখে।",
+    bullets_title: "মাসিক দাতার সুবিধা",
+    bullets: [
+      "প্রতি মাসে স্বয়ংক্রিয় রিমাইন্ডার",
+      "প্রতিটি দানের ডিজিটাল রসিদ",
+      "যেকোনো সময় পরিমাণ পরিবর্তন বা বন্ধ",
+      "মাসিক ইমপ্যাক্ট রিপোর্ট সরাসরি ইমেইলে",
+      "বিশেষ প্রকল্পে অগ্রাধিকার অংশগ্রহণ",
+    ],
+    quote_text: "আল্লাহর কাছে সর্বাধিক প্রিয় আমল হলো, যা সদাসর্বদা নিয়মিত করা হয়, যদিও তা অল্প হয়।",
+    quote_source: "(সহীহ বুখারী, হাদীস ৬৪৬৪)",
+    stats: [
+      { v: "৮,৫০০+", l: "মাসিক দাতা" },
+      { v: "৳ ৫০০", l: "শুরু করুন" },
+      { v: "১০০%", l: "স্বচ্ছতা" },
+    ],
+    banner_type: "none",
+    banner_url: "",
+  },
+};
+
 export const FORM_DEFAULTS: Record<FormKey, FormSchema> = {
   volunteer,
   representative,
   donor,
+  monthly,
   member,
 };
+
