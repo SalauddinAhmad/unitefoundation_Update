@@ -508,9 +508,9 @@ const defaultSettings: SiteSettings = {
     { value: 14, label: "দেশে কার্যক্রম", suffix: "" },
   ],
   impact_section: {
-    eyebrow: "আমাদের প্রভাব",
-    heading: "আপনাদের বিশ্বাসেই গড়ে উঠেছে এই অর্জন",
-    subtitle: "১৫ বছরের যাত্রায় লক্ষাধিক মানুষের জীবনে পরিবর্তন এনেছেন আপনারা।",
+    eyebrow: "",
+    heading: "ভালোবাসা সর্বস্তরের মানুষের কাছে পৌঁছে যাচ্ছে।",
+    subtitle: "লক্ষাধিক মানুষের জীবনে পরিবর্তন এনেছেন আপনারা।",
   },
   hero_slides: [],
   about: {
