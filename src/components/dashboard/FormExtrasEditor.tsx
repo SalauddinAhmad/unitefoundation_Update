@@ -3,7 +3,7 @@ import { Plus, Trash2, Image as ImgIcon, Youtube, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ImagePickerButton } from "@/components/dashboard/ImagePickerButton";
+import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import { EMPTY_EXTRAS, type FormExtras } from "@/data/formDefaults";
 import { FormSideContent } from "@/components/forms/FormSideContent";
 
