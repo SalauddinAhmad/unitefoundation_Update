@@ -14,36 +14,39 @@ export const HomeDonationChannelsSection = () => {
   const patternSvg = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'><g fill='none' stroke='%23FBB03B' stroke-width='0.8'><path d='M30 2 L58 30 L30 58 L2 30 Z'/><path d='M30 14 L46 30 L30 46 L14 30 Z'/></g></svg>")`;
 
   return (
-    <section
-      className="relative py-16 md:py-24 overflow-hidden"
-      style={{ background: sectionBg }}
-    >
+    <section className="relative py-16 md:py-24 overflow-hidden bg-white md:shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      {/* Mobile-only green gradient background */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 md:hidden"
+        style={{ background: sectionBg }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06] md:hidden"
         style={{ backgroundImage: patternSvg, backgroundSize: "60px 60px" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-highlight) / 0.18)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-red) / 0.18)" }}
       />
 
 
       <div className="container-page relative">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/30 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-donate-highlight">
+          <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/30 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-donate-highlight md:border-primary/20 md:bg-primary/5 md:text-primary">
             <QrCode className="h-3.5 w-3.5" /> Bangla QR
           </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground leading-tight">
+          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground md:text-foreground leading-tight">
             স্ক্যান করে সহজেই দান করুন
           </h2>
-          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:px-8">
+          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:text-muted-foreground md:px-8">
             যেকোনো মোবাইল ব্যাংকিং বা ব্যাংক অ্যাপ থেকে নিচের QR কোডটি স্ক্যান করুন — মুহূর্তেই আপনার দান পৌঁছে যাবে ইনশাআল্লাহ।
           </p>
 
