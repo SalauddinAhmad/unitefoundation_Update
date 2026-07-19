@@ -475,7 +475,8 @@ export const useProjectsAdmin = () =>
     queryKey: ["admin", "projects"],
     queryFn: async () => {
       try {
-        return await api.get<ApiProject[]>("/projects");
+        const rows = await api.get<ApiProject[]>("/projects");
+        return applyProjectOrder(rows || []);
       } catch {
         return [] as ApiProject[];
       }
@@ -511,8 +512,15 @@ export const useDeleteProject = () => {
 export const useReorderProjects = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (items: { id: string; sort_order: number }[]) =>
-      api.post("/projects/reorder", { items }),
+    mutationFn: async (items: { id: string; sort_order: number }[]) => {
+      // Always save locally first so UI works even without backend endpoint.
+      saveProjectOrder(items.map((it) => it.id));
+      // Try backend; ignore failure (endpoint may not be deployed yet).
+      try {
+        await api.post("/projects/reorder", { items });
+      } catch { /* fallback to local order */ }
+      return { ok: true };
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "projects"] });
       qc.invalidateQueries({ queryKey: ["public", "projects"] });
