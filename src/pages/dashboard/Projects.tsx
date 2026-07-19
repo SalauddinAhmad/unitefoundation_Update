@@ -172,6 +172,25 @@ export default function Projects() {
     catch (e: any) { toast.error(e?.message || "আপডেট ব্যর্থ"); }
   };
 
+  const canReorder = search.trim() === "" && filter === "all" && category === "all";
+  const handleDrop = async (targetId: string) => {
+    if (!dragId || dragId === targetId || !canReorder) { setDragId(null); return; }
+    const ids = list.map((p) => p.id);
+    const from = ids.indexOf(dragId);
+    const to = ids.indexOf(targetId);
+    if (from < 0 || to < 0) { setDragId(null); return; }
+    const next = [...ids];
+    next.splice(to, 0, next.splice(from, 1)[0]);
+    setDragId(null);
+    try {
+      await reorderMut.mutateAsync(next.map((id, i) => ({ id, sort_order: i })));
+      toast.success("ক্রম আপডেট হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "ক্রম আপডেট ব্যর্থ");
+    }
+  };
+
+
 
   return (
     <>
