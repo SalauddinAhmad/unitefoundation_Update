@@ -69,14 +69,15 @@ export const HomeDonationChannelsSection = () => {
                 </h3>
               </div>
               <div
-                className="h-11 w-11 shrink-0 rounded-lg bg-white flex items-center justify-center border-2"
-                style={{ borderColor: "#006B39" }}
+                className="h-11 w-11 shrink-0 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: "hsl(var(--donate-highlight))" }}
               >
-                <QrCode className="h-5 w-5" strokeWidth={2.4} style={{ color: "#006B39" }} />
+                <QrCode className="h-5 w-5 text-[hsl(152_65%_8%)]" strokeWidth={2.4} />
               </div>
             </div>
 
             <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-white p-3 shadow-sm">
+
               <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
                 {payments.qrImage ? (
                   <img
