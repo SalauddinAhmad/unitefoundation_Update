@@ -15,24 +15,25 @@ export const HomeDonationChannelsSection = () => {
 
   return (
     <section
-      className="relative py-16 md:py-24 overflow-hidden"
+      className="relative py-16 md:py-24 overflow-hidden md:!bg-white md:shadow-[inset_0_1px_0_hsl(0_0%_0%/0.04)]"
       style={{ background: sectionBg }}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 opacity-[0.06] md:hidden"
         style={{ backgroundImage: patternSvg, backgroundSize: "60px 60px" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-highlight) / 0.18)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-red) / 0.18)" }}
       />
+
 
       <div className="container-page relative">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
