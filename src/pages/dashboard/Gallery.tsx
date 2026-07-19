@@ -942,19 +942,21 @@ function Lightbox({ album, idx, onClose, onNav }: { album: Album; idx: number; o
 function VideoManager({
   albums,
   items,
+  cats,
   onSaveAlbum,
   onSaveItem,
   onDeleteItem,
 }: {
   albums: ApiGalleryAlbum[];
   items: ApiGalleryItem[];
+  cats: { all: string[]; customCats: string[]; add: (n: string) => void; remove: (n: string) => void };
   onSaveAlbum: (data: Partial<ApiGalleryAlbum>) => Promise<any>;
   onSaveItem: (data: Partial<ApiGalleryItem>) => Promise<any>;
   onDeleteItem: (id: string) => Promise<any>;
 }) {
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState(cats.all[0] || DEFAULT_CATEGORIES[0]);
   const [busy, setBusy] = useState(false);
   const [filterCat, setFilterCat] = useState<"all" | string>("all");
 
