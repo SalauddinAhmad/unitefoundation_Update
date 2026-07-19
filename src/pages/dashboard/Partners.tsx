@@ -185,13 +185,6 @@ export default function DashboardPartners() {
         actions={
           <div className="flex items-center gap-2">
             <button
-              onClick={importDefaults}
-              disabled={importing}
-              className="inline-flex items-center gap-2 border border-border bg-card text-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-secondary transition disabled:opacity-60"
-            >
-              <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট প্রতিষ্ঠান ইমপোর্ট"}
-            </button>
-            <button
               onClick={() => setEditor({ open: true, draft: emptyDraft() })}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm shadow-md hover:shadow-lg transition"
             >
