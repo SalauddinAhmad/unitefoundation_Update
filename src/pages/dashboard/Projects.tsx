@@ -258,14 +258,14 @@ export default function Projects() {
           >
             <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
           </button>
-          {customCats.length > 0 && category !== "all" && customCats.includes(category) && (
+          {category !== "all" && !DEFAULT_CATEGORIES.includes(category) && (
             <button
               type="button"
               onClick={() => { removeCustomCategory(category); setCategory("all"); }}
-              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
               title="এই কাস্টম ক্যাটাগরি ডিলিট"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-3.5 w-3.5" /> ডিলিট
             </button>
           )}
           <div className="ml-auto inline-flex p-1 bg-secondary rounded-lg">
@@ -442,7 +442,7 @@ export default function Projects() {
         )}
       </Card>
 
-      {editor.open && <ProjectEditor p={editor.p} categories={allCategories} onAddCategory={addCustomCategory} onClose={() => setEditor({ open: false })} onSave={save} />}
+      {editor.open && <ProjectEditor p={editor.p} categories={allCategories} defaults={DEFAULT_CATEGORIES} onAddCategory={addCustomCategory} onRemoveCategory={removeCustomCategory} onClose={() => setEditor({ open: false })} onSave={save} />}
       {viewer && <ProjectViewer p={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, p: viewer }); setViewer(null); }} />}
     </>
   );
@@ -485,7 +485,7 @@ const Field = ({ label, children }: any) => (
 );
 
 /* ---------- editor ---------- */
-function ProjectEditor({ p, categories, onAddCategory, onClose, onSave }: { p?: ProjectEx; categories: string[]; onAddCategory: (name: string) => void; onClose: () => void; onSave: (p: ProjectEx) => void }) {
+function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategory, onClose, onSave }: { p?: ProjectEx; categories: string[]; defaults: string[]; onAddCategory: (name: string) => void; onRemoveCategory: (name: string) => void; onClose: () => void; onSave: (p: ProjectEx) => void }) {
   const isNew = !p;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(p?.title || "");
@@ -650,11 +650,25 @@ function ProjectEditor({ p, categories, onAddCategory, onClose, onSave }: { p?: 
                       onAddCategory(trimmed);
                       setCategory(trimmed);
                     }}
-                    className="px-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90"
+                    className="inline-flex items-center gap-1 px-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 text-xs font-semibold"
                     title="নতুন ক্যাটাগরি যোগ"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
+                  {category && !defaults.includes(category) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const target = category;
+                        onRemoveCategory(target);
+                        setCategory(defaults[0] || "");
+                      }}
+                      className="inline-flex items-center gap-1 px-2.5 rounded-lg text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold"
+                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                    </button>
+                  )}
                 </div>
               </Field>
               <Field label="স্ট্যাটাস">
