@@ -414,12 +414,7 @@ export default function Gallery() {
         subtitle="অ্যালবাম, ছবি ও ভিডিও তৈরি, এডিট ও প্রকাশ করুন"
         actions={
           mainTab === "albums" ? (
-            <>
-              <Btn variant="outline" onClick={importDefaults} disabled={importing}>
-                <Download className="h-4 w-4" /> {importing ? "ইমপোর্ট হচ্ছে..." : "ডিফল্ট গ্যালারি ইমপোর্ট"}
-              </Btn>
-              <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
-            </>
+            <Btn onClick={() => setEditor({ open: true, a: empty() })}><Plus className="h-4 w-4" /> নতুন অ্যালবাম</Btn>
           ) : null
         }
       />
