@@ -6,9 +6,20 @@ const { shortId } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 
 router.get('/', asyncH(async (_req, res) => {
-  const [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
+  const [rows] = await pool.execute('SELECT * FROM projects ORDER BY sort_order ASC, created_at DESC');
   res.json(rows.map(parseGallery));
 }));
+
+// Bulk reorder — accepts [{id, sort_order}]
+router.post('/reorder', requireAuth, asyncH(async (req, res) => {
+  const items = Array.isArray(req.body?.items) ? req.body.items : [];
+  for (const it of items) {
+    if (!it || typeof it.id !== 'string') continue;
+    await pool.execute('UPDATE projects SET sort_order=? WHERE id=?', [Number(it.sort_order) || 0, it.id]);
+  }
+  res.json({ ok: true });
+}));
+
 
 router.get('/:id', asyncH(async (req, res) => {
   const [rows] = await pool.execute('SELECT * FROM projects WHERE id=? OR slug=?', [req.params.id, req.params.id]);
@@ -40,6 +51,7 @@ const schema = z.object({
   gallery: z.array(z.string()).optional(),
   status: z.enum(['active','completed','draft']).optional(),
   cover_image_url: z.string().optional().nullable(),
+  sort_order: z.number().optional(),
 });
 
 router.post('/', requireAuth, asyncH(async (req, res) => {

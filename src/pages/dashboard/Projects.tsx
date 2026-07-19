@@ -7,7 +7,7 @@ import {
   Image as ImageIcon, Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
   Quote, Heading1, Heading2, FolderKanban, BarChart3, CheckCircle2, Clock,
   Sparkles, Calendar, MapPin, Target, Trash2, Copy, Globe, Archive, Loader2,
-  TrendingUp, HandCoins,
+  TrendingUp, HandCoins, GripVertical,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import {
   useProjectsAdmin,
   useSaveProject,
   useDeleteProject,
+  useReorderProjects,
   type ApiProject,
 } from "@/hooks/api/usePublic";
 
@@ -90,8 +91,10 @@ export default function Projects() {
   const { data: rows = [] } = useProjectsAdmin();
   const saveMut = useSaveProject();
   const delMut = useDeleteProject();
+  const reorderMut = useReorderProjects();
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
+  const [dragId, setDragId] = useState<string | null>(null);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
   const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
@@ -168,6 +171,25 @@ export default function Projects() {
     try { await saveMut.mutateAsync({ id: p.id, data: { status: next } }); toast.success("স্ট্যাটাস আপডেট হয়েছে"); }
     catch (e: any) { toast.error(e?.message || "আপডেট ব্যর্থ"); }
   };
+
+  const canReorder = search.trim() === "" && filter === "all" && category === "all";
+  const handleDrop = async (targetId: string) => {
+    if (!dragId || dragId === targetId || !canReorder) { setDragId(null); return; }
+    const ids = list.map((p) => p.id);
+    const from = ids.indexOf(dragId);
+    const to = ids.indexOf(targetId);
+    if (from < 0 || to < 0) { setDragId(null); return; }
+    const next = [...ids];
+    next.splice(to, 0, next.splice(from, 1)[0]);
+    setDragId(null);
+    try {
+      await reorderMut.mutateAsync(next.map((id, i) => ({ id, sort_order: i })));
+      toast.success("ক্রম আপডেট হয়েছে");
+    } catch (e: any) {
+      toast.error(e?.message || "ক্রম আপডেট ব্যর্থ");
+    }
+  };
+
 
 
   return (
@@ -254,11 +276,20 @@ export default function Projects() {
         {filtered.length === 0 ? (
           <div className="p-12 text-center text-sm text-muted-foreground">কোনো প্রকল্প পাওয়া যায়নি</div>
         ) : view === "grid" ? (
+          <>
+          {canReorder && (
+            <div className="px-4 pt-3 text-[11px] text-muted-foreground">টিপ: কার্ডের বাম কোণে <GripVertical className="inline h-3 w-3" /> হ্যান্ডল ধরে টেনে ক্রম পরিবর্তন করুন।</div>
+          )}
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.map((p) => {
               const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
               return (
-                <div key={p.id} className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col">
+                <div
+                  key={p.id}
+                  onDragOver={(e) => { if (canReorder && dragId) e.preventDefault(); }}
+                  onDrop={() => handleDrop(p.id)}
+                  className={"group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col " + (dragId === p.id ? "opacity-50 " : "") + (canReorder && dragId && dragId !== p.id ? "ring-1 ring-primary/30" : "")}
+                >
                   <div className="h-32 relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
                     {p.cover ? (
                       <img src={p.cover} alt={p.title} className="w-full h-full object-cover" />
@@ -266,6 +297,18 @@ export default function Projects() {
                       <div className="absolute inset-0 flex items-center justify-center text-primary/40">
                         <FolderKanban className="h-12 w-12" />
                       </div>
+                    )}
+                    {canReorder && (
+                      <button
+                        type="button"
+                        draggable
+                        onDragStart={() => setDragId(p.id)}
+                        onDragEnd={() => setDragId(null)}
+                        title="টেনে ক্রম পরিবর্তন করুন"
+                        className="absolute top-3 left-3 h-8 w-8 rounded-lg bg-card/90 backdrop-blur border border-border flex items-center justify-center text-foreground/70 hover:text-foreground cursor-grab active:cursor-grabbing shadow-sm"
+                      >
+                        <GripVertical className="h-4 w-4" />
+                      </button>
                     )}
                     <div className="absolute top-3 right-3"><StatusBadge status={p.status} /></div>
                   </div>
@@ -310,6 +353,7 @@ export default function Projects() {
               );
             })}
           </div>
+          </>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
