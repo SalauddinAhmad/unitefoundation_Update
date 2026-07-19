@@ -994,7 +994,7 @@ function VideoManager({
 }: {
   albums: ApiGalleryAlbum[];
   items: ApiGalleryItem[];
-  cats: { all: string[]; customCats: string[]; add: (n: string) => void; remove: (n: string) => void };
+  cats: GalleryCategories;
   onSaveAlbum: (data: Partial<ApiGalleryAlbum>) => Promise<any>;
   onSaveItem: (data: Partial<ApiGalleryItem>) => Promise<any>;
   onDeleteItem: (id: string) => Promise<any>;
