@@ -1111,14 +1111,32 @@ function VideoManager({
               placeholder="ভিডিওর শিরোনাম / ক্যাপশন (ঐচ্ছিক)"
               className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
             />
-            <div className="grid grid-cols-[1fr_auto] gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium"
+                className="flex-1 min-w-[140px] px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium"
               >
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                {cats.all.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
+              <button
+                type="button"
+                onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) { cats.add(n); setCategory(n.trim()); } }}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80 border border-transparent hover:border-border"
+                title="নতুন ক্যাটাগরি যোগ করুন"
+              >
+                <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+              </button>
+              {cats.customCats.includes(category) && (
+                <button
+                  type="button"
+                  onClick={() => { cats.remove(category); setCategory(cats.all[0] || DEFAULT_CATEGORIES[0]); }}
+                  className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                  title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
               <Btn onClick={add} disabled={busy || !previewYid}>
                 <Plus className="h-4 w-4" /> {busy ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
               </Btn>
