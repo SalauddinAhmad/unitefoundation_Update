@@ -6,7 +6,17 @@ const { shortId } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 
 router.get('/', asyncH(async (_req, res) => {
-  const [rows] = await pool.execute('SELECT * FROM projects ORDER BY sort_order ASC, created_at DESC');
+  let rows;
+  try {
+    [rows] = await pool.execute('SELECT * FROM projects ORDER BY sort_order ASC, created_at DESC');
+  } catch (e) {
+    // Fallback if sort_order column doesn't exist yet (migration 018 not run)
+    if (e && e.code === 'ER_BAD_FIELD_ERROR') {
+      [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
+    } else {
+      throw e;
+    }
+  }
   res.json(rows.map(parseGallery));
 }));
 
