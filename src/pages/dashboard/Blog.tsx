@@ -845,14 +845,12 @@ function CategoryManager({
     setInput("");
   };
   const removeCat = (c: string) => {
-    if (defaults.includes(c)) return toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না");
     onRemove(c);
   };
   const saveEdit = () => {
     if (!editing) return;
     const v = editing.val.trim();
     if (!v || v === editing.old) { setEditing(null); return; }
-    if (defaults.includes(editing.old)) { toast.error("ডিফল্ট ক্যাটাগরি রিনেম করা যাবে না"); setEditing(null); return; }
     if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
       toast.error("একই নামে ক্যাটাগরি আছে");
       return;
