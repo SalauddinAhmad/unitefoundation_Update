@@ -353,6 +353,7 @@ export default function Projects() {
               );
             })}
           </div>
+          </>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
