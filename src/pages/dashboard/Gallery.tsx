@@ -118,7 +118,7 @@ function useGalleryCategories(discovered: string[] = []): GalleryCategories {
   const all = useMemo(() => {
     const deleted = new Set(deletedCats);
     return Array.from(new Set([...DEFAULT_CATEGORIES, ...discovered, ...customCats].map((c) => c.trim()).filter(Boolean)))
-      .filter((c) => DEFAULT_CATEGORIES.includes(c) || !deleted.has(c));
+      .filter((c) => !deleted.has(c));
   }, [customCats, deletedCats, discovered]);
   const add = (name: string) => {
     const n = name.trim(); if (!n) return;
@@ -128,13 +128,13 @@ function useGalleryCategories(discovered: string[] = []): GalleryCategories {
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const remove = (name: string) => {
-    if (!name || DEFAULT_CATEGORIES.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    if (!name) return;
     if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name); setCustomCats(next); saveCustomCategories(next);
     const nextDeleted = Array.from(new Set([...deletedCats, name])); setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
     toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
-  const canDelete = (name: string) => Boolean(name && !DEFAULT_CATEGORIES.includes(name));
+  const canDelete = (name: string) => Boolean(name);
   return { all, customCats, add, remove, canDelete };
 }
 // Back-compat for existing references
@@ -229,7 +229,8 @@ export default function Gallery() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | AlbumStatus>("all");
   const [category, setCategory] = useState("all");
-  const cats = useGalleryCategories();
+  const discoveredCategories = useMemo(() => list.map((a) => a.category).filter(Boolean), [list]);
+  const cats = useGalleryCategories(discoveredCategories);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [editor, setEditor] = useState<{ open: boolean; a?: Album }>({ open: false });
   const [viewer, setViewer] = useState<Album | null>(null);
@@ -491,14 +492,14 @@ export default function Gallery() {
             >
               <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
             </button>
-            {category !== "all" && cats.customCats.includes(category) && (
+            {category !== "all" && cats.canDelete(category) && (
               <button
                 type="button"
                 onClick={() => { cats.remove(category); setCategory("all"); }}
-                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
                 title="এই কাস্টম ক্যাটাগরি ডিলিট"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5" /> ডিলিট
               </button>
             )}
             <div className="inline-flex rounded-lg border border-border bg-background p-0.5">
