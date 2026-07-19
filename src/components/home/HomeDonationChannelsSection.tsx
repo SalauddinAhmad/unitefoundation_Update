@@ -97,12 +97,13 @@ export const HomeDonationChannelsSection = () => {
               </div>
             </div>
 
-            <p className="relative mt-5 text-center text-xs font-semibold text-white">
+            <p className="relative mt-5 text-center text-xs font-semibold text-donate-highlight">
               {t("channels.anyAppNote")}
             </p>
-            <p className="relative mt-2 text-center text-xs text-white/80 leading-relaxed">
+            <p className="relative mt-2 text-center text-xs text-white/75 leading-relaxed">
               {t("channels.qrHint")}
             </p>
+
 
 
             {/* Smart CTA to full donate page */}
