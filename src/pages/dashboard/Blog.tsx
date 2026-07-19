@@ -247,11 +247,42 @@ export default function Blog() {
             <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 pointer-events-none" />
           </div>
           <button
+            type="button"
+            onClick={() => {
+              const n = prompt("নতুন ক্যাটাগরির নাম:");
+              if (!n) return;
+              const v = n.trim();
+              if (!v) return;
+              if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+              updateCats([...customCats, v]);
+              toast.success("ক্যাটাগরি যোগ হয়েছে");
+            }}
+            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary hover:bg-muted text-xs font-semibold"
+            title="নতুন ক্যাটাগরি যোগ"
+          >
+            <Plus className="h-3.5 w-3.5" /> যোগ
+          </button>
+          {category !== "all" && !DEFAULT_CATEGORIES.includes(category) && (
+            <button
+              type="button"
+              onClick={() => {
+                if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+                updateCats(customCats.filter((c) => c !== category));
+                setCategory("all");
+                toast.success("ক্যাটাগরি ডিলিট হয়েছে");
+              }}
+              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
+              title="এই কাস্টম ক্যাটাগরি ডিলিট"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+            </button>
+          )}
+          <button
             onClick={() => setCatManagerOpen(true)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary hover:bg-muted text-xs font-semibold"
             title="ক্যাটাগরি ব্যবস্থাপনা"
           >
-            <Tags className="h-3.5 w-3.5" /> ক্যাটাগরি
+            <Tags className="h-3.5 w-3.5" /> ব্যবস্থাপনা
           </button>
         </div>
 
@@ -320,7 +351,9 @@ export default function Blog() {
         <PostEditor
           post={editor.post}
           categories={categories}
+          defaults={DEFAULT_CATEGORIES}
           onAddCategory={(c) => updateCats([...customCats, c])}
+          onRemoveCategory={(c) => updateCats(customCats.filter((x) => x !== c))}
           onClose={() => setEditor({ open: false })}
           onSave={save}
         />
@@ -373,7 +406,7 @@ const IconBtn = ({ icon: Icon, onClick, title }: { icon: any; onClick: () => voi
 
 /* ============================ Editor ============================ */
 
-function PostEditor({ post, onClose, onSave, categories, onAddCategory }: { post?: Post; onClose: () => void; onSave: (p: Post) => void; categories: string[]; onAddCategory: (c: string) => void }) {
+function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory, onRemoveCategory }: { post?: Post; onClose: () => void; onSave: (p: Post) => void; categories: string[]; defaults: string[]; onAddCategory: (c: string) => void; onRemoveCategory: (c: string) => void }) {
   const isNew = !post;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(post?.title || "");
