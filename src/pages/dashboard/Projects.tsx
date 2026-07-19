@@ -33,11 +33,18 @@ type ProjectEx = Project & {
 
 const DEFAULT_CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
 const CUSTOM_CATS_KEY = "projectCategoriesCustom";
+const DELETED_CATS_KEY = "projectCategoriesDeleted";
 function loadCustomCategories(): string[] {
   try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
 }
 function saveCustomCategories(list: string[]) {
   try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+function loadDeletedCategories(): string[] {
+  try { const raw = localStorage.getItem(DELETED_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveDeletedCategories(list: string[]) {
+  try { localStorage.setItem(DELETED_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
 }
 const CATEGORIES = DEFAULT_CATEGORIES;
 
@@ -96,20 +103,33 @@ export default function Projects() {
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
-  const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const [deletedCats, setDeletedCats] = useState<string[]>(() => loadDeletedCategories());
+  const [catManagerOpen, setCatManagerOpen] = useState(false);
+  const allCategories = useMemo(() => {
+    const deleted = new Set(deletedCats);
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats]))
+      .map((c) => c.trim())
+      .filter(Boolean)
+      .filter((c) => !deleted.has(c));
+  }, [customCats, deletedCats]);
   const addCustomCategory = (name: string) => {
     const n = name.trim();
     if (!n) return;
     if (allCategories.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+    const nextDeleted = deletedCats.filter((c) => c !== n);
+    setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
     const next = [...customCats, n];
     setCustomCats(next); saveCustomCategories(next);
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const removeCustomCategory = (name: string) => {
-    if (!customCats.includes(name)) return;
+    if (DEFAULT_CATEGORIES.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
     if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name);
     setCustomCats(next); saveCustomCategories(next);
+    const nextDeleted = Array.from(new Set([...deletedCats, name]));
+    setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
 
   const [search, setSearch] = useState("");
@@ -256,7 +276,7 @@ export default function Projects() {
             className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-card border border-transparent hover:border-border"
             title="নতুন ক্যাটাগরি যোগ করুন"
           >
-            <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+            <Plus className="h-3.5 w-3.5" /> যোগ
           </button>
           <button
             type="button"
@@ -273,7 +293,15 @@ export default function Projects() {
             className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
             title="কাস্টম ক্যাটাগরি ডিলিট"
           >
-            <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+            <Trash2 className="h-3.5 w-3.5" /> ক্যাটাগরি ডিলিট
+          </button>
+          <button
+            type="button"
+            onClick={() => setCatManagerOpen(true)}
+            className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-card border border-transparent hover:border-border"
+            title="ক্যাটাগরি তালিকা"
+          >
+            <Filter className="h-3.5 w-3.5" /> ক্যাটাগরি তালিকা
           </button>
           <div className="ml-auto inline-flex p-1 bg-secondary rounded-lg">
             <button onClick={() => setView("grid")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "grid" ? "bg-card shadow-sm" : "text-muted-foreground")}>গ্রিড</button>
@@ -451,6 +479,20 @@ export default function Projects() {
 
       {editor.open && <ProjectEditor p={editor.p} categories={allCategories} defaults={DEFAULT_CATEGORIES} onAddCategory={addCustomCategory} onRemoveCategory={removeCustomCategory} onClose={() => setEditor({ open: false })} onSave={save} />}
       {viewer && <ProjectViewer p={viewer} onClose={() => setViewer(null)} onEdit={() => { setEditor({ open: true, p: viewer }); setViewer(null); }} />}
+      {catManagerOpen && (
+        <ProjectCategoryManager
+          categories={allCategories}
+          customCategories={customCats}
+          defaults={DEFAULT_CATEGORIES}
+          usage={list.reduce<Record<string, number>>((acc, p) => { const c = p.category; if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {})}
+          onAdd={addCustomCategory}
+          onRemove={(c) => {
+            removeCustomCategory(c);
+            if (category === c) setCategory("all");
+          }}
+          onClose={() => setCatManagerOpen(false)}
+        />
+      )}
     </>
   );
 }
@@ -662,20 +704,20 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
                   >
                     <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
-                  {category && !defaults.includes(category) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const target = category;
-                        onRemoveCategory(target);
-                        setCategory(defaults[0] || "");
-                      }}
-                      className="inline-flex items-center gap-1 px-2.5 rounded-lg text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold"
-                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    disabled={!category || defaults.includes(category)}
+                    onClick={() => {
+                      if (!category || defaults.includes(category)) return;
+                      const target = category;
+                      onRemoveCategory(target);
+                      setCategory(defaults[0] || "");
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 rounded-lg text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold disabled:opacity-45 disabled:cursor-not-allowed"
+                    title={category && defaults.includes(category) ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "এই কাস্টম ক্যাটাগরি ডিলিট"}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                  </button>
                 </div>
               </Field>
               <Field label="স্ট্যাটাস">
