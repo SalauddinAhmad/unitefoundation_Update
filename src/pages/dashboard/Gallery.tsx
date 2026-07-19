@@ -90,7 +90,32 @@ const DEFAULT_LIBRARY: { src: string; alt: string; cat: string }[] = [
   { src: g20, alt: "নৌকায় ত্রাণ অভিযান — সূর্যাস্ত", cat: "ত্রাণ" },
 ];
 
-const CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
+const DEFAULT_CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
+const CUSTOM_CATS_KEY = "galleryCategoriesCustom";
+function loadCustomCategories(): string[] {
+  try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveCustomCategories(list: string[]) {
+  try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+function useGalleryCategories() {
+  const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const all = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const add = (name: string) => {
+    const n = name.trim(); if (!n) return;
+    if (all.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+    const next = [...customCats, n]; setCustomCats(next); saveCustomCategories(next);
+    toast.success("ক্যাটাগরি যোগ হয়েছে");
+  };
+  const remove = (name: string) => {
+    if (!customCats.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+    const next = customCats.filter((c) => c !== name); setCustomCats(next); saveCustomCategories(next);
+  };
+  return { all, customCats, add, remove };
+}
+// Back-compat for existing references
+const CATEGORIES = DEFAULT_CATEGORIES;
 
 const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/[^\w\u0980-\u09FF]+/g, "-").replace(/^-|-$/g, "") || `album-${Date.now()}`;
@@ -181,6 +206,7 @@ export default function Gallery() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | AlbumStatus>("all");
   const [category, setCategory] = useState("all");
+  const cats = useGalleryCategories();
   const [view, setView] = useState<"grid" | "table">("grid");
   const [editor, setEditor] = useState<{ open: boolean; a?: Album }>({ open: false });
   const [viewer, setViewer] = useState<Album | null>(null);
@@ -397,6 +423,7 @@ export default function Gallery() {
         <VideoManager
           albums={data?.albums || []}
           items={data?.items || []}
+          cats={cats}
           onSaveAlbum={(d) => saveAlbumMut.mutateAsync({ data: d })}
           onSaveItem={(d) => saveItemMut.mutateAsync({ data: d })}
           onDeleteItem={(id) => deleteItemMut.mutateAsync(id)}
@@ -428,11 +455,29 @@ export default function Gallery() {
               </button>
             ))}
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 items-center">
             <select value={category} onChange={(e) => setCategory(e.target.value)} className="px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium">
               <option value="all">সকল ক্যাটাগরি</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+              {cats.all.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
+            <button
+              type="button"
+              onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) cats.add(n); }}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80 border border-transparent hover:border-border"
+              title="নতুন ক্যাটাগরি যোগ করুন"
+            >
+              <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+            </button>
+            {category !== "all" && cats.customCats.includes(category) && (
+              <button
+                type="button"
+                onClick={() => { cats.remove(category); setCategory("all"); }}
+                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                title="এই কাস্টম ক্যাটাগরি ডিলিট"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
             <div className="inline-flex rounded-lg border border-border bg-background p-0.5">
               <button onClick={() => setView("grid")} className={"p-2 rounded-md " + (view === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground")} aria-label="grid"><Grid3x3 className="h-4 w-4" /></button>
               <button onClick={() => setView("table")} className={"p-2 rounded-md " + (view === "table" ? "bg-primary text-primary-foreground" : "text-muted-foreground")} aria-label="table"><Rows3 className="h-4 w-4" /></button>
@@ -746,7 +791,7 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
               <Field label="স্লাগ"><input value={a.slug} onChange={(e) => setA({ ...a, slug: e.target.value })} placeholder="auto" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
               <Field label="ক্যাটাগরি">
                 <select value={a.category} onChange={(e) => setA({ ...a, category: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm">
-                  {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                  {Array.from(new Set([...DEFAULT_CATEGORIES, ...loadCustomCategories(), a.category].filter(Boolean))).map((c) => <option key={c}>{c}</option>)}
                 </select>
               </Field>
               <Field label="তারিখ"><input type="date" value={a.date} onChange={(e) => setA({ ...a, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
@@ -897,19 +942,21 @@ function Lightbox({ album, idx, onClose, onNav }: { album: Album; idx: number; o
 function VideoManager({
   albums,
   items,
+  cats,
   onSaveAlbum,
   onSaveItem,
   onDeleteItem,
 }: {
   albums: ApiGalleryAlbum[];
   items: ApiGalleryItem[];
+  cats: { all: string[]; customCats: string[]; add: (n: string) => void; remove: (n: string) => void };
   onSaveAlbum: (data: Partial<ApiGalleryAlbum>) => Promise<any>;
   onSaveItem: (data: Partial<ApiGalleryItem>) => Promise<any>;
   onDeleteItem: (id: string) => Promise<any>;
 }) {
   const [url, setUrl] = useState("");
   const [caption, setCaption] = useState("");
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState(cats.all[0] || DEFAULT_CATEGORIES[0]);
   const [busy, setBusy] = useState(false);
   const [filterCat, setFilterCat] = useState<"all" | string>("all");
 
@@ -1064,14 +1111,32 @@ function VideoManager({
               placeholder="ভিডিওর শিরোনাম / ক্যাপশন (ঐচ্ছিক)"
               className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
             />
-            <div className="grid grid-cols-[1fr_auto] gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium"
+                className="flex-1 min-w-[140px] px-3 py-2 rounded-lg border border-border bg-background text-sm font-medium"
               >
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                {cats.all.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
+              <button
+                type="button"
+                onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) { cats.add(n); setCategory(n.trim()); } }}
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80 border border-transparent hover:border-border"
+                title="নতুন ক্যাটাগরি যোগ করুন"
+              >
+                <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
+              </button>
+              {cats.customCats.includes(category) && (
+                <button
+                  type="button"
+                  onClick={() => { cats.remove(category); setCategory(cats.all[0] || DEFAULT_CATEGORIES[0]); }}
+                  className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                  title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
               <Btn onClick={add} disabled={busy || !previewYid}>
                 <Plus className="h-4 w-4" /> {busy ? "যুক্ত হচ্ছে..." : "যুক্ত করুন"}
               </Btn>
