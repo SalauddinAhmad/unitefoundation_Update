@@ -791,7 +791,7 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
               <Field label="স্লাগ"><input value={a.slug} onChange={(e) => setA({ ...a, slug: e.target.value })} placeholder="auto" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
               <Field label="ক্যাটাগরি">
                 <select value={a.category} onChange={(e) => setA({ ...a, category: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm">
-                  {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+                  {Array.from(new Set([...DEFAULT_CATEGORIES, ...loadCustomCategories(), a.category].filter(Boolean))).map((c) => <option key={c}>{c}</option>)}
                 </select>
               </Field>
               <Field label="তারিখ"><input type="date" value={a.date} onChange={(e) => setA({ ...a, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
