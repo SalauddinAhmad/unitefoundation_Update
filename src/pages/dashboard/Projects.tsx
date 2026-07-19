@@ -370,7 +370,8 @@ export default function Projects() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground bg-muted/40">
-                  <th className="px-5 py-3">প্রকল্প</th>
+                  <th className="pl-5 py-3 w-20">ক্রম</th>
+                  <th className="py-3">প্রকল্প</th>
                   <th className="py-3">ক্যাটাগরি</th>
                   <th className="py-3">অগ্রগতি</th>
                   <th className="py-3">সংগৃহীত</th>
@@ -380,11 +381,33 @@ export default function Projects() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => {
+                {filtered.map((p, idx) => {
                   const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
                   return (
                     <tr key={p.id} className="border-t border-border hover:bg-muted/40">
-                      <td className="px-5 py-3 max-w-sm">
+                      <td className="pl-5 py-3">
+                        <div className="inline-flex rounded-md border border-border overflow-hidden">
+                          <button
+                            type="button"
+                            disabled={!canReorder || idx === 0 || reorderMut.isPending}
+                            onClick={() => move(p.id, -1)}
+                            title="উপরে নিন"
+                            className="h-7 w-7 flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!canReorder || idx === filtered.length - 1 || reorderMut.isPending}
+                            onClick={() => move(p.id, 1)}
+                            title="নিচে নামান"
+                            className="h-7 w-7 flex items-center justify-center hover:bg-secondary border-l border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-3 max-w-sm">
                         <div className="font-semibold truncate">{p.title}</div>
                         <div className="text-[11px] text-muted-foreground">{p.id}</div>
                       </td>
