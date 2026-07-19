@@ -51,13 +51,13 @@ const Index = () => {
       <Hero />
       
       <AboutSection />
+      <PrayerTimes />
       <ProgramsSection />
 
       <ImpactStats />
       <HomeDonationChannelsSection />
       <GallerySection />
       <PartnersSection />
-      <PrayerTimes />
       <VisitorCounter />
         </>
       )}
