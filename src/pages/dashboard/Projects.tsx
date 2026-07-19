@@ -278,18 +278,18 @@ export default function Projects() {
           <div className="p-12 text-center text-sm text-muted-foreground">কোনো প্রকল্প পাওয়া যায়নি</div>
         ) : view === "grid" ? (
           <>
-          {canReorder && (
-            <div className="px-4 pt-3 text-[11px] text-muted-foreground">টিপ: কার্ডের বাম কোণে <GripVertical className="inline h-3 w-3" /> হ্যান্ডল ধরে টেনে ক্রম পরিবর্তন করুন।</div>
+          {canReorder ? (
+            <div className="px-4 pt-3 text-[11px] text-muted-foreground">টিপ: কার্ডের উপরের বাম কোণে ▲ / ▼ বোতাম দিয়ে ক্রম আগে-পিছে করুন।</div>
+          ) : (
+            <div className="px-4 pt-3 text-[11px] text-muted-foreground">ক্রম পরিবর্তন করতে সার্চ ও ফিল্টার ক্লিয়ার করুন।</div>
           )}
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filtered.map((p) => {
+            {filtered.map((p, idx) => {
               const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
               return (
                 <div
                   key={p.id}
-                  onDragOver={(e) => { if (canReorder && dragId) e.preventDefault(); }}
-                  onDrop={() => handleDrop(p.id)}
-                  className={"group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col " + (dragId === p.id ? "opacity-50 " : "") + (canReorder && dragId && dragId !== p.id ? "ring-1 ring-primary/30" : "")}
+                  className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
                 >
                   <div className="h-32 relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
                     {p.cover ? (
@@ -300,16 +300,26 @@ export default function Projects() {
                       </div>
                     )}
                     {canReorder && (
-                      <button
-                        type="button"
-                        draggable
-                        onDragStart={() => setDragId(p.id)}
-                        onDragEnd={() => setDragId(null)}
-                        title="টেনে ক্রম পরিবর্তন করুন"
-                        className="absolute top-3 left-3 h-8 w-8 rounded-lg bg-card/90 backdrop-blur border border-border flex items-center justify-center text-foreground/70 hover:text-foreground cursor-grab active:cursor-grabbing shadow-sm"
-                      >
-                        <GripVertical className="h-4 w-4" />
-                      </button>
+                      <div className="absolute top-3 left-3 flex flex-col rounded-lg overflow-hidden bg-card/90 backdrop-blur border border-border shadow-sm">
+                        <button
+                          type="button"
+                          disabled={idx === 0 || reorderMut.isPending}
+                          onClick={() => move(p.id, -1)}
+                          title="উপরে নিন"
+                          className="h-7 w-8 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === filtered.length - 1 || reorderMut.isPending}
+                          onClick={() => move(p.id, 1)}
+                          title="নিচে নামান"
+                          className="h-7 w-8 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-secondary border-t border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </button>
+                      </div>
                     )}
                     <div className="absolute top-3 right-3"><StatusBadge status={p.status} /></div>
                   </div>
