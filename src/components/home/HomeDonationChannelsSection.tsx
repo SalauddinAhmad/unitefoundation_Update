@@ -64,8 +64,11 @@ export const HomeDonationChannelsSection = () => {
                   {t("channels.scanToDonate")}
                 </h3>
               </div>
-              <div className="h-11 w-11 shrink-0 rounded-lg bg-primary flex items-center justify-center">
-                <QrCode className="h-5 w-5 text-primary-foreground" strokeWidth={2.4} />
+              <div
+                className="h-11 w-11 shrink-0 rounded-lg bg-white flex items-center justify-center border-2"
+                style={{ borderColor: "#006B39" }}
+              >
+                <QrCode className="h-5 w-5" strokeWidth={2.4} style={{ color: "#006B39" }} />
               </div>
             </div>
 
