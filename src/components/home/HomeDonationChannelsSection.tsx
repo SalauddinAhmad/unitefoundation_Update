@@ -45,23 +45,22 @@ export const HomeDonationChannelsSection = () => {
         {/* Bangla QR only */}
         <div className="mx-auto max-w-md">
           <article
-            className="relative overflow-hidden rounded-[28px] border-2 shadow-[0_20px_60px_-20px_hsl(152_60%_20%/0.25)] p-6 md:p-8"
-            style={{ background: cardBg, borderColor: "#006B39" }}
-            
+            className="relative overflow-hidden rounded-[28px] shadow-[0_20px_60px_-20px_hsl(152_60%_20%/0.35)] p-6 md:p-8 text-white"
+            style={{ background: cardBg }}
           >
             <div
               aria-hidden
-              className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 opacity-[0.05]"
+              className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 opacity-[0.08]"
             >
-              <QrCode className="h-48 w-48 text-primary" strokeWidth={1} />
+              <QrCode className="h-48 w-48 text-white" strokeWidth={1} />
             </div>
 
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
+                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/70">
                   Bangla QR
                 </p>
-                <h3 className="mt-2 text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
+                <h3 className="mt-2 text-2xl md:text-3xl font-extrabold text-white leading-tight">
                   {t("channels.scanToDonate")}
                 </h3>
               </div>
@@ -73,7 +72,7 @@ export const HomeDonationChannelsSection = () => {
               </div>
             </div>
 
-            <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-card p-3 border border-border shadow-sm">
+            <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-white p-3 shadow-sm">
               <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
                 {payments.qrImage ? (
                   <img
@@ -93,12 +92,13 @@ export const HomeDonationChannelsSection = () => {
               </div>
             </div>
 
-            <p className="relative mt-5 text-center text-xs font-semibold text-primary">
+            <p className="relative mt-5 text-center text-xs font-semibold text-white">
               {t("channels.anyAppNote")}
             </p>
-            <p className="relative mt-2 text-center text-xs text-muted-foreground leading-relaxed">
+            <p className="relative mt-2 text-center text-xs text-white/80 leading-relaxed">
               {t("channels.qrHint")}
             </p>
+
 
             {/* Smart CTA to full donate page */}
             <div className="relative mt-7 flex justify-center">
