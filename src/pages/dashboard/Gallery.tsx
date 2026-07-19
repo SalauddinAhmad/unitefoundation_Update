@@ -423,6 +423,7 @@ export default function Gallery() {
         <VideoManager
           albums={data?.albums || []}
           items={data?.items || []}
+          cats={cats}
           onSaveAlbum={(d) => saveAlbumMut.mutateAsync({ data: d })}
           onSaveItem={(d) => saveItemMut.mutateAsync({ data: d })}
           onDeleteItem={(id) => deleteItemMut.mutateAsync(id)}
