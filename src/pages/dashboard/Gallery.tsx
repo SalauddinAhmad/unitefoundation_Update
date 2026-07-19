@@ -626,6 +626,7 @@ export default function Gallery() {
 /* ------------- Editor ------------- */
 function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
   const [a, setA] = useState<Album>(album);
+  const cats = useGalleryCategories();
   const [tagInput, setTagInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
@@ -790,9 +791,29 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
             <div className="p-5 md:p-6 space-y-5 bg-secondary/30">
               <Field label="স্লাগ"><input value={a.slug} onChange={(e) => setA({ ...a, slug: e.target.value })} placeholder="auto" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
               <Field label="ক্যাটাগরি">
-                <select value={a.category} onChange={(e) => setA({ ...a, category: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm">
-                  {Array.from(new Set([...DEFAULT_CATEGORIES, ...loadCustomCategories(), a.category].filter(Boolean))).map((c) => <option key={c}>{c}</option>)}
-                </select>
+                <div className="flex items-center gap-2">
+                  <select value={a.category} onChange={(e) => setA({ ...a, category: e.target.value })} className="flex-1 px-3 py-2 rounded-lg border border-border bg-background text-sm">
+                    {Array.from(new Set([...cats.all, a.category].filter(Boolean))).map((c) => <option key={c}>{c}</option>)}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) { cats.add(n); setA({ ...a, category: n.trim() }); } }}
+                    className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80"
+                    title="নতুন ক্যাটাগরি যোগ করুন"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                  {cats.customCats.includes(a.category) && (
+                    <button
+                      type="button"
+                      onClick={() => { const cur = a.category; cats.remove(cur); setA({ ...a, category: DEFAULT_CATEGORIES[0] }); }}
+                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
               </Field>
               <Field label="তারিখ"><input type="date" value={a.date} onChange={(e) => setA({ ...a, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
               <Field label="অবস্থান"><input value={a.location || ""} onChange={(e) => setA({ ...a, location: e.target.value })} placeholder="যেমন: নেত্রকোণা" className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm" /></Field>
