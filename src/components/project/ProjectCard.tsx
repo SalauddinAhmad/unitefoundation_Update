@@ -43,20 +43,13 @@ export const ProjectCard = ({ project }: { project: Project }) => {
 
         {project.target > 0 && <ProgressBar raised={project.raised} target={project.target} size="sm" />}
 
-        <div className="flex items-center justify-between gap-3 pt-1">
-          {project.target > 0 ? (
-            <div className="text-sm">
-              <div className="text-[11px] text-muted-foreground">সংগৃহীত</div>
-              <div className="font-bold text-foreground">৳{toBnNum(formatBDT(project.raised))}</div>
-            </div>
-          ) : <div />}
-          <Link
-            to={`/donate?project=${project.slug}`}
-            className="btn-donate text-sm py-2.5 px-4"
-          >
-            দান করুন <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+        <Link
+          to={`/projects/${project.slug}`}
+          className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-btn border-2 border-primary/80 bg-primary/5 px-4 py-3 text-sm font-bold text-primary transition-all hover:bg-primary hover:text-white hover:gap-3"
+        >
+          বিস্তারিত দেখুন <ArrowRight className="h-4 w-4" />
+        </Link>
+
       </div>
     </article>
   );
