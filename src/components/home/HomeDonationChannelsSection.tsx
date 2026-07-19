@@ -121,9 +121,10 @@ export const HomeDonationChannelsSection = () => {
           </article>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-10 italic max-w-xl mx-auto">
+        <p className="text-center text-xs text-white/60 mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
+
       </div>
     </section>
   );
