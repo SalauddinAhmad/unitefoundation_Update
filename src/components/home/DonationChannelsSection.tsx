@@ -69,12 +69,17 @@ export const DonationChannelsSection = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6 items-stretch">
             {/* Bank */}
             <article
-              className="group relative flex flex-col rounded-[28px] border border-primary/15 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1"
+              className="group relative flex flex-col rounded-[28px] border border-primary/15 shadow-2xl p-6 md:p-7 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
               style={{
                 background: "linear-gradient(155deg, hsl(152 45% 92%) 0%, hsl(152 55% 85%) 100%)",
               }}
             >
-              <div className="flex items-center justify-between gap-4 mb-6">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-30"
+                style={{ background: "radial-gradient(circle, hsl(152 100% 25% / 0.35), transparent 70%)" }}
+              />
+              <div className="relative flex items-center justify-between gap-4 mb-6">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
                     ব্যাংক ট্রান্সফার
@@ -88,46 +93,69 @@ export const DonationChannelsSection = () => {
                 </div>
               </div>
 
-              <div className="relative flex-1 space-y-5 pl-5 before:absolute before:left-[13px] before:top-2 before:bottom-2 before:w-px before:bg-border">
-                {bankCards.map((bank, index) => (
-                  <div key={bank.title} className="relative">
-                    <span className="absolute -left-[25px] top-1 h-4 w-4 rounded-full border-4 border-card bg-primary" />
-                    <div className="min-w-0">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                            Bank · 0{index + 1}
-                          </p>
-                          <h4 className="mt-1 text-base font-extrabold text-foreground leading-snug">
-                            {bank.title}
-                          </h4>
-                        </div>
-                        <span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-[10px] font-bold text-primary">
+              <div className="relative flex-1 flex flex-col gap-5">
+                {bankCards.map((bank) => (
+                  <div
+                    key={bank.title}
+                    className="relative rounded-2xl bg-card/70 backdrop-blur-sm border border-primary/15 p-5 shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h4 className="text-lg font-extrabold text-foreground leading-snug">
+                          {bank.title}
+                        </h4>
+                        <p className="mt-0.5 text-[11px] font-semibold text-muted-foreground">
                           {bank.branch}
-                        </span>
+                        </p>
                       </div>
-                      <p className="mt-1 text-xs font-semibold text-primary">
+                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                        Verified
+                      </span>
+                    </div>
+
+                    <div className="mt-4 rounded-xl bg-primary/5 border border-primary/10 px-3 py-2">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                        Account Name
+                      </p>
+                      <p className="mt-0.5 text-sm font-extrabold text-primary">
                         {bank.accountName}
                       </p>
-                      <div className="mt-3 flex items-center justify-between gap-2 rounded-2xl bg-secondary/80 border border-border/60 px-3 py-2.5">
-                        <p className="font-mono text-sm font-extrabold text-foreground tracking-wide" dir="ltr">
+                    </div>
+
+                    <div className="mt-3">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-muted-foreground mb-1.5">
+                        Account Number
+                      </p>
+                      <div className="flex items-center justify-between gap-2 rounded-2xl bg-secondary border border-border px-3.5 py-3">
+                        <p className="font-mono text-base font-extrabold text-foreground tracking-wider" dir="ltr">
                           {formatAccount(bank.accountNumber)}
                         </p>
                         <button
                           onClick={() => copy(bank.accountNumber, t("channels.toast.accountNumber"))}
                           aria-label={t("channels.copyAccount")}
-                          className="h-8 w-8 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition-colors hover:bg-primary/90"
+                          className="h-9 w-9 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center transition-colors hover:bg-primary/90 shadow-md"
                         >
-                          <Copy className="h-3.5 w-3.5" />
+                          <Copy className="h-4 w-4" />
                         </button>
                       </div>
-                      {(bank.routing || bank.swift) && (
-                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-semibold text-muted-foreground" dir="ltr">
-                          {bank.routing && <span>Routing: {bank.routing}</span>}
-                          {bank.swift && <span>SWIFT: {bank.swift}</span>}
-                        </div>
-                      )}
                     </div>
+
+                    {(bank.routing || bank.swift) && (
+                      <div className="mt-3 grid grid-cols-2 gap-2" dir="ltr">
+                        {bank.routing && (
+                          <div className="rounded-lg bg-secondary/60 border border-border/60 px-2.5 py-1.5">
+                            <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Routing</p>
+                            <p className="text-[11px] font-mono font-bold text-foreground">{bank.routing}</p>
+                          </div>
+                        )}
+                        {bank.swift && (
+                          <div className="rounded-lg bg-secondary/60 border border-border/60 px-2.5 py-1.5">
+                            <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">SWIFT</p>
+                            <p className="text-[11px] font-mono font-bold text-foreground">{bank.swift}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
