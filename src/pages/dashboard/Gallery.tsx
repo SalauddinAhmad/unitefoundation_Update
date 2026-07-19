@@ -1172,14 +1172,14 @@ function VideoManager({
               >
                 <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
               </button>
-              {cats.customCats.includes(category) && (
+              {cats.canDelete(category) && (
                 <button
                   type="button"
                   onClick={() => { cats.remove(category); setCategory(cats.all[0] || DEFAULT_CATEGORIES[0]); }}
-                  className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
-                  title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20"
+                  title="এই ক্যাটাগরি ডিলিট"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                 </button>
               )}
               <Btn onClick={add} disabled={busy || !previewYid}>
@@ -1194,8 +1194,16 @@ function VideoManager({
       </Card>
 
       {/* Category filter */}
-      {activeCats.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-2 items-center">
+          <button
+            type="button"
+            onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) cats.add(n); }}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-secondary text-sm font-semibold hover:bg-secondary/80"
+          >
+            <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি যোগ
+          </button>
+        {activeCats.length > 0 && (
+          <>
           <button
             onClick={() => setFilterCat("all")}
             className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === "all" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
@@ -1203,16 +1211,28 @@ function VideoManager({
             সকল ({videos.length})
           </button>
           {activeCats.map((c) => (
-            <button
-              key={c}
-              onClick={() => setFilterCat(c)}
-              className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === c ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
-            >
-              {c} ({videos.filter((v) => v.category === c).length})
-            </button>
+            <span key={c} className="inline-flex items-center rounded-full overflow-hidden bg-secondary">
+              <button
+                onClick={() => setFilterCat(c)}
+                className={"px-3 py-1.5 text-sm font-semibold " + (filterCat === c ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary/80")}
+              >
+                {c} ({videos.filter((v) => v.category === c).length})
+              </button>
+              {cats.canDelete(c) && (
+                <button
+                  type="button"
+                  onClick={() => { cats.remove(c); if (filterCat === c) setFilterCat("all"); }}
+                  className="px-2 py-1.5 text-destructive hover:bg-destructive/10"
+                  title="এই ক্যাটাগরি ডিলিট"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </span>
           ))}
-        </div>
-      )}
+          </>
+        )}
+      </div>
 
       {/* Grid */}
       {filtered.length === 0 ? (
