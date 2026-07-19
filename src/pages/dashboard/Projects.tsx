@@ -107,11 +107,12 @@ export default function Projects() {
   const [catManagerOpen, setCatManagerOpen] = useState(false);
   const allCategories = useMemo(() => {
     const deleted = new Set(deletedCats);
-    return Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats]))
+    const fromProjects = list.map((p) => p.category).filter(Boolean) as string[];
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats, ...fromProjects]))
       .map((c) => c.trim())
       .filter(Boolean)
       .filter((c) => !deleted.has(c));
-  }, [customCats, deletedCats]);
+  }, [list, customCats, deletedCats]);
   const addCustomCategory = (name: string) => {
     const n = name.trim();
     if (!n) return;

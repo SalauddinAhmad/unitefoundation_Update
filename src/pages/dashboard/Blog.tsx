@@ -28,6 +28,7 @@ type Post = BlogPost & {
 
 const DEFAULT_CATEGORIES = ["ইসলামিক", "দাওয়াহ", "সংবাদ", "রিপোর্ট", "প্রকল্প", "ইভেন্ট"];
 const CAT_STORAGE_KEY = "blog:custom-categories:v1";
+const DELETED_CAT_STORAGE_KEY = "blog:deleted-categories:v1";
 
 function loadCustomCategories(): string[] {
   try {
@@ -39,6 +40,17 @@ function loadCustomCategories(): string[] {
 }
 function saveCustomCategories(list: string[]) {
   try { localStorage.setItem(CAT_STORAGE_KEY, JSON.stringify(list)); } catch {}
+}
+function loadDeletedCategories(): string[] {
+  try {
+    const raw = localStorage.getItem(DELETED_CAT_STORAGE_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveDeletedCategories(list: string[]) {
+  try { localStorage.setItem(DELETED_CAT_STORAGE_KEY, JSON.stringify(list)); } catch {}
 }
 
 
@@ -85,16 +97,38 @@ export default function Blog() {
   const list = useMemo<Post[]>(() => (rows as ApiPost[]).map(apiToUi), [rows]);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
+  const [deletedCats, setDeletedCats] = useState<string[]>(() => loadDeletedCategories());
   const [catManagerOpen, setCatManagerOpen] = useState(false);
   const categories = useMemo(() => {
+    const deleted = new Set(deletedCats);
     const fromPosts = list.map((p) => p.category).filter(Boolean) as string[];
     const merged = [...DEFAULT_CATEGORIES, ...customCats, ...fromPosts];
-    return Array.from(new Set(merged.map((s) => s.trim()).filter(Boolean)));
-  }, [list, customCats]);
+    return Array.from(new Set(merged.map((s) => s.trim()).filter(Boolean))).filter((c) => !deleted.has(c));
+  }, [list, customCats, deletedCats]);
   const updateCats = (next: string[]) => {
     const clean = Array.from(new Set(next.map((s) => s.trim()).filter(Boolean)));
     setCustomCats(clean);
     saveCustomCategories(clean);
+  };
+  const addCategory = (name: string) => {
+    const v = name.trim();
+    if (!v) return;
+    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
+    const nextDeleted = deletedCats.filter((c) => c !== v);
+    setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    updateCats([...customCats, v]);
+    toast.success("ক্যাটাগরি যোগ হয়েছে");
+  };
+  const removeCategory = (name: string) => {
+    const target = name.trim();
+    if (!target) return;
+    if (DEFAULT_CATEGORIES.includes(target)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    if (!confirm(`"${target}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+    updateCats(customCats.filter((c) => c !== target));
+    const nextDeleted = Array.from(new Set([...deletedCats, target]));
+    setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    if (category === target) setCategory("all");
+    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
 
   const [search, setSearch] = useState("");
@@ -251,11 +285,7 @@ export default function Blog() {
             onClick={() => {
               const n = prompt("নতুন ক্যাটাগরির নাম:");
               if (!n) return;
-              const v = n.trim();
-              if (!v) return;
-              if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
-              updateCats([...customCats, v]);
-              toast.success("ক্যাটাগরি যোগ হয়েছে");
+              addCategory(n);
             }}
             className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-secondary hover:bg-muted text-xs font-semibold"
             title="নতুন ক্যাটাগরি যোগ"
@@ -265,15 +295,13 @@ export default function Blog() {
           <button
             type="button"
             onClick={() => {
-              const deletable = customCats.filter((c) => !DEFAULT_CATEGORIES.includes(c));
+              const deletable = categories.filter((c) => !DEFAULT_CATEGORIES.includes(c));
               if (deletable.length === 0) { toast.error("কোনো কাস্টম ক্যাটাগরি নেই"); return; }
               const n = prompt(`কোন ক্যাটাগরি ডিলিট করবেন?\n\n${deletable.map((c, i) => `${i + 1}. ${c}`).join("\n")}\n\nনাম লিখুন:`);
               if (!n) return;
               const target = n.trim();
               if (!deletable.includes(target)) { toast.error("এই নামে কাস্টম ক্যাটাগরি নেই"); return; }
-              updateCats(customCats.filter((c) => c !== target));
-              if (category === target) setCategory("all");
-              toast.success("ক্যাটাগরি ডিলিট হয়েছে");
+              removeCategory(target);
             }}
             className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
             title="কাস্টম ক্যাটাগরি ডিলিট"
@@ -355,8 +383,8 @@ export default function Blog() {
           post={editor.post}
           categories={categories}
           defaults={DEFAULT_CATEGORIES}
-          onAddCategory={(c) => updateCats([...customCats, c])}
-          onRemoveCategory={(c) => updateCats(customCats.filter((x) => x !== c))}
+          onAddCategory={addCategory}
+          onRemoveCategory={removeCategory}
           onClose={() => setEditor({ open: false })}
           onSave={save}
         />
@@ -368,7 +396,8 @@ export default function Blog() {
           customCategories={customCats}
           defaults={DEFAULT_CATEGORIES}
           usage={list.reduce<Record<string, number>>((acc, p) => { const c = p.category; if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {})}
-          onChange={updateCats}
+          onAdd={addCategory}
+          onRemove={removeCategory}
           onClose={() => setCatManagerOpen(false)}
         />
       )}
@@ -786,13 +815,14 @@ function PostViewer({ post, onClose, onEdit }: { post: Post; onClose: () => void
 /* ============================ Category Manager ============================ */
 
 function CategoryManager({
-  categories, customCategories, defaults, usage, onChange, onClose,
+  categories, customCategories, defaults, usage, onAdd, onRemove, onClose,
 }: {
   categories: string[];
   customCategories: string[];
   defaults: string[];
   usage: Record<string, number>;
-  onChange: (next: string[]) => void;
+  onAdd: (name: string) => void;
+  onRemove: (name: string) => void;
   onClose: () => void;
 }) {
   const [input, setInput] = useState("");
@@ -801,18 +831,12 @@ function CategoryManager({
   const add = () => {
     const v = input.trim();
     if (!v) return;
-    if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
-      toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে");
-      return;
-    }
-    onChange([...customCategories, v]);
+    onAdd(v);
     setInput("");
-    toast.success("যোগ করা হয়েছে");
   };
   const removeCat = (c: string) => {
     if (defaults.includes(c)) return toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না");
-    if ((usage[c] || 0) > 0 && !confirm(`"${c}" ব্যবহারে আছে (${usage[c]}টি পোস্ট)। তবুও ডিলিট করবেন?`)) return;
-    onChange(customCategories.filter((x) => x !== c));
+    onRemove(c);
   };
   const saveEdit = () => {
     if (!editing) return;
@@ -823,7 +847,8 @@ function CategoryManager({
       toast.error("একই নামে ক্যাটাগরি আছে");
       return;
     }
-    onChange(customCategories.map((x) => (x === editing.old ? v : x)));
+    // Rename remains limited to saved custom categories.
+    saveCustomCategories(customCategories.map((x) => (x === editing.old ? v : x)));
     setEditing(null);
     toast.success("আপডেট হয়েছে");
   };
