@@ -206,6 +206,7 @@ export default function Gallery() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | AlbumStatus>("all");
   const [category, setCategory] = useState("all");
+  const cats = useGalleryCategories();
   const [view, setView] = useState<"grid" | "table">("grid");
   const [editor, setEditor] = useState<{ open: boolean; a?: Album }>({ open: false });
   const [viewer, setViewer] = useState<Album | null>(null);
