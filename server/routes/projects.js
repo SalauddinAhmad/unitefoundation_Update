@@ -51,6 +51,7 @@ const schema = z.object({
   gallery: z.array(z.string()).optional(),
   status: z.enum(['active','completed','draft']).optional(),
   cover_image_url: z.string().optional().nullable(),
+  sort_order: z.number().optional(),
 });
 
 router.post('/', requireAuth, asyncH(async (req, res) => {
