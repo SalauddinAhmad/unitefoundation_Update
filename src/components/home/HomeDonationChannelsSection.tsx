@@ -8,7 +8,7 @@ export const HomeDonationChannelsSection = () => {
   const payments = usePaymentsData();
 
   const cardBg =
-    "linear-gradient(160deg, hsl(0 0% 100%) 0%, hsl(152 30% 97%) 100%)";
+    "linear-gradient(160deg, #006B39 0%, #004d29 100%)";
 
   return (
     <section className="relative py-16 md:py-24 overflow-hidden bg-background">
