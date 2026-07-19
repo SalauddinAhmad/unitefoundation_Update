@@ -920,16 +920,13 @@ function CategoryManager({
                     </>
                   ) : (
                     <>
-                      {!isDefault && customCategories.includes(c) && (
-                        <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
-                          <Edit3 className="h-4 w-4" />
-                        </button>
-                      )}
+                      <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
+                        <Edit3 className="h-4 w-4" />
+                      </button>
                       <button
-                        disabled={isDefault}
                         onClick={() => removeCat(c)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold hover:bg-destructive/10 text-destructive disabled:opacity-45 disabled:cursor-not-allowed"
-                        title={isDefault ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "ডিলিট"}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold hover:bg-destructive/10 text-destructive"
+                        title="ডিলিট"
                       >
                         <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                       </button>
@@ -944,7 +941,7 @@ function CategoryManager({
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            টিপ: ডিফল্ট ক্যাটাগরি ({defaults.join(", ")}) রিনেম বা ডিলিট করা যাবে না। কাস্টম ক্যাটাগরি এই ব্রাউজারে সংরক্ষিত হয়।
+            যেকোনো ক্যাটাগরি রিনেম বা ডিলিট করা যাবে। পরিবর্তন এই ব্রাউজারে সংরক্ষিত হয়।
           </p>
         </div>
 
