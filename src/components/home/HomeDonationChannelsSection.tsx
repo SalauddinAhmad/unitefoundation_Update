@@ -45,7 +45,8 @@ export const HomeDonationChannelsSection = () => {
         {/* Bangla QR only */}
         <div className="mx-auto max-w-md">
           <article
-            className="relative overflow-hidden rounded-[28px] border border-border shadow-[0_20px_60px_-20px_hsl(152_60%_20%/0.25)] p-6 md:p-8"
+            className="relative overflow-hidden rounded-[28px] border-2 shadow-[0_20px_60px_-20px_hsl(152_60%_20%/0.25)] p-6 md:p-8"
+            style={{ background: cardBg, borderColor: "#006B39" }}
             style={{ background: cardBg }}
           >
             <div
