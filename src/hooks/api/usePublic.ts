@@ -96,7 +96,7 @@ export const useProjectsPublic = () =>
     queryKey: ["public", "projects"],
     queryFn: async () => {
       const rows = await tryList<ApiProject>("/projects");
-      return rows.map(apiToProject);
+      return applyProjectOrder(rows).map(apiToProject);
     },
     staleTime: STALE,
   });
