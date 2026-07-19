@@ -11,6 +11,29 @@ import { type Partner as StaticPartner } from "@/data/partners";
 
 const STALE = 60_000;
 
+// ---------- local project ordering (fallback until backend reorder endpoint is deployed) ----------
+const PROJECT_ORDER_KEY = "projectSortOrderV1";
+function loadProjectOrder(): string[] {
+  try {
+    const raw = localStorage.getItem(PROJECT_ORDER_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : [];
+  } catch { return []; }
+}
+function saveProjectOrder(ids: string[]) {
+  try { localStorage.setItem(PROJECT_ORDER_KEY, JSON.stringify(ids)); } catch { /* noop */ }
+}
+function applyProjectOrder<T extends { id: string }>(rows: T[]): T[] {
+  const order = loadProjectOrder();
+  if (!order.length) return rows;
+  const idx = new Map(order.map((id, i) => [id, i] as const));
+  return [...rows].sort((a, b) => {
+    const ai = idx.has(a.id) ? (idx.get(a.id) as number) : Number.MAX_SAFE_INTEGER;
+    const bi = idx.has(b.id) ? (idx.get(b.id) as number) : Number.MAX_SAFE_INTEGER;
+    return ai - bi;
+  });
+}
+
 // ---------- shared helper ----------
 async function tryList<T>(path: string): Promise<T[]> {
   try {
@@ -73,7 +96,7 @@ export const useProjectsPublic = () =>
     queryKey: ["public", "projects"],
     queryFn: async () => {
       const rows = await tryList<ApiProject>("/projects");
-      return rows.map(apiToProject);
+      return applyProjectOrder(rows).map(apiToProject);
     },
     staleTime: STALE,
   });
@@ -452,7 +475,8 @@ export const useProjectsAdmin = () =>
     queryKey: ["admin", "projects"],
     queryFn: async () => {
       try {
-        return await api.get<ApiProject[]>("/projects");
+        const rows = await api.get<ApiProject[]>("/projects");
+        return applyProjectOrder(rows || []);
       } catch {
         return [] as ApiProject[];
       }
@@ -488,8 +512,15 @@ export const useDeleteProject = () => {
 export const useReorderProjects = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (items: { id: string; sort_order: number }[]) =>
-      api.post("/projects/reorder", { items }),
+    mutationFn: async (items: { id: string; sort_order: number }[]) => {
+      // Always save locally first so UI works even without backend endpoint.
+      saveProjectOrder(items.map((it) => it.id));
+      // Try backend; ignore failure (endpoint may not be deployed yet).
+      try {
+        await api.post("/projects/reorder", { items });
+      } catch { /* fallback to local order */ }
+      return { ok: true };
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "projects"] });
       qc.invalidateQueries({ queryKey: ["public", "projects"] });
