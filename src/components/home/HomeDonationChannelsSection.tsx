@@ -15,36 +15,38 @@ export const HomeDonationChannelsSection = () => {
 
   return (
     <section
-      className="relative py-16 md:py-24 overflow-hidden"
+      className="relative py-16 md:py-24 overflow-hidden md:!bg-white md:shadow-[inset_0_1px_0_hsl(0_0%_0%/0.04)]"
       style={{ background: sectionBg }}
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 opacity-[0.06] md:hidden"
         style={{ backgroundImage: patternSvg, backgroundSize: "60px 60px" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-highlight) / 0.18)" }}
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl"
+        className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full blur-3xl md:hidden"
         style={{ background: "hsl(var(--donate-red) / 0.18)" }}
       />
+
 
       <div className="container-page relative">
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
           <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/30 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-donate-highlight">
             <QrCode className="h-3.5 w-3.5" /> Bangla QR
           </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground leading-tight">
+          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground md:text-foreground leading-tight">
             স্ক্যান করে সহজেই দান করুন
           </h2>
-          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:px-8">
+          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:text-muted-foreground md:px-8">
             যেকোনো মোবাইল ব্যাংকিং বা ব্যাংক অ্যাপ থেকে নিচের QR কোডটি স্ক্যান করুন — মুহূর্তেই আপনার দান পৌঁছে যাবে ইনশাআল্লাহ।
           </p>
+
         </div>
 
         <div className="mx-auto max-w-md">
@@ -114,9 +116,10 @@ export const HomeDonationChannelsSection = () => {
           </article>
         </div>
 
-        <p className="text-center text-xs text-primary-foreground/60 mt-10 italic max-w-xl mx-auto">
+        <p className="text-center text-xs text-primary-foreground/60 md:text-muted-foreground mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
+
       </div>
     </section>
   );
