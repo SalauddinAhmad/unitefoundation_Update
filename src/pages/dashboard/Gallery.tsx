@@ -1175,7 +1175,7 @@ function VideoManager({
               {cats.canDelete(category) && (
                 <button
                   type="button"
-                  onClick={() => { cats.remove(category); setCategory(cats.all[0] || DEFAULT_CATEGORIES[0]); }}
+                  onClick={() => { const cur = category; cats.remove(cur); setCategory(cats.all.find((c) => c !== cur) || DEFAULT_CATEGORIES.find((c) => c !== cur) || ""); }}
                   className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20"
                   title="এই ক্যাটাগরি ডিলিট"
                 >
