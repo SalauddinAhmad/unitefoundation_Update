@@ -92,27 +92,50 @@ const DEFAULT_LIBRARY: { src: string; alt: string; cat: string }[] = [
 
 const DEFAULT_CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
 const CUSTOM_CATS_KEY = "galleryCategoriesCustom";
+const DELETED_CATS_KEY = "galleryCategoriesDeleted";
 function loadCustomCategories(): string[] {
   try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
 }
 function saveCustomCategories(list: string[]) {
   try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
 }
-function useGalleryCategories() {
+function loadDeletedCategories(): string[] {
+  try { const raw = localStorage.getItem(DELETED_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveDeletedCategories(list: string[]) {
+  try { localStorage.setItem(DELETED_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+type GalleryCategories = {
+  all: string[];
+  customCats: string[];
+  add: (name: string) => void;
+  remove: (name: string) => void;
+  canDelete: (name: string) => boolean;
+};
+function useGalleryCategories(discovered: string[] = []): GalleryCategories {
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
-  const all = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const [deletedCats, setDeletedCats] = useState<string[]>(() => loadDeletedCategories());
+  const all = useMemo(() => {
+    const deleted = new Set(deletedCats);
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...discovered, ...customCats].map((c) => c.trim()).filter(Boolean)))
+      .filter((c) => !deleted.has(c));
+  }, [customCats, deletedCats, discovered]);
   const add = (name: string) => {
     const n = name.trim(); if (!n) return;
     if (all.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
-    const next = [...customCats, n]; setCustomCats(next); saveCustomCategories(next);
+    const nextDeleted = deletedCats.filter((c) => c !== n); setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    const next = Array.from(new Set([...customCats, n])); setCustomCats(next); saveCustomCategories(next);
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const remove = (name: string) => {
-    if (!customCats.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    if (!name) return;
     if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name); setCustomCats(next); saveCustomCategories(next);
+    const nextDeleted = Array.from(new Set([...deletedCats, name])); setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
-  return { all, customCats, add, remove };
+  const canDelete = (name: string) => Boolean(name);
+  return { all, customCats, add, remove, canDelete };
 }
 // Back-compat for existing references
 const CATEGORIES = DEFAULT_CATEGORIES;
@@ -206,7 +229,8 @@ export default function Gallery() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | AlbumStatus>("all");
   const [category, setCategory] = useState("all");
-  const cats = useGalleryCategories();
+  const discoveredCategories = useMemo(() => list.map((a) => a.category).filter(Boolean), [list]);
+  const cats = useGalleryCategories(discoveredCategories);
   const [view, setView] = useState<"grid" | "table">("grid");
   const [editor, setEditor] = useState<{ open: boolean; a?: Album }>({ open: false });
   const [viewer, setViewer] = useState<Album | null>(null);
@@ -468,14 +492,14 @@ export default function Gallery() {
             >
               <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
             </button>
-            {category !== "all" && cats.customCats.includes(category) && (
+            {category !== "all" && cats.canDelete(category) && (
               <button
                 type="button"
                 onClick={() => { cats.remove(category); setCategory("all"); }}
-                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
+                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
                 title="এই কাস্টম ক্যাটাগরি ডিলিট"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="h-3.5 w-3.5" /> ডিলিট
               </button>
             )}
             <div className="inline-flex rounded-lg border border-border bg-background p-0.5">
@@ -592,6 +616,7 @@ export default function Gallery() {
       {editor.open && editor.a && (
         <AlbumEditor
           album={editor.a}
+          cats={cats}
           onClose={() => setEditor({ open: false })}
           onSave={save}
           onPublishToggle={() => editor.a && toggleStatus(editor.a)}
@@ -624,9 +649,8 @@ export default function Gallery() {
 }
 
 /* ------------- Editor ------------- */
-function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
+function AlbumEditor({ album, cats, onClose, onSave }: { album: Album; cats: GalleryCategories; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
   const [a, setA] = useState<Album>(album);
-  const cats = useGalleryCategories();
   const [tagInput, setTagInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
@@ -801,16 +825,16 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
                     className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80"
                     title="নতুন ক্যাটাগরি যোগ করুন"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
-                  {cats.customCats.includes(a.category) && (
+                  {cats.canDelete(a.category) && (
                     <button
                       type="button"
-                      onClick={() => { const cur = a.category; cats.remove(cur); setA({ ...a, category: DEFAULT_CATEGORIES[0] }); }}
-                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
-                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                      onClick={() => { const cur = a.category; cats.remove(cur); setA({ ...a, category: cats.all.find((c) => c !== cur) || DEFAULT_CATEGORIES[0] }); }}
+                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20"
+                      title="এই ক্যাটাগরি ডিলিট"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                     </button>
                   )}
                 </div>
@@ -970,7 +994,7 @@ function VideoManager({
 }: {
   albums: ApiGalleryAlbum[];
   items: ApiGalleryItem[];
-  cats: { all: string[]; customCats: string[]; add: (n: string) => void; remove: (n: string) => void };
+  cats: GalleryCategories;
   onSaveAlbum: (data: Partial<ApiGalleryAlbum>) => Promise<any>;
   onSaveItem: (data: Partial<ApiGalleryItem>) => Promise<any>;
   onDeleteItem: (id: string) => Promise<any>;
@@ -1148,14 +1172,14 @@ function VideoManager({
               >
                 <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
               </button>
-              {cats.customCats.includes(category) && (
+              {cats.canDelete(category) && (
                 <button
                   type="button"
-                  onClick={() => { cats.remove(category); setCategory(cats.all[0] || DEFAULT_CATEGORIES[0]); }}
-                  className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
-                  title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                  onClick={() => { const cur = category; cats.remove(cur); setCategory(cats.all.find((c) => c !== cur) || DEFAULT_CATEGORIES.find((c) => c !== cur) || ""); }}
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20"
+                  title="এই ক্যাটাগরি ডিলিট"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                 </button>
               )}
               <Btn onClick={add} disabled={busy || !previewYid}>
@@ -1170,8 +1194,16 @@ function VideoManager({
       </Card>
 
       {/* Category filter */}
-      {activeCats.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-2 items-center">
+          <button
+            type="button"
+            onClick={() => { const n = prompt("নতুন ক্যাটাগরির নাম:"); if (n) cats.add(n); }}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-secondary text-sm font-semibold hover:bg-secondary/80"
+          >
+            <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি যোগ
+          </button>
+        {activeCats.length > 0 && (
+          <>
           <button
             onClick={() => setFilterCat("all")}
             className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === "all" ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
@@ -1179,16 +1211,28 @@ function VideoManager({
             সকল ({videos.length})
           </button>
           {activeCats.map((c) => (
-            <button
-              key={c}
-              onClick={() => setFilterCat(c)}
-              className={"px-3 py-1.5 rounded-full text-sm font-semibold " + (filterCat === c ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground hover:bg-secondary/80")}
-            >
-              {c} ({videos.filter((v) => v.category === c).length})
-            </button>
+            <span key={c} className="inline-flex items-center rounded-full overflow-hidden bg-secondary">
+              <button
+                onClick={() => setFilterCat(c)}
+                className={"px-3 py-1.5 text-sm font-semibold " + (filterCat === c ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-secondary/80")}
+              >
+                {c} ({videos.filter((v) => v.category === c).length})
+              </button>
+              {cats.canDelete(c) && (
+                <button
+                  type="button"
+                  onClick={() => { cats.remove(c); if (filterCat === c) setFilterCat("all"); }}
+                  className="px-2 py-1.5 text-destructive hover:bg-destructive/10"
+                  title="এই ক্যাটাগরি ডিলিট"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </span>
           ))}
-        </div>
-      )}
+          </>
+        )}
+      </div>
 
       {/* Grid */}
       {filtered.length === 0 ? (
