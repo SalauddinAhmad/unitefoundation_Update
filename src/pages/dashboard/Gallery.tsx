@@ -626,6 +626,7 @@ export default function Gallery() {
 /* ------------- Editor ------------- */
 function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
   const [a, setA] = useState<Album>(album);
+  const cats = useGalleryCategories();
   const [tagInput, setTagInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
