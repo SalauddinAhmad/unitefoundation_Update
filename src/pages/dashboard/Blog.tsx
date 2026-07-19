@@ -690,16 +690,15 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                   </button>
                   <button
                     type="button"
-                    disabled={!category || defaults.includes(category)}
+                    disabled={!category}
                     onClick={() => {
-                      if (!category || defaults.includes(category)) return;
-                      if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+                      if (!category) return;
                       const target = category;
                       onRemoveCategory(target);
-                      setCategory(defaults[0] || "");
+                      setCategory("");
                     }}
                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold disabled:opacity-45 disabled:cursor-not-allowed"
-                    title={category && defaults.includes(category) ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "এই কাস্টম ক্যাটাগরি ডিলিট"}
+                    title="এই ক্যাটাগরি ডিলিট"
                   >
                     <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                   </button>
