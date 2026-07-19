@@ -278,7 +278,7 @@ export default function Blog() {
             className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
             title="কাস্টম ক্যাটাগরি ডিলিট"
           >
-            <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+            <Trash2 className="h-3.5 w-3.5" /> ক্যাটাগরি ডিলিট
           </button>
           <button
             onClick={() => setCatManagerOpen(true)}
@@ -649,21 +649,21 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                   >
                     <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
-                  {category && !defaults.includes(category) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
-                        const target = category;
-                        onRemoveCategory(target);
-                        setCategory(defaults[0] || "");
-                      }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold"
-                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    disabled={!category || defaults.includes(category)}
+                    onClick={() => {
+                      if (!category || defaults.includes(category)) return;
+                      if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+                      const target = category;
+                      onRemoveCategory(target);
+                      setCategory(defaults[0] || "");
+                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold disabled:opacity-45 disabled:cursor-not-allowed"
+                    title={category && defaults.includes(category) ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "এই কাস্টম ক্যাটাগরি ডিলিট"}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                  </button>
                 </div>
               </Field>
 
@@ -894,11 +894,14 @@ function CategoryManager({
                           <Edit3 className="h-4 w-4" />
                         </button>
                       )}
-                      {!isDefault && (
-                        <button onClick={() => removeCat(c)} className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive" title="ডিলিট">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
+                      <button
+                        disabled={isDefault}
+                        onClick={() => removeCat(c)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold hover:bg-destructive/10 text-destructive disabled:opacity-45 disabled:cursor-not-allowed"
+                        title={isDefault ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "ডিলিট"}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                      </button>
                     </>
                   )}
                 </div>
