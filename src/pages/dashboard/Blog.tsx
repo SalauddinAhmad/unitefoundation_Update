@@ -641,11 +641,26 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                       setCategory(v);
                       setNewCatInput("");
                     }}
-                    className="p-1.5 rounded-md bg-primary text-primary-foreground"
+                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-semibold"
                     title="যোগ করুন"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
+                  {category && !defaults.includes(category) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+                        const target = category;
+                        onRemoveCategory(target);
+                        setCategory(defaults[0] || "");
+                      }}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold"
+                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                    </button>
+                  )}
                 </div>
               </Field>
 
