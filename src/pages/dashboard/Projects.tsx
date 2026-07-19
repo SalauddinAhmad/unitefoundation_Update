@@ -91,8 +91,10 @@ export default function Projects() {
   const { data: rows = [] } = useProjectsAdmin();
   const saveMut = useSaveProject();
   const delMut = useDeleteProject();
+  const reorderMut = useReorderProjects();
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
+  const [dragId, setDragId] = useState<string | null>(null);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
   const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
