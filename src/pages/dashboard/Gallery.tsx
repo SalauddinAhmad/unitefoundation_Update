@@ -616,6 +616,7 @@ export default function Gallery() {
       {editor.open && editor.a && (
         <AlbumEditor
           album={editor.a}
+          cats={cats}
           onClose={() => setEditor({ open: false })}
           onSave={save}
           onPublishToggle={() => editor.a && toggleStatus(editor.a)}
@@ -648,9 +649,8 @@ export default function Gallery() {
 }
 
 /* ------------- Editor ------------- */
-function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
+function AlbumEditor({ album, cats, onClose, onSave }: { album: Album; cats: GalleryCategories; onClose: () => void; onSave: (a: Album) => void; onPublishToggle: () => void }) {
   const [a, setA] = useState<Album>(album);
-  const cats = useGalleryCategories();
   const [tagInput, setTagInput] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
@@ -825,16 +825,16 @@ function AlbumEditor({ album, onClose, onSave }: { album: Album; onClose: () => 
                     className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg bg-secondary text-xs font-semibold hover:bg-secondary/80"
                     title="নতুন ক্যাটাগরি যোগ করুন"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-3.5 w-3.5" /> যোগ
                   </button>
-                  {cats.customCats.includes(a.category) && (
+                  {cats.canDelete(a.category) && (
                     <button
                       type="button"
-                      onClick={() => { const cur = a.category; cats.remove(cur); setA({ ...a, category: DEFAULT_CATEGORIES[0] }); }}
-                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10"
-                      title="এই কাস্টম ক্যাটাগরি ডিলিট"
+                      onClick={() => { const cur = a.category; cats.remove(cur); setA({ ...a, category: cats.all.find((c) => c !== cur) || DEFAULT_CATEGORIES[0] }); }}
+                      className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20"
+                      title="এই ক্যাটাগরি ডিলিট"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                     </button>
                   )}
                 </div>
