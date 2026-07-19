@@ -122,13 +122,11 @@ export default function Blog() {
   const removeCategory = (name: string) => {
     const target = name.trim();
     if (!target) return;
-    
-    if (!confirm(`"${target}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     updateCats(customCats.filter((c) => c !== target));
     const nextDeleted = Array.from(new Set([...deletedCats, target]));
     setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
     if (category === target) setCategory("all");
-    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
+    toast.success(`"${target}" ডিলিট হয়েছে`);
   };
   const renameCategory = (oldName: string, newName: string) => {
     const oldValue = oldName.trim();
