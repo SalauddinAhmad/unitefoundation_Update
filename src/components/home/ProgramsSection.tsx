@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ProjectCard } from "@/components/project/ProjectCard";
 import { useProjectsPublic } from "@/hooks/api/usePublic";
@@ -38,6 +40,14 @@ export const ProgramsSection = () => {
           </div>
         </div>
 
+        <div className="mt-10 md:mt-12 flex justify-center">
+          <Link
+            to="/projects"
+            className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:gap-3 transition-all"
+          >
+            সকল প্রকল্প দেখুন <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
