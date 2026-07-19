@@ -14,14 +14,17 @@ export const HomeDonationChannelsSection = () => {
     <section className="relative py-16 md:py-24 overflow-hidden bg-background">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.18]"
+        className="pointer-events-none absolute inset-0 opacity-[0.22]"
         style={{
-          backgroundImage: `url('/background-overlay-3.svg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          filter:
-            "invert(24%) sepia(88%) saturate(452%) hue-rotate(115deg) brightness(92%) contrast(92%)",
+          backgroundColor: "#006B39",
+          WebkitMaskImage: `url('/background-overlay-3.svg')`,
+          maskImage: `url('/background-overlay-3.svg')`,
+          WebkitMaskSize: "cover",
+          maskSize: "cover",
+          WebkitMaskPosition: "center",
+          maskPosition: "center",
+          WebkitMaskRepeat: "no-repeat",
+          maskRepeat: "no-repeat",
         }}
       />
 
