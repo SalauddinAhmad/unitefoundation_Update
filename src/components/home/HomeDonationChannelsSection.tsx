@@ -40,12 +40,13 @@ export const HomeDonationChannelsSection = () => {
           <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/30 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-donate-highlight">
             <QrCode className="h-3.5 w-3.5" /> Bangla QR
           </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground leading-tight">
+          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-primary-foreground md:text-foreground leading-tight">
             স্ক্যান করে সহজেই দান করুন
           </h2>
-          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:px-8">
+          <p className="mt-3 text-sm md:text-base leading-relaxed text-primary-foreground/75 md:text-muted-foreground md:px-8">
             যেকোনো মোবাইল ব্যাংকিং বা ব্যাংক অ্যাপ থেকে নিচের QR কোডটি স্ক্যান করুন — মুহূর্তেই আপনার দান পৌঁছে যাবে ইনশাআল্লাহ।
           </p>
+
         </div>
 
         <div className="mx-auto max-w-md">
