@@ -80,8 +80,21 @@ export async function compressImage(file: File, opts: CompressOptions = {}): Pro
     if (opts.mimeType && opts.mimeType !== "auto") {
       outType = opts.mimeType;
     } else {
-      const alpha = canvasHasAlpha(ctx, w, h);
-      outType = alpha ? "image/png" : "image/jpeg";
+      // Prefer WebP — supports alpha and is 25-40% smaller than JPEG.
+      // Fallback to JPEG/PNG if the browser can't encode WebP.
+      const canWebp = (() => {
+        try {
+          const c = document.createElement("canvas");
+          c.width = c.height = 1;
+          return c.toDataURL("image/webp").startsWith("data:image/webp");
+        } catch { return false; }
+      })();
+      if (canWebp) {
+        outType = "image/webp";
+      } else {
+        const alpha = canvasHasAlpha(ctx, w, h);
+        outType = alpha ? "image/png" : "image/jpeg";
+      }
     }
 
     const blob = await canvasToBlob(canvas, outType, o.quality);

@@ -95,14 +95,14 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
     for (let i = 0; i < list.length; i++) {
       const f = list[i];
       try {
-        const compressed = await compressImage(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.85 });
+        const compressed = await compressImage(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.8, mimeType: "auto" });
         const dataUrl = await new Promise<string>((resolve, reject) => {
           const r = new FileReader();
           r.onload = () => resolve(String(r.result));
           r.onerror = reject;
           r.readAsDataURL(compressed);
         });
-        const thumb = await compressImageToDataURL(compressed, { maxWidth: 400, maxHeight: 400, quality: 0.75 });
+        const thumb = await compressImageToDataURL(compressed, { maxWidth: 400, maxHeight: 400, quality: 0.7, mimeType: "auto" });
         const meta = await fileToMeta(compressed);
 
         // Send as JSON (base64 data URI) — cPanel/LiteSpeed proxies often block
