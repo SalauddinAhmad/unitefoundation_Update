@@ -484,3 +484,15 @@ export const useDeleteProject = () => {
     },
   });
 };
+
+export const useReorderProjects = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (items: { id: string; sort_order: number }[]) =>
+      api.post("/projects/reorder", { items }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "projects"] });
+      qc.invalidateQueries({ queryKey: ["public", "projects"] });
+    },
+  });
+};
