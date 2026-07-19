@@ -38,31 +38,31 @@ export const HomeDonationChannelsSection = () => {
         {/* Bangla QR only */}
         <div className="mx-auto max-w-md">
           <article
-            className="relative overflow-hidden rounded-[28px] border border-donate-highlight/20 shadow-2xl p-6 md:p-8"
+            className="relative overflow-hidden rounded-[28px] border border-border shadow-[0_20px_60px_-20px_hsl(152_60%_20%/0.25)] p-6 md:p-8"
             style={{ background: cardBg }}
           >
             <div
               aria-hidden
-              className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 opacity-[0.06]"
+              className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 opacity-[0.05]"
             >
-              <QrCode className="h-48 w-48 text-donate-highlight" strokeWidth={1} />
+              <QrCode className="h-48 w-48 text-primary" strokeWidth={1} />
             </div>
 
             <div className="relative flex items-start justify-between gap-4">
               <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-primary-foreground/60">
+                <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-muted-foreground">
                   Bangla QR
                 </p>
-                <h3 className="mt-2 text-2xl md:text-3xl font-extrabold text-primary-foreground leading-tight">
+                <h3 className="mt-2 text-2xl md:text-3xl font-extrabold text-foreground leading-tight">
                   {t("channels.scanToDonate")}
                 </h3>
               </div>
-              <div className="h-11 w-11 shrink-0 rounded-lg bg-donate-highlight/90 flex items-center justify-center">
-                <QrCode className="h-5 w-5 text-[hsl(152_65%_8%)]" strokeWidth={2.4} />
+              <div className="h-11 w-11 shrink-0 rounded-lg bg-primary flex items-center justify-center">
+                <QrCode className="h-5 w-5 text-primary-foreground" strokeWidth={2.4} />
               </div>
             </div>
 
-            <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-card p-3 border border-donate-highlight/20">
+            <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-card p-3 border border-border shadow-sm">
               <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
                 {payments.qrImage ? (
                   <img
@@ -82,10 +82,10 @@ export const HomeDonationChannelsSection = () => {
               </div>
             </div>
 
-            <p className="relative mt-5 text-center text-xs font-semibold text-donate-highlight">
+            <p className="relative mt-5 text-center text-xs font-semibold text-primary">
               {t("channels.anyAppNote")}
             </p>
-            <p className="relative mt-2 text-center text-xs text-primary-foreground/70 leading-relaxed">
+            <p className="relative mt-2 text-center text-xs text-muted-foreground leading-relaxed">
               {t("channels.qrHint")}
             </p>
 
@@ -104,7 +104,7 @@ export const HomeDonationChannelsSection = () => {
           </article>
         </div>
 
-        <p className="text-center text-xs text-primary-foreground/60 mt-10 italic max-w-xl mx-auto">
+        <p className="text-center text-xs text-muted-foreground mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
       </div>
