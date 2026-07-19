@@ -122,7 +122,7 @@ export default function Blog() {
   const removeCategory = (name: string) => {
     const target = name.trim();
     if (!target) return;
-    if (DEFAULT_CATEGORIES.includes(target)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    
     if (!confirm(`"${target}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     updateCats(customCats.filter((c) => c !== target));
     const nextDeleted = Array.from(new Set([...deletedCats, target]));
