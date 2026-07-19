@@ -7,7 +7,7 @@ import {
   Image as ImageIcon, Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
   Quote, Heading1, Heading2, FolderKanban, BarChart3, CheckCircle2, Clock,
   Sparkles, Calendar, MapPin, Target, Trash2, Copy, Globe, Archive, Loader2,
-  TrendingUp, HandCoins, GripVertical,
+  TrendingUp, HandCoins, ChevronUp,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -94,7 +94,6 @@ export default function Projects() {
   const reorderMut = useReorderProjects();
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
-  const [dragId, setDragId] = useState<string | null>(null);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
   const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
@@ -173,15 +172,17 @@ export default function Projects() {
   };
 
   const canReorder = search.trim() === "" && filter === "all" && category === "all";
-  const handleDrop = async (targetId: string) => {
-    if (!dragId || dragId === targetId || !canReorder) { setDragId(null); return; }
+  const move = async (id: string, dir: -1 | 1) => {
+    if (!canReorder) {
+      toast.error("ক্রম পরিবর্তনের আগে সার্চ ও ফিল্টার ক্লিয়ার করুন");
+      return;
+    }
     const ids = list.map((p) => p.id);
-    const from = ids.indexOf(dragId);
-    const to = ids.indexOf(targetId);
-    if (from < 0 || to < 0) { setDragId(null); return; }
+    const from = ids.indexOf(id);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= ids.length) return;
     const next = [...ids];
-    next.splice(to, 0, next.splice(from, 1)[0]);
-    setDragId(null);
+    [next[from], next[to]] = [next[to], next[from]];
     try {
       await reorderMut.mutateAsync(next.map((id, i) => ({ id, sort_order: i })));
       toast.success("ক্রম আপডেট হয়েছে");
@@ -277,18 +278,18 @@ export default function Projects() {
           <div className="p-12 text-center text-sm text-muted-foreground">কোনো প্রকল্প পাওয়া যায়নি</div>
         ) : view === "grid" ? (
           <>
-          {canReorder && (
-            <div className="px-4 pt-3 text-[11px] text-muted-foreground">টিপ: কার্ডের বাম কোণে <GripVertical className="inline h-3 w-3" /> হ্যান্ডল ধরে টেনে ক্রম পরিবর্তন করুন।</div>
+          {canReorder ? (
+            <div className="px-4 pt-3 text-[11px] text-muted-foreground">টিপ: কার্ডের উপরের বাম কোণে ▲ / ▼ বোতাম দিয়ে ক্রম আগে-পিছে করুন।</div>
+          ) : (
+            <div className="px-4 pt-3 text-[11px] text-muted-foreground">ক্রম পরিবর্তন করতে সার্চ ও ফিল্টার ক্লিয়ার করুন।</div>
           )}
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-            {filtered.map((p) => {
+            {filtered.map((p, idx) => {
               const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
               return (
                 <div
                   key={p.id}
-                  onDragOver={(e) => { if (canReorder && dragId) e.preventDefault(); }}
-                  onDrop={() => handleDrop(p.id)}
-                  className={"group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col " + (dragId === p.id ? "opacity-50 " : "") + (canReorder && dragId && dragId !== p.id ? "ring-1 ring-primary/30" : "")}
+                  className="group rounded-2xl border border-border bg-card overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col"
                 >
                   <div className="h-32 relative overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-transparent">
                     {p.cover ? (
@@ -299,16 +300,26 @@ export default function Projects() {
                       </div>
                     )}
                     {canReorder && (
-                      <button
-                        type="button"
-                        draggable
-                        onDragStart={() => setDragId(p.id)}
-                        onDragEnd={() => setDragId(null)}
-                        title="টেনে ক্রম পরিবর্তন করুন"
-                        className="absolute top-3 left-3 h-8 w-8 rounded-lg bg-card/90 backdrop-blur border border-border flex items-center justify-center text-foreground/70 hover:text-foreground cursor-grab active:cursor-grabbing shadow-sm"
-                      >
-                        <GripVertical className="h-4 w-4" />
-                      </button>
+                      <div className="absolute top-3 left-3 flex flex-col rounded-lg overflow-hidden bg-card/90 backdrop-blur border border-border shadow-sm">
+                        <button
+                          type="button"
+                          disabled={idx === 0 || reorderMut.isPending}
+                          onClick={() => move(p.id, -1)}
+                          title="উপরে নিন"
+                          className="h-7 w-8 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <ChevronUp className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          disabled={idx === filtered.length - 1 || reorderMut.isPending}
+                          onClick={() => move(p.id, 1)}
+                          title="নিচে নামান"
+                          className="h-7 w-8 flex items-center justify-center text-foreground/70 hover:text-foreground hover:bg-secondary border-t border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </button>
+                      </div>
                     )}
                     <div className="absolute top-3 right-3"><StatusBadge status={p.status} /></div>
                   </div>
@@ -359,7 +370,8 @@ export default function Projects() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground bg-muted/40">
-                  <th className="px-5 py-3">প্রকল্প</th>
+                  <th className="pl-5 py-3 w-20">ক্রম</th>
+                  <th className="py-3">প্রকল্প</th>
                   <th className="py-3">ক্যাটাগরি</th>
                   <th className="py-3">অগ্রগতি</th>
                   <th className="py-3">সংগৃহীত</th>
@@ -369,11 +381,33 @@ export default function Projects() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((p) => {
+                {filtered.map((p, idx) => {
                   const pct = p.budget > 0 ? Math.min(100, Math.round((p.raised / p.budget) * 100)) : 0;
                   return (
                     <tr key={p.id} className="border-t border-border hover:bg-muted/40">
-                      <td className="px-5 py-3 max-w-sm">
+                      <td className="pl-5 py-3">
+                        <div className="inline-flex rounded-md border border-border overflow-hidden">
+                          <button
+                            type="button"
+                            disabled={!canReorder || idx === 0 || reorderMut.isPending}
+                            onClick={() => move(p.id, -1)}
+                            title="উপরে নিন"
+                            className="h-7 w-7 flex items-center justify-center hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            <ChevronUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!canReorder || idx === filtered.length - 1 || reorderMut.isPending}
+                            onClick={() => move(p.id, 1)}
+                            title="নিচে নামান"
+                            className="h-7 w-7 flex items-center justify-center hover:bg-secondary border-l border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            <ChevronDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-3 max-w-sm">
                         <div className="font-semibold truncate">{p.title}</div>
                         <div className="text-[11px] text-muted-foreground">{p.id}</div>
                       </td>
