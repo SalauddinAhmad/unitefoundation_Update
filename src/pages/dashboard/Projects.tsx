@@ -124,12 +124,11 @@ export default function Projects() {
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const removeCustomCategory = (name: string) => {
-    if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name);
     setCustomCats(next); saveCustomCategories(next);
     const nextDeleted = Array.from(new Set([...deletedCats, name]));
     setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
-    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
+    toast.success(`"${name}" ডিলিট হয়েছে`);
   };
 
   const [search, setSearch] = useState("");
