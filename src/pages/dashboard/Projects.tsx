@@ -7,7 +7,7 @@ import {
   Image as ImageIcon, Bold, Italic, Underline, List, ListOrdered, Link as LinkIcon,
   Quote, Heading1, Heading2, FolderKanban, BarChart3, CheckCircle2, Clock,
   Sparkles, Calendar, MapPin, Target, Trash2, Copy, Globe, Archive, Loader2,
-  TrendingUp, HandCoins, GripVertical,
+  TrendingUp, HandCoins, ChevronUp,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
