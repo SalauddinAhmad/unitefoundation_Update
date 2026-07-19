@@ -124,7 +124,6 @@ export default function Projects() {
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const removeCustomCategory = (name: string) => {
-    if (DEFAULT_CATEGORIES.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
     if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name);
     setCustomCats(next); saveCustomCategories(next);
