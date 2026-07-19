@@ -40,14 +40,6 @@ export const ProgramsSection = () => {
           </div>
         </div>
 
-        <div className="mt-10 text-center">
-          <Link
-            to="/projects"
-            className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
-          >
-            {t("programs.viewAll")} <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );
