@@ -92,27 +92,50 @@ const DEFAULT_LIBRARY: { src: string; alt: string; cat: string }[] = [
 
 const DEFAULT_CATEGORIES = ["ত্রাণ", "খাদ্য বিতরণ", "ইফতার", "শিক্ষা", "চিকিৎসা", "প্রতিবেদন", "অন্যান্য"];
 const CUSTOM_CATS_KEY = "galleryCategoriesCustom";
+const DELETED_CATS_KEY = "galleryCategoriesDeleted";
 function loadCustomCategories(): string[] {
   try { const raw = localStorage.getItem(CUSTOM_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
 }
 function saveCustomCategories(list: string[]) {
   try { localStorage.setItem(CUSTOM_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
 }
-function useGalleryCategories() {
+function loadDeletedCategories(): string[] {
+  try { const raw = localStorage.getItem(DELETED_CATS_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr.filter((x) => typeof x === "string") : []; } catch { return []; }
+}
+function saveDeletedCategories(list: string[]) {
+  try { localStorage.setItem(DELETED_CATS_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+type GalleryCategories = {
+  all: string[];
+  customCats: string[];
+  add: (name: string) => void;
+  remove: (name: string) => void;
+  canDelete: (name: string) => boolean;
+};
+function useGalleryCategories(discovered: string[] = []): GalleryCategories {
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
-  const all = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
+  const [deletedCats, setDeletedCats] = useState<string[]>(() => loadDeletedCategories());
+  const all = useMemo(() => {
+    const deleted = new Set(deletedCats);
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...discovered, ...customCats].map((c) => c.trim()).filter(Boolean)))
+      .filter((c) => DEFAULT_CATEGORIES.includes(c) || !deleted.has(c));
+  }, [customCats, deletedCats, discovered]);
   const add = (name: string) => {
     const n = name.trim(); if (!n) return;
     if (all.includes(n)) { toast.error("এই ক্যাটাগরি ইতিমধ্যে আছে"); return; }
-    const next = [...customCats, n]; setCustomCats(next); saveCustomCategories(next);
+    const nextDeleted = deletedCats.filter((c) => c !== n); setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    const next = Array.from(new Set([...customCats, n])); setCustomCats(next); saveCustomCategories(next);
     toast.success("ক্যাটাগরি যোগ হয়েছে");
   };
   const remove = (name: string) => {
-    if (!customCats.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    if (!name || DEFAULT_CATEGORIES.includes(name)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
     if (!confirm(`"${name}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     const next = customCats.filter((c) => c !== name); setCustomCats(next); saveCustomCategories(next);
+    const nextDeleted = Array.from(new Set([...deletedCats, name])); setDeletedCats(nextDeleted); saveDeletedCategories(nextDeleted);
+    toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
-  return { all, customCats, add, remove };
+  const canDelete = (name: string) => Boolean(name && !DEFAULT_CATEGORIES.includes(name));
+  return { all, customCats, add, remove, canDelete };
 }
 // Back-compat for existing references
 const CATEGORIES = DEFAULT_CATEGORIES;
