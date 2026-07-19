@@ -130,6 +130,15 @@ export default function Blog() {
     if (category === target) setCategory("all");
     toast.success("ক্যাটাগরি ডিলিট হয়েছে");
   };
+  const renameCategory = (oldName: string, newName: string) => {
+    const oldValue = oldName.trim();
+    const nextValue = newName.trim();
+    if (!oldValue || !nextValue) return;
+    if (DEFAULT_CATEGORIES.includes(oldValue)) { toast.error("ডিফল্ট ক্যাটাগরি রিনেম করা যাবে না"); return; }
+    if (!customCats.includes(oldValue)) { toast.error("শুধু কাস্টম ক্যাটাগরি রিনেম করা যাবে"); return; }
+    updateCats(customCats.map((c) => (c === oldValue ? nextValue : c)));
+    toast.success("আপডেট হয়েছে");
+  };
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "draft" | "scheduled">("all");
@@ -398,6 +407,7 @@ export default function Blog() {
           usage={list.reduce<Record<string, number>>((acc, p) => { const c = p.category; if (c) acc[c] = (acc[c] || 0) + 1; return acc; }, {})}
           onAdd={addCategory}
           onRemove={removeCategory}
+          onRename={renameCategory}
           onClose={() => setCatManagerOpen(false)}
         />
       )}
@@ -815,7 +825,7 @@ function PostViewer({ post, onClose, onEdit }: { post: Post; onClose: () => void
 /* ============================ Category Manager ============================ */
 
 function CategoryManager({
-  categories, customCategories, defaults, usage, onAdd, onRemove, onClose,
+  categories, customCategories, defaults, usage, onAdd, onRemove, onRename, onClose,
 }: {
   categories: string[];
   customCategories: string[];
@@ -823,6 +833,7 @@ function CategoryManager({
   usage: Record<string, number>;
   onAdd: (name: string) => void;
   onRemove: (name: string) => void;
+  onRename: (oldName: string, newName: string) => void;
   onClose: () => void;
 }) {
   const [input, setInput] = useState("");
@@ -847,10 +858,8 @@ function CategoryManager({
       toast.error("একই নামে ক্যাটাগরি আছে");
       return;
     }
-    // Rename remains limited to saved custom categories.
-    saveCustomCategories(customCategories.map((x) => (x === editing.old ? v : x)));
+    onRename(editing.old, v);
     setEditing(null);
-    toast.success("আপডেট হয়েছে");
   };
 
   return (
@@ -914,7 +923,7 @@ function CategoryManager({
                     </>
                   ) : (
                     <>
-                      {!isDefault && (
+                      {!isDefault && customCategories.includes(c) && (
                         <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
                           <Edit3 className="h-4 w-4" />
                         </button>
