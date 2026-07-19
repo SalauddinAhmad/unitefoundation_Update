@@ -32,14 +32,38 @@ const extrasSchema = z.object({
   banner_url: z.string().max(10 * 1024 * 1024).optional().default(''),
 }).optional().default({});
 
+// Cache whether the `extras` column exists so we degrade gracefully
+// if migration 017 has not been applied to the target database yet.
+let _hasExtras = null;
+async function hasExtrasColumn() {
+  if (_hasExtras !== null) return _hasExtras;
+  try {
+    const [rows] = await pool.execute(
+      "SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'form_schemas' AND column_name = 'extras'"
+    );
+    _hasExtras = rows[0].c > 0;
+  } catch {
+    _hasExtras = false;
+  }
+  return _hasExtras;
+}
+
 router.get('/', asyncH(async (_req, res) => {
-  const [rows] = await pool.execute('SELECT form_key, title, subtitle, fields, extras, updated_at FROM form_schemas');
+  const withExtras = await hasExtrasColumn();
+  const sql = withExtras
+    ? 'SELECT form_key, title, subtitle, fields, extras, updated_at FROM form_schemas'
+    : 'SELECT form_key, title, subtitle, fields, updated_at FROM form_schemas';
+  const [rows] = await pool.execute(sql);
   res.json(rows.map(hydrate));
 }));
 
 router.get('/:key', asyncH(async (req, res) => {
   if (!KEYS.includes(req.params.key)) return res.status(400).json({ message: 'Invalid key' });
-  const [rows] = await pool.execute('SELECT form_key, title, subtitle, fields, extras, updated_at FROM form_schemas WHERE form_key=?', [req.params.key]);
+  const withExtras = await hasExtrasColumn();
+  const sql = withExtras
+    ? 'SELECT form_key, title, subtitle, fields, extras, updated_at FROM form_schemas WHERE form_key=?'
+    : 'SELECT form_key, title, subtitle, fields, updated_at FROM form_schemas WHERE form_key=?';
+  const [rows] = await pool.execute(sql, [req.params.key]);
   if (!rows.length) return res.status(404).json({ message: 'Not found' });
   res.json(hydrate(rows[0]));
 }));
@@ -54,12 +78,22 @@ router.put('/:key', requireAuth, asyncH(async (req, res) => {
   }).parse(req.body);
   const fieldsJson = JSON.stringify(body.fields);
   const extrasJson = JSON.stringify(body.extras || {});
-  await pool.execute(
-    `INSERT INTO form_schemas (form_key, title, subtitle, fields, extras) VALUES (?,?,?,?,?)
-     ON DUPLICATE KEY UPDATE title=VALUES(title), subtitle=VALUES(subtitle), fields=VALUES(fields), extras=VALUES(extras)`,
-    [req.params.key, body.title, body.subtitle, fieldsJson, extrasJson]
-  );
-  res.json({ ok: true });
+  const withExtras = await hasExtrasColumn();
+  if (withExtras) {
+    await pool.execute(
+      `INSERT INTO form_schemas (form_key, title, subtitle, fields, extras) VALUES (?,?,?,?,?)
+       ON DUPLICATE KEY UPDATE title=VALUES(title), subtitle=VALUES(subtitle), fields=VALUES(fields), extras=VALUES(extras)`,
+      [req.params.key, body.title, body.subtitle, fieldsJson, extrasJson]
+    );
+  } else {
+    // Fallback: write only base columns; extras will be applied once migration 017 runs.
+    await pool.execute(
+      `INSERT INTO form_schemas (form_key, title, subtitle, fields) VALUES (?,?,?,?)
+       ON DUPLICATE KEY UPDATE title=VALUES(title), subtitle=VALUES(subtitle), fields=VALUES(fields)`,
+      [req.params.key, body.title, body.subtitle, fieldsJson]
+    );
+  }
+  res.json({ ok: true, extras_persisted: withExtras });
 }));
 
 function hydrate(row) {
