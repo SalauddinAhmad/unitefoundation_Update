@@ -11,12 +11,15 @@ export const HomeDonationChannelsSection = () => {
     "linear-gradient(160deg, #006B39 0%, #004d29 100%)";
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-background">
+    <section
+      className="relative py-16 md:py-24 overflow-hidden"
+      style={{ background: "radial-gradient(ellipse at top, #007a42 0%, #004d29 55%, #003a1f 100%)" }}
+    >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.22]"
+        className="pointer-events-none absolute inset-0 opacity-[0.18]"
         style={{
-          backgroundColor: "#006B39",
+          backgroundColor: "#ffffff",
           WebkitMaskImage: `url('/background-overlay-3.svg')`,
           maskImage: `url('/background-overlay-3.svg')`,
           WebkitMaskSize: "cover",
@@ -31,16 +34,17 @@ export const HomeDonationChannelsSection = () => {
       <div className="container-page relative">
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-primary">
+          <span className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/40 bg-donate-highlight/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-donate-highlight">
             <QrCode className="h-3.5 w-3.5" /> Bangla QR
           </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-foreground leading-tight">
+          <h2 className="mt-4 text-3xl md:text-5xl font-extrabold text-white leading-tight">
             স্ক্যান করে সহজেই দান করুন
           </h2>
-          <p className="mt-3 text-sm md:text-base leading-relaxed text-muted-foreground md:px-8">
+          <p className="mt-3 text-sm md:text-base leading-relaxed text-white/75 md:px-8">
             যেকোনো মোবাইল ব্যাংকিং বা ব্যাংক অ্যাপ থেকে নিচের QR কোডটি স্ক্যান করুন — মুহূর্তেই আপনার দান পৌঁছে যাবে ইনশাআল্লাহ।
           </p>
         </div>
+
 
         {/* Bangla QR only */}
         <div className="mx-auto max-w-md">
@@ -65,14 +69,15 @@ export const HomeDonationChannelsSection = () => {
                 </h3>
               </div>
               <div
-                className="h-11 w-11 shrink-0 rounded-lg bg-white flex items-center justify-center border-2"
-                style={{ borderColor: "#006B39" }}
+                className="h-11 w-11 shrink-0 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: "hsl(var(--donate-highlight))" }}
               >
-                <QrCode className="h-5 w-5" strokeWidth={2.4} style={{ color: "#006B39" }} />
+                <QrCode className="h-5 w-5 text-[hsl(152_65%_8%)]" strokeWidth={2.4} />
               </div>
             </div>
 
             <div className="relative mt-8 mx-auto w-56 rounded-2xl bg-white p-3 shadow-sm">
+
               <div className="aspect-square rounded-xl bg-secondary flex items-center justify-center overflow-hidden">
                 {payments.qrImage ? (
                   <img
@@ -92,12 +97,13 @@ export const HomeDonationChannelsSection = () => {
               </div>
             </div>
 
-            <p className="relative mt-5 text-center text-xs font-semibold text-white">
+            <p className="relative mt-5 text-center text-xs font-semibold text-donate-highlight">
               {t("channels.anyAppNote")}
             </p>
-            <p className="relative mt-2 text-center text-xs text-white/80 leading-relaxed">
+            <p className="relative mt-2 text-center text-xs text-white/75 leading-relaxed">
               {t("channels.qrHint")}
             </p>
+
 
 
             {/* Smart CTA to full donate page */}
@@ -115,9 +121,10 @@ export const HomeDonationChannelsSection = () => {
           </article>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-10 italic max-w-xl mx-auto">
+        <p className="text-center text-xs text-white/60 mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
+
       </div>
     </section>
   );
