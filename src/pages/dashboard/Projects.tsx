@@ -94,7 +94,6 @@ export default function Projects() {
   const reorderMut = useReorderProjects();
 
   const list = useMemo<ProjectEx[]>(() => (rows as ApiProject[]).map(apiToUi), [rows]);
-  const [dragId, setDragId] = useState<string | null>(null);
 
   const [customCats, setCustomCats] = useState<string[]>(() => loadCustomCategories());
   const allCategories = useMemo(() => Array.from(new Set([...DEFAULT_CATEGORIES, ...customCats])), [customCats]);
