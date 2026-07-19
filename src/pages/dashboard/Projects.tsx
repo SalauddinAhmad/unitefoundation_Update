@@ -926,10 +926,9 @@ function ProjectCategoryManager({
                   </div>
                   <button
                     type="button"
-                    disabled={isDefault}
                     onClick={() => onRemove(c)}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/30 disabled:opacity-45 disabled:cursor-not-allowed"
-                    title={isDefault ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "ক্যাটাগরি ডিলিট"}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/30"
+                    title="ক্যাটাগরি ডিলিট"
                   >
                     <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                   </button>
@@ -938,7 +937,7 @@ function ProjectCategoryManager({
             })}
           </div>
 
-          <p className="text-[11px] text-muted-foreground">ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না। কাস্টম ক্যাটাগরির পাশে ডিলিট বাটন সবসময় দেখা যাবে।</p>
+          <p className="text-[11px] text-muted-foreground">যেকোনো ক্যাটাগরি ডিলিট করা যাবে। ডিলিট করা ডিফল্ট ক্যাটাগরি এই ব্রাউজারে মনে রাখা হবে।</p>
         </div>
 
         <div className="px-5 py-3 border-t border-border flex justify-end">
