@@ -258,16 +258,23 @@ export default function Projects() {
           >
             <Plus className="h-3.5 w-3.5" /> ক্যাটাগরি
           </button>
-          {category !== "all" && !DEFAULT_CATEGORIES.includes(category) && (
-            <button
-              type="button"
-              onClick={() => { removeCustomCategory(category); setCategory("all"); }}
-              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
-              title="এই কাস্টম ক্যাটাগরি ডিলিট"
-            >
-              <Trash2 className="h-3.5 w-3.5" /> ডিলিট
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              const deletable = allCategories.filter((c) => !DEFAULT_CATEGORIES.includes(c));
+              if (deletable.length === 0) { toast.error("কোনো কাস্টম ক্যাটাগরি নেই"); return; }
+              const n = prompt(`কোন ক্যাটাগরি ডিলিট করবেন?\n\n${deletable.map((c, i) => `${i + 1}. ${c}`).join("\n")}\n\nনাম লিখুন:`);
+              if (!n) return;
+              const target = n.trim();
+              if (!deletable.includes(target)) { toast.error("এই নামে কাস্টম ক্যাটাগরি নেই"); return; }
+              removeCustomCategory(target);
+              if (category === target) setCategory("all");
+            }}
+            className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
+            title="কাস্টম ক্যাটাগরি ডিলিট"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+          </button>
           <div className="ml-auto inline-flex p-1 bg-secondary rounded-lg">
             <button onClick={() => setView("grid")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "grid" ? "bg-card shadow-sm" : "text-muted-foreground")}>গ্রিড</button>
             <button onClick={() => setView("table")} className={"px-3 py-1.5 rounded-md text-xs font-semibold " + (view === "table" ? "bg-card shadow-sm" : "text-muted-foreground")}>টেবিল</button>

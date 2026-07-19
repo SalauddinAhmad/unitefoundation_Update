@@ -262,21 +262,24 @@ export default function Blog() {
           >
             <Plus className="h-3.5 w-3.5" /> যোগ
           </button>
-          {category !== "all" && !DEFAULT_CATEGORIES.includes(category) && (
-            <button
-              type="button"
-              onClick={() => {
-                if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
-                updateCats(customCats.filter((c) => c !== category));
-                setCategory("all");
-                toast.success("ক্যাটাগরি ডিলিট হয়েছে");
-              }}
-              className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
-              title="এই কাস্টম ক্যাটাগরি ডিলিট"
-            >
-              <Trash2 className="h-3.5 w-3.5" /> ডিলিট
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => {
+              const deletable = customCats.filter((c) => !DEFAULT_CATEGORIES.includes(c));
+              if (deletable.length === 0) { toast.error("কোনো কাস্টম ক্যাটাগরি নেই"); return; }
+              const n = prompt(`কোন ক্যাটাগরি ডিলিট করবেন?\n\n${deletable.map((c, i) => `${i + 1}. ${c}`).join("\n")}\n\nনাম লিখুন:`);
+              if (!n) return;
+              const target = n.trim();
+              if (!deletable.includes(target)) { toast.error("এই নামে কাস্টম ক্যাটাগরি নেই"); return; }
+              updateCats(customCats.filter((c) => c !== target));
+              if (category === target) setCategory("all");
+              toast.success("ক্যাটাগরি ডিলিট হয়েছে");
+            }}
+            className="inline-flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-semibold text-destructive hover:bg-destructive/10 border border-transparent hover:border-destructive/30"
+            title="কাস্টম ক্যাটাগরি ডিলিট"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+          </button>
           <button
             onClick={() => setCatManagerOpen(true)}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-secondary hover:bg-muted text-xs font-semibold"
