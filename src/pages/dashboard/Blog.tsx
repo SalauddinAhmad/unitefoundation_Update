@@ -122,7 +122,7 @@ export default function Blog() {
   const removeCategory = (name: string) => {
     const target = name.trim();
     if (!target) return;
-    if (DEFAULT_CATEGORIES.includes(target)) { toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না"); return; }
+    
     if (!confirm(`"${target}" ক্যাটাগরি ডিলিট করবেন?`)) return;
     updateCats(customCats.filter((c) => c !== target));
     const nextDeleted = Array.from(new Set([...deletedCats, target]));
@@ -690,16 +690,15 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                   </button>
                   <button
                     type="button"
-                    disabled={!category || defaults.includes(category)}
+                    disabled={!category}
                     onClick={() => {
-                      if (!category || defaults.includes(category)) return;
-                      if (!confirm(`"${category}" ক্যাটাগরি ডিলিট করবেন?`)) return;
+                      if (!category) return;
                       const target = category;
                       onRemoveCategory(target);
-                      setCategory(defaults[0] || "");
+                      setCategory("");
                     }}
                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-destructive hover:bg-destructive/10 border border-destructive/30 text-xs font-semibold disabled:opacity-45 disabled:cursor-not-allowed"
-                    title={category && defaults.includes(category) ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "এই কাস্টম ক্যাটাগরি ডিলিট"}
+                    title="এই ক্যাটাগরি ডিলিট"
                   >
                     <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                   </button>
@@ -846,14 +845,12 @@ function CategoryManager({
     setInput("");
   };
   const removeCat = (c: string) => {
-    if (defaults.includes(c)) return toast.error("ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না");
     onRemove(c);
   };
   const saveEdit = () => {
     if (!editing) return;
     const v = editing.val.trim();
     if (!v || v === editing.old) { setEditing(null); return; }
-    if (defaults.includes(editing.old)) { toast.error("ডিফল্ট ক্যাটাগরি রিনেম করা যাবে না"); setEditing(null); return; }
     if (categories.some((c) => c.toLowerCase() === v.toLowerCase())) {
       toast.error("একই নামে ক্যাটাগরি আছে");
       return;
@@ -923,16 +920,13 @@ function CategoryManager({
                     </>
                   ) : (
                     <>
-                      {!isDefault && customCategories.includes(c) && (
-                        <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
-                          <Edit3 className="h-4 w-4" />
-                        </button>
-                      )}
+                      <button onClick={() => setEditing({ old: c, val: c })} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground" title="রিনেম">
+                        <Edit3 className="h-4 w-4" />
+                      </button>
                       <button
-                        disabled={isDefault}
                         onClick={() => removeCat(c)}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold hover:bg-destructive/10 text-destructive disabled:opacity-45 disabled:cursor-not-allowed"
-                        title={isDefault ? "ডিফল্ট ক্যাটাগরি ডিলিট করা যাবে না" : "ডিলিট"}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold hover:bg-destructive/10 text-destructive"
+                        title="ডিলিট"
                       >
                         <Trash2 className="h-3.5 w-3.5" /> ডিলিট
                       </button>
@@ -947,7 +941,7 @@ function CategoryManager({
           </div>
 
           <p className="text-[11px] text-muted-foreground">
-            টিপ: ডিফল্ট ক্যাটাগরি ({defaults.join(", ")}) রিনেম বা ডিলিট করা যাবে না। কাস্টম ক্যাটাগরি এই ব্রাউজারে সংরক্ষিত হয়।
+            যেকোনো ক্যাটাগরি রিনেম বা ডিলিট করা যাবে। পরিবর্তন এই ব্রাউজারে সংরক্ষিত হয়।
           </p>
         </div>
 
