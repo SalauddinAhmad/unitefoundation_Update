@@ -74,10 +74,10 @@
     "expLabel": "বছরের অভিজ্ঞতা ও বিশ্বাস"
   },
   "programs": {
-    "eyebrow": "আমাদের কার্যক্রম",
-    "heading": "চলমান প্রকল্পসমূহ — যেখানে আপনার দান সরাসরি কাজ করছে",
-    "allProjects": "সব প্রকল্প",
-    "viewAll": "সব প্রকল্প দেখুন"
+    "eyebrow": "",
+    "heading": "চলমান প্রকল্পসমূহ",
+    "allProjects": "",
+    "viewAll": ""
   },
   "impact": {
     "eyebrow": "",
