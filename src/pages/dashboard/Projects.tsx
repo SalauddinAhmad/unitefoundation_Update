@@ -172,15 +172,17 @@ export default function Projects() {
   };
 
   const canReorder = search.trim() === "" && filter === "all" && category === "all";
-  const handleDrop = async (targetId: string) => {
-    if (!dragId || dragId === targetId || !canReorder) { setDragId(null); return; }
+  const move = async (id: string, dir: -1 | 1) => {
+    if (!canReorder) {
+      toast.error("ক্রম পরিবর্তনের আগে সার্চ ও ফিল্টার ক্লিয়ার করুন");
+      return;
+    }
     const ids = list.map((p) => p.id);
-    const from = ids.indexOf(dragId);
-    const to = ids.indexOf(targetId);
-    if (from < 0 || to < 0) { setDragId(null); return; }
+    const from = ids.indexOf(id);
+    const to = from + dir;
+    if (from < 0 || to < 0 || to >= ids.length) return;
     const next = [...ids];
-    next.splice(to, 0, next.splice(from, 1)[0]);
-    setDragId(null);
+    [next[from], next[to]] = [next[to], next[from]];
     try {
       await reorderMut.mutateAsync(next.map((id, i) => ({ id, sort_order: i })));
       toast.success("ক্রম আপডেট হয়েছে");
