@@ -232,7 +232,7 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
           <!-- Hero: success gradient with amount -->
           <div style="background:linear-gradient(135deg,${BRAND.primary} 0%,${BRAND.accent} 100%);padding:36px 24px 30px;text-align:center;color:#ffffff;">
             <div style="width:64px;height:64px;line-height:64px;margin:0 auto 14px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);border-radius:50%;font:700 32px/64px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">✓</div>
-            <div style="font:400 18px/1.4 'Amiri','Scheherazade New',serif;color:#fff;opacity:.95;margin-bottom:6px;" dir="rtl">جَزَاكُمُ اللهُ خَيْرًا</div>
+            
             <h1 style="margin:0 0 6px;font:700 26px/1.3 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">আল-হামদুলিল্লাহ!</h1>
             <p style="margin:0 0 20px;font:400 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#fff;opacity:.92;">আপনার অনুদানটি আমরা সফলভাবে গ্রহণ করেছি। জাযাকাল্লাহু খাইরান!</p>
             <div style="display:inline-block;padding:14px 32px;background:#ffffff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.15);">
