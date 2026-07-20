@@ -584,7 +584,10 @@ const defaultSettings: SiteSettings = {
     volunteer: "",
     privacy: "",
     gallery: "",
+    terms: "",
+    refund: "",
   },
+
   founder: {
     nameBn: "আব্দুল্লাহ বিন এরশাদ",
     nameEn: "Abdullah bin Ershad",
