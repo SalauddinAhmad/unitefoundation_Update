@@ -114,15 +114,23 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
                 <dl className="space-y-3 text-sm md:text-base">
                   <Row label="দাতার নাম" value={info.name} />
                   <Row label="মোবাইল / ইমেইল" value={info.email || info.phone} />
-                  <Row label="তহবিল" value={info.purpose || "সাধারণ দান"} />
                   <Row
                     label="দানের পরিমাণ"
                     value={<span className="font-semibold text-emerald-700">৳ {Number(info.amount).toLocaleString("bn-BD")}</span>}
                   />
                   <Row
                     label="ট্রানজেকশন আইডি"
-                    value={<span className="font-mono text-xs md:text-sm break-all">{info.bank_tran_id || info.transaction_id || info.id}</span>}
+                    value={<span className="font-mono text-xs md:text-sm break-all">{info.id}</span>}
                   />
+                  <Row label="মাধ্যম" value={info.method || "SSLCommerz"} />
+                  {info.card_type && <Row label="কার্ড / চ্যানেল" value={info.card_type} />}
+                  {info.bank_tran_id && (
+                    <Row
+                      label="ব্যাংক রেফারেন্স"
+                      value={<span className="font-mono text-xs md:text-sm break-all">{info.bank_tran_id}</span>}
+                    />
+                  )}
+                  <Row label="উদ্দেশ্য" value={info.purpose || "সাধারণ দান"} />
                   <Row label="তারিখ ও সময়" value={bnDate(info.created_at)} />
                 </dl>
               </div>
