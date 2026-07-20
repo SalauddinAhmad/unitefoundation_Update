@@ -90,13 +90,14 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
           >
             <div className="text-center">
               <h1 className="text-3xl md:text-4xl font-bold text-emerald-700 heading-display">
-                আলহামদুলিল্লাহ
+                আল-হামদুলিল্লাহ!
               </h1>
-              <p className="text-lg md:text-xl mt-2 text-foreground/90">
-                আপনার অনুদানটি সফল হয়েছে
+              <p className="text-lg md:text-xl mt-3 text-foreground/90 leading-relaxed">
+                আপনার অনুদানটি আমরা সফলভাবে গ্রহণ করেছি। <br className="hidden sm:block" />
+                জাযাকাল্লাহু খাইরান!
               </p>
-              <p className="text-sm text-muted-foreground mt-3 max-w-md mx-auto leading-relaxed">
-                জাযাকাল্লাহু খাইরান! আপনার মহানুভবতায় আমরা আরও অনেক মানুষের পাশে দাঁড়ানোর সুযোগ পেয়েছি।
+              <p className="text-sm md:text-base text-muted-foreground mt-4 max-w-md mx-auto leading-relaxed">
+                মহান আল্লাহ আপনার এই উত্তম দানকে কবুল করুন এবং আপনাকে দুনিয়া ও আখিরাতে সর্বোত্তম প্রতিদান দিন। আমীন!
               </p>
             </div>
 
