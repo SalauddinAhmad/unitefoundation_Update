@@ -226,14 +226,25 @@ const TermsCheckbox = ({ checked, onChange }: { checked: boolean; onChange: (v: 
   </label>
 );
 
+const guardTerms = (agreed: boolean): boolean => {
+  if (agreed) return true;
+  toast({
+    title: "শর্তাবলী গ্রহণ করুন",
+    description: "দান করতে হলে অনুগ্রহ করে টার্মস, প্রাইভেসি ও রিফান্ড পলিসিতে সম্মতি দিন।",
+    variant: "destructive",
+  });
+  return false;
+};
+
 const RegularForm = () => {
   const { t } = useTranslation();
   const { data: schema } = useFormSchema("donor");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -242,7 +253,9 @@ const RegularForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -264,9 +277,10 @@ const MonthlyForm = () => {
   const { data: schema } = useFormSchema("monthly");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -275,7 +289,9 @@ const MonthlyForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -297,9 +313,10 @@ const MemberForm = () => {
   const { data: schema } = useFormSchema("member");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -308,7 +325,9 @@ const MemberForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("member", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -325,6 +344,7 @@ const MemberForm = () => {
     </>
   );
 };
+
 
 export const MembershipDonorSection = () => {
   const { t } = useTranslation();
