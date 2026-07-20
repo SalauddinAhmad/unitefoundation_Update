@@ -287,7 +287,6 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
         <td style="padding:22px 12px 0;text-align:center;font:400 12px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">
           <div><a href="${site}" target="_blank" style="color:${BRAND.primary};text-decoration:none;font-weight:600;">${site.replace(/^https?:\/\//, '')}</a></div>
           <div style="margin-top:6px;">© ${year} ${esc(BRAND.name)} — সর্বস্বত্ব সংরক্ষিত</div>
-          <div style="margin-top:4px;color:#94A3B8;">এই ইমেইলটি স্বয়ংক্রিয়ভাবে পাঠানো হয়েছে।</div>
         </td>
       </tr>
     </table>
