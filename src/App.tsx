@@ -71,6 +71,8 @@ const App = () => (
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/partners/:slug" element={<PartnerDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-conditions" element={<TermsConditions />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
 
             {/* Admin dashboard */}
             <Route path="/login" element={<Login />} />
