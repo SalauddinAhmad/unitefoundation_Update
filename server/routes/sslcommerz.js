@@ -9,6 +9,38 @@ const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { shortId } = require('../utils/uid');
 const { validateEmail } = require('../utils/emailValidator');
+const { sendMail } = require('../services/mailer');
+const { tplDonationReceipt } = require('../services/emailTemplate');
+
+// Send receipt email once per donation (idempotent — checks receipt_sent flag)
+async function sendReceiptOnce(tran_id) {
+  try {
+    const [rows] = await pool.execute(
+      `SELECT id, name, email, amount, method, purpose, card_type, bank_tran_id, created_at, status, receipt_sent
+         FROM donations WHERE id=?`, [tran_id]
+    );
+    const d = rows[0];
+    if (!d || d.status !== 'completed' || !d.email || d.receipt_sent) return;
+    const html = tplDonationReceipt({
+      name: d.name,
+      tran_id: d.id,
+      amount: d.amount,
+      method: d.method,
+      purpose: d.purpose,
+      card_type: d.card_type,
+      bank_tran_id: d.bank_tran_id,
+      date: d.created_at ? new Date(d.created_at).toLocaleString('bn-BD') : '',
+    });
+    await sendMail({
+      to: d.email,
+      subject: `দানের রসিদ — ${d.id}`,
+      html,
+    });
+    await pool.execute(`UPDATE donations SET receipt_sent=1 WHERE id=?`, [tran_id]);
+  } catch (e) {
+    console.error('[sslcommerz] receipt email failed for', tran_id, e.message);
+  }
+}
 
 const IS_LIVE = String(process.env.SSLCOMMERZ_LIVE || 'true').toLowerCase() === 'true';
 const BASE = IS_LIVE
