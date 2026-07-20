@@ -208,7 +208,21 @@ const EmailTemplatesPanel = () => {
               return (
                 <label key={f.key} className="block">
                   <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">{f.label}</span>
-                  {f.type === "textarea" ? (
+                  {f.type === "html" ? (
+                    <>
+                      <textarea
+                        value={value}
+                        onChange={(e) => setField(f.key, e.target.value)}
+                        rows={16}
+                        spellCheck={false}
+                        placeholder="<!doctype html>&#10;<html>&#10;  ... এখানে সম্পূর্ণ HTML পেস্ট করুন। {{name}}, {{amount}} ইত্যাদি ভেরিয়েবল ব্যবহার করা যাবে ..."
+                        className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-xs font-mono transition resize-y"
+                      />
+                      <span className="mt-1 block text-[11px] text-muted-foreground">
+                        এই ফিল্ডে HTML দিলে উপরের অন্য সব ফিল্ড উপেক্ষা হবে এবং এটাই সরাসরি ইমেইলে যাবে। ফাঁকা রাখলে ডিফল্ট ডিজাইন ব্যবহার হবে।
+                      </span>
+                    </>
+                  ) : f.type === "textarea" ? (
                     <textarea
                       value={value}
                       onChange={(e) => setField(f.key, e.target.value)}
