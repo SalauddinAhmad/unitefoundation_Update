@@ -3,7 +3,7 @@
 
 const BRAND = {
   name: 'Unite Foundation',
-  tagline: 'একসাথে গড়ি, একসাথে বদলাই',
+  tagline: 'সুন্নাহর অনুসরণে, মানবতার কল্যাণে ‘ইউনাইট ফাউন্ডেশন’',
   primary: '#ED2324',      // brand red
   primaryDark: '#B71C1D',
   accent: '#F57E20',       // brand orange
