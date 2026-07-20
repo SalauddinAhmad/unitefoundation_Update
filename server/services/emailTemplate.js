@@ -132,9 +132,11 @@ function _customHtml(key, vars) {
 }
 
 function tplAdminCreated({ name, email, password, loginUrl }) {
+  const vars = { name: name || '', email: email || '', password: password || '', login_url: loginUrl || `${siteUrl()}/login` };
+  const custom = _customHtml('admin_created', vars);
+  if (custom) return custom;
   const t = store.get('admin_created');
   const s = t.slots;
-  const vars = { name: name || '', email: email || '', password: password || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
