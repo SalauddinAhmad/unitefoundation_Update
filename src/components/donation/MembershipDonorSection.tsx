@@ -202,14 +202,29 @@ const useShowError = () => {
 // Dynamic forms (schemas managed from the dashboard's Form Manager).
 import { useFormSchema } from "@/hooks/api/useForms";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { Link } from "react-router-dom";
 
 type SubmittedVals = Record<string, string | number | boolean | string[]>;
 const stringVal = (v: unknown) => (Array.isArray(v) ? v.join(", ") : v == null ? "" : String(v));
-const buildBody = (schema: { fields: { key: string; label: string; type: string }[] }, vals: SubmittedVals) =>
-  schema.fields
-    .filter((f) => f.type !== "section" && f.type !== "checkbox")
-    .map((f) => `${f.label}: ${stringVal(vals[f.key]) || "-"}`)
-    .join("\n");
+
+const TermsCheckbox = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
+  <label className="flex items-start gap-2.5 text-xs md:text-sm text-white/90 cursor-pointer select-none mt-2">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="mt-0.5 h-4 w-4 rounded border-white/40 bg-white/20 text-primary focus:ring-white/40 shrink-0"
+    />
+    <span className="leading-relaxed">
+      আমি{" "}
+      <Link to="/terms-conditions" target="_blank" className="underline font-semibold hover:text-white">টার্মস অ্যান্ড কন্ডিশনস</Link>,{" "}
+      <Link to="/privacy-policy" target="_blank" className="underline font-semibold hover:text-white">প্রাইভেসি পলিসি</Link>{" "}
+      ও{" "}
+      <Link to="/refund-policy" target="_blank" className="underline font-semibold hover:text-white">রিফান্ড পলিসি</Link>{" "}
+      পড়েছি ও এতে সম্মত।
+    </span>
+  </label>
+);
 
 const RegularForm = () => {
   const { t } = useTranslation();
