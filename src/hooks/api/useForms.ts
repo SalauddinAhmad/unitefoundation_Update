@@ -57,19 +57,15 @@ export function useSaveFormSchema() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ key, schema }: { key: FormKey; schema: FormSchema }) => {
-      // cache locally regardless of API result so preview always works
+      // Persist to server FIRST — only cache locally after success so that
+      // other devices/browsers stay in sync with the backend truth.
+      await api.put(`/forms/${key}`, {
+        title: schema.title,
+        subtitle: schema.subtitle,
+        fields: schema.fields,
+        extras: schema.extras || {},
+      });
       writeCache(key, schema);
-      try {
-        await api.put(`/forms/${key}`, {
-          title: schema.title,
-          subtitle: schema.subtitle,
-          fields: schema.fields,
-          extras: schema.extras || {},
-        });
-      } catch (e) {
-        // surface but do not throw — local cache still applied
-        console.warn("Form save API failed, using local cache", e);
-      }
       return schema;
     },
     onSuccess: (schema, vars) => {
