@@ -177,6 +177,18 @@ function fill(tpl, vars = {}) {
   });
 }
 
+// Add a shared "কাস্টম HTML" field to every template. If non-empty, it
+// completely replaces the default rendered HTML (variables still filled).
+const HTML_FIELD = {
+  key: 'html_override',
+  label: 'কাস্টম HTML (ঐচ্ছিক — সেট থাকলে উপরের সব ফিল্ড উপেক্ষা করে এই HTML পাঠানো হবে)',
+  type: 'html',
+};
+for (const k of Object.keys(TEMPLATES)) {
+  TEMPLATES[k].fields.push(HTML_FIELD);
+  TEMPLATES[k].defaults.slots.html_override = '';
+}
+
 /** Return {subject, slots} for a key, merged with saved overrides (may be undefined). */
 function mergeWithDefaults(key, override) {
   const def = TEMPLATES[key];
