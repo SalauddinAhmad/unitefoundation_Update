@@ -3,6 +3,7 @@ import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail,
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
+import EmailTemplatesPanel from "@/components/dashboard/EmailTemplatesPanel";
 
 import { useSettings, useUpdateSettings, type SiteSettings, type Milestone } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
@@ -168,6 +169,7 @@ const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[
   { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
   { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
   { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
+  { k: "email_templates", icon: Mail, l: "ইমেইল টেমপ্লেট", perm: "admins" },
   { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
 ];
 
@@ -477,6 +479,7 @@ const Settings = () => {
           )}
 
           {active === "admins" && <AdminsPanel />}
+          {active === "email_templates" && <EmailTemplatesPanel />}
 
           {active === "impact" && (
             <Card>
