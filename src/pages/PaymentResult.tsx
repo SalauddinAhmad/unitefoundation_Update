@@ -48,7 +48,11 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
       .finally(() => setLoading(false));
   }, [tranId]);
 
-  const printReceipt = () => window.print();
+  const printReceipt = () => {
+    if (!tranId) return;
+    window.open(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?print=1`, "_blank");
+  };
+
 
   if (kind === "fail" || kind === "cancel") {
     const isFail = kind === "fail";

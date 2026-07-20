@@ -219,4 +219,36 @@ router.get('/status/:id', asyncH(async (req, res) => {
   res.json(rows[0]);
 }));
 
+// 7) RECEIPT HTML — same design as email receipt, opened by "Download receipt" button
+router.get('/receipt/:id', asyncH(async (req, res) => {
+  const [rows] = await pool.execute(
+    `SELECT id, name, email, amount, method, purpose, card_type, bank_tran_id, created_at, status
+       FROM donations WHERE id=?`,
+    [req.params.id]
+  );
+  const d = rows[0];
+  if (!d) return res.status(404).send('Not found');
+  if (d.status !== 'completed') return res.status(400).send('Donation not completed');
+
+  const html = tplDonationReceipt({
+    name: d.name,
+    tran_id: d.id,
+    amount: d.amount,
+    method: d.method,
+    purpose: d.purpose,
+    card_type: d.card_type,
+    bank_tran_id: d.bank_tran_id,
+    date: d.created_at ? new Date(d.created_at).toLocaleString('bn-BD') : '',
+  });
+
+  // Optional ?print=1 → auto-open the browser print dialog (used by frontend button)
+  const withPrint = req.query.print
+    ? html.replace('</body>', `<script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),300)});</script></body>`)
+    : html;
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(withPrint);
+}));
+
 module.exports = router;
+
