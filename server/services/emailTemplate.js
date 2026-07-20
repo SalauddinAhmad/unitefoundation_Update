@@ -167,9 +167,11 @@ function tplPasswordChanged({ password, loginUrl }) {
 }
 
 function tplForgotPassword({ resetUrl }) {
+  const vars = { reset_url: resetUrl || '' };
+  const custom = _customHtml('forgot_password', vars);
+  if (custom) return custom;
   const t = store.get('forgot_password');
   const s = t.slots;
-  const vars = { reset_url: resetUrl || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
