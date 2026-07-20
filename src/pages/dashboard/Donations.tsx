@@ -12,9 +12,23 @@ const Donations = () => {
   const { data = [], isLoading } = useDonations();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
+  const [method, setMethod] = useState("all");
   const [entryOpen, setEntryOpen] = useState(false);
+  const norm = (m: string) => (m || "").toLowerCase();
+  const matchMethod = (d: Donation) => {
+    if (method === "all") return true;
+    const m = norm(d.method);
+    if (method === "sslcommerz") return m === "sslcommerz" || m === "কার্ড" || m === "card";
+    if (method === "bkash") return m === "bkash";
+    if (method === "nagad") return m === "nagad";
+    if (method === "rocket") return m === "rocket";
+    if (method === "bank") return m === "bank" || m === "ব্যাংক";
+    if (method === "manual") return m === "নগদ" || m === "cash" || d.id.startsWith("TXN-M");
+    return true;
+  };
   const filtered = (data as Donation[]).filter((d) =>
     (status === "all" || d.status === status) &&
+    matchMethod(d) &&
     (q === "" || d.name.includes(q) || d.id.toLowerCase().includes(q.toLowerCase()) || d.phone.includes(q))
   );
   const total = filtered.reduce((s, d) => s + (d.status === "completed" ? d.amount : 0), 0);
@@ -151,6 +165,30 @@ const Donations = () => {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="px-4 md:px-5 py-3 flex items-center gap-2 flex-wrap border-b border-border bg-muted/20">
+          <span className="text-xs font-bold text-muted-foreground uppercase mr-1">মাধ্যম:</span>
+          {[
+            { k: "all", label: "সব" },
+            { k: "sslcommerz", label: "SSLCommerz / কার্ড" },
+            { k: "bkash", label: "bKash" },
+            { k: "nagad", label: "Nagad" },
+            { k: "rocket", label: "Rocket" },
+            { k: "bank", label: "ব্যাংক" },
+            { k: "manual", label: "ম্যানুয়াল / নগদ" },
+          ].map((m) => (
+            <button
+              key={m.k}
+              onClick={() => setMethod(m.k)}
+              className={
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors " +
+                (method === m.k ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground/70 hover:bg-accent")
+              }
+            >
+              {m.label}
+            </button>
+          ))}
         </div>
 
         <div className="overflow-x-auto">

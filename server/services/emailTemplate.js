@@ -182,6 +182,30 @@ function tplWrapContent({ subject, bodyHtml }) {
   });
 }
 
+function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank_tran_id, card_type }) {
+  const site = siteUrl();
+  const fmtAmt = '৳ ' + Number(amount || 0).toLocaleString('bn-BD');
+  const details = [
+    { label: 'ট্রানজেকশন আইডি', value: tran_id },
+    { label: 'পরিমাণ', value: fmtAmt },
+    { label: 'মাধ্যম', value: method || 'SSLCommerz' },
+  ];
+  if (card_type) details.push({ label: 'কার্ড / চ্যানেল', value: card_type });
+  if (bank_tran_id) details.push({ label: 'ব্যাংক রেফারেন্স', value: bank_tran_id });
+  if (purpose) details.push({ label: 'উদ্দেশ্য', value: purpose });
+  if (date) details.push({ label: 'তারিখ', value: date });
+  return renderEmail({
+    title: 'আলহামদুলিল্লাহ! আপনার দান গৃহীত হয়েছে',
+    preheader: `রসিদ ${tran_id} — ${fmtAmt}`,
+    intro: `<p style="margin:0 0 8px;">আসসালামু আলাইকুম <b>${esc(name || '')}</b>,</p>
+            <p style="margin:0;">আপনার উদার দানের জন্য Unite Foundation-এর পক্ষ থেকে আন্তরিক কৃতজ্ঞতা। আপনার অবদান আমাদের কাজকে আরও এগিয়ে নিয়ে যাবে ইনশাআল্লাহ। নিচে আপনার দানের একটি ডিজিটাল রসিদ দেওয়া হলো।</p>`,
+    details,
+    cta: { label: 'রসিদ অনলাইনে দেখুন', url: `${site}/payment/success?tran_id=${encodeURIComponent(tran_id)}` },
+    note: 'এই ইমেইলটি আপনার দানের অফিসিয়াল রসিদ হিসেবে সংরক্ষণ করে রাখুন।',
+    footerNote: 'জাযাকুমুল্লাহু খাইরান — আপনার সদকা কবুল করুন, আমীন।',
+  });
+}
+
 module.exports = {
   renderEmail,
   tplAdminCreated,
@@ -189,4 +213,5 @@ module.exports = {
   tplForgotPassword,
   tplLoginOtp,
   tplWrapContent,
+  tplDonationReceipt,
 };
