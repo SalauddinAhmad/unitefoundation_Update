@@ -113,7 +113,7 @@ function renderEmail(opts) {
             <a href="${site}" target="_blank" style="color:${BRAND.primary};text-decoration:none;font-weight:600;">${site.replace(/^https?:\/\//, '')}</a>
           </div>
           <div style="margin-top:6px;">© ${year} ${esc(BRAND.name)} — সর্বস্বত্ব সংরক্ষিত</div>
-          <div style="margin-top:4px;color:#94A3B8;">এই ইমেইলটি স্বয়ংক্রিয়ভাবে পাঠানো হয়েছে, উত্তর দেওয়ার প্রয়োজন নেই।</div>
+          <div style="margin-top:4px;color:#94A3B8;">এই ইমেইলটি স্বয়ংক্রিয়ভাবে পাঠানো হয়েছে।</div>
         </td>
       </tr>
     </table>
@@ -184,26 +184,116 @@ function tplWrapContent({ subject, bodyHtml }) {
 
 function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank_tran_id, card_type }) {
   const site = siteUrl();
-  const fmtAmt = '৳ ' + Number(amount || 0).toLocaleString('bn-BD');
-  const details = [
+  const year = new Date().getFullYear();
+  const fmtAmt = Number(amount || 0).toLocaleString('bn-BD');
+  const rows = [
+    { label: 'দাতার নাম', value: name || '—' },
     { label: 'ট্রানজেকশন আইডি', value: tran_id },
-    { label: 'পরিমাণ', value: fmtAmt },
     { label: 'মাধ্যম', value: method || 'SSLCommerz' },
   ];
-  if (card_type) details.push({ label: 'কার্ড / চ্যানেল', value: card_type });
-  if (bank_tran_id) details.push({ label: 'ব্যাংক রেফারেন্স', value: bank_tran_id });
-  if (purpose) details.push({ label: 'উদ্দেশ্য', value: purpose });
-  if (date) details.push({ label: 'তারিখ', value: date });
-  return renderEmail({
-    title: 'আলহামদুলিল্লাহ! আপনার দান গৃহীত হয়েছে',
-    preheader: `রসিদ ${tran_id} — ${fmtAmt}`,
-    intro: `<p style="margin:0 0 8px;">আসসালামু আলাইকুম <b>${esc(name || '')}</b>,</p>
-            <p style="margin:0;">আপনার উদার দানের জন্য Unite Foundation-এর পক্ষ থেকে আন্তরিক কৃতজ্ঞতা। আপনার অবদান আমাদের কাজকে আরও এগিয়ে নিয়ে যাবে ইনশাআল্লাহ। নিচে আপনার দানের একটি ডিজিটাল রসিদ দেওয়া হলো।</p>`,
-    details,
-    cta: { label: 'রসিদ অনলাইনে দেখুন', url: `${site}/payment/success?tran_id=${encodeURIComponent(tran_id)}` },
-    note: 'এই ইমেইলটি আপনার দানের অফিসিয়াল রসিদ হিসেবে সংরক্ষণ করে রাখুন।',
-    footerNote: 'জাযাকুমুল্লাহু খাইরান — আপনার সদকা কবুল করুন, আমীন।',
-  });
+  if (card_type) rows.push({ label: 'কার্ড / চ্যানেল', value: card_type });
+  if (bank_tran_id) rows.push({ label: 'ব্যাংক রেফারেন্স', value: bank_tran_id });
+  if (purpose) rows.push({ label: 'উদ্দেশ্য', value: purpose });
+  if (date) rows.push({ label: 'তারিখ', value: date });
+
+  const rowsHtml = rows.map((d, i) => `
+        <tr>
+          <td style="padding:12px 18px;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};width:40%;border-bottom:${i === rows.length - 1 ? '0' : `1px dashed ${BRAND.border}`};">${esc(d.label)}</td>
+          <td style="padding:12px 18px;font:600 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.text};border-bottom:${i === rows.length - 1 ? '0' : `1px dashed ${BRAND.border}`};word-break:break-all;">${esc(d.value)}</td>
+        </tr>`).join('');
+
+  return `<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<title>আপনার দানের রসিদ — ${esc(BRAND.name)}</title>
+</head>
+<body style="margin:0;padding:0;background:${BRAND.bg};">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">রসিদ ${esc(tran_id)} — ৳ ${fmtAmt} সফলভাবে গৃহীত হয়েছে</div>
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:${BRAND.bg};padding:32px 12px;">
+  <tr><td align="center">
+    <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;">
+      <!-- Brand header -->
+      <tr>
+        <td align="center" style="padding:4px 4px 22px;">
+          <a href="${site}" target="_blank" style="text-decoration:none;">
+            <img src="${logoUrl()}" width="180" alt="${esc(BRAND.name)}" style="display:block;border:0;height:auto;max-width:180px;" />
+          </a>
+          <div style="margin-top:8px;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:.2px;">${esc(BRAND.tagline)}</div>
+        </td>
+      </tr>
+
+      <!-- Main card -->
+      <tr>
+        <td style="background:${BRAND.card};border:1px solid ${BRAND.border};border-radius:20px;box-shadow:0 4px 16px rgba(15,23,42,.06);overflow:hidden;">
+
+          <!-- Hero: success gradient with amount -->
+          <div style="background:linear-gradient(135deg,${BRAND.primary} 0%,${BRAND.accent} 100%);padding:36px 24px 30px;text-align:center;color:#ffffff;">
+            <div style="width:64px;height:64px;line-height:64px;margin:0 auto 14px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);border-radius:50%;font:700 32px/64px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">✓</div>
+            <div style="font:400 18px/1.4 'Amiri','Scheherazade New',serif;color:#fff;opacity:.95;margin-bottom:6px;" dir="rtl">جَزَاكُمُ اللهُ خَيْرًا</div>
+            <h1 style="margin:0 0 6px;font:700 26px/1.3 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">আলহামদুলিল্লাহ!</h1>
+            <p style="margin:0 0 20px;font:400 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#fff;opacity:.92;">আপনার দান সফলভাবে গৃহীত হয়েছে</p>
+            <div style="display:inline-block;padding:14px 32px;background:#ffffff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.15);">
+              <div style="font:500 11px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">দানের পরিমাণ</div>
+              <div style="font:800 34px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.primary};">৳ ${fmtAmt}</div>
+            </div>
+          </div>
+
+          <!-- Message -->
+          <div style="padding:28px 32px 8px;">
+            <p style="margin:0 0 8px;font:400 15px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#334155;">
+              আসসালামু আলাইকুম <b style="color:${BRAND.text};">${esc(name || '')}</b>,
+            </p>
+            <p style="margin:0;font:400 15px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#334155;">
+              আপনার উদার দানের জন্য <b>${esc(BRAND.name)}</b>-এর পক্ষ থেকে আন্তরিক কৃতজ্ঞতা। আপনার এই সদকা আমাদের কাজকে আরও এগিয়ে নিয়ে যাবে, ইনশাআল্লাহ। আল্লাহ্‌ তা'আলা আপনার এই দান কবুল করুন এবং উত্তম প্রতিদান দান করুন।
+            </p>
+          </div>
+
+          <!-- Receipt details -->
+          <div style="padding:20px 32px 8px;">
+            <div style="display:inline-block;padding:4px 12px;background:${BRAND.bg};border-radius:20px;font:600 11px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;">ডিজিটাল রসিদ</div>
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:8px 0 0;border:1px solid ${BRAND.border};border-radius:14px;overflow:hidden;background:#FAFBFC;">
+              ${rowsHtml}
+            </table>
+          </div>
+
+          <!-- CTA -->
+          <div style="padding:20px 32px 32px;text-align:center;">
+            <table role="presentation" cellspacing="0" cellpadding="0" style="margin:8px auto 0;">
+              <tr>
+                <td align="center" bgcolor="${BRAND.primary}" style="border-radius:10px;">
+                  <a href="${site}/payment/success?tran_id=${encodeURIComponent(tran_id)}" target="_blank" style="display:inline-block;padding:14px 32px;font:600 15px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;text-decoration:none;border-radius:10px;background:${BRAND.primary};">
+                    রসিদ অনলাইনে দেখুন
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:14px 0 0;font:400 12px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">এই ইমেইলটি আপনার দানের অফিসিয়াল রসিদ হিসেবে সংরক্ষণ করে রাখুন।</p>
+          </div>
+
+          <!-- Dua ribbon -->
+          <div style="background:linear-gradient(90deg,#FFF7ED 0%,#FEF2F2 100%);border-top:1px solid ${BRAND.border};padding:18px 24px;text-align:center;">
+            <div style="font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.primaryDark};">জাযাকুমুল্লাহু খাইরান</div>
+            <div style="margin-top:4px;font:400 12px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">আপনার সদকা কবুল হোক — আমীন।</div>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td style="padding:22px 12px 0;text-align:center;font:400 12px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">
+          <div><a href="${site}" target="_blank" style="color:${BRAND.primary};text-decoration:none;font-weight:600;">${site.replace(/^https?:\/\//, '')}</a></div>
+          <div style="margin-top:6px;">© ${year} ${esc(BRAND.name)} — সর্বস্বত্ব সংরক্ষিত</div>
+          <div style="margin-top:4px;color:#94A3B8;">এই ইমেইলটি স্বয়ংক্রিয়ভাবে পাঠানো হয়েছে।</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>`;
 }
 
 module.exports = {
