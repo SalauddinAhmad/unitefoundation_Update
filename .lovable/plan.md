@@ -1,97 +1,89 @@
+
 ## লক্ষ্য
+Dashboard → Settings-এর ভেতরে একটি নতুন ট্যাব "ইমেইল টেমপ্লেট" যোগ করা, যেখান থেকে super_admin সকল অটোমেটিক ইমেইল টেমপ্লেট (subject + body) দেখতে, লাইভ preview করতে ও এডিট করতে পারবেন — কোড ডিপ্লয় ছাড়াই।
 
-ড্যাশবোর্ডে একটি নতুন **"ফর্ম ম্যানেজার"** সেকশন যোগ হবে, যেখানে ট্যাব আকারে সব পাবলিক ফর্ম থাকবে। প্রতিটি ফর্মের ফিল্ড লেবেল, placeholder, type, required/optional, options (select-এর জন্য), এবং ফিল্ড যোগ/বাদ — সব ড্যাশবোর্ড থেকে কনফিগার করা যাবে। কনফিগ ব্যাকএন্ডে সেভ হবে এবং পাবলিক পেজগুলো সেটা থেকে ফর্ম রেন্ডার করবে।
+## কোন কোন ইমেইল কাভার হবে
+বর্তমানে `server/services/emailTemplate.js`-এ hard-coded ৬টি টেমপ্লেট আছে:
+1. `admin_created` — নতুন অ্যাডমিন অ্যাকাউন্ট
+2. `password_changed` — সুপার অ্যাডমিন কর্তৃক পাসওয়ার্ড রিসেট
+3. `forgot_password` — পাসওয়ার্ড রিসেট লিংক
+4. `login_otp` — লগইন OTP
+5. `contact_reply` / broadcast — অ্যাডমিন-লেখা content wrapper
+6. `donation_receipt` — SSLCommerz সফল দানের রসিদ
 
-## স্কোপ (৫টি ফর্ম)
+প্রত্যেকটির জন্য এডিটেবল ফিল্ড:
+- **Subject** (ইমেইলের বিষয়)
+- **Title** (কার্ডের বড় হেডিং)
+- **Preheader** (ইনবক্স প্রিভিউ)
+- **Intro / Body** (rich text — bold, link, paragraph)
+- **CTA label** (যেখানে প্রযোজ্য)
+- **Note / Footer note** (যেখানে প্রযোজ্য)
 
-1. **স্বেচ্ছাসেবক** (`/volunteer` → volunteer tab)
-2. **জেলা প্রতিনিধি** (`/volunteer` → representative tab)
-3. **নিয়মিত দাতা** (Donate পেজের donor sign-up)
-4. **আজীবন সদস্য**
-5. **দাতা সদস্য**
+Variable placeholders থাকবে যেমন `{{name}}`, `{{email}}`, `{{amount}}`, `{{tran_id}}`, `{{reset_url}}`, `{{code}}` — এডিটরের উপরে available variable-এর তালিকা দেখানো হবে।
 
-## Backend (server/)
+## Backend পরিবর্তন
 
-### নতুন migration `014_form_schemas.sql`
-```sql
-CREATE TABLE form_schemas (
-  form_key VARCHAR(64) PRIMARY KEY,   -- volunteer, representative, donor, member_lifetime, member_donor
-  title VARCHAR(200),
-  subtitle TEXT,
-  fields LONGTEXT,                     -- JSON: [{key,label,placeholder,type,required,options,order,help}]
+**নতুন migration** `021_email_templates.sql`:
+```
+CREATE TABLE email_templates (
+  key VARCHAR(64) PRIMARY KEY,
+  subject VARCHAR(255) NOT NULL,
+  title VARCHAR(255),
+  preheader VARCHAR(255),
+  intro LONGTEXT,
+  cta_label VARCHAR(120),
+  note LONGTEXT,
+  footer_note LONGTEXT,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
-Seed row per form with existing field definitions extracted from `Volunteer.tsx` / `Donate.tsx`.
+প্রথম রান-এ ৬টি টেমপ্লেটের বর্তমান default value seed হবে।
 
-### নতুন route `server/routes/forms.js`
-- `GET /forms` — public: সব ফর্ম স্কিমা
-- `GET /forms/:key` — public: একটি ফর্ম
-- `PUT /forms/:key` — admin only (permission `settings`): title/subtitle/fields update
-- `POST /forms/:key/reset` — admin: default-এ ফেরত
+**নতুন route** `server/routes/emailTemplates.js`:
+- `GET /email-templates` — সকল টেমপ্লেট (super_admin only)
+- `GET /email-templates/:key` — একটি টেমপ্লেট
+- `PUT /email-templates/:key` — এডিট (super_admin only)
+- `POST /email-templates/:key/preview` — sample data দিয়ে HTML render করে ফেরত দেয়
+- `POST /email-templates/:key/reset` — default-এ ফেরত
 
-Field JSON shape:
-```json
-{
-  "key": "name",
-  "label": "পূর্ণ নাম",
-  "placeholder": "আপনার নাম",
-  "type": "text|email|phone|number|textarea|select|checkbox-group|date",
-  "required": true,
-  "options": ["ঢাকা", "চট্টগ্রাম"],
-  "help": "",
-  "order": 1
-}
+**`emailTemplate.js` রিফ্যাক্টর**:
+- প্রতিটি `tpl*` ফাংশন আগে DB থেকে override খুঁজবে; না পেলে বর্তমান hard-coded default ব্যবহার করবে।
+- একটি ছোট placeholder resolver: `{{name}}` → actual value replace।
+
+## Frontend পরিবর্তন
+
+**`src/pages/dashboard/Settings.tsx`**-এ নতুন ট্যাব "ইমেইল টেমপ্লেট" — শুধু super_admin-এর কাছে দৃশ্যমান।
+
+নতুন কম্পোনেন্ট `src/components/dashboard/EmailTemplateEditor.tsx`:
+- বাম দিকে ৬টি টেমপ্লেটের তালিকা
+- ডান দিকে ফর্ম: subject, title, preheader, intro (textarea), cta label, note
+- উপরে "উপলব্ধ ভ্যারিয়েবল" chip-এ ক্লিক করলে cursor-এ insert
+- নিচে দুটি বাটন: **সংরক্ষণ করুন** ও **প্রিভিউ দেখুন** (মডালে iframe-এ live rendered HTML)
+- ডানে একটি **ডিফল্টে ফেরত** বাটন
+
+## নিরাপত্তা
+- সকল endpoint `requireSuperAdmin`
+- HTML sanitization: শুধু নির্দিষ্ট ট্যাগ (`b, i, a, p, br, ul, li`) allow; `<script>`, `<style>`, `onerror` ইত্যাদি strip
+
+## Layout
+```text
+Settings
+ ├─ সাইট (existing)
+ ├─ পেমেন্ট (existing)
+ ├─ হেডার ইমেজ (existing)
+ └─ ইমেইল টেমপ্লেট  ← নতুন
+     ├─ [তালিকা] ────┬── Subject, Title, Preheader
+     │  • Admin created│   Intro (rich)
+     │  • Password reset│   CTA label, Note
+     │  • Forgot password│  [Variables: {{name}} {{email}} ...]
+     │  • Login OTP    │   [সংরক্ষণ] [প্রিভিউ] [ডিফল্ট]
+     │  • Contact reply│
+     │  • Donation receipt
 ```
 
-## Dashboard (নতুন)
+## Rollout ধাপ
+1. Migration + route + refactor `emailTemplate.js`
+2. `Settings.tsx`-এ নতুন ট্যাব ও `EmailTemplateEditor` কম্পোনেন্ট
+3. cPanel-এ deploy → migration auto-run → default seed → dashboard থেকে এডিট শুরু
 
-### Route: `/dashboard/forms` (menu item: "ফর্ম ম্যানেজার", icon `FormInput`)
-
-### Page `src/pages/dashboard/FormsManager.tsx`
-- Top tabs: ৫টি ফর্ম key
-- প্রতিটি ট্যাবে:
-  - Title + subtitle এডিটর
-  - Draggable field list (dnd-kit) — reorder সাপোর্ট
-  - প্রতিটি রো-তে: label, placeholder, type dropdown, required switch, options editor (select হলে), delete
-  - "+ নতুন ফিল্ড যোগ করুন" বাটন
-  - "সংরক্ষণ" ও "ডিফল্ট-এ ফেরত" বাটন
-- Live preview panel (right side): কনফিগ অনুযায়ী রেন্ডার্ড ফর্মের প্রিভিউ
-
-### Components
-- `src/components/dashboard/FormFieldEditor.tsx` — একটি ফিল্ড row edit UI
-- `src/components/forms/DynamicForm.tsx` — কনফিগ থেকে ফর্ম রেন্ডার + zod validation dynamic build
-
-## Public pages update
-
-### `src/pages/Volunteer.tsx`
-- হার্ডকোডেড `VolunteerForm` ও `RepresentativeForm` → `<DynamicForm formKey="volunteer" />` ও `<DynamicForm formKey="representative" />` দিয়ে replace
-- Submit logic (`saveApplication`, WhatsApp URL) `DynamicForm`-এর `onSubmit` prop-এ pass
-- হার্ডকোডেড লেবেল/i18n keys backend defaults-এ চলে যাবে; সাফল্যের কার্ড আগের মতোই থাকবে
-
-### `src/pages/Donate.tsx` + membership sections
-- Donor/member forms → `<DynamicForm formKey="donor" />` ইত্যাদি
-
-## Error-free guarantee
-
-1. **Zod schema dynamic**: field type + required থেকে auto-build (text→string.min(1), email→email(), phone→regex, number→coerce.number(), select→enum)
-2. **Backwards-compat**: fixed system keys (name, phone, email) protected — delete করা যাবে না, শুধু label/placeholder edit
-3. **Fallback**: backend fetch fail হলে hardcoded default JSON ব্যবহৃত হবে (bundled in `src/data/formDefaults.ts`)
-4. **Submit payload**: dynamic → API-তে `{fields: {...}}` shape, existing `/applications/*` routes accept extra fields via existing `extra` param
-
-## টেকনিক্যাল বিবরণ
-
-- **Files added**: `server/db/migrations/014_form_schemas.sql`, `server/routes/forms.js`, `src/pages/dashboard/FormsManager.tsx`, `src/components/dashboard/FormFieldEditor.tsx`, `src/components/forms/DynamicForm.tsx`, `src/data/formDefaults.ts`, `src/hooks/api/useForms.ts`
-- **Files edited**: `server/app.js` (mount route), `src/App.tsx` (route), `src/components/dashboard/DashboardLayout.tsx` (menu), `src/lib/permissions.ts` (add `forms` perm), `src/pages/Volunteer.tsx` (use DynamicForm), `src/pages/Donate.tsx` (use DynamicForm for donor/member sections)
-- **Deps**: `@dnd-kit/core @dnd-kit/sortable` for drag-reorder
-
-## ডেলিভারি ক্রম
-
-1. Migration + backend route + seed defaults
-2. `DynamicForm` component + `formDefaults.ts`
-3. Dashboard FormsManager UI + menu entry
-4. Refactor Volunteer.tsx to use DynamicForm
-5. Refactor Donate.tsx donor/member forms
-6. QA: প্রতিটি ফর্ম add/edit/delete/reorder/save/reset test
-
-অনুমোদন করলে বাস্তবায়ন শুরু করব।
+আপনি চাইলে এখনই বাস্তবায়ন শুরু করব।
