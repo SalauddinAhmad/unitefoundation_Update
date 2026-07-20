@@ -151,9 +151,11 @@ function tplAdminCreated({ name, email, password, loginUrl }) {
 }
 
 function tplPasswordChanged({ password, loginUrl }) {
+  const vars = { password: password || '', login_url: loginUrl || `${siteUrl()}/login` };
+  const custom = _customHtml('password_changed', vars);
+  if (custom) return custom;
   const t = store.get('password_changed');
   const s = t.slots;
-  const vars = { password: password || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
