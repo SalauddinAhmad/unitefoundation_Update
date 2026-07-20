@@ -170,6 +170,8 @@ router.post('/success', asyncH(async (req, res) => {
     await persistPayload(tran_id, p, status);
   }
 
+  if (status === 'completed') await sendReceiptOnce(tran_id);
+
   const target = status === 'completed' ? 'success' : 'fail';
   res.redirect(`${SITE_URL}/payment/${target}?tran_id=${encodeURIComponent(tran_id)}`);
 }));
