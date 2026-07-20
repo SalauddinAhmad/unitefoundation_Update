@@ -3,7 +3,7 @@
 
 const BRAND = {
   name: 'Unite Foundation',
-  tagline: 'সুন্নাহর অনুসরণে, মানবতার কল্যাণে ‘ইউনাইট ফাউন্ডেশন’',
+  tagline: 'সুন্নাহর অনুসরণে, মানবতার কল্যাণে',
   primary: '#ED2324',      // brand red
   primaryDark: '#B71C1D',
   accent: '#F57E20',       // brand orange
