@@ -182,9 +182,11 @@ function tplForgotPassword({ resetUrl }) {
 }
 
 function tplLoginOtp({ code }) {
+  const vars = { code: code || '' };
+  const custom = _customHtml('login_otp', vars);
+  if (custom) return custom;
   const t = store.get('login_otp');
   const s = t.slots;
-  const vars = { code: code || '' };
   const intro = `${_p(fill(s.intro, vars))}
     <p style="margin:20px 0 0;text-align:center;">
       <span style="display:inline-block;padding:14px 22px;background:#F1F5F9;border:1px dashed ${BRAND.border};border-radius:12px;font:700 28px/1 'Menlo',Consolas,monospace;letter-spacing:8px;color:${BRAND.primaryDark};">${esc(code)}</span>
