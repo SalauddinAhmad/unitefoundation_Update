@@ -49,9 +49,15 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
   }, [tranId]);
 
   const printReceipt = () => {
-    if (!tranId) return;
-    window.open(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?print=1`, "_blank");
+    if (!tranId) { window.print(); return; }
+    const url = `${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?print=1`;
+    const w = window.open(url, "_blank", "noopener,noreferrer");
+    // Fallback if popup was blocked
+    if (!w || w.closed || typeof w.closed === "undefined") {
+      window.location.href = url;
+    }
   };
+
 
 
   if (kind === "fail" || kind === "cancel") {
