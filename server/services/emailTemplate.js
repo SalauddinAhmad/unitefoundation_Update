@@ -209,9 +209,18 @@ function tplWrapContent({ subject, bodyHtml }) {
 }
 
 function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank_tran_id, card_type }) {
+  const fmtAmt0 = Number(amount || 0).toLocaleString('bn-BD');
+  const vars = {
+    name: name || '', amount: amount || 0, amount_formatted: fmtAmt0,
+    tran_id: tran_id || '', method: method || 'SSLCommerz',
+    card_type: card_type || '', bank_tran_id: bank_tran_id || '',
+    purpose: purpose || '', date: date || '',
+    receipt_url: `${siteUrl()}/payment/success?tran_id=${encodeURIComponent(tran_id || '')}`,
+  };
+  const custom = _customHtml('donation_receipt', vars);
+  if (custom) return custom;
   const t = store.get('donation_receipt');
   const s = t.slots;
-  const vars = { name: name || '', amount: amount || 0, tran_id: tran_id || '' };
 
   const site = siteUrl();
   const year = new Date().getFullYear();
