@@ -330,7 +330,10 @@ export type PageHeroes = {
   volunteer: string;
   privacy: string;
   gallery: string;
+  terms: string;
+  refund: string;
 };
+
 
 export type FounderContent = {
   nameBn: string;
