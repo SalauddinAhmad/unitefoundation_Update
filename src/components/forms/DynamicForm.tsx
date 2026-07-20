@@ -77,9 +77,10 @@ type Props = {
   onSubmit: (values: Values) => void;
   variant?: "light" | "dark";
   footer?: ReactNode;
+  extraBeforeSubmit?: ReactNode;
 };
 
-export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer }: Props) {
+export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer, extraBeforeSubmit }: Props) {
   const [values, setValues] = useState<Values>(() => {
     const v: Values = {};
     for (const f of schema.fields) v[f.key] = initialValueFor(f);
@@ -135,6 +136,8 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
       <div className="grid sm:grid-cols-2 gap-3">
         {schema.fields.map((f) => renderField(f, values, set, inputCls, labelCls, isDark))}
       </div>
+
+      {extraBeforeSubmit}
 
       {footer ?? (
         <>

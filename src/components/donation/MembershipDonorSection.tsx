@@ -202,23 +202,49 @@ const useShowError = () => {
 // Dynamic forms (schemas managed from the dashboard's Form Manager).
 import { useFormSchema } from "@/hooks/api/useForms";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { Link } from "react-router-dom";
 
 type SubmittedVals = Record<string, string | number | boolean | string[]>;
 const stringVal = (v: unknown) => (Array.isArray(v) ? v.join(", ") : v == null ? "" : String(v));
-const buildBody = (schema: { fields: { key: string; label: string; type: string }[] }, vals: SubmittedVals) =>
-  schema.fields
-    .filter((f) => f.type !== "section" && f.type !== "checkbox")
-    .map((f) => `${f.label}: ${stringVal(vals[f.key]) || "-"}`)
-    .join("\n");
+
+const TermsCheckbox = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
+  <label className="flex items-start gap-2.5 text-xs md:text-sm text-white/90 cursor-pointer select-none mt-2">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="mt-0.5 h-4 w-4 rounded border-white/40 bg-white/20 text-primary focus:ring-white/40 shrink-0"
+    />
+    <span className="leading-relaxed">
+      আমি{" "}
+      <Link to="/terms-conditions" target="_blank" className="underline font-semibold hover:text-white">টার্মস অ্যান্ড কন্ডিশনস</Link>,{" "}
+      <Link to="/privacy-policy" target="_blank" className="underline font-semibold hover:text-white">প্রাইভেসি পলিসি</Link>{" "}
+      ও{" "}
+      <Link to="/refund-policy" target="_blank" className="underline font-semibold hover:text-white">রিফান্ড পলিসি</Link>{" "}
+      পড়েছি ও এতে সম্মত।
+    </span>
+  </label>
+);
+
+const guardTerms = (agreed: boolean): boolean => {
+  if (agreed) return true;
+  toast({
+    title: "শর্তাবলী গ্রহণ করুন",
+    description: "দান করতে হলে অনুগ্রহ করে টার্মস, প্রাইভেসি ও রিফান্ড পলিসিতে সম্মতি দিন।",
+    variant: "destructive",
+  });
+  return false;
+};
 
 const RegularForm = () => {
   const { t } = useTranslation();
   const { data: schema } = useFormSchema("donor");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -227,7 +253,9 @@ const RegularForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -249,9 +277,10 @@ const MonthlyForm = () => {
   const { data: schema } = useFormSchema("monthly");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -260,7 +289,9 @@ const MonthlyForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("donor", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -282,9 +313,10 @@ const MemberForm = () => {
   const { data: schema } = useFormSchema("member");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -293,7 +325,9 @@ const MemberForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("member", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -310,6 +344,7 @@ const MemberForm = () => {
     </>
   );
 };
+
 
 export const MembershipDonorSection = () => {
   const { t } = useTranslation();
