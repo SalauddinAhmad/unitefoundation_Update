@@ -88,12 +88,34 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-white/10">
-          <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-              <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
-              <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
+          <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="text-xs text-white/70 text-center md:text-left">
+              <div className="font-semibold text-white/90 mb-1">নিরাপদ পেমেন্ট গ্রহণ করি</div>
+              <div>Visa · MasterCard · bKash · Nagad · Rocket · Internet Banking</div>
             </div>
-            <span aria-hidden className="sr-only" />
+            <a href="https://securepay.sslcommerz.com/" target="_blank" rel="noopener noreferrer" className="bg-white rounded-md p-2 inline-block">
+              <img
+                src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-01.png"
+                alt="Pay with SSLCommerz — Visa, MasterCard, bKash, Nagad, Rocket, Internet Banking"
+                loading="lazy"
+                className="h-10 md:h-12 w-auto"
+              />
+            </a>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10">
+          <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+              <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
+              <div className="hidden md:block text-white/30">·</div>
+              <div className="font-en text-[11px] text-white/50">Trade License: {site.tradeLicense} · TIN: {site.tin}</div>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
+              <Link to="/terms-conditions" className="hover:text-white transition-colors">টার্মস অ্যান্ড কন্ডিশনস</Link>
+              <Link to="/refund-policy" className="hover:text-white transition-colors">রিফান্ড পলিসি</Link>
+            </div>
           </div>
         </div>
       </div>
