@@ -137,6 +137,8 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
         {schema.fields.map((f) => renderField(f, values, set, inputCls, labelCls, isDark))}
       </div>
 
+      {extraBeforeSubmit}
+
       {footer ?? (
         <>
           <button
