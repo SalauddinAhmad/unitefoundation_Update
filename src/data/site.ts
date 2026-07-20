@@ -9,7 +9,7 @@ export const site = {
   whatsapp: "8801614264901", // E.164 without +
   address: "৫৬-চামুরখান, কাঁচকুড়া, উত্তরখান, ঢাকা।",
   addressEn: "56-Chamurkhan, Kanchkura, Uttarkhan, Dhaka.",
-  tradeLicense: "TRAD/DNCC/049900/2026",
+  tradeLicense: "TRAD/DNCC/049900/2025",
   tin: "631633963204",
   // Manual payment channels
   payments: {

@@ -108,8 +108,6 @@ export const Footer = () => {
           <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
             <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
               <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
-              <div className="hidden md:block text-white/30">·</div>
-              <div className="font-en text-[11px] text-white/50">Trade License: {site.tradeLicense} · TIN: {site.tin}</div>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
               <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
