@@ -9,7 +9,7 @@ import { api, ApiError } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Card, Btn } from "@/components/dashboard/DashboardUI";
 
-type Field = { key: string; label: string; type: "text" | "textarea" };
+type Field = { key: string; label: string; type: "text" | "textarea" | "html" };
 type Variable = { key: string; desc: string };
 type TplDefaults = { subject: string; slots: Record<string, string> };
 type TplSchema = {
