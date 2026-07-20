@@ -233,8 +233,8 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
           <div style="background:linear-gradient(135deg,${BRAND.primary} 0%,${BRAND.accent} 100%);padding:36px 24px 30px;text-align:center;color:#ffffff;">
             <div style="width:64px;height:64px;line-height:64px;margin:0 auto 14px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.4);border-radius:50%;font:700 32px/64px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">✓</div>
             <div style="font:400 18px/1.4 'Amiri','Scheherazade New',serif;color:#fff;opacity:.95;margin-bottom:6px;" dir="rtl">جَزَاكُمُ اللهُ خَيْرًا</div>
-            <h1 style="margin:0 0 6px;font:700 26px/1.3 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">আলহামদুলিল্লাহ!</h1>
-            <p style="margin:0 0 20px;font:400 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#fff;opacity:.92;">আপনার দান সফলভাবে গৃহীত হয়েছে</p>
+            <h1 style="margin:0 0 6px;font:700 26px/1.3 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#ffffff;">আল-হামদুলিল্লাহ!</h1>
+            <p style="margin:0 0 20px;font:400 14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#fff;opacity:.92;">আপনার অনুদানটি আমরা সফলভাবে গ্রহণ করেছি। জাযাকাল্লাহু খাইরান!</p>
             <div style="display:inline-block;padding:14px 32px;background:#ffffff;border-radius:14px;box-shadow:0 6px 20px rgba(0,0,0,.15);">
               <div style="font:500 11px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">দানের পরিমাণ</div>
               <div style="font:800 34px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.primary};">৳ ${fmtAmt}</div>
@@ -244,10 +244,10 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
           <!-- Message -->
           <div style="padding:28px 32px 8px;">
             <p style="margin:0 0 8px;font:400 15px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#334155;">
-              আসসালামু আলাইকুম <b style="color:${BRAND.text};">${esc(name || '')}</b>,
+              আস-সালামু আলাইকুম, <b style="color:${BRAND.text};">${esc(name || '')}</b>
             </p>
             <p style="margin:0;font:400 15px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#334155;">
-              আপনার উদার দানের জন্য <b>${esc(BRAND.name)}</b>-এর পক্ষ থেকে আন্তরিক কৃতজ্ঞতা। আপনার এই সদকা আমাদের কাজকে আরও এগিয়ে নিয়ে যাবে, ইনশাআল্লাহ। আল্লাহ্‌ তা'আলা আপনার এই দান কবুল করুন এবং উত্তম প্রতিদান দান করুন।
+              ইউনাইট ফাউন্ডেশনের ওপর আস্থা রাখার জন্য জাযাকাল্লাহু খাইরান। আপনার এই মূল্যবান দান আমাদের দাওয়াহ ও সেবামূলক কাজকে আরও একধাপ এগিয়ে নিয়ে যেতে সহজ হবে ইনশাআল্লাহ। মহান আল্লাহ আপনার দান কবুল করুন এবং আপনার রিজিকে বারাকাহ দান করুন, আমীন!
             </p>
           </div>
 
