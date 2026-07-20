@@ -175,7 +175,9 @@ router.post('/ipn', asyncH(async (req, res) => {
 // 6) STATUS lookup (used by result page to display final state)
 router.get('/status/:id', asyncH(async (req, res) => {
   const [rows] = await pool.execute(
-    'SELECT id, amount, currency, status, method, created_at FROM donations WHERE id=?',
+    `SELECT id, name, email, phone, amount, currency, status, method, purpose,
+            transaction_id, bank_tran_id, card_type, created_at
+       FROM donations WHERE id=?`,
     [req.params.id]
   );
   if (!rows[0]) return res.status(404).json({ message: 'Not found' });
