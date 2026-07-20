@@ -1,10 +1,11 @@
-import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube } from "lucide-react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube, ShieldCheck, FileText, MapPin, BadgeCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { PageHero } from "@/components/layout/PageHero";
 import { useTeam } from "@/hooks/api/useTeam";
 import { useSettings } from "@/hooks/api/useDashboardData";
+import { site } from "@/data/site";
 
 const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer U)[] | undefined ? U : never }) => (
   <article className="group relative">
