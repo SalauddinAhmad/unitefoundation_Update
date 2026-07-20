@@ -577,7 +577,7 @@ const About = () => {
           <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-wider">
             <ShieldCheck className="h-4 w-4" /> অনুমোদনসমূহ
           </div>
-          <h2 className="heading-display mt-4">আইনি স্বীকৃতি ও নিবন্ধন</h2>
+          <h2 className="heading-display mt-4">অনুমোদনসমূহ</h2>
           <p className="mt-3 text-muted-foreground leading-relaxed">
             ইউনাইট ফাউন্ডেশন একটি সম্পূর্ণ নিবন্ধিত ও অনুমোদিত অলাভজনক প্রতিষ্ঠান। নিচে আমাদের অনুমোদন সংক্রান্ত তথ্য দেওয়া হলো।
           </p>
