@@ -167,6 +167,30 @@ const Donations = () => {
           </div>
         </div>
 
+        <div className="px-4 md:px-5 py-3 flex items-center gap-2 flex-wrap border-b border-border bg-muted/20">
+          <span className="text-xs font-bold text-muted-foreground uppercase mr-1">মাধ্যম:</span>
+          {[
+            { k: "all", label: "সব" },
+            { k: "sslcommerz", label: "SSLCommerz / কার্ড" },
+            { k: "bkash", label: "bKash" },
+            { k: "nagad", label: "Nagad" },
+            { k: "rocket", label: "Rocket" },
+            { k: "bank", label: "ব্যাংক" },
+            { k: "manual", label: "ম্যানুয়াল / নগদ" },
+          ].map((m) => (
+            <button
+              key={m.k}
+              onClick={() => setMethod(m.k)}
+              className={
+                "px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors " +
+                (method === m.k ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground/70 hover:bg-accent")
+              }
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
