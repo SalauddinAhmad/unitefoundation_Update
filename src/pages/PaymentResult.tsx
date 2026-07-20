@@ -3,8 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { CheckCircle2, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/api";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import { SiteLayout } from "@/components/layout/SiteLayout";
 
 type Kind = "success" | "fail" | "cancel";
 
@@ -47,8 +46,7 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
   const Icon = C.icon;
 
   return (
-    <>
-      <Navbar />
+    <SiteLayout>
       <main className="min-h-[70vh] flex items-center justify-center px-4 py-16">
         <div className="max-w-lg w-full bg-card border rounded-2xl p-8 text-center shadow-sm">
           <Icon className={`h-16 w-16 mx-auto ${C.color}`} strokeWidth={1.5} />
@@ -90,7 +88,6 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
           </div>
         </div>
       </main>
-      <Footer />
-    </>
+    </SiteLayout>
   );
 }
