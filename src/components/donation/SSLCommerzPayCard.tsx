@@ -210,12 +210,13 @@ export function SSLCommerzPayCard() {
               <div className="text-center text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">
                 গৃহীত পেমেন্ট মাধ্যম
               </div>
-              <div className="flex flex-wrap justify-center gap-2">
-                {METHODS.map((m) => (
-                  <span key={m} className="text-[11px] font-semibold px-2.5 py-1 rounded bg-background text-foreground border border-border">
-                    {m}
-                  </span>
-                ))}
+              <div className="flex justify-center">
+                <img
+                  src={sslLogo.url}
+                  alt="SSLCommerz accepted payment methods"
+                  className="max-w-full h-auto"
+                  loading="lazy"
+                />
               </div>
             </div>
 
