@@ -274,9 +274,10 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
           </div>
 
           <!-- Dua ribbon -->
-          <div style="background:linear-gradient(90deg,#FFF7ED 0%,#FEF2F2 100%);border-top:1px solid ${BRAND.border};padding:18px 24px;text-align:center;">
-            <div style="font:600 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.primaryDark};">জাযাকুমুল্লাহু খাইরান</div>
-            <div style="margin-top:4px;font:400 12px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">আপনার সদকা কবুল হোক — আমীন।</div>
+          <div style="background:linear-gradient(90deg,#FFF7ED 0%,#FEF2F2 100%);border-top:1px solid ${BRAND.border};padding:18px 24px;text-align:right;">
+            <div style="font:400 13px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">শুভেচ্ছান্তে,</div>
+            <div style="margin-top:6px;font:700 15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.primaryDark};">আব্দুল্লাহ বিন এরশাদ</div>
+            <div style="margin-top:2px;font:400 12px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};">চেয়ারম্যান, ইউনাইট ফাউন্ডেশন, ঢাকা</div>
           </div>
         </td>
       </tr>
