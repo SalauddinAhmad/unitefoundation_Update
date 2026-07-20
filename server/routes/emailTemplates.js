@@ -48,7 +48,8 @@ router.put('/:key', requireAuth, requireSuperAdmin, asyncH(async (req, res) => {
   const inSlots = body.slots && typeof body.slots === 'object' ? body.slots : {};
   for (const k of Object.keys(inSlots)) {
     if (allowedSlotKeys.has(k) && typeof inSlots[k] === 'string') {
-      cleanSlots[k] = inSlots[k].slice(0, 5000);
+      const cap = k === 'html_override' ? 200_000 : 5000;
+      cleanSlots[k] = inSlots[k].slice(0, cap);
     }
   }
   const subject = typeof body.subject === 'string' && body.subject.trim()

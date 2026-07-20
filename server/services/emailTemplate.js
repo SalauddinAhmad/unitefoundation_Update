@@ -121,10 +121,22 @@ function renderEmail(opts) {
 
 function _p(html) { return `<p style="margin:0 0 8px;">${html}</p>`; }
 
+// If admin pasted a full HTML override for this template, return it (with
+// {{variable}} placeholders filled). Otherwise null → fall through to the
+// default renderer.
+function _customHtml(key, vars) {
+  const t = store.get(key);
+  const raw = t && t.slots && t.slots.html_override;
+  if (!raw || !String(raw).trim()) return null;
+  return fill(raw, vars);
+}
+
 function tplAdminCreated({ name, email, password, loginUrl }) {
+  const vars = { name: name || '', email: email || '', password: password || '', login_url: loginUrl || `${siteUrl()}/login` };
+  const custom = _customHtml('admin_created', vars);
+  if (custom) return custom;
   const t = store.get('admin_created');
   const s = t.slots;
-  const vars = { name: name || '', email: email || '', password: password || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
@@ -139,9 +151,11 @@ function tplAdminCreated({ name, email, password, loginUrl }) {
 }
 
 function tplPasswordChanged({ password, loginUrl }) {
+  const vars = { password: password || '', login_url: loginUrl || `${siteUrl()}/login` };
+  const custom = _customHtml('password_changed', vars);
+  if (custom) return custom;
   const t = store.get('password_changed');
   const s = t.slots;
-  const vars = { password: password || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
@@ -153,9 +167,11 @@ function tplPasswordChanged({ password, loginUrl }) {
 }
 
 function tplForgotPassword({ resetUrl }) {
+  const vars = { reset_url: resetUrl || '' };
+  const custom = _customHtml('forgot_password', vars);
+  if (custom) return custom;
   const t = store.get('forgot_password');
   const s = t.slots;
-  const vars = { reset_url: resetUrl || '' };
   return renderEmail({
     title: fill(s.title, vars),
     preheader: fill(s.preheader, vars),
@@ -166,9 +182,11 @@ function tplForgotPassword({ resetUrl }) {
 }
 
 function tplLoginOtp({ code }) {
+  const vars = { code: code || '' };
+  const custom = _customHtml('login_otp', vars);
+  if (custom) return custom;
   const t = store.get('login_otp');
   const s = t.slots;
-  const vars = { code: code || '' };
   const intro = `${_p(fill(s.intro, vars))}
     <p style="margin:20px 0 0;text-align:center;">
       <span style="display:inline-block;padding:14px 22px;background:#F1F5F9;border:1px dashed ${BRAND.border};border-radius:12px;font:700 28px/1 'Menlo',Consolas,monospace;letter-spacing:8px;color:${BRAND.primaryDark};">${esc(code)}</span>
@@ -191,9 +209,18 @@ function tplWrapContent({ subject, bodyHtml }) {
 }
 
 function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank_tran_id, card_type }) {
+  const fmtAmt0 = Number(amount || 0).toLocaleString('bn-BD');
+  const vars = {
+    name: name || '', amount: amount || 0, amount_formatted: fmtAmt0,
+    tran_id: tran_id || '', method: method || 'SSLCommerz',
+    card_type: card_type || '', bank_tran_id: bank_tran_id || '',
+    purpose: purpose || '', date: date || '',
+    receipt_url: `${siteUrl()}/payment/success?tran_id=${encodeURIComponent(tran_id || '')}`,
+  };
+  const custom = _customHtml('donation_receipt', vars);
+  if (custom) return custom;
   const t = store.get('donation_receipt');
   const s = t.slots;
-  const vars = { name: name || '', amount: amount || 0, tran_id: tran_id || '' };
 
   const site = siteUrl();
   const year = new Date().getFullYear();
