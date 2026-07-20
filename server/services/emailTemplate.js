@@ -121,6 +121,16 @@ function renderEmail(opts) {
 
 function _p(html) { return `<p style="margin:0 0 8px;">${html}</p>`; }
 
+// If admin pasted a full HTML override for this template, return it (with
+// {{variable}} placeholders filled). Otherwise null → fall through to the
+// default renderer.
+function _customHtml(key, vars) {
+  const t = store.get(key);
+  const raw = t && t.slots && t.slots.html_override;
+  if (!raw || !String(raw).trim()) return null;
+  return fill(raw, vars);
+}
+
 function tplAdminCreated({ name, email, password, loginUrl }) {
   const t = store.get('admin_created');
   const s = t.slots;
