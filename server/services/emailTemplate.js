@@ -19,7 +19,7 @@ function siteUrl() {
   return (process.env.FRONTEND_URL || 'https://unitefoundation.bd').replace(/\/$/, '');
 }
 function logoUrl() {
-  return process.env.EMAIL_LOGO_URL || `${siteUrl()}/email-logo.png`;
+  return process.env.EMAIL_LOGO_URL || `${siteUrl()}/uf-logo.png`;
 }
 
 function esc(v) {
