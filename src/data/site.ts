@@ -7,7 +7,10 @@ export const site = {
   website: "https://unitefoundation.bd",
   phone: "+৮৮০ ১৬১৪-২৬৪৯০১",
   whatsapp: "8801614264901", // E.164 without +
-  address: "উত্তরখান, উত্তরা, ঢাকা ১২৩০।",
+  address: "৫৬-চামুরখান, কাঁচকুড়া, উত্তরখান, ঢাকা।",
+  addressEn: "56-Chamurkhan, Kanchkura, Uttarkhan, Dhaka.",
+  tradeLicense: "TRAD/DNCC/049900/2026",
+  tin: "631633963204",
   // Manual payment channels
   payments: {
     bkash: { number: "01759-754265", type: "Personal" },
