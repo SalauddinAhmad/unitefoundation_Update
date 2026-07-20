@@ -219,7 +219,7 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
       <tr>
         <td align="center" style="padding:4px 4px 22px;">
           <a href="${site}" target="_blank" style="text-decoration:none;">
-            <img src="${logoUrl()}" width="180" alt="${esc(BRAND.name)}" style="display:block;border:0;height:auto;max-width:180px;" />
+            <img src="${logoUrl()}" width="96" height="96" alt="${esc(BRAND.name)}" style="display:block;border:0;height:96px;width:96px;background:transparent;" />
           </a>
           <div style="margin-top:8px;font:500 12px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:${BRAND.muted};letter-spacing:.2px;">${esc(BRAND.tagline)}</div>
         </td>
