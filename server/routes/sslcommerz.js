@@ -203,6 +203,7 @@ router.post('/ipn', asyncH(async (req, res) => {
     status = 'cancelled';
   }
   await persistPayload(tran_id, { ...p, ...v }, status);
+  if (status === 'completed') await sendReceiptOnce(tran_id);
   res.json({ ok: true });
 }));
 
