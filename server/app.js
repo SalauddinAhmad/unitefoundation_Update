@@ -47,6 +47,21 @@ app.use(cors({
   allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
 }));
 
+// Form Manager saves should be tiny JSON payloads. If a stale dashboard tab or
+// old localStorage cache still tries to send embedded base64 media, reject it
+// before express.json() reads the full body; shared cPanel/LiteSpeed can time
+// out on those large PUTs and the browser reports only "Failed to fetch".
+app.use('/forms', (req, res, next) => {
+  if (!['POST', 'PUT', 'PATCH'].includes(req.method)) return next();
+  const len = Number(req.headers['content-length'] || 0);
+  if (len > 200 * 1024) {
+    return res.status(413).json({
+      message: 'Form payload is too large. Remove embedded/base64 images and choose images from Media Library again.',
+    });
+  }
+  return next();
+});
+
 // Body limits raised to 25mb so base64-encoded image uploads
 // (gallery / blog cover / project cover) don't get truncated.
 app.use(express.json({ limit: '25mb' }));
