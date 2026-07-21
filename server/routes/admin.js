@@ -6,7 +6,7 @@ const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
-const { tplAdminCreated, tplPasswordChanged } = require('../services/emailTemplate');
+const { tplAdminCreated, tplPasswordChanged, subjectOf } = require('../services/emailTemplate');
 
 // Every /admin/* endpoint is super-admin only.
 router.use(requireAuth, requireSuperAdmin);
