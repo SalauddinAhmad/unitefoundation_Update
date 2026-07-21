@@ -86,6 +86,7 @@ export function apiToProject(row: ApiProject): UiProject {
     target,
     raised,
     donors: num(row.donors),
+    beneficiaries: num(row.beneficiaries),
     urgent: Boolean(row.urgent),
     location: row.location || "",
   };
