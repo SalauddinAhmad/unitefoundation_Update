@@ -29,7 +29,9 @@ type ProjectEx = Project & {
   tags?: string[];
   goals?: string[];
   slug?: string;
+  donors?: number;
 };
+
 
 const DEFAULT_CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
 const CUSTOM_CATS_KEY = "projectCategoriesCustom";
