@@ -43,7 +43,7 @@ router.post('/login', authLimiter, asyncH(async (req, res) => {
     try {
       await sendMail({
         to: user.email,
-        subject: `Unite Foundation — লগইন কোড ${code}`,
+        subject: subjectOf('login_otp', { code }),
         html: tplLoginOtp({ code }),
       });
     } catch (e) { console.error('OTP mail failed', e); }
