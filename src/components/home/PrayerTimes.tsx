@@ -190,7 +190,7 @@ export const PrayerTimes = () => {
   ];
 
   return (
-    <section className="section-y bg-gradient-to-b from-primary/5 via-background to-background">
+    <section className="py-8 sm:py-20 md:py-28 bg-gradient-to-b from-primary/5 via-background to-background">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
           {/* Decorative arch pattern watermark */}
