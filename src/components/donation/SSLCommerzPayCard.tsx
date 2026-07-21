@@ -69,12 +69,31 @@ export function SSLCommerzPayCard() {
         <div className="mx-auto grid lg:grid-cols-[1fr_440px] lg:gap-12 lg:items-center max-w-5xl">
           {/* Illustration - desktop only */}
           <div className="hidden lg:flex flex-col items-center text-center animate-fade-in">
+            <figure className="relative w-full max-w-md mb-6">
+              <div className="relative flex items-stretch gap-4 rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-sm px-5 py-4 shadow-sm text-left">
+                <div aria-hidden="true" className="w-1 shrink-0 rounded-full bg-gradient-to-b from-primary/70 via-primary/40 to-primary/70" />
+                <svg aria-hidden="true" viewBox="0 0 24 24" className="absolute -top-2.5 -right-2.5 h-6 w-6 text-primary/80 fill-current drop-shadow-sm">
+                  <path d="M12 2l2.39 6.96H22l-6.19 4.5L18.18 22 12 17.27 5.82 22l2.37-8.54L2 8.96h7.61z" />
+                </svg>
+                <div className="flex-1 min-w-0">
+                  <blockquote className="text-base leading-[1.75] text-foreground font-medium">
+                    <span aria-hidden="true" className="text-primary/40 font-serif mr-1">“</span>
+                    তোমরা একটি খেজুরের টুকরা দান করে হলেও জাহান্নামের আগুন থেকে বাঁচো।
+                    <span aria-hidden="true" className="text-primary/40 font-serif ml-0.5">”</span>
+                  </blockquote>
+                  <figcaption className="mt-1.5 text-xs text-primary/90 font-medium">
+                    — সহীহ্‌ তিরমিযী, হা/২৯৫৩
+                  </figcaption>
+                </div>
+              </div>
+            </figure>
             <img
               src={DONATE_ILLUSTRATION_URL}
               alt="দানের মাধ্যমে মানবতার সেবা"
               className="w-full max-w-md h-auto drop-shadow-[0_20px_40px_rgba(0,104,55,0.15)]"
               loading="lazy"
             />
+
             <h3 className="mt-6 text-2xl xl:text-3xl font-extrabold text-foreground leading-snug">
               আপনার দানে বদলে যাবে <span className="text-primary">অসংখ্য জীবন</span>
             </h3>
