@@ -550,7 +550,9 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
   const [budget, setBudget] = useState(p?.budget || 0);
   const [raised, setRaised] = useState(p?.raised || 0);
   const [beneficiaries, setBeneficiaries] = useState(p?.beneficiaries || 0);
+  const [donors, setDonors] = useState(p?.donors || 0);
   const [status, setStatus] = useState<ProjectEx["status"]>(p?.status || "draft");
+
   const [startDate, setStartDate] = useState(p?.startDate || new Date().toISOString().slice(0, 10));
   const [endDate, setEndDate] = useState(p?.endDate || "");
   const [tags, setTags] = useState<string[]>(p?.tags || []);
