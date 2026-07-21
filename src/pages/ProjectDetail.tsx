@@ -120,10 +120,19 @@ const ProjectDetail = () => {
                   <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
                 </div>
               )}
-              <Link to={`/donate?project=${project.slug}`} className="btn-donate w-full mt-6 text-base">
-                <Heart className="h-5 w-5" /> {t("projectDetail.donateCta")}
-              </Link>
-              <p className="mt-3 text-xs text-muted-foreground text-center">{t("projectDetail.safeNote")}</p>
+              {project.status !== "completed" && (
+                <>
+                  <Link to={`/donate?project=${project.slug}`} className="btn-donate w-full mt-6 text-base">
+                    <Heart className="h-5 w-5" /> {t("projectDetail.donateCta")}
+                  </Link>
+                  <p className="mt-3 text-xs text-muted-foreground text-center">{t("projectDetail.safeNote")}</p>
+                </>
+              )}
+              {project.status === "completed" && (
+                <div className="mt-6 rounded-btn bg-violet-50 text-violet-700 text-center text-sm font-bold py-3">
+                  এই প্রকল্পটি সম্পন্ন হয়েছে
+                </div>
+              )}
             </div>
           </aside>
         </div>
