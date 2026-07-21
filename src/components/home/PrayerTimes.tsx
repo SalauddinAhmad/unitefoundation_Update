@@ -279,20 +279,20 @@ export const PrayerTimes = () => {
 
 
           {/* Sehri / Iftar band */}
-          <div className="relative -mt-4 sm:mt-4 mx-4 sm:mx-6 grid grid-cols-2 gap-3 z-10">
-            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
-              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
+          <div className="relative mt-3 sm:mt-4 mx-3 sm:mx-6 grid grid-cols-2 gap-2 sm:gap-3 z-10">
+            <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
+              <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
             </div>
-            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
-              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
+            <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
+              <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
             </div>
           </div>
 
           {/* Prayer arch cards */}
-          <div className="relative p-4 sm:p-6 pt-6">
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+          <div className="relative p-3 sm:p-6 pt-4 sm:pt-6">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-3">
               {prayerTimes.map(({ key, time }) => {
                 const meta = PRAYERS.find((p) => p.key === key)!;
                 const isNext = nextName === key;
@@ -302,32 +302,32 @@ export const PrayerTimes = () => {
                   <div
                     key={key}
                     className={[
-                      "relative group flex flex-col items-center text-center px-2 py-4 transition-all",
-                      // Mihrab arch shape via border-radius
-                      "rounded-t-[3rem] rounded-b-xl border",
+                      "relative group flex flex-col items-center text-center px-1.5 sm:px-2 py-2.5 sm:py-4 transition-all",
+                      "rounded-t-[2rem] sm:rounded-t-[3rem] rounded-b-lg sm:rounded-b-xl border",
                       highlight
                         ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 -translate-y-1"
                         : "bg-muted/40 text-foreground border-border/60 hover:bg-primary/5 hover:border-primary/30",
                     ].join(" ")}
                   >
                     {isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">চলমান</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">চলমান</span>
                     )}
                     {isNext && !isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
                     )}
-                    <div className={["w-7 h-7 sm:w-8 sm:h-8 mb-1.5 mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
+                    <div className={["w-5 h-5 sm:w-8 sm:h-8 mb-1 sm:mb-1.5 mt-0.5 sm:mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
                       {meta.icon}
                     </div>
-                    <div className={["text-xs sm:text-sm font-semibold", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
-                    <div className={["text-sm sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
+                    <div className={["text-[11px] sm:text-sm font-semibold leading-tight", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
+                    <div className={["text-xs sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
                       {fmtHM(time).time}
                     </div>
-                    <div className={["text-[9px] uppercase tracking-wider", highlight ? "text-primary-foreground/75" : "text-muted-foreground"].join(" ")}>{fmtHM(time).ampm}</div>
+                    <div className={["text-[8px] sm:text-[9px] uppercase tracking-wider", highlight ? "text-primary-foreground/75" : "text-muted-foreground"].join(" ")}>{fmtHM(time).ampm}</div>
                   </div>
                 );
               })}
             </div>
+
 
             {/* Method selector + disclaimer */}
             <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border/60">
