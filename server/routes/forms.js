@@ -29,8 +29,21 @@ const extrasSchema = z.object({
   quote_source: z.string().max(200).optional().default(''),
   stats: z.array(z.object({ v: z.string().max(40), l: z.string().max(80) })).optional().default([]),
   banner_type: z.enum(['none', 'image', 'video']).optional().default('none'),
-  banner_url: z.string().max(10 * 1024 * 1024).optional().default(''),
+  // Store only short media/video URLs here. Base64 data URIs make PUT payloads
+  // large enough for cPanel/LiteSpeed to abort with browser "Failed to fetch".
+  banner_url: z.string().max(3000).optional().default(''),
 }).optional().default({});
+
+const DATA_URI_RE = /^data:[^;,]+;base64,/i;
+
+function stripDataUriBanner(extras = {}) {
+  const next = { ...extras };
+  if (typeof next.banner_url === 'string' && DATA_URI_RE.test(next.banner_url)) {
+    next.banner_type = 'none';
+    next.banner_url = '';
+  }
+  return next;
+}
 
 // Cache whether the `extras` column exists so we degrade gracefully
 // if migration 017 has not been applied to the target database yet.
@@ -70,6 +83,7 @@ router.get('/:key', asyncH(async (req, res) => {
 
 router.put('/:key', requireAuth, asyncH(async (req, res) => {
   if (!KEYS.includes(req.params.key)) return res.status(400).json({ message: 'Invalid key' });
+  if (req.body && req.body.extras) req.body.extras = stripDataUriBanner(req.body.extras);
   const body = z.object({
     title: z.string().max(200).optional().default(''),
     subtitle: z.string().max(1000).optional().default(''),
@@ -77,7 +91,7 @@ router.put('/:key', requireAuth, asyncH(async (req, res) => {
     extras: extrasSchema,
   }).parse(req.body);
   const fieldsJson = JSON.stringify(body.fields);
-  const extrasJson = JSON.stringify(body.extras || {});
+  const extrasJson = JSON.stringify(stripDataUriBanner(body.extras || {}));
   const withExtras = await hasExtrasColumn();
   if (withExtras) {
     await pool.execute(
@@ -97,12 +111,13 @@ router.put('/:key', requireAuth, asyncH(async (req, res) => {
 }));
 
 function hydrate(row) {
+  const extras = stripDataUriBanner(safeParse(row.extras, {}));
   return {
     form_key: row.form_key,
     title: row.title,
     subtitle: row.subtitle,
     fields: safeParse(row.fields, []),
-    extras: safeParse(row.extras, {}),
+    extras,
     updated_at: row.updated_at,
   };
 }
