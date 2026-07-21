@@ -12,8 +12,14 @@ import { useSettings } from "@/hooks/api/useDashboardData";
 const Projects = () => {
   const { t } = useTranslation();
   const { data: settings } = useSettings();
-  const { data: projects = [], isLoading } = useProjectsPublic();
+  const { data: projectsRaw = [], isLoading } = useProjectsPublic();
   const ALL = t("projectsPage.all");
+
+  // Active/ongoing projects always appear first; completed/draft after.
+  const projects = useMemo(() => {
+    const rank = (s?: string) => (s === "completed" ? 2 : s === "draft" ? 1 : 0);
+    return [...projectsRaw].sort((a, b) => rank(a.status) - rank(b.status));
+  }, [projectsRaw]);
 
   const cats = useMemo(() => {
     const s = new Set<string>();
