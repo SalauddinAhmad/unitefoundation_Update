@@ -65,6 +65,8 @@ export const useDonations = () => {
         area: r.area ?? "",
         date: r.date ?? (r.created_at ? String(r.created_at).slice(0, 10) : ""),
         status: r.status ?? "pending",
+        bank_tran_id: r.bank_tran_id ?? "",
+        card_type: r.card_type ?? "",
       }));
       return mergeExtras(EXTRAS.donations, normalized);
     },
