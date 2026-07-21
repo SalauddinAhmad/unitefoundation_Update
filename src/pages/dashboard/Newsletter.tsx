@@ -59,21 +59,33 @@ const Newsletter = () => {
     try { return new Date(d).toLocaleString("bn-BD"); } catch { return d; }
   };
 
+  const [composeOpen, setComposeOpen] = useState(false);
+
   return (
     <>
       <PageHeader
         title="নিউজলেটার সাবস্ক্রাইবার"
         subtitle={`মোট ${list.length} জন সাবস্ক্রাইবার`}
         actions={
-          <button
-            onClick={exportCsv}
-            disabled={list.length === 0}
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-primary/90 disabled:opacity-50"
-          >
-            <Download className="h-4 w-4" /> CSV ডাউনলোড
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setComposeOpen(true)}
+              disabled={list.length === 0}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-primary/90 disabled:opacity-50"
+            >
+              <Send className="h-4 w-4" /> সবাইকে ইমেইল পাঠান
+            </button>
+            <button
+              onClick={exportCsv}
+              disabled={list.length === 0}
+              className="inline-flex items-center gap-2 bg-secondary text-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-secondary/70 disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" /> CSV
+            </button>
+          </div>
         }
       />
+
 
       <Card pad={false} className="overflow-hidden">
         <div className="p-4 border-b border-border">
