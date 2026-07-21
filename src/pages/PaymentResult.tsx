@@ -50,22 +50,44 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
 
   const printReceipt = async () => {
     if (!tranId) { window.print(); return; }
-    // Download the same HTML receipt that goes via email (not open in a new tab).
+    // Fetch the same HTML receipt that goes via email, render it in a hidden
+    // iframe, then convert to PDF client-side (preserves Bangla fonts).
+    let iframe: HTMLIFrameElement | null = null;
     try {
-      const res = await fetch(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?download=1`);
+      const res = await fetch(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}`);
       if (!res.ok) throw new Error("failed");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `receipt-${tranId}.html`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      const html = await res.text();
+
+      iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.left = "-10000px";
+      iframe.style.top = "0";
+      iframe.style.width = "800px";
+      iframe.style.height = "1200px";
+      document.body.appendChild(iframe);
+      const doc = iframe.contentDocument!;
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      await new Promise((r) => setTimeout(r, 600));
+      try { await (doc as unknown as { fonts?: { ready: Promise<unknown> } }).fonts?.ready; } catch { /* ignore */ }
+
+      const html2pdf = (await import("html2pdf.js")).default;
+      await html2pdf()
+        .set({
+          margin: 0,
+          filename: `receipt-${tranId}.pdf`,
+          image: { type: "jpeg", quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+          jsPDF: { unit: "pt", format: "a4", orientation: "portrait" },
+        })
+        .from(doc.body)
+        .save();
     } catch {
-      // Fallback: direct navigation forces the browser to download via Content-Disposition
-      window.location.href = `${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?download=1`;
+      window.open(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?print=1`, "_blank");
+    } finally {
+      if (iframe) setTimeout(() => iframe?.remove(), 1000);
     }
   };
 
