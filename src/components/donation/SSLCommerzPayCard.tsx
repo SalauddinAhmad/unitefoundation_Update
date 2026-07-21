@@ -70,7 +70,7 @@ export function SSLCommerzPayCard() {
           {/* Illustration - desktop only */}
           <div className="hidden lg:flex flex-col items-center text-center animate-fade-in">
             <img
-              src={donateIllustration.url}
+              src={DONATE_ILLUSTRATION_URL}
               alt="দানের মাধ্যমে মানবতার সেবা"
               className="w-full max-w-md h-auto drop-shadow-[0_20px_40px_rgba(0,104,55,0.15)]"
               loading="lazy"
