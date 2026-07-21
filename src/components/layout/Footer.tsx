@@ -75,7 +75,8 @@ export const Footer = () => {
             </ul>
           </div>
 
-          <div className="col-span-2 md:col-span-1">
+          <div>
+
             <h4 className="font-semibold text-white mb-4">{t("footer.contact")}</h4>
             <ul className="space-y-3 text-sm text-white/75">
               <li className="flex gap-3"><MapPin className="h-4 w-4 mt-0.5 shrink-0 text-donate-highlight" /> <span>{site.address}</span></li>
