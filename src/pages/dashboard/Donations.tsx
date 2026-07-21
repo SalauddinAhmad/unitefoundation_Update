@@ -56,10 +56,12 @@ const Donations = () => {
               if (!filtered.length) { toast.error("এক্সপোর্টের জন্য কোনো রেকর্ড নেই"); return; }
               exportRowsAsCsv(`দানসমূহ-${new Date().toISOString().slice(0,10)}.csv`, filtered, [
                 { header: "ট্রানজেকশন ID", accessor: (r) => r.id },
+                { header: "ব্যাংক রেফারেন্স", accessor: (r) => r.bank_tran_id || "" },
                 { header: "নাম", accessor: (r) => r.name },
                 { header: "ফোন", accessor: (r) => r.phone },
                 { header: "পরিমাণ (৳)", accessor: (r) => r.amount },
                 { header: "মাধ্যম", accessor: (r) => r.method },
+                { header: "কার্ড / চ্যানেল", accessor: (r) => r.card_type || "" },
                 { header: "ক্ষেত্র", accessor: (r) => r.area },
                 { header: "তারিখ", accessor: (r) => r.date },
                 { header: "স্ট্যাটাস", accessor: (r) => r.status === "completed" ? "সম্পন্ন" : r.status === "pending" ? "অপেক্ষমাণ" : "ব্যর্থ" },
@@ -196,6 +198,7 @@ const Donations = () => {
             <thead>
               <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground bg-muted/40">
                 <th className="font-semibold px-5 py-3">ট্রানজেকশন</th>
+                <th className="font-semibold py-3">ব্যাংক রেফ.</th>
                 <th className="font-semibold py-3">দাতা</th>
                 <th className="font-semibold py-3">পরিমাণ</th>
                 <th className="font-semibold py-3">মাধ্যম</th>
@@ -206,20 +209,30 @@ const Donations = () => {
             </thead>
             <tbody>
               {isLoading && (
-                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">লোড হচ্ছে...</td></tr>
+                <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-muted-foreground">লোড হচ্ছে...</td></tr>
               )}
               {!isLoading && filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-5 py-8 text-center text-sm text-muted-foreground">কোনো রেকর্ড পাওয়া যায়নি</td></tr>
+                <tr><td colSpan={8} className="px-5 py-8 text-center text-sm text-muted-foreground">কোনো রেকর্ড পাওয়া যায়নি</td></tr>
               )}
               {filtered.map((d) => (
                 <tr key={d.id} className="border-t border-border hover:bg-muted/40 transition-colors">
                   <td className="px-5 py-3 font-mono text-xs text-foreground/70">{d.id}</td>
+                  <td className="py-3 font-mono text-xs text-foreground/60">
+                    {d.bank_tran_id ? (
+                      <span title={d.card_type || ""}>{d.bank_tran_id}</span>
+                    ) : (
+                      <span className="text-muted-foreground/50">—</span>
+                    )}
+                  </td>
                   <td className="py-3">
                     <div className="font-semibold">{d.name}</div>
                     <div className="text-xs text-muted-foreground">{d.phone}</div>
                   </td>
                   <td className="py-3 font-bold tabular-nums">৳ {d.amount.toLocaleString()}</td>
-                  <td className="py-3 text-foreground/80">{d.method}</td>
+                  <td className="py-3 text-foreground/80">
+                    <div>{d.method}</div>
+                    {d.card_type && <div className="text-[11px] text-muted-foreground">{d.card_type}</div>}
+                  </td>
                   <td className="py-3 text-foreground/80">{d.area}</td>
                   <td className="py-3 text-foreground/70 text-xs">{d.date}</td>
                   <td className="py-3 pr-5"><StatusBadge status={d.status} /></td>
@@ -228,7 +241,7 @@ const Donations = () => {
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-border bg-muted/40">
-                <td colSpan={2} className="px-5 py-3 text-xs font-bold uppercase text-muted-foreground">সম্পন্ন দান মোট</td>
+                <td colSpan={3} className="px-5 py-3 text-xs font-bold uppercase text-muted-foreground">সম্পন্ন দান মোট</td>
                 <td className="py-3 font-extrabold text-primary tabular-nums">৳ {total.toLocaleString()}</td>
                 <td colSpan={4}></td>
               </tr>
