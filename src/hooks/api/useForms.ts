@@ -38,7 +38,10 @@ export function useFormSchema(key: FormKey) {
     queryKey: ["form-schema", key],
     queryFn: () => fetchOne(key),
     staleTime: 60_000,
+    refetchOnMount: "always",
     initialData: () => readCache()[key] || FORM_DEFAULTS[key],
+    // Mark initialData as ancient so RQ still fetches fresh server data on mount.
+    initialDataUpdatedAt: 0,
   });
 }
 
@@ -50,6 +53,7 @@ export function useAllFormSchemas() {
       return Object.fromEntries(FORM_KEYS.map((k, i) => [k, results[i]])) as Record<FormKey, FormSchema>;
     },
     staleTime: 60_000,
+    refetchOnMount: "always",
   });
 }
 
