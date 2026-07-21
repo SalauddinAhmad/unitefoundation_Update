@@ -72,7 +72,9 @@ function apiToUi(row: ApiProject): ProjectEx {
     endDate: content?.endDate || "",
     tags: Array.isArray(content?.tags) ? content.tags : [],
     goals: Array.isArray(content?.goals) ? content.goals : [],
+    donors: Number(row.donors || 0),
   };
+
 }
 function uiToApi(p: ProjectEx): Partial<ApiProject> {
   const slug =
