@@ -8,7 +8,7 @@ const { uuid, token } = require('../utils/uid');
 const { authLimiter } = require('../middleware/rateLimit');
 const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
-const { tplLoginOtp, tplForgotPassword } = require('../services/emailTemplate');
+const { tplLoginOtp, tplForgotPassword, subjectOf } = require('../services/emailTemplate');
 const { logActivity } = require('../services/audit');
 
 const signToken = (u) => jwt.sign(
