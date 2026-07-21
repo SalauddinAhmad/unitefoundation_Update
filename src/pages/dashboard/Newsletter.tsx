@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, PageHeader } from "@/components/dashboard/DashboardUI";
-import { Mail, Search, Trash2, Download, Loader2 } from "lucide-react";
+import { Mail, Search, Trash2, Download, Loader2, Send, X, Eye } from "lucide-react";
 import { api, API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
+
 
 type Subscriber = {
   id: string;
