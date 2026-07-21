@@ -37,6 +37,9 @@ const EmailTemplatesPanel = () => {
   const [previewHtml, setPreviewHtml] = useState<string>("");
   const [previewLoading, setPreviewLoading] = useState(false);
   const previewTimer = useRef<number | null>(null);
+  const [htmlEditorOpen, setHtmlEditorOpen] = useState(false);
+  const [htmlEditorLoading, setHtmlEditorLoading] = useState(false);
+  const [htmlEditorValue, setHtmlEditorValue] = useState("");
 
   const load = async () => {
     setLoading(true);
