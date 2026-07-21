@@ -6,7 +6,7 @@ const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
-const { tplAdminCreated, tplPasswordChanged } = require('../services/emailTemplate');
+const { tplAdminCreated, tplPasswordChanged, subjectOf } = require('../services/emailTemplate');
 
 // Every /admin/* endpoint is super-admin only.
 router.use(requireAuth, requireSuperAdmin);
@@ -36,7 +36,7 @@ router.post('/users', asyncH(async (req, res) => {
     try {
       await sendMail({
         to: d.email,
-        subject: 'Unite Foundation — আপনার অ্যাডমিন অ্যাকাউন্ট প্রস্তুত',
+        subject: subjectOf('admin_created', { name: d.name, email: d.email }),
         html: tplAdminCreated({ name: d.name, email: d.email, password: d.password }),
       });
       emailSent = true;
@@ -59,7 +59,7 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
       try {
         await sendMail({
           to: rows[0].email,
-          subject: 'Unite Foundation — আপনার পাসওয়ার্ড রিসেট করা হয়েছে',
+          subject: subjectOf('password_changed'),
           html: tplPasswordChanged({ password: d.password }),
         });
         emailSent = true;

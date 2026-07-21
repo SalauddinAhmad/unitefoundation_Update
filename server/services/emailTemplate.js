@@ -322,10 +322,10 @@ function tplDonationReceipt({ name, tran_id, amount, method, purpose, date, bank
 </html>`;
 }
 
-// Return the current subject for a template key (used by send helpers if needed).
-function subjectOf(key) {
+// Return the current subject for a template key, with {{vars}} filled.
+function subjectOf(key, vars = {}) {
   const t = store.get(key);
-  return t ? t.subject : '';
+  return t ? fill(t.subject, vars) : '';
 }
 
 module.exports = {
