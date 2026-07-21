@@ -1,12 +1,38 @@
 import { Link } from "react-router-dom";
-import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv } from "lucide-react";
+import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { site } from "@/data/site";
 import logo from "@/assets/logo-white.svg";
 import footerBg from "@/assets/footer-bg.svg";
+import { useState } from "react";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 export const Footer = () => {
   const { t } = useTranslation();
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "done">("idle");
+
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      toast.error("সঠিক ইমেইল ঠিকানা দিন");
+      return;
+    }
+    setState("sending");
+    try {
+      await api.post("/newsletter/subscribe", { email: v, source: "footer" });
+      setState("done");
+      setEmail("");
+      toast.success("সাবস্ক্রিপশন সফল — ইনবক্স চেক করুন ✅");
+    } catch (err: unknown) {
+      const anyE = err as { data?: { message?: string }; message?: string };
+      toast.error(anyE?.data?.message || anyE?.message || "সাবস্ক্রাইব করা যায়নি");
+      setState("idle");
+    }
+  };
+
   return (
     <footer className="relative bg-footer text-footer-foreground overflow-hidden">
       {/* Decorative SVG background */}
