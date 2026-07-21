@@ -330,7 +330,7 @@ export const PrayerTimes = () => {
 
 
             {/* Method selector + disclaimer */}
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border/60">
+            <div className="mt-3 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border/60">
               <div className="relative w-full sm:w-auto">
                 <select
                   value={method}
