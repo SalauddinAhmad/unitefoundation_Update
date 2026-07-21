@@ -54,10 +54,10 @@ const Index = () => {
       <PrayerTimes />
       <ProgramsSection />
 
-      <ImpactStats />
       <HomeDonationChannelsSection />
       <GallerySection />
       <PartnersSection />
+      <ImpactStats />
       <VisitorCounter />
         </>
       )}
