@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 import { Link } from "react-router-dom";
 
-import sslLogo from "@/assets/payment/sslcommerz_pgw_logo.png.asset.json";
+const SSL_LOGO_URL = "/sslcommerz-pay.png";
 
 const PRESETS = [100, 500, 1000, 2500, 5000, 10000];
 
@@ -197,7 +197,7 @@ export function SSLCommerzPayCard() {
               Secured by SSLCommerz · 256-bit SSL
             </div>
             <img
-              src={sslLogo.url}
+              src={SSL_LOGO_URL}
               alt="SSLCommerz accepted payment methods"
               className="max-w-full h-auto opacity-80"
               loading="lazy"
