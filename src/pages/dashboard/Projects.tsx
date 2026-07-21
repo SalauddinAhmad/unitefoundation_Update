@@ -683,6 +683,10 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
               <Field label="উপকারভোগী সংখ্যা">
                 <input type="number" value={beneficiaries} onChange={(e) => setBeneficiaries(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
               </Field>
+              <Field label="দাতা সংখ্যা">
+                <input type="number" value={donors} onChange={(e) => setDonors(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
+              </Field>
+
             </Section>
 
             <Section title="বিবরণ" icon={Target}>
