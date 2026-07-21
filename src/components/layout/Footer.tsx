@@ -86,22 +86,31 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-white/10">
-          <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-xs text-white/70 text-center md:text-left">
-              <div className="font-semibold text-white/90 mb-1">নিরাপদ পেমেন্ট গ্রহণ করি</div>
-              <div>Visa · MasterCard · bKash · Nagad · Rocket · Internet Banking</div>
+        <div className="border-t border-white/10 bg-black/20">
+          <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-5">
+            <div className="flex items-center gap-3 text-center md:text-left">
+              <div className="hidden md:flex h-10 w-10 items-center justify-center rounded-full bg-donate-highlight/15 ring-1 ring-donate-highlight/30">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-donate-highlight" aria-hidden>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="m9 12 2 2 4-4" />
+                </svg>
+              </div>
+              <div>
+                <div className="text-sm font-semibold text-white tracking-wide">নিরাপদ ও এনক্রিপ্টেড পেমেন্ট</div>
+                <div className="text-xs text-white/60 mt-0.5">SSL-সুরক্ষিত · PCI-DSS কমপ্লায়েন্ট গেটওয়ে</div>
+              </div>
             </div>
-            <a href="https://securepay.sslcommerz.com/" target="_blank" rel="noopener noreferrer" className="bg-white rounded-md p-2 inline-block">
+            <div className="bg-white rounded-md p-2 inline-block shadow-sm">
               <img
                 src="https://securepay.sslcommerz.com/public/image/SSLCommerz-Pay-With-logo-All-Size-01.png"
                 alt="Pay with SSLCommerz — Visa, MasterCard, bKash, Nagad, Rocket, Internet Banking"
                 loading="lazy"
                 className="h-10 md:h-12 w-auto"
               />
-            </a>
+            </div>
           </div>
         </div>
+
 
         <div className="border-t border-white/10">
           <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/60 text-center">
