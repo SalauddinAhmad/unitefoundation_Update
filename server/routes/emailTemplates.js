@@ -43,6 +43,7 @@ router.put('/:key', requireAuth, requireSuperAdmin, asyncH(async (req, res) => {
   const body = req.body || {};
   const def = TEMPLATES[key];
   const allowedSlotKeys = new Set(def.fields.filter((f) => f.key !== 'subject').map((f) => f.key));
+  allowedSlotKeys.add('html_override'); // exposed via dedicated button, not in fields[]
 
   const cleanSlots = {};
   const inSlots = body.slots && typeof body.slots === 'object' ? body.slots : {};
@@ -87,30 +88,38 @@ router.post('/:key/reset', requireAuth, requireSuperAdmin, asyncH(async (req, re
   res.json({ ok: true, value: mergeWithDefaults(key) });
 }));
 
-// POST /email-templates/:key/preview  body: { subject?, slots? }
+// POST /email-templates/:key/preview  body: { subject?, slots?, raw? }
 // Renders the template with the provided override (without persisting)
-// and returns the resulting HTML.
+// and returns the resulting HTML. When `raw:true`, variables are kept
+// as {{placeholder}} strings AND html_override is forced empty — this
+// is used by the editor to fetch the current default design for editing.
 router.post('/:key/preview', requireAuth, requireSuperAdmin, asyncH(async (req, res) => {
   const key = req.params.key;
   if (!KEYS.includes(key)) return res.status(404).json({ message: 'Unknown template' });
 
   const def = TEMPLATES[key];
   const body = req.body || {};
-  const draft = mergeWithDefaults(key, {
-    subject: body.subject,
-    slots: body.slots || {},
-  });
+  const raw = !!body.raw;
+  const inSlots = body.slots && typeof body.slots === 'object' ? { ...body.slots } : {};
+  if (raw) inSlots.html_override = '';
+  const draft = mergeWithDefaults(key, { subject: body.subject, slots: inSlots });
 
   // Temporarily inject the draft into the store, render, then restore.
   const before = store.get(key);
   store.setLocal(key, draft);
   let html = '';
   try {
-    const sample = def.sample || {};
+    let sample = def.sample || {};
+    if (raw) {
+      // Replace every declared variable with a visible {{key}} placeholder.
+      sample = Object.fromEntries((def.variables || []).map((v) => [v.key, `{{${v.key}}}`]));
+      // Some templates use aliased sample keys — mirror them.
+      if (sample.reset_url) sample.resetUrl = sample.reset_url;
+    }
     switch (key) {
       case 'admin_created':      html = tpl.tplAdminCreated(sample); break;
       case 'password_changed':   html = tpl.tplPasswordChanged(sample); break;
-      case 'forgot_password':    html = tpl.tplForgotPassword({ resetUrl: sample.reset_url }); break;
+      case 'forgot_password':    html = tpl.tplForgotPassword({ resetUrl: sample.reset_url || sample.resetUrl }); break;
       case 'login_otp':          html = tpl.tplLoginOtp(sample); break;
       case 'donation_receipt':   html = tpl.tplDonationReceipt(sample); break;
       default: html = '<p>Preview unavailable.</p>';
