@@ -109,14 +109,15 @@ export const Footer = () => {
             <div>
               Design &amp; Developed by{" "}
               <a
-                href="https://unitefoundation.bd"
+                href="https://wa.me/message/IKFP3JMMZ66MJ1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-white/90 hover:text-white transition-colors"
               >
-                Unite IT
+                Salauddin Ahmad
               </a>
             </div>
+
           </div>
         </div>
       </div>
