@@ -27,6 +27,9 @@ export interface Project {
   beneficiaries?: number;
   urgent?: boolean;
   location: string;
+  status?: "active" | "completed" | "draft";
+  startDate?: string;
+  endDate?: string;
 }
 
 

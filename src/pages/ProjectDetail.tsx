@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2, HeartHandshake } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2, HeartHandshake, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -39,9 +39,27 @@ const ProjectDetail = () => {
         <div className="container-page grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="px-2.5 py-1 rounded-btn bg-accent text-accent-foreground text-xs font-bold">{project.category}</span>
+              {project.category && <span className="px-2.5 py-1 rounded-btn bg-accent text-accent-foreground text-xs font-bold">{project.category}</span>}
               {project.urgent && <span className="px-2.5 py-1 rounded-btn gradient-donate-bg text-white text-xs font-bold">{t("projectDetail.urgent")}</span>}
-              <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{project.location}</span>
+              {project.status && (
+                <span className={
+                  "px-2.5 py-1 rounded-btn text-xs font-bold " +
+                  (project.status === "active"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : project.status === "completed"
+                    ? "bg-violet-100 text-violet-700"
+                    : "bg-secondary text-muted-foreground")
+                }>
+                  {project.status === "active" ? "চলমান" : project.status === "completed" ? "সম্পন্ন" : "ড্রাফট"}
+                </span>
+              )}
+              {project.location && <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{project.location}</span>}
+              {(project.startDate || project.endDate) && (
+                <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {project.startDate || "—"}{project.endDate ? ` → ${project.endDate}` : ""}
+                </span>
+              )}
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold leading-tight">{project.title}</h1>
             <div className="rounded-card overflow-hidden mt-6 shadow-card">
