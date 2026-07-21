@@ -133,17 +133,18 @@ async function saveSchemaToSettings(key: FormKey, schema: FormSchema) {
 }
 
 async function fetchOne(key: FormKey): Promise<FormSchema> {
+  const settingsSchema = (await fetchSettingsFormSchemas())[key];
+  if (settingsSchema) {
+    writeCache(key, settingsSchema);
+    return settingsSchema;
+  }
+
   try {
     const r = await api.get<FormSchema & { extras?: FormSchema["extras"] }>(`/forms/${key}`, { auth: false });
     const schema = normalizeSchema(key, r);
     writeCache(key, schema);
     return schema;
   } catch {
-    const settingsSchema = (await fetchSettingsFormSchemas())[key];
-    if (settingsSchema) {
-      writeCache(key, settingsSchema);
-      return settingsSchema;
-    }
     return readCache()[key] || FORM_DEFAULTS[key];
   }
 }
@@ -193,6 +194,9 @@ export function useSaveFormSchema() {
       if (payloadBytes > 200_000) {
         throw new Error("ফর্মের ডেটা অস্বাভাবিক বড় — বড়/base64 ইমেজ সরিয়ে Media Library URL ব্যবহার করুন।");
       }
+      let saved = false;
+      let lastError: unknown;
+
       try {
         await api.put(`/forms/${key}`, {
           title: payload.title,
@@ -200,9 +204,22 @@ export function useSaveFormSchema() {
           fields: payload.fields,
           extras: payload.extras,
         });
-      } catch {
-        await saveSchemaToSettings(key, nextSchema);
+        saved = true;
+      } catch (error) {
+        lastError = error;
       }
+
+      try {
+        await saveSchemaToSettings(key, nextSchema);
+        saved = true;
+      } catch (error) {
+        lastError = error;
+      }
+
+      if (!saved) {
+        throw lastError instanceof Error ? lastError : new Error("ফর্ম সংরক্ষণ করা যায়নি");
+      }
+
       writeCache(key, nextSchema);
       return nextSchema;
     },
