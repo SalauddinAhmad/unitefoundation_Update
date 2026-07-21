@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { FORM_DEFAULTS, FORM_KEYS, type FormKey, type FormSchema } from "@/data/formDefaults";
-import { compressImage } from "@/lib/imageCompress";
 
 const LS_KEY = "uf_form_schemas__cache";
 
@@ -48,47 +47,6 @@ function normalizeSchema(key: FormKey, schema?: Partial<FormSchema>): FormSchema
   };
 }
 
-async function fileToDataUrl(file: File): Promise<string> {
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-async function dataUriToOptimizedFile(dataUri: string, filename: string): Promise<File> {
-  const response = await fetch(dataUri);
-  const blob = await response.blob();
-  const mime = blob.type || dataUri.match(DATA_URI_RE)?.[1] || "image/jpeg";
-  const ext = mime.includes("png") ? "png" : mime.includes("webp") ? "webp" : mime.includes("gif") ? "gif" : "jpg";
-  const original = new File([blob], `${filename}.${ext}`, { type: mime, lastModified: Date.now() });
-  return compressImage(original, { maxWidth: 1600, maxHeight: 1000, quality: 0.78, mimeType: "auto" });
-}
-
-async function uploadLegacyBannerDataUri(key: FormKey, dataUri: string) {
-  const file = await dataUriToOptimizedFile(dataUri, `form-${key}-banner`);
-
-  // Prefer real file upload after client-side compression. If a host blocks
-  // multipart, fall back to the existing JSON data-URI media endpoint.
-  try {
-    const form = new FormData();
-    form.append("file", file, file.name);
-    const saved = await api.post<{ id: string; url: string }>("/media", form);
-    return saved.url;
-  } catch {
-    const compactDataUri = await fileToDataUrl(file);
-    const saved = await api.post<{ id: string; url: string }>("/media", {
-      url: compactDataUri,
-      thumb_url: compactDataUri,
-      filename: file.name.replace(/\.[^.]+$/, ""),
-      mime: file.type || "image/jpeg",
-      size_bytes: file.size,
-    });
-    return saved.url;
-  }
-}
-
 async function fetchOne(key: FormKey): Promise<FormSchema> {
   try {
     const r = await api.get<FormSchema & { extras?: FormSchema["extras"] }>(`/forms/${key}`, { auth: false });
@@ -128,27 +86,13 @@ export function useSaveFormSchema() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ key, schema }: { key: FormKey; schema: FormSchema }) => {
-      // Guard: legacy banner_url stored as a base64 data URI can push the
-      // PUT payload past cPanel/LiteSpeed's request body limit and surface
-      // as a generic "Failed to fetch" in the browser. Upload it to the
-      // media library first and swap in the short URL before saving.
-      const extras = { ...(schema.extras || {}) } as NonNullable<FormSchema["extras"]>;
-      const banner = extras.banner_url || "";
-      if (extras.banner_type === "image" && isDataUri(banner)) {
-        try {
-          extras.banner_url = await uploadLegacyBannerDataUri(key, banner);
-        } catch {
-          // Last-resort safety: do not let an old oversized base64 banner stop
-          // all form edits from being saved. Admin can re-select the banner from
-          // the Media Library after the text/field changes are saved.
-          extras.banner_type = "none";
-          extras.banner_url = "";
-        }
-      } else if (isDataUri(banner)) {
-        extras.banner_type = "none";
-        extras.banner_url = "";
-      }
-      const nextSchema: FormSchema = { ...schema, extras };
+      // Do not attempt to upload legacy base64 banners during form save.
+      // On the live cPanel/LiteSpeed API, that extra media request is what can
+      // abort the whole save flow as a browser-level "Failed to fetch".
+      // New banners should be selected/uploaded via Media Library first, which
+      // gives us a short URL; legacy data URIs are cleared here so text/field
+      // edits always save.
+      const nextSchema = normalizeSchema(key, schema);
       await api.put(`/forms/${key}`, {
         title: nextSchema.title,
         subtitle: nextSchema.subtitle,
