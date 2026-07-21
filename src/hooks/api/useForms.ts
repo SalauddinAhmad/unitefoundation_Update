@@ -61,16 +61,34 @@ export function useSaveFormSchema() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ key, schema }: { key: FormKey; schema: FormSchema }) => {
-      // Persist to server FIRST — only cache locally after success so that
-      // other devices/browsers stay in sync with the backend truth.
+      // Guard: legacy banner_url stored as a base64 data URI can push the
+      // PUT payload past cPanel/LiteSpeed's request body limit and surface
+      // as a generic "Failed to fetch" in the browser. Upload it to the
+      // media library first and swap in the short URL before saving.
+      const extras = { ...(schema.extras || {}) } as NonNullable<FormSchema["extras"]>;
+      const banner = extras.banner_url || "";
+      if (extras.banner_type === "image" && banner.startsWith("data:")) {
+        try {
+          const saved = await api.post<{ id: string; url: string }>("/media", {
+            url: banner,
+            thumb_url: banner,
+            filename: `form-${key}-banner`,
+            mime: (banner.match(/^data:([^;,]+)/i)?.[1]) || "image/jpeg",
+          });
+          extras.banner_url = saved.url;
+        } catch {
+          throw new Error("ব্যানার ইমেজটি অনেক বড় — অনুগ্রহ করে 'ইমেজ' বাটন থেকে মিডিয়া লাইব্রেরির মাধ্যমে নতুন করে ছবি বাছুন।");
+        }
+      }
+      const nextSchema: FormSchema = { ...schema, extras };
       await api.put(`/forms/${key}`, {
-        title: schema.title,
-        subtitle: schema.subtitle,
-        fields: schema.fields,
-        extras: schema.extras || {},
+        title: nextSchema.title,
+        subtitle: nextSchema.subtitle,
+        fields: nextSchema.fields,
+        extras: nextSchema.extras || {},
       });
-      writeCache(key, schema);
-      return schema;
+      writeCache(key, nextSchema);
+      return nextSchema;
     },
     onSuccess: (schema, vars) => {
       qc.setQueryData(["form-schema", vars.key], schema);
@@ -78,6 +96,7 @@ export function useSaveFormSchema() {
     },
   });
 }
+
 
 export function resetToDefault(key: FormKey): FormSchema {
   return JSON.parse(JSON.stringify(FORM_DEFAULTS[key]));
