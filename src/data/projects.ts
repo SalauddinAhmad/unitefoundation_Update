@@ -24,6 +24,7 @@ export interface Project {
   target: number; // in BDT
   raised: number;
   donors: number;
+  beneficiaries?: number;
   urgent?: boolean;
   location: string;
 }
