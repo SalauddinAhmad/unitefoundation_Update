@@ -43,6 +43,7 @@ router.put('/:key', requireAuth, requireSuperAdmin, asyncH(async (req, res) => {
   const body = req.body || {};
   const def = TEMPLATES[key];
   const allowedSlotKeys = new Set(def.fields.filter((f) => f.key !== 'subject').map((f) => f.key));
+  allowedSlotKeys.add('html_override'); // exposed via dedicated button, not in fields[]
 
   const cleanSlots = {};
   const inSlots = body.slots && typeof body.slots === 'object' ? body.slots : {};
