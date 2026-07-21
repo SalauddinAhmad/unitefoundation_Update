@@ -222,6 +222,7 @@ export function SSLCommerzPayCard() {
             />
           </div>
         </div>
+        </div>
       </div>
     </section>
   );
