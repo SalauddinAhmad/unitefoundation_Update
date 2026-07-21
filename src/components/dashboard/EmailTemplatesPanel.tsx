@@ -280,19 +280,42 @@ const EmailTemplatesPanel = () => {
               );
             })}
 
-            <div className="flex items-center gap-2 pt-2">
-              <Btn onClick={save} disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                সংরক্ষণ করুন
-              </Btn>
-              <button
-                type="button"
-                onClick={reset}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                ডিফল্টে ফিরে যান
-              </button>
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Btn onClick={save} disabled={saving}>
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  সংরক্ষণ করুন
+                </Btn>
+                <button
+                  type="button"
+                  onClick={openHtmlEditor}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-secondary hover:bg-secondary/80 border border-border transition"
+                >
+                  <Code2 className="h-3.5 w-3.5" />
+                  HTML কোড দেখুন / এডিট করুন
+                </button>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  ডিফল্টে ফিরে যান
+                </button>
+              </div>
+              {draft.slots.html_override?.trim() && (
+                <div className="flex items-center gap-2 text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-2.5 py-1.5">
+                  <Code2 className="h-3 w-3" />
+                  কাস্টম HTML সক্রিয় — উপরের অন্য ফিল্ডগুলো ইমেইলে ব্যবহার হবে না।
+                  <button
+                    type="button"
+                    onClick={clearHtmlOverride}
+                    className="ml-auto underline hover:text-emerald-900"
+                  >
+                    সরান
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -317,6 +340,76 @@ const EmailTemplatesPanel = () => {
             <p className="text-[11px] text-muted-foreground">
               প্রিভিউতে নমুনা তথ্য (যেমন দাতার নাম, পরিমাণ) দেখানো হচ্ছে — আসল ইমেইলে প্রকৃত মান বসবে।
             </p>
+          </div>
+        </div>
+      )}
+
+      {htmlEditorOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card rounded-2xl border border-border w-full max-w-6xl h-[90vh] flex flex-col shadow-2xl">
+            <div className="flex items-start justify-between gap-4 p-5 border-b border-border">
+              <div>
+                <h4 className="font-bold text-sm">HTML কোড — {schema?.label}</h4>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  সম্পূর্ণ HTML এডিট করুন। {schema?.variables.map((v) => `{{${v.key}}}`).join(", ")} ভেরিয়েবল ব্যবহার করা যাবে।
+                  ফাঁকা রেখে "প্রয়োগ করুন" চাপলে ডিফল্ট ডিজাইন ব্যবহার হবে।
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHtmlEditorOpen(false)}
+                className="p-1.5 rounded-lg hover:bg-secondary transition"
+                aria-label="বন্ধ করুন"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 grid lg:grid-cols-2 gap-0 min-h-0">
+              <div className="p-4 border-r border-border min-h-0 flex flex-col">
+                <div className="text-[11px] font-semibold text-foreground/70 mb-2">HTML সোর্স</div>
+                {htmlEditorLoading ? (
+                  <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" /> বর্তমান ডিজাইন লোড হচ্ছে…
+                  </div>
+                ) : (
+                  <textarea
+                    value={htmlEditorValue}
+                    onChange={(e) => setHtmlEditorValue(e.target.value)}
+                    spellCheck={false}
+                    className="flex-1 w-full px-3 py-2 rounded-lg bg-secondary/60 border border-border focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none text-[11px] font-mono resize-none"
+                  />
+                )}
+              </div>
+              <div className="p-4 min-h-0 flex flex-col">
+                <div className="text-[11px] font-semibold text-foreground/70 mb-2">প্রিভিউ (এডিটরের HTML)</div>
+                <div className="flex-1 rounded-lg border border-border overflow-hidden bg-white">
+                  <iframe
+                    title="HTML editor preview"
+                    srcDoc={htmlEditorValue}
+                    sandbox=""
+                    className="w-full h-full"
+                    style={{ border: 0, background: "#fff" }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 p-4 border-t border-border flex-wrap">
+              <Btn onClick={applyHtmlEditor}>
+                <Save className="h-4 w-4" />
+                প্রয়োগ করুন
+              </Btn>
+              <button
+                type="button"
+                onClick={clearHtmlOverride}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                কাস্টম HTML সরান
+              </button>
+              <div className="ml-auto text-[11px] text-muted-foreground">
+                "প্রয়োগ করুন" চাপলে editor বন্ধ হবে — এরপর নিচের "সংরক্ষণ করুন" চেপে ইমেইলে সেট করুন।
+              </div>
+            </div>
           </div>
         </div>
       )}
