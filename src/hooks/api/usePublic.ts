@@ -74,13 +74,18 @@ const num = (v: unknown, def = 0) => (typeof v === "number" ? v : v ? Number(v) 
 export function apiToProject(row: ApiProject): UiProject {
   const target = num(row.target || row.budget);
   const raised = num(row.raised);
+  let parsed: any = {};
+  if (row.content && typeof row.content === "string") {
+    try { parsed = JSON.parse(row.content); } catch { parsed = {}; }
+  }
+  const html = typeof parsed?.html === "string" && parsed.html ? parsed.html : (row.description || "");
   return {
     id: row.id,
     slug: row.slug || row.id,
     title: row.title,
     category: (row.category as UiProject["category"]) || "দাওয়াহ",
-    shortDescription: row.short_description || row.description?.slice(0, 160) || "",
-    description: row.description || "",
+    shortDescription: row.short_description || "",
+    description: html,
     image: row.cover_image_url || "",
     gallery: Array.isArray(row.gallery) ? row.gallery : row.cover_image_url ? [row.cover_image_url] : [],
     target,
@@ -89,6 +94,9 @@ export function apiToProject(row: ApiProject): UiProject {
     beneficiaries: num(row.beneficiaries),
     urgent: Boolean(row.urgent),
     location: row.location || "",
+    status: row.status,
+    startDate: parsed?.startDate || "",
+    endDate: parsed?.endDate || "",
   };
 }
 
