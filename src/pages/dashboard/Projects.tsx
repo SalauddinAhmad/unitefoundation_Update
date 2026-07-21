@@ -29,7 +29,9 @@ type ProjectEx = Project & {
   tags?: string[];
   goals?: string[];
   slug?: string;
+  donors?: number;
 };
+
 
 const DEFAULT_CATEGORIES = ["জরুরি সহায়তা", "শিশু কল্যাণ", "স্বাস্থ্যসেবা", "মৌসুমি সহায়তা", "ইবাদাহ", "শিক্ষা", "যেখানে প্রয়োজন"];
 const CUSTOM_CATS_KEY = "projectCategoriesCustom";
@@ -70,7 +72,9 @@ function apiToUi(row: ApiProject): ProjectEx {
     endDate: content?.endDate || "",
     tags: Array.isArray(content?.tags) ? content.tags : [],
     goals: Array.isArray(content?.goals) ? content.goals : [],
+    donors: Number(row.donors || 0),
   };
+
 }
 function uiToApi(p: ProjectEx): Partial<ApiProject> {
   const slug =
@@ -88,11 +92,13 @@ function uiToApi(p: ProjectEx): Partial<ApiProject> {
     target: Number(p.budget) || 0,
     raised: Number(p.raised) || 0,
     beneficiaries: Number(p.beneficiaries) || 0,
+    donors: Number(p.donors) || 0,
     location: p.location || "",
     status: (p.status as any) || "draft",
     cover_image_url: p.cover || "",
   };
 }
+
 
 export default function Projects() {
   const { data: rows = [] } = useProjectsAdmin();
@@ -544,7 +550,9 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
   const [budget, setBudget] = useState(p?.budget || 0);
   const [raised, setRaised] = useState(p?.raised || 0);
   const [beneficiaries, setBeneficiaries] = useState(p?.beneficiaries || 0);
+  const [donors, setDonors] = useState(p?.donors || 0);
   const [status, setStatus] = useState<ProjectEx["status"]>(p?.status || "draft");
+
   const [startDate, setStartDate] = useState(p?.startDate || new Date().toISOString().slice(0, 10));
   const [endDate, setEndDate] = useState(p?.endDate || "");
   const [tags, setTags] = useState<string[]>(p?.tags || []);
@@ -582,7 +590,7 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
     const finalSlug = (slug.trim() ? slugify(slug) : slugify(title)) || `p-${Date.now()}`;
     const next: ProjectEx = {
       id: p?.id || `P-${Math.floor(Math.random() * 900) + 100}`,
-      title: title.trim(), category, budget, raised, beneficiaries,
+      title: title.trim(), category, budget, raised, beneficiaries, donors,
       status: publish ? (status === "draft" ? "active" : status) : status,
       cover, description: description.trim() || html.replace(/<[^>]+>/g, "").slice(0, 140),
       location, startDate, endDate, tags, goals, html,
@@ -675,6 +683,10 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
               <Field label="উপকারভোগী সংখ্যা">
                 <input type="number" value={beneficiaries} onChange={(e) => setBeneficiaries(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
               </Field>
+              <Field label="দাতা সংখ্যা">
+                <input type="number" value={donors} onChange={(e) => setDonors(+e.target.value)} className="w-full px-3 py-2 rounded-lg bg-card border border-border text-sm" />
+              </Field>
+
             </Section>
 
             <Section title="বিবরণ" icon={Target}>
