@@ -2,7 +2,7 @@
 // Reads from backend, falls back to bundled defaults + localStorage cache.
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { FORM_DEFAULTS, FORM_KEYS, type FormKey, type FormSchema } from "@/data/formDefaults";
+import { FORM_DEFAULTS, FORM_KEYS, type FormExtras, type FormField, type FormKey, type FormSchema } from "@/data/formDefaults";
 
 const LS_KEY = "uf_form_schemas__cache_v2";
 const LEGACY_LS_KEYS = ["uf_form_schemas__cache"];
@@ -46,7 +46,7 @@ function cleanOptions(value: unknown): string[] {
     : [];
 }
 
-function normalizeField(field: Partial<FormSchema["fields"][number]>): FormSchema["fields"][number] {
+function normalizeField(field: Partial<FormField>): FormField {
   const type = field.type || "text";
   return {
     key: cleanString(field.key, 64).replace(/[^a-zA-Z0-9_]/g, ""),
@@ -61,7 +61,7 @@ function normalizeField(field: Partial<FormSchema["fields"][number]>): FormSchem
   };
 }
 
-function normalizeExtras(extras?: Partial<FormSchema["extras"]>): FormSchema["extras"] {
+function normalizeExtras(extras?: Partial<FormExtras>): FormExtras {
   const next = {
     intro: cleanString(extras?.intro, 4000),
     bullets_title: cleanString(extras?.bullets_title, 200),
