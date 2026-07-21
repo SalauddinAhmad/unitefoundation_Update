@@ -56,10 +56,12 @@ const Donations = () => {
               if (!filtered.length) { toast.error("এক্সপোর্টের জন্য কোনো রেকর্ড নেই"); return; }
               exportRowsAsCsv(`দানসমূহ-${new Date().toISOString().slice(0,10)}.csv`, filtered, [
                 { header: "ট্রানজেকশন ID", accessor: (r) => r.id },
+                { header: "ব্যাংক রেফারেন্স", accessor: (r) => r.bank_tran_id || "" },
                 { header: "নাম", accessor: (r) => r.name },
                 { header: "ফোন", accessor: (r) => r.phone },
                 { header: "পরিমাণ (৳)", accessor: (r) => r.amount },
                 { header: "মাধ্যম", accessor: (r) => r.method },
+                { header: "কার্ড / চ্যানেল", accessor: (r) => r.card_type || "" },
                 { header: "ক্ষেত্র", accessor: (r) => r.area },
                 { header: "তারিখ", accessor: (r) => r.date },
                 { header: "স্ট্যাটাস", accessor: (r) => r.status === "completed" ? "সম্পন্ন" : r.status === "pending" ? "অপেক্ষমাণ" : "ব্যর্থ" },
