@@ -590,7 +590,7 @@ function ProjectEditor({ p, categories, defaults, onAddCategory, onRemoveCategor
     const finalSlug = (slug.trim() ? slugify(slug) : slugify(title)) || `p-${Date.now()}`;
     const next: ProjectEx = {
       id: p?.id || `P-${Math.floor(Math.random() * 900) + 100}`,
-      title: title.trim(), category, budget, raised, beneficiaries,
+      title: title.trim(), category, budget, raised, beneficiaries, donors,
       status: publish ? (status === "draft" ? "active" : status) : status,
       cover, description: description.trim() || html.replace(/<[^>]+>/g, "").slice(0, 140),
       location, startDate, endDate, tags, goals, html,
