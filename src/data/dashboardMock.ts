@@ -28,6 +28,7 @@ export const channelSplit = [
 export type Donation = {
   id: string; name: string; phone: string; amount: number; method: string;
   area: string; date: string; status: "completed" | "pending" | "failed";
+  bank_tran_id?: string; card_type?: string;
 };
 
 export const donations: Donation[] = [
