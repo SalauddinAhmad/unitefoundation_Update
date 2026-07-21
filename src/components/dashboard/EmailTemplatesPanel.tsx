@@ -129,6 +129,42 @@ const EmailTemplatesPanel = () => {
     }
   };
 
+  const openHtmlEditor = async () => {
+    if (!activeKey) return;
+    setHtmlEditorOpen(true);
+    const existing = draft.slots.html_override?.trim();
+    if (existing) {
+      setHtmlEditorValue(draft.slots.html_override);
+      return;
+    }
+    // No override yet — fetch the current default design with variables kept as {{placeholders}}.
+    setHtmlEditorLoading(true);
+    try {
+      const html = await api.post<string>(
+        `/email-templates/${activeKey}/preview`,
+        { subject: draft.subject, slots: { ...draft.slots, html_override: "" }, raw: true },
+      );
+      setHtmlEditorValue(typeof html === "string" ? html : String(html));
+    } catch {
+      setHtmlEditorValue("<!-- বর্তমান ডিজাইন লোড করা যায়নি — এখানে নিজের HTML পেস্ট করুন -->");
+    } finally {
+      setHtmlEditorLoading(false);
+    }
+  };
+
+  const applyHtmlEditor = () => {
+    setField("html_override", htmlEditorValue);
+    setHtmlEditorOpen(false);
+    toast({ title: "আপডেট করা হয়েছে", description: "নিচে সংরক্ষণ করুন-এ ক্লিক করে সেভ করুন।" });
+  };
+
+  const clearHtmlOverride = () => {
+    if (!confirm("কাস্টম HTML সরিয়ে ডিফল্ট ডিজাইনে ফিরে যেতে চান? (সেভ করার পর কার্যকর হবে)")) return;
+    setField("html_override", "");
+    setHtmlEditorValue("");
+    setHtmlEditorOpen(false);
+  };
+
   if (loading) {
     return (
       <Card>
