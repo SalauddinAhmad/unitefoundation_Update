@@ -217,7 +217,7 @@ export function SSLCommerzPayCard() {
             <img
               src={SSL_LOGO_URL}
               alt="SSLCommerz accepted payment methods"
-              className="max-w-full h-auto opacity-80"
+              className="h-6 sm:h-7 w-auto opacity-80"
               loading="lazy"
             />
           </div>
