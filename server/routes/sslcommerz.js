@@ -10,7 +10,7 @@ const asyncH = require('../utils/asyncH');
 const { shortId } = require('../utils/uid');
 const { validateEmail } = require('../utils/emailValidator');
 const { sendMail } = require('../services/mailer');
-const { tplDonationReceipt } = require('../services/emailTemplate');
+const { tplDonationReceipt, subjectOf } = require('../services/emailTemplate');
 
 // Send receipt email once per donation (idempotent — checks receipt_sent flag)
 async function sendReceiptOnce(tran_id) {
