@@ -10,6 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { api } from "@/lib/api";
 import { EXTRAS, mergeExtras } from "@/lib/localExtras";
+import type { FormKey, FormSchema } from "@/data/formDefaults";
 import {
   donations as mockDonations,
   volunteerApps as mockVolunteers,
@@ -335,6 +336,7 @@ export type SiteSettings = {
   mission_section: MissionSection;
   page_heroes: PageHeroes;
   founder: FounderContent;
+  form_schemas?: Partial<Record<FormKey, FormSchema>>;
 };
 
 export type PageHeroes = {
@@ -621,6 +623,7 @@ const defaultSettings: SiteSettings = {
     whatsapp: "https://wa.me/message/QNW22PYYZM4ZN1",
     x: "https://x.com/abdullah6852443",
   },
+  form_schemas: {},
 };
 
 function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings {
@@ -649,6 +652,7 @@ function withDefaults(s: Partial<SiteSettings> | null | undefined): SiteSettings
     },
     page_heroes: { ...defaultSettings.page_heroes, ...(s?.page_heroes || {}) },
     founder: { ...defaultSettings.founder, ...(s?.founder || {}) },
+    form_schemas: { ...(s?.form_schemas || {}) },
   };
 }
 
