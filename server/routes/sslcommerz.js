@@ -241,11 +241,15 @@ router.get('/receipt/:id', asyncH(async (req, res) => {
     date: d.created_at ? new Date(d.created_at).toLocaleString('bn-BD') : '',
   });
 
-  // Optional ?print=1 → auto-open the browser print dialog (used by frontend button)
+  // Optional ?print=1 → auto-open the browser print dialog
+  // Optional ?download=1 → force browser to save as .html file (same email design)
   const withPrint = req.query.print
     ? html.replace('</body>', `<script>window.addEventListener('load',()=>{setTimeout(()=>window.print(),300)});</script></body>`)
     : html;
 
+  if (req.query.download) {
+    res.setHeader('Content-Disposition', `attachment; filename="receipt-${d.id}.html"`);
+  }
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(withPrint);
 }));

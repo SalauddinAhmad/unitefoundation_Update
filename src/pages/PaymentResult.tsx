@@ -48,13 +48,24 @@ export default function PaymentResult({ kind }: { kind: Kind }) {
       .finally(() => setLoading(false));
   }, [tranId]);
 
-  const printReceipt = () => {
+  const printReceipt = async () => {
     if (!tranId) { window.print(); return; }
-    const url = `${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?print=1`;
-    const w = window.open(url, "_blank", "noopener,noreferrer");
-    // Fallback if popup was blocked
-    if (!w || w.closed || typeof w.closed === "undefined") {
-      window.location.href = url;
+    // Download the same HTML receipt that goes via email (not open in a new tab).
+    try {
+      const res = await fetch(`${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?download=1`);
+      if (!res.ok) throw new Error("failed");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `receipt-${tranId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch {
+      // Fallback: direct navigation forces the browser to download via Content-Disposition
+      window.location.href = `${API_BASE_URL}/sslcommerz/receipt/${encodeURIComponent(tranId)}?download=1`;
     }
   };
 
