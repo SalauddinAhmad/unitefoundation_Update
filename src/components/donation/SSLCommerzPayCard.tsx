@@ -197,7 +197,7 @@ export function SSLCommerzPayCard() {
               Secured by SSLCommerz · 256-bit SSL
             </div>
             <img
-              src={sslLogo.url}
+              src={SSL_LOGO_URL}
               alt="SSLCommerz accepted payment methods"
               className="max-w-full h-auto opacity-80"
               loading="lazy"
