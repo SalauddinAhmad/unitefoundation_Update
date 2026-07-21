@@ -4,7 +4,7 @@
 // Super-admin only (backend enforces).
 // ============================================================
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, RotateCcw, Save, Eye } from "lucide-react";
+import { Loader2, RotateCcw, Save, Eye, Code2, X } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Card, Btn } from "@/components/dashboard/DashboardUI";
