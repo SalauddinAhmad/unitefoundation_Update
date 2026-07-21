@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/api";
 import { Link } from "react-router-dom";
+import donateIllustration from "@/assets/donation/donate-illustration.png.asset.json";
 
 const SSL_LOGO_URL = "/sslcommerz-pay.png";
 
