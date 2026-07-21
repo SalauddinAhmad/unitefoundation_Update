@@ -67,13 +67,11 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">{t("footer.ourProjects")}</h4>
+            <h4 className="font-semibold text-white mb-4">নীতিমালা</h4>
             <ul className="space-y-2.5 text-sm text-white/75">
-              <li><Link to="/projects/madrasa-project" className="hover:text-white transition-colors">{t("footer.projects.madrasa")}</Link></li>
-              <li><Link to="/projects/yatim-project" className="hover:text-white transition-colors">{t("footer.projects.yatim")}</Link></li>
-              <li><Link to="/projects/palestine-food" className="hover:text-white transition-colors">{t("footer.projects.palestine")}</Link></li>
-              <li><Link to="/projects/qarz-e-hasanah" className="hover:text-white transition-colors">{t("footer.projects.qarz")}</Link></li>
-              <li><Link to="/projects/unite-tv" className="hover:text-white transition-colors">{t("footer.projects.tv")}</Link></li>
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link></li>
+              <li><Link to="/terms-conditions" className="hover:text-white transition-colors">টার্মস অ্যান্ড কন্ডিশনস</Link></li>
+              <li><Link to="/refund-policy" className="hover:text-white transition-colors">রিফান্ড পলিসি</Link></li>
             </ul>
           </div>
 
