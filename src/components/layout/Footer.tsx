@@ -35,7 +35,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="container-page py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div className="container-page py-14 grid grid-cols-2 md:grid-cols-3 gap-10">
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="inline-block">
               <img
