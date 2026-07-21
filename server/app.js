@@ -18,13 +18,11 @@ const app = express();
 // --- Core middleware ---
 app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-// Body limits raised to 25mb so base64-encoded image uploads
-// (gallery / blog cover / project cover) don't get truncated.
-app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ extended: true, limit: '25mb' }));
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // --- CORS ---
+// Keep CORS before body parsing. If a dashboard save request is rejected while
+// parsing JSON (large/invalid body), the browser still receives a readable JSON
+// error instead of a generic "Failed to fetch" network failure.
 // Built-in safe defaults so the site keeps working even if CORS_ORIGINS
 // env var is missing on the server (e.g. after re-creating the Node.js app).
 const DEFAULT_ORIGINS = [
@@ -48,6 +46,27 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
 }));
+
+// Form Manager saves should be tiny JSON payloads. If a stale dashboard tab or
+// old localStorage cache still tries to send embedded base64 media, reject it
+// before express.json() reads the full body; shared cPanel/LiteSpeed can time
+// out on those large PUTs and the browser reports only "Failed to fetch".
+app.use('/forms', (req, res, next) => {
+  if (!['POST', 'PUT', 'PATCH'].includes(req.method)) return next();
+  const len = Number(req.headers['content-length'] || 0);
+  if (len > 200 * 1024) {
+    return res.status(413).json({
+      message: 'Form payload is too large. Remove embedded/base64 images and choose images from Media Library again.',
+    });
+  }
+  return next();
+});
+
+// Body limits raised to 25mb so base64-encoded image uploads
+// (gallery / blog cover / project cover) don't get truncated.
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // --- Global rate limit ---
 app.use(globalLimiter);
