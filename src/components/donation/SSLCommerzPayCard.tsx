@@ -66,7 +66,24 @@ export function SSLCommerzPayCard() {
       />
 
       <div className="container-page relative">
-        <div className="w-full max-w-[440px] mx-auto bg-card rounded-3xl shadow-[var(--shadow-card-hover)] border border-border overflow-hidden animate-fade-in">
+        <div className="mx-auto grid lg:grid-cols-[1fr_440px] lg:gap-12 lg:items-center max-w-5xl">
+          {/* Illustration - desktop only */}
+          <div className="hidden lg:flex flex-col items-center text-center animate-fade-in">
+            <img
+              src={donateIllustration.url}
+              alt="দানের মাধ্যমে মানবতার সেবা"
+              className="w-full max-w-md h-auto drop-shadow-[0_20px_40px_rgba(0,104,55,0.15)]"
+              loading="lazy"
+            />
+            <h3 className="mt-6 text-2xl xl:text-3xl font-extrabold text-foreground leading-snug">
+              আপনার দানে বদলে যাবে <span className="text-primary">অসংখ্য জীবন</span>
+            </h3>
+            <p className="mt-3 text-sm xl:text-base text-muted-foreground leading-relaxed max-w-md">
+              সুন্নাহর অনুসরণে মানবতার কল্যাণে — আপনার ছোট্ট অবদানই হতে পারে কারও জন্য বড় সহায়।
+            </p>
+          </div>
+
+          <div className="w-full max-w-[440px] mx-auto lg:mx-0 bg-card rounded-3xl shadow-[var(--shadow-card-hover)] border border-border overflow-hidden animate-fade-in">
           {/* Compact centered header */}
           <div className="bg-primary text-primary-foreground px-6 py-7 text-center">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-foreground/10 rounded-full mb-3 border border-primary-foreground/15">
