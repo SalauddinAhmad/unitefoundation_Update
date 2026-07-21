@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2 } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2, HeartHandshake } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -85,6 +85,9 @@ const ProjectDetail = () => {
                   </div>
                   <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
                     <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
+                    {!!project.beneficiaries && (
+                      <Stat icon={HeartHandshake} label="উপকারভোগী" value={`${toBnNum(project.beneficiaries)} জন`} />
+                    )}
                     <Stat icon={TrendingUp} label={t("projectDetail.raisedPct")} value={`${toBnNum(Math.round((project.raised/project.target)*100))}%`} />
                     <Stat icon={Target} label={t("projectDetail.remaining")} value={`৳${toBnNum(formatBDT(Math.max(0, project.target - project.raised)))}`} />
                     <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
@@ -93,6 +96,9 @@ const ProjectDetail = () => {
               ) : (
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
+                  {!!project.beneficiaries && (
+                    <Stat icon={HeartHandshake} label="উপকারভোগী" value={`${toBnNum(project.beneficiaries)} জন`} />
+                  )}
                   <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
                 </div>
               )}
