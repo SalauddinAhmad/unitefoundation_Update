@@ -33,7 +33,7 @@ async function sendReceiptOnce(tran_id) {
     });
     await sendMail({
       to: d.email,
-      subject: `দানের রসিদ — ${d.id}`,
+      subject: subjectOf('donation_receipt', { name: d.name, tran_id: d.id, amount: d.amount }),
       html,
     });
     await pool.execute(`UPDATE donations SET receipt_sent=1 WHERE id=?`, [tran_id]);
