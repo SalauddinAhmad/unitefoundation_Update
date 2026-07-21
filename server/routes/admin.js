@@ -59,7 +59,7 @@ router.post('/users/:id/reset-credentials', asyncH(async (req, res) => {
       try {
         await sendMail({
           to: rows[0].email,
-          subject: 'Unite Foundation — আপনার পাসওয়ার্ড রিসেট করা হয়েছে',
+          subject: subjectOf('password_changed'),
           html: tplPasswordChanged({ password: d.password }),
         });
         emailSent = true;
