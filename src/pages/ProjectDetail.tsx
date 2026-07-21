@@ -129,8 +129,9 @@ const ProjectDetail = () => {
                 </>
               )}
               {project.status === "completed" && (
-                <div className="mt-6 rounded-btn bg-violet-50 text-violet-700 text-center text-sm font-bold py-3">
-                  এই প্রকল্পটি সম্পন্ন হয়েছে
+                <div className="mt-6 rounded-btn bg-violet-50 text-violet-700 text-center py-4 px-3">
+                  <div className="text-lg font-extrabold">আলহামদুলিল্লাহ</div>
+                  <div className="text-sm font-semibold mt-1">এই প্রকল্পটি সম্পন্ন হয়েছে</div>
                 </div>
               )}
             </div>
