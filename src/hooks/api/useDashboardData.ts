@@ -54,7 +54,20 @@ export const useDonations = () => {
   useExtrasInvalidator(EXTRAS.donations, ["donations"]);
   return useQuery({
     queryKey: ["donations"],
-    queryFn: async () => mergeExtras(EXTRAS.donations, await tryApi("/donations", mockDonations)),
+    queryFn: async () => {
+      const rows = await tryApi<any[]>("/donations", mockDonations as any);
+      const normalized = (Array.isArray(rows) ? rows : []).map((r: any) => ({
+        id: String(r.id ?? ""),
+        name: r.name ?? "",
+        phone: r.phone ?? "",
+        amount: Number(r.amount) || 0,
+        method: r.method ?? "",
+        area: r.area ?? "",
+        date: r.date ?? (r.created_at ? String(r.created_at).slice(0, 10) : ""),
+        status: r.status ?? "pending",
+      }));
+      return mergeExtras(EXTRAS.donations, normalized);
+    },
     staleTime: STALE,
   });
 };
