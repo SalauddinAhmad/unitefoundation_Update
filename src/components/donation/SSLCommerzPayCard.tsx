@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { CreditCard, Loader2, ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
+import { CreditCard, Loader2, ShieldCheck, Heart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
@@ -19,6 +18,7 @@ export function SSLCommerzPayCard() {
   });
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showExtra, setShowExtra] = useState(false);
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -54,8 +54,7 @@ export function SSLCommerzPayCard() {
   };
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-24 bg-gradient-to-b from-background via-accent/30 to-background">
-      {/* Subtle geometric backdrop */}
+    <section className="relative overflow-hidden py-14 md:py-20 bg-gradient-to-b from-background via-accent/30 to-background">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -66,48 +65,33 @@ export function SSLCommerzPayCard() {
       />
 
       <div className="container-page relative">
-        {/* Header */}
-        <div className="max-w-2xl mx-auto text-center animate-fade-in">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            SSLCommerz দ্বারা নিরাপদ
-          </div>
-          <h2 className="heading-display text-3xl md:text-5xl font-extrabold tracking-tight text-foreground mt-5">
-            কার্ড / মোবাইল ব্যাংকিং-এ দান করুন
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground">
-            SSLCommerz-এর সুরক্ষিত গেটওয়ে দিয়ে মাত্র কয়েক মুহূর্তে আপনার দান পৌঁছে দিন।
-          </p>
-        </div>
-
-        {/* Card */}
-        <div className="mt-12 max-w-3xl mx-auto rounded-3xl overflow-hidden bg-card border border-border shadow-[var(--shadow-card-hover)]">
-          {/* Header strip */}
-          <div className="relative px-6 md:px-10 py-5 flex flex-wrap items-center justify-between gap-4 bg-primary text-primary-foreground">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full flex items-center justify-center bg-primary-foreground/10 border border-primary-foreground/20">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-[10px] font-bold tracking-[0.24em] uppercase text-primary-foreground/80">
-                  Secured Gateway
-                </div>
-                <div className="text-sm font-semibold">SSLCommerz এনক্রিপ্টেড</div>
-              </div>
+        <div className="w-full max-w-[440px] mx-auto bg-card rounded-3xl shadow-[var(--shadow-card-hover)] border border-border overflow-hidden animate-fade-in">
+          {/* Compact centered header */}
+          <div className="bg-primary text-primary-foreground px-6 py-7 text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-foreground/10 rounded-full mb-3 border border-primary-foreground/15">
+              <Heart className="h-6 w-6" fill="currentColor" />
             </div>
-            <div className="flex items-center gap-2 text-xs text-primary-foreground/80">
-              <Lock className="h-3.5 w-3.5" />
-              256-bit SSL
-            </div>
+            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight">
+              কার্ড / মোবাইল ব্যাংকিং-এ দান
+            </h2>
+            <p className="text-xs md:text-sm text-primary-foreground/80 mt-1.5">
+              আপনার ছোট দানে আসবে বড় পরিবর্তন
+            </p>
           </div>
 
-          <form onSubmit={submit} className="p-6 md:p-10 space-y-7">
-            {/* Presets */}
+          <form onSubmit={submit} className="p-5 md:p-6 space-y-5">
+            {/* Amount input + presets */}
             <div>
-              <div className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                দানের পরিমাণ নির্বাচন করুন
+              <div className="relative mb-2.5">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-bold text-primary">৳</span>
+                <Input
+                  id="amount" type="number" min={10} required inputMode="numeric"
+                  value={form.amount} onChange={set("amount")}
+                  placeholder="পরিমাণ লিখুন"
+                  className="pl-11 h-14 text-lg font-bold rounded-2xl bg-muted/60 border-2 border-transparent focus-visible:border-primary focus-visible:ring-0"
+                />
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+              <div className="grid grid-cols-3 gap-2">
                 {PRESETS.map((p) => {
                   const active = Number(form.amount) === p;
                   return (
@@ -115,84 +99,84 @@ export function SSLCommerzPayCard() {
                       type="button"
                       key={p}
                       onClick={() => setForm((f) => ({ ...f, amount: p }))}
-                      className={`relative py-3 rounded-lg text-sm font-bold transition-all border ${
+                      className={`py-2.5 text-sm font-semibold rounded-xl border transition-all ${
                         active
-                          ? "bg-primary text-primary-foreground border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.15)]"
-                          : "bg-background text-foreground border-border hover:border-primary/40 hover:bg-accent"
+                          ? "border-primary bg-accent text-primary shadow-[0_0_0_2px_hsl(var(--primary)/0.15)]"
+                          : "border-border bg-background text-foreground hover:border-primary/50 hover:bg-accent"
                       }`}
                     >
                       ৳{p.toLocaleString("bn-BD")}
-                      {active && (
-                        <CheckCircle2 className="absolute -top-1.5 -right-1.5 h-4 w-4 bg-primary rounded-full text-primary-foreground" />
-                      )}
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Custom amount */}
-            <div>
-              <Label htmlFor="amount" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">
-                অথবা কাস্টম পরিমাণ (৳) *
-              </Label>
-              <div className="relative mt-1.5">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-primary">৳</span>
+            {/* Donor info */}
+            <div className="space-y-3">
+              <Input
+                required value={form.name} onChange={set("name")}
+                placeholder="আপনার পূর্ণ নাম *"
+                className="h-12 rounded-xl bg-muted/60 border-border"
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Input
-                  id="amount" type="number" min={10} required value={form.amount}
-                  onChange={set("amount")} placeholder="যেমন ১০০০"
-                  className="pl-10 h-12 text-lg font-bold"
+                  required value={form.phone} onChange={set("phone")}
+                  placeholder="ফোন নম্বর *"
+                  className="h-12 rounded-xl bg-muted/60 border-border"
+                />
+                <Input
+                  type="email" required value={form.email} onChange={set("email")}
+                  placeholder="ইমেইল *"
+                  className="h-12 rounded-xl bg-muted/60 border-border"
                 />
               </div>
             </div>
 
-            <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-            {/* Donor info */}
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">নাম *</Label>
-                <Input id="name" required value={form.name} onChange={set("name")} className="mt-1.5 h-11" />
-              </div>
-              <div>
-                <Label htmlFor="phone" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">মোবাইল *</Label>
-                <Input id="phone" required value={form.phone} onChange={set("phone")} placeholder="01XXXXXXXXX" className="mt-1.5 h-11" />
-              </div>
-            </div>
-
+            {/* Collapsible optional */}
             <div>
-              <Label htmlFor="email" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">ইমেইল *</Label>
-              <Input id="email" type="email" required value={form.email} onChange={set("email")} className="mt-1.5 h-11" />
-            </div>
-
-            <div>
-              <Label htmlFor="purpose" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">উদ্দেশ্য (ঐচ্ছিক)</Label>
-              <Input id="purpose" value={form.purpose} onChange={set("purpose")} placeholder="যেমন যাকাত, সাধারণ দান" className="mt-1.5 h-11" />
-            </div>
-
-            <div>
-              <Label htmlFor="note" className="text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground">নোট (ঐচ্ছিক)</Label>
-              <Textarea id="note" rows={2} value={form.note} onChange={set("note")} className="mt-1.5" />
+              <button
+                type="button"
+                onClick={() => setShowExtra((v) => !v)}
+                className="w-full flex items-center justify-between text-[11px] font-bold tracking-[0.18em] uppercase text-muted-foreground hover:text-primary transition-colors py-1"
+              >
+                <span>অতিরিক্ত তথ্য (ঐচ্ছিক)</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showExtra ? "rotate-180" : ""}`} />
+              </button>
+              {showExtra && (
+                <div className="mt-3 space-y-3 animate-fade-in">
+                  <Input
+                    value={form.purpose} onChange={set("purpose")}
+                    placeholder="দানের উদ্দেশ্য (যেমন যাকাত, সাধারণ দান)"
+                    className="h-12 rounded-xl bg-muted/60 border-border"
+                  />
+                  <Textarea
+                    rows={2} value={form.note} onChange={set("note")}
+                    placeholder="নোট বা মন্তব্য"
+                    className="rounded-xl bg-muted/60 border-border resize-none"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Terms */}
-            <label className="flex items-start gap-3 text-sm cursor-pointer rounded-lg p-4 bg-accent/50 border border-border">
+            <label className="flex items-start gap-2.5 text-xs cursor-pointer">
               <Checkbox checked={agree} onCheckedChange={(v) => setAgree(!!v)} className="mt-0.5" />
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground leading-relaxed">
                 আমি{" "}
                 <Link to="/terms-conditions" target="_blank" className="font-semibold underline text-primary">শর্তাবলী</Link>,{" "}
-                <Link to="/refund-policy" target="_blank" className="font-semibold underline text-primary">রিফান্ড নীতি</Link> এবং{" "}
+                <Link to="/refund-policy" target="_blank" className="font-semibold underline text-primary">রিফান্ড নীতি</Link> ও{" "}
                 <Link to="/privacy-policy" target="_blank" className="font-semibold underline text-primary">প্রাইভেসি পলিসি</Link>{" "}
                 পড়ে সম্মত হয়েছি।
               </span>
             </label>
 
-            {/* Submit — donate gradient */}
+            {/* Submit */}
             <Button
               type="submit"
               size="lg"
               disabled={loading}
-              className="w-full h-14 text-base font-bold tracking-wide rounded-xl text-white border-0 hover:opacity-95 transition-opacity"
+              className="w-full h-14 text-base font-bold tracking-wide rounded-2xl text-white border-0 hover:brightness-110 hover:opacity-100 active:scale-[0.98] transition-all"
               style={{
                 background: "var(--gradient-donate)",
                 boxShadow: "var(--shadow-donate)",
@@ -204,26 +188,21 @@ export function SSLCommerzPayCard() {
                 <><CreditCard className="h-5 w-5 mr-2" /> নিরাপদে পেমেন্ট করুন</>
               )}
             </Button>
-
-            {/* Methods */}
-            <div className="pt-2">
-              <div className="text-center text-[11px] font-bold tracking-[0.2em] uppercase text-muted-foreground mb-3">
-                গৃহীত পেমেন্ট মাধ্যম
-              </div>
-              <div className="flex justify-center">
-                <img
-                  src={sslLogo.url}
-                  alt="SSLCommerz accepted payment methods"
-                  className="max-w-full h-auto"
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <p className="text-xs text-center text-muted-foreground">
-              পরবর্তী ধাপে SSLCommerz-এর নিরাপদ পেমেন্ট পেজে যাবেন।
-            </p>
           </form>
+
+          {/* Trust footer strip */}
+          <div className="px-6 py-4 bg-muted/40 border-t border-border flex flex-col items-center gap-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.22em] uppercase text-muted-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+              Secured by SSLCommerz · 256-bit SSL
+            </div>
+            <img
+              src={sslLogo.url}
+              alt="SSLCommerz accepted payment methods"
+              className="max-w-full h-auto opacity-80"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </section>
