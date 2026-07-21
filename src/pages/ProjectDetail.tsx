@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2, HeartHandshake } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Users, Target, TrendingUp, Loader2, HeartHandshake, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
