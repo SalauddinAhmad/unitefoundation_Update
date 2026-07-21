@@ -92,11 +92,13 @@ function uiToApi(p: ProjectEx): Partial<ApiProject> {
     target: Number(p.budget) || 0,
     raised: Number(p.raised) || 0,
     beneficiaries: Number(p.beneficiaries) || 0,
+    donors: Number(p.donors) || 0,
     location: p.location || "",
     status: (p.status as any) || "draft",
     cover_image_url: p.cover || "",
   };
 }
+
 
 export default function Projects() {
   const { data: rows = [] } = useProjectsAdmin();
