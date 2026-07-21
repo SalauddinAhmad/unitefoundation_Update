@@ -1,12 +1,38 @@
 import { Link } from "react-router-dom";
-import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv } from "lucide-react";
+import { Facebook, Youtube, Mail, Phone, MapPin, Heart, Tv, Send, Loader2, CheckCircle2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { site } from "@/data/site";
 import logo from "@/assets/logo-white.svg";
 import footerBg from "@/assets/footer-bg.svg";
+import { useState } from "react";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 export const Footer = () => {
   const { t } = useTranslation();
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "done">("idle");
+
+  const subscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const v = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+      toast.error("সঠিক ইমেইল ঠিকানা দিন");
+      return;
+    }
+    setState("sending");
+    try {
+      await api.post("/newsletter/subscribe", { email: v, source: "footer" });
+      setState("done");
+      setEmail("");
+      toast.success("সাবস্ক্রিপশন সফল — ইনবক্স চেক করুন ✅");
+    } catch (err: unknown) {
+      const anyE = err as { data?: { message?: string }; message?: string };
+      toast.error(anyE?.data?.message || anyE?.message || "সাবস্ক্রাইব করা যায়নি");
+      setState("idle");
+    }
+  };
+
   return (
     <footer className="relative bg-footer text-footer-foreground overflow-hidden">
       {/* Decorative SVG background */}
@@ -32,6 +58,45 @@ export const Footer = () => {
             <Link to="/donate" className="btn-donate text-base whitespace-nowrap">
               <Heart className="h-5 w-5" /> {t("common.donate")}
             </Link>
+          </div>
+        </div>
+
+        {/* Newsletter strip */}
+        <div className="border-b border-white/10">
+          <div className="container-page py-8 grid gap-6 md:grid-cols-[1fr_auto] items-center">
+            <div>
+              <h4 className="text-lg font-bold text-white flex items-center gap-2">
+                <Mail className="h-5 w-5 text-donate-highlight" /> নিউজলেটার সাবস্ক্রাইব করুন
+              </h4>
+              <p className="mt-1.5 text-sm text-white/70 max-w-xl">
+                আমাদের সাম্প্রতিক কাজ, প্রকল্প ও দাওয়াতি কার্যক্রমের আপডেট সরাসরি আপনার ইনবক্সে পেতে সাবস্ক্রাইব করুন।
+              </p>
+            </div>
+            <form onSubmit={subscribe} className="flex w-full md:w-auto items-stretch gap-2">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={state === "sending" || state === "done"}
+                placeholder="আপনার ইমেইল ঠিকানা"
+                className="flex-1 md:w-72 px-4 py-2.5 rounded-lg bg-white/10 text-white placeholder:text-white/50 text-sm ring-1 ring-white/15 focus:ring-2 focus:ring-donate-highlight focus:bg-white/15 focus:outline-none disabled:opacity-60"
+                dir="ltr"
+              />
+              <button
+                type="submit"
+                disabled={state === "sending" || state === "done"}
+                className="inline-flex items-center gap-2 bg-donate-highlight text-black font-semibold px-4 py-2.5 rounded-lg text-sm hover:bg-donate-highlight/90 transition-colors disabled:opacity-70 whitespace-nowrap"
+              >
+                {state === "sending" ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> পাঠানো হচ্ছে…</>
+                ) : state === "done" ? (
+                  <><CheckCircle2 className="h-4 w-4" /> সফল</>
+                ) : (
+                  <><Send className="h-4 w-4" /> সাবস্ক্রাইব</>
+                )}
+              </button>
+            </form>
           </div>
         </div>
 

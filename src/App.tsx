@@ -36,6 +36,7 @@ const DashProjects = lazy(() => import("./pages/dashboard/Projects.tsx"));
 const DashBlog = lazy(() => import("./pages/dashboard/Blog.tsx"));
 const DashGallery = lazy(() => import("./pages/dashboard/Gallery.tsx"));
 const DashMessages = lazy(() => import("./pages/dashboard/Messages.tsx"));
+const DashNewsletter = lazy(() => import("./pages/dashboard/Newsletter.tsx"));
 const DashCareers = lazy(() => import("./pages/dashboard/Careers.tsx"));
 const DashTeam = lazy(() => import("./pages/dashboard/Team.tsx"));
 const DashPartners = lazy(() => import("./pages/dashboard/Partners.tsx"));
@@ -91,6 +92,7 @@ const App = () => (
               <Route path="blog" element={<RequireAuth permission="blog"><DashBlog /></RequireAuth>} />
               <Route path="gallery" element={<RequireAuth permission="gallery"><DashGallery /></RequireAuth>} />
               <Route path="messages" element={<RequireAuth permission="messages"><DashMessages /></RequireAuth>} />
+              <Route path="newsletter" element={<RequireAuth permission="newsletter"><DashNewsletter /></RequireAuth>} />
               <Route path="careers" element={<RequireAuth permission="careers"><DashCareers /></RequireAuth>} />
               <Route path="team" element={<RequireAuth permission="team"><DashTeam /></RequireAuth>} />
               <Route path="partners" element={<RequireAuth permission="partners"><DashPartners /></RequireAuth>} />

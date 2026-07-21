@@ -50,6 +50,7 @@ const menu: MenuItem[] = [
   { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট", perm: "blog" },
   { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি", perm: "gallery" },
   { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", perm: "messages" },
+  { to: "/dashboard/newsletter", icon: Mail, label: "নিউজলেটার", perm: "newsletter" },
   { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
   { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
   { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },

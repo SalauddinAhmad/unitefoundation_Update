@@ -29,6 +29,7 @@ export type Permission =
   | "members"
   | "careers"
   | "messages"
+  | "newsletter"
   | "projects"
   | "blog"
   | "gallery"
@@ -51,6 +52,7 @@ const MATRIX: Record<Permission, Role[]> = {
   members:             ["admin", "moderator"],
   careers:             ["admin", "moderator"],
   messages:            ["admin", "moderator", "viewer"],
+  newsletter:          ["admin", "moderator", "viewer"],
   projects:            ["admin", "editor"],
   blog:                ["admin", "editor"],
   gallery:             ["admin", "editor"],
