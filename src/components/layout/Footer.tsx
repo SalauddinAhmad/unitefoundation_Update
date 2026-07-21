@@ -103,15 +103,8 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-white/10">
-          <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-white/60">
-            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
-              <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-              <Link to="/privacy-policy" className="hover:text-white transition-colors">প্রাইভেসি পলিসি</Link>
-              <Link to="/terms-conditions" className="hover:text-white transition-colors">টার্মস অ্যান্ড কন্ডিশনস</Link>
-              <Link to="/refund-policy" className="hover:text-white transition-colors">রিফান্ড পলিসি</Link>
-            </div>
+          <div className="container-page py-5 text-center text-xs text-white/60">
+            © {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}
           </div>
         </div>
       </div>
