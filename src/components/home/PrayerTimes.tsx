@@ -190,7 +190,7 @@ export const PrayerTimes = () => {
   ];
 
   return (
-    <section className="section-y bg-gradient-to-b from-primary/5 via-background to-background">
+    <section className="py-8 sm:py-20 md:py-28 bg-gradient-to-b from-primary/5 via-background to-background">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
           {/* Decorative arch pattern watermark */}
@@ -205,73 +205,41 @@ export const PrayerTimes = () => {
             </svg>
           </div>
 
-          {/* ============ MOBILE HERO: emerald mihrab with sun arc ============ */}
+          {/* ============ MOBILE HERO: compact emerald header ============ */}
           <div className="sm:hidden relative bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary-foreground)/0.15),transparent_70%)]" />
+            <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary-foreground)/0.15),transparent_70%)]" />
 
-            <div className="relative px-5 pt-5 pb-2 flex items-center justify-end">
+            <div className="relative px-4 pt-3 pb-1 flex items-center justify-between gap-2">
+              <div className="text-[10px] text-primary-foreground/80 leading-tight min-w-0">
+                <div className="truncate">{BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month}</div>
+                {hijri && <div className="truncate opacity-80">{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} হিজরি</div>}
+              </div>
               <button
                 onClick={detectLocation}
                 disabled={locating}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 backdrop-blur-sm px-3 py-1.5 text-[11px] font-medium transition-colors disabled:opacity-60 border border-primary-foreground/20"
+                className="inline-flex items-center gap-1 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 backdrop-blur-sm px-2.5 py-1 text-[10px] font-medium transition-colors disabled:opacity-60 border border-primary-foreground/20 shrink-0"
               >
-                {locating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
-                <span className="truncate max-w-[160px]">{locating ? "খোঁজা হচ্ছে..." : coords.label}</span>
+                {locating ? <Loader2 className="w-3 h-3 animate-spin" /> : <MapPin className="w-3 h-3" />}
+                <span className="truncate max-w-[110px]">{locating ? "..." : coords.label}</span>
               </button>
             </div>
 
-            {/* Sun arc timeline */}
-            <div className="relative px-4">
-              <svg viewBox="0 0 400 110" className="w-full h-24" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="pt-arc-grad" x1="0" x2="1">
-                    <stop offset="0" stopColor="currentColor" stopOpacity="0.25" />
-                    <stop offset="0.5" stopColor="currentColor" stopOpacity="0.6" />
-                    <stop offset="1" stopColor="currentColor" stopOpacity="0.25" />
-                  </linearGradient>
-                </defs>
-                <path d="M10 100 Q 200 -60 390 100" fill="none" stroke="url(#pt-arc-grad)" strokeWidth="1.5" strokeDasharray="3 4" />
-                <line x1="0" y1="100" x2="400" y2="100" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1" />
-                <circle cx="10" cy="100" r="3" fill="currentColor" opacity="0.6" />
-                <circle cx="390" cy="100" r="3" fill="currentColor" opacity="0.6" />
-                {isDaytime ? (
-                  <>
-                    <circle cx={arcX} cy={arcY} r="14" fill="currentColor" opacity="0.15" />
-                    <circle cx={arcX} cy={arcY} r="7" fill="hsl(var(--primary-foreground))" />
-                  </>
-                ) : (
-                  <text x="200" y="60" textAnchor="middle" className="fill-current" opacity="0.6" fontSize="14">☾</text>
-                )}
-              </svg>
-              <div className="flex justify-between text-[10px] font-medium text-primary-foreground/70 -mt-2 px-1">
-                <span>সূর্যোদয় {fmtHM(today.sunrise).time}</span>
-                <span>সূর্যাস্ত {fmtHM(today.maghrib).time}</span>
+            <div className="relative px-4 py-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[9px] uppercase tracking-[0.18em] text-primary-foreground/70 leading-none mb-1">এখন</p>
+                <div className="text-2xl font-bold tabular-nums tracking-tight leading-none">{fmtHMS(now)}</div>
               </div>
-            </div>
-
-            <div className="relative px-5 py-6 text-center">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-primary-foreground/70 mb-2">এখন</p>
-              <div className="text-4xl font-bold tabular-nums tracking-tight">{fmtHMS(now)}</div>
-              <div className="mt-3 inline-flex flex-col items-center gap-0.5 rounded-2xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 px-5 py-3">
-                <span className="text-[10px] uppercase tracking-widest text-primary-foreground/70">পরবর্তী · {nextLabel}</span>
-                <span className="text-lg font-bold tabular-nums">
-                  {toBn(hh)}<span className="text-primary-foreground/60 text-sm mx-0.5">ঘ</span>
-                  {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-primary-foreground/60 text-sm mx-0.5">মি</span>
-                  {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-primary-foreground/60 text-sm mx-0.5">সে</span>
+              <div className="text-right shrink-0 rounded-xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 px-3 py-1.5">
+                <span className="block text-[9px] uppercase tracking-widest text-primary-foreground/70 leading-none">পরবর্তী · {nextLabel}</span>
+                <span className="block text-sm font-bold tabular-nums mt-0.5">
+                  {toBn(hh)}<span className="text-primary-foreground/60 text-[10px]">ঘ</span>
+                  {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">মি</span>
+                  {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">সে</span>
                 </span>
-                <span className="text-[11px] text-primary-foreground/80 mt-0.5">শুরু {fmtHM(nextTime).time} {fmtHM(nextTime).ampm}</span>
-              </div>
-            </div>
-
-            <div className="relative px-5 pb-5">
-              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-primary-foreground/85 text-center">
-                <span>{BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month} {toBn(bn.year)} বঙ্গাব্দ</span>
-                <span className="opacity-40">·</span>
-                <span>{now.toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}</span>
-                {hijri && (<><span className="opacity-40">·</span><span>{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} হিজরি</span></>)}
               </div>
             </div>
           </div>
+
 
           {/* ============ DESKTOP HEADER: compact single row ============ */}
           <div className="hidden sm:block relative border-b border-border/60 bg-gradient-to-r from-primary/5 via-transparent to-primary/5">
@@ -311,20 +279,20 @@ export const PrayerTimes = () => {
 
 
           {/* Sehri / Iftar band */}
-          <div className="relative -mt-4 sm:mt-4 mx-4 sm:mx-6 grid grid-cols-2 gap-3 z-10">
-            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
-              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
+          <div className="relative mt-3 sm:mt-4 mx-3 sm:mx-6 grid grid-cols-2 gap-2 sm:gap-3 z-10">
+            <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
+              <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
             </div>
-            <div className="rounded-2xl bg-card border border-border shadow-sm px-4 py-3 text-center">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
-              <p className="text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
+            <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
+              <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
             </div>
           </div>
 
           {/* Prayer arch cards */}
-          <div className="relative p-4 sm:p-6 pt-6">
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+          <div className="relative p-3 sm:p-6 pt-4 sm:pt-6">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-3">
               {prayerTimes.map(({ key, time }) => {
                 const meta = PRAYERS.find((p) => p.key === key)!;
                 const isNext = nextName === key;
@@ -334,35 +302,35 @@ export const PrayerTimes = () => {
                   <div
                     key={key}
                     className={[
-                      "relative group flex flex-col items-center text-center px-2 py-4 transition-all",
-                      // Mihrab arch shape via border-radius
-                      "rounded-t-[3rem] rounded-b-xl border",
+                      "relative group flex flex-col items-center text-center px-1.5 sm:px-2 py-2.5 sm:py-4 transition-all",
+                      "rounded-t-[2rem] sm:rounded-t-[3rem] rounded-b-lg sm:rounded-b-xl border",
                       highlight
                         ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 -translate-y-1"
                         : "bg-muted/40 text-foreground border-border/60 hover:bg-primary/5 hover:border-primary/30",
                     ].join(" ")}
                   >
                     {isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">চলমান</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">চলমান</span>
                     )}
                     {isNext && !isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
                     )}
-                    <div className={["w-7 h-7 sm:w-8 sm:h-8 mb-1.5 mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
+                    <div className={["w-5 h-5 sm:w-8 sm:h-8 mb-1 sm:mb-1.5 mt-0.5 sm:mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
                       {meta.icon}
                     </div>
-                    <div className={["text-xs sm:text-sm font-semibold", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
-                    <div className={["text-sm sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
+                    <div className={["text-[11px] sm:text-sm font-semibold leading-tight", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
+                    <div className={["text-xs sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
                       {fmtHM(time).time}
                     </div>
-                    <div className={["text-[9px] uppercase tracking-wider", highlight ? "text-primary-foreground/75" : "text-muted-foreground"].join(" ")}>{fmtHM(time).ampm}</div>
+                    <div className={["text-[8px] sm:text-[9px] uppercase tracking-wider", highlight ? "text-primary-foreground/75" : "text-muted-foreground"].join(" ")}>{fmtHM(time).ampm}</div>
                   </div>
                 );
               })}
             </div>
 
+
             {/* Method selector + disclaimer */}
-            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-border/60">
+            <div className="mt-3 sm:mt-6 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-border/60">
               <div className="relative w-full sm:w-auto">
                 <select
                   value={method}
