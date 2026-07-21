@@ -94,7 +94,7 @@ router.post('/forgot-password', authLimiter, asyncH(async (req, res) => {
     try {
       await sendMail({
         to: email,
-        subject: 'Unite Foundation — পাসওয়ার্ড রিসেট লিংক',
+        subject: subjectOf('forgot_password'),
         html: tplForgotPassword({ resetUrl: link }),
       });
     } catch (e) { console.error('Reset mail failed', e); }
