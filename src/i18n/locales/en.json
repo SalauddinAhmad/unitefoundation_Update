@@ -435,7 +435,7 @@
     ],
     "educationMediums": ["Qawmi Madrasa", "Aliya Madrasa", "General (College/University)"],
     "professionOptions": ["Service holder", "Business", "Student", "Other"],
-    "paymentMethods": ["bKash", "Nagad", "Rocket", "Bank transfer", "Card (SSLCommerz)"],
+    "paymentMethods": ["bKash", "Nagad", "Rocket", "Bank transfer"],
     "politicalOptions": ["No", "Yes"],
     "success": {
       "nextStepHeader": "Next steps",

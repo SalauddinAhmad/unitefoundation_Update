@@ -20,7 +20,7 @@ const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions.tsx"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy.tsx"));
-const PaymentResult = lazy(() => import("./pages/PaymentResult.tsx"));
+
 
 // Admin dashboard
 const DashboardLayout = lazy(() => import("./components/dashboard/DashboardLayout.tsx"));
@@ -75,9 +75,6 @@ const App = () => (
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-conditions" element={<TermsConditions />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
-            <Route path="/payment/success" element={<PaymentResult kind="success" />} />
-            <Route path="/payment/fail" element={<PaymentResult kind="fail" />} />
-            <Route path="/payment/cancel" element={<PaymentResult kind="cancel" />} />
 
             {/* Admin dashboard */}
             <Route path="/login" element={<Login />} />
