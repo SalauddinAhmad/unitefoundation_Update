@@ -123,7 +123,7 @@ const TeamSection = () => {
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="heading-display">উপদেষ্টা</h2>
             </div>
-            <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center lg:justify-center">
               {advisors.map((m) => <TeamCard key={m.id} m={m} />)}
             </div>
           </div>
