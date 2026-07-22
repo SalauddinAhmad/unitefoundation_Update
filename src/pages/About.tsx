@@ -581,48 +581,6 @@ const About = () => {
 
     <TeamSection />
 
-    <section className="section-y bg-secondary/30">
-      <div className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-wider">
-            <ShieldCheck className="h-4 w-4" /> অনুমোদনসমূহ
-          </div>
-          <h2 className="heading-display mt-4">অনুমোদনসমূহ</h2>
-          <p className="mt-3 text-muted-foreground leading-relaxed">
-            ইউনাইট ফাউন্ডেশন একটি সম্পূর্ণ নিবন্ধিত ও অনুমোদিত অলাভজনক প্রতিষ্ঠান। নিচে আমাদের অনুমোদন সংক্রান্ত তথ্য দেওয়া হলো।
-          </p>
-        </div>
-
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-          <div className="rounded-card bg-card border border-border p-6 shadow-card hover:shadow-card-hover transition-all">
-            <div className="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <FileText className="h-5 w-5" />
-            </div>
-            <div className="text-sm text-muted-foreground">ট্রেড লাইসেন্স নম্বর</div>
-            <div className="mt-1 text-lg font-bold text-foreground font-en break-all">{site.tradeLicense}</div>
-            <div className="mt-2 text-xs text-muted-foreground">ঢাকা উত্তর সিটি কর্পোরেশন (DNCC) কর্তৃক ইস্যুকৃত</div>
-          </div>
-
-          <div className="rounded-card bg-card border border-border p-6 shadow-card hover:shadow-card-hover transition-all">
-            <div className="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <BadgeCheck className="h-5 w-5" />
-            </div>
-            <div className="text-sm text-muted-foreground">TIN সার্টিফিকেট নম্বর</div>
-            <div className="mt-1 text-lg font-bold text-foreground font-en break-all">{site.tin}</div>
-            <div className="mt-2 text-xs text-muted-foreground">জাতীয় রাজস্ব বোর্ড (NBR) কর্তৃক ইস্যুকৃত</div>
-          </div>
-
-          <div className="rounded-card bg-card border border-border p-6 shadow-card hover:shadow-card-hover transition-all sm:col-span-2 lg:col-span-1">
-            <div className="h-11 w-11 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <MapPin className="h-5 w-5" />
-            </div>
-            <div className="text-sm text-muted-foreground">নিবন্ধিত ঠিকানা</div>
-            <div className="mt-1 text-base font-semibold text-foreground leading-relaxed">{site.address}</div>
-            <div className="mt-2 text-xs text-muted-foreground font-en">{site.addressEn}</div>
-          </div>
-        </div>
-      </div>
-    </section>
   </SiteLayout>
   );
 };
