@@ -75,7 +75,7 @@ const sections = [
         <li><strong>কার্ড পেমেন্ট (Visa / MasterCard):</strong> ৭-১০ কর্মদিবস (ব্যাংকের উপর নির্ভরশীল)</li>
         <li><strong>Mobile Banking (bKash / Nagad / Rocket):</strong> ৩-৫ কর্মদিবস</li>
         <li><strong>Internet Banking / ব্যাংক ট্রান্সফার:</strong> ৫-৭ কর্মদিবস</li>
-        <li><strong>SSLCommerz gateway:</strong> gateway এর নিজস্ব process time অনুযায়ী</li>
+        
       </ul>
     ),
   },

@@ -435,7 +435,7 @@
     ],
     "educationMediums": ["কওমী মাদরাসা", "আলিয়া মাদরাসা", "জেনারেল (কলেজ/বিশ্ববিদ্যালয়)"],
     "professionOptions": ["চাকরিজীবী", "ব্যবসায়ী", "ছাত্র", "অন্যান্য"],
-    "paymentMethods": ["bKash", "Nagad", "Rocket", "ব্যাংক ট্রান্সফার", "কার্ড (SSLCommerz)"],
+    "paymentMethods": ["bKash", "Nagad", "Rocket", "ব্যাংক ট্রান্সফার"],
     "politicalOptions": ["না", "হ্যাঁ"],
     "success": {
       "nextStepHeader": "পরবর্তী ধাপ",
