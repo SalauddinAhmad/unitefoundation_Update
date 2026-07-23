@@ -60,7 +60,7 @@ function apiToUi(row: ApiPost): Post {
   return {
     id: row.id,
     title: row.title,
-    author: "এডিটোরিয়াল টিম",
+    author: row.author_name || "",
     category: row.category || DEFAULT_CATEGORIES[0],
     views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
 
@@ -86,6 +86,7 @@ function uiToApi(p: Post): Partial<ApiPost> {
     cover_image_url: p.cover || "",
     category: p.category,
     status: p.status === "published" ? "published" : "draft",
+    author_name: p.author || null,
   };
 }
 
@@ -450,7 +451,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
   const isNew = !post;
   const editorRef = useRef<HTMLDivElement>(null);
   const [title, setTitle] = useState(post?.title || "");
-  const [author, setAuthor] = useState(post?.author || "এডিটোরিয়াল টিম");
+  const [author, setAuthor] = useState(post?.author || "");
   const [category, setCategory] = useState(post?.category || categories[0] || DEFAULT_CATEGORIES[0]);
   const [newCatInput, setNewCatInput] = useState("");
 
@@ -496,7 +497,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
     const p: Post = {
       id: post?.id || `B-${Math.floor(Math.random() * 900) + 100}`,
       title: title.trim(),
-      author: author.trim() || "এডিটোরিয়াল টিম",
+      author: author.trim(),
       category,
       views: post?.views ?? 0,
       date,

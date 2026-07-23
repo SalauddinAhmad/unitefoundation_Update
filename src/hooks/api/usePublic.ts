@@ -152,7 +152,7 @@ const bnDate = (iso?: string | null) => {
   }
 };
 
-export type UiBlogPost = StaticBlogPost & { html?: string; views?: number };
+export type UiBlogPost = StaticBlogPost & { html?: string; views?: number; author?: string };
 
 export function apiToPost(row: ApiPost): UiBlogPost {
   // content may be plain HTML (from dashboard rich-text editor) OR a JSON ContentBlock[] string
