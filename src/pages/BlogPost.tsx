@@ -171,6 +171,11 @@ const BlogPost = () => {
             </Link>
             <div className="flex flex-wrap items-center gap-3 mb-3">
               <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wider">{post.category}</span>
+              {(post as any).author && (
+                <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground" title="লেখক">
+                  ✍️ {(post as any).author}
+                </span>
+              )}
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground" title="পঠিত সংখ্যা"><Eye className="h-4 w-4" />{toBnNum(views)} বার পঠিত</span>
             </div>
