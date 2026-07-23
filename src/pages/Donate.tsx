@@ -16,7 +16,7 @@ const Donate = () => {
         canonical="/donate"
       />
 
-      <section className="lg:hidden relative bg-gradient-to-b from-primary/[0.05] to-background pt-6 pb-4 sm:pt-8 sm:pb-6">
+      <section className="relative bg-gradient-to-b from-primary/[0.05] to-background pt-6 pb-4 sm:pt-8 sm:pb-6">
         <div className="container mx-auto px-4">
           <figure className="relative mx-auto max-w-2xl">
             <div className="relative flex items-stretch gap-3 sm:gap-4 rounded-2xl border border-primary/20 bg-card/80 backdrop-blur-sm px-4 py-3.5 sm:px-6 sm:py-4 shadow-sm">
