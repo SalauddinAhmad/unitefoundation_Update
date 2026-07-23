@@ -529,8 +529,8 @@ const defaultSettings: SiteSettings = {
   ],
   impact_section: {
     eyebrow: "",
-    heading: "ভালোবাসা সর্বস্তরের মানুষের কাছে পৌঁছে যাচ্ছে।",
-    subtitle: "লক্ষাধিক মানুষের জীবনে পরিবর্তন এনেছেন আপনারা।",
+    heading: "আপনার আমানত পৌঁছে যাচ্ছে মানুষের দোরগোড়ায়।",
+    subtitle: "",
   },
   hero_slides: [],
   about: {
