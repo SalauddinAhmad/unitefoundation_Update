@@ -45,7 +45,7 @@ export const ProgramsSection = () => {
             to="/projects"
             className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:gap-3 transition-all"
           >
-            সকল প্রকল্প দেখুন <ArrowRight className="h-4 w-4" />
+            আরো দেখুন <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
