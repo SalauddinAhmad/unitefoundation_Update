@@ -59,12 +59,12 @@ export const GallerySection = () => {
           ))}
         </div>
 
-        <div className="mt-6 md:mt-8 text-center">
+        <div className="mt-10 md:mt-12 flex justify-center">
           <Link
             to="/gallery"
-            className="inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:gap-3 transition-all"
           >
-            {t("gallery.seeMore")} <Images className="h-4 w-4" />
+            আরো দেখুন <Images className="h-4 w-4" />
           </Link>
         </div>
       </div>
