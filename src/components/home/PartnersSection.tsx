@@ -10,14 +10,10 @@ export const PartnersSection = () => {
     <section className="section-y bg-muted/30">
       <div className="container-page">
         <div className="text-center mb-12 md:mb-14">
-          <span className="eyebrow text-primary">{t("partners.eyebrow")}</span>
-          <h2 className="heading-display mt-3 text-3xl md:text-4xl font-bold text-foreground">
+          <h2 className="heading-display text-3xl md:text-4xl font-bold text-foreground">
             {t("partners.heading")}
           </h2>
           <div className="mx-auto mt-4 h-1 w-16 rounded-full bg-gradient-to-r from-primary/30 via-primary to-primary/30" />
-          <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-            {t("partners.subtitle")}
-          </p>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
