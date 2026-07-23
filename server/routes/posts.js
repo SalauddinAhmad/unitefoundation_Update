@@ -50,16 +50,17 @@ const schema = z.object({
   cover_image_url: z.string().optional(),
   category: z.string().optional(),
   status: z.enum(['draft','published']).optional(),
+  author_name: z.string().max(150).optional().nullable(),
 });
 
 router.post('/', requireAuth, asyncH(async (req, res) => {
   const d = schema.parse(req.body);
   const id = uuid();
   await pool.execute(
-    `INSERT INTO posts (id,title,slug,excerpt,content,cover_image_url,category,status,author_id,published_at)
-     VALUES (?,?,?,?,?,?,?,?,?, ${d.status === 'published' ? 'NOW()' : 'NULL'})`,
+    `INSERT INTO posts (id,title,slug,excerpt,content,cover_image_url,category,status,author_id,author_name,published_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?, ${d.status === 'published' ? 'NOW()' : 'NULL'})`,
     [id, d.title, d.slug, d.excerpt || null, d.content || null, d.cover_image_url || null,
-     d.category || null, d.status || 'draft', req.user.sub]
+     d.category || null, d.status || 'draft', req.user.sub, d.author_name || null]
   );
   res.status(201).json({ id });
 }));

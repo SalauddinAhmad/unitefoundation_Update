@@ -140,6 +140,7 @@ export type ApiPost = {
   published_at?: string | null;
   created_at?: string;
   views?: number | null;
+  author_name?: string | null;
 };
 
 const bnDate = (iso?: string | null) => {
@@ -151,7 +152,7 @@ const bnDate = (iso?: string | null) => {
   }
 };
 
-export type UiBlogPost = StaticBlogPost & { html?: string; views?: number };
+export type UiBlogPost = StaticBlogPost & { html?: string; views?: number; author?: string };
 
 export function apiToPost(row: ApiPost): UiBlogPost {
   // content may be plain HTML (from dashboard rich-text editor) OR a JSON ContentBlock[] string
@@ -179,6 +180,7 @@ export function apiToPost(row: ApiPost): UiBlogPost {
     body,
     html,
     views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
+    author: row.author_name || "",
   };
 }
 
