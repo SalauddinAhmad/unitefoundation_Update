@@ -140,6 +140,7 @@ export type ApiPost = {
   published_at?: string | null;
   created_at?: string;
   views?: number | null;
+  author_name?: string | null;
 };
 
 const bnDate = (iso?: string | null) => {
@@ -179,6 +180,7 @@ export function apiToPost(row: ApiPost): UiBlogPost {
     body,
     html,
     views: typeof row.views === "number" ? row.views : Number(row.views) || 0,
+    author: row.author_name || "",
   };
 }
 
