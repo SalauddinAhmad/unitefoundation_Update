@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Card, PageHeader } from "@/components/dashboard/DashboardUI";
-import { Mail, Search, Trash2, Download, Loader2, Send, X, Eye } from "lucide-react";
+import { Mail, Search, Trash2, Download, Loader2, Send, X } from "lucide-react";
 import { api, API_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -159,10 +159,9 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
   const [title, setTitle] = useState("");
   const [preheader, setPreheader] = useState("");
   const [message, setMessage] = useState("");
-  const [isHtml, setIsHtml] = useState(false);
   const [testTo, setTestTo] = useState("");
   const [sending, setSending] = useState(false);
-  const [preview, setPreview] = useState(false);
+  const isHtml = false;
 
   const validate = () => {
     if (!subject.trim()) { toast.error("সাবজেক্ট দিন"); return false; }
@@ -235,16 +234,10 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
             </div>
           </div>
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-muted-foreground">মেসেজ *</label>
-              <label className="text-xs flex items-center gap-1.5 text-muted-foreground">
-                <input type="checkbox" checked={isHtml} onChange={(e) => setIsHtml(e.target.checked)} />
-                HTML হিসেবে পাঠান
-              </label>
-            </div>
+            <label className="text-xs font-semibold text-muted-foreground mb-1 block">মেসেজ *</label>
             <textarea value={message} onChange={(e) => setMessage(e.target.value)}
               rows={9}
-              placeholder={isHtml ? "<p>Hello ...</p>" : "আসসালামু আলাইকুম..."}
+              placeholder="আসসালামু আলাইকুম..."
               className="w-full px-3 py-2 rounded-lg bg-secondary text-sm font-[inherit] focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
           </div>
           <div className="border-t border-border pt-3">
@@ -255,34 +248,19 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
                 className="flex-1 px-3 py-2 rounded-lg bg-secondary text-sm focus:bg-card focus:ring-2 focus:ring-primary/20 focus:outline-none" />
               <button onClick={sendTest} disabled={sending}
                 className="px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/70 text-sm font-semibold disabled:opacity-50 inline-flex items-center gap-1.5">
-                <Eye className="h-3.5 w-3.5" /> টেস্ট
+                <Send className="h-3.5 w-3.5" /> টেস্ট
               </button>
             </div>
           </div>
-
-          {preview && (
-            <div className="border border-border rounded-lg p-3 bg-background">
-              <div className="text-xs font-semibold text-muted-foreground mb-1">প্রিভিউ (বডি)</div>
-              {isHtml
-                ? <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: message }} />
-                : <div className="whitespace-pre-wrap text-sm">{message}</div>}
-            </div>
-          )}
         </div>
 
-        <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-2 bg-secondary/30">
-          <button onClick={() => setPreview((p) => !p)}
-            className="text-sm px-3 py-2 rounded-lg hover:bg-secondary inline-flex items-center gap-1.5">
-            <Eye className="h-4 w-4" /> {preview ? "প্রিভিউ বন্ধ" : "প্রিভিউ"}
+        <div className="border-t border-border px-5 py-3 flex items-center justify-end gap-2 bg-secondary/30">
+          <button onClick={onClose} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-lg">বাতিল</button>
+          <button onClick={sendAll} disabled={sending}
+            className="px-4 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 inline-flex items-center gap-2">
+            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            সবাইকে পাঠান ({totalActive})
           </button>
-          <div className="flex items-center gap-2">
-            <button onClick={onClose} className="px-4 py-2 text-sm font-semibold hover:bg-secondary rounded-lg">বাতিল</button>
-            <button onClick={sendAll} disabled={sending}
-              className="px-4 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 inline-flex items-center gap-2">
-              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              সবাইকে পাঠান ({totalActive})
-            </button>
-          </div>
         </div>
       </div>
     </div>
