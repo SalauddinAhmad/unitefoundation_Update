@@ -140,19 +140,9 @@ export const Footer = () => {
 
 
         <div className="border-t border-white/10">
-          <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-white/60 text-center">
+          <div className="container-page py-5 flex items-center justify-center gap-2 text-xs text-white/60 text-center">
             <div>© {new Date().getFullYear()} {site.nameEn}. {t("footer.rights")}</div>
-            <div>
-              Design &amp; Developed by{" "}
-              <a
-                href="https://wa.me/message/IKFP3JMMZ66MJ1"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-white/90 hover:text-white transition-colors"
-              >
-                Salauddin Ahmad
-              </a>
-            </div>
+
 
           </div>
         </div>
