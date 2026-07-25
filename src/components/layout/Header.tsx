@@ -112,7 +112,7 @@ export const Header = () => {
             <LanguageToggle className="hidden sm:inline-flex" />
             <NavLink
               to="/donate"
-              className="lg:hidden inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-white gradient-donate-bg shadow-[0_6px_16px_-6px_hsl(var(--donate-red)/0.7)] ring-1 ring-white/30 animate-pulse-slow"
+              className="lg:hidden inline-flex items-center px-4 py-2 rounded-md text-[14px] font-semibold text-white gradient-donate-bg shadow-[0_6px_16px_-6px_hsl(var(--donate-red)/0.7)] ring-1 ring-white/30 animate-pulse-slow"
             >
               {t("nav.donate")}
             </NavLink>
