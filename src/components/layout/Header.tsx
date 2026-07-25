@@ -76,22 +76,36 @@ export const Header = () => {
 
           {/* Nav */}
           <nav className="relative hidden lg:flex items-center gap-0.5" aria-label={t("nav.menu")}>
-            {navItems.map((item) => (
-              <NavLink
-                key={item.href}
-                to={item.href}
-                end={item.href === "/"}
-                className={({ isActive }) =>
-                  `relative px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 group ${
-                    isActive
-                      ? "text-donate-red"
-                      : "text-foreground/75 hover:text-foreground"
-                  }`
-                }
-              >
-                {t(`nav.${item.key}`)}
-              </NavLink>
-            ))}
+            {navItems.map((item) => {
+              if (item.key === "donate") {
+                return (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    className="relative ml-2 inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[15px] font-semibold text-white bg-donate-red shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] hover:shadow-[0_12px_28px_-6px_hsl(var(--donate-red)/0.75)] hover:-translate-y-0.5 hover:brightness-110 transition-all duration-300 ring-1 ring-white/30 animate-pulse-slow"
+                  >
+                    <span aria-hidden>❤</span>
+                    {t(`nav.${item.key}`)}
+                  </NavLink>
+                );
+              }
+              return (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  end={item.href === "/"}
+                  className={({ isActive }) =>
+                    `relative px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 group ${
+                      isActive
+                        ? "text-donate-red"
+                        : "text-foreground/75 hover:text-foreground"
+                    }`
+                  }
+                >
+                  {t(`nav.${item.key}`)}
+                </NavLink>
+              );
+            })}
           </nav>
 
           {/* Right side: language toggle + mobile menu */}
@@ -112,20 +126,34 @@ export const Header = () => {
         {open && (
           <div className="lg:hidden mt-2 rounded-3xl bg-card/95 backdrop-blur-xl shadow-card-hover overflow-hidden animate-fade-up">
             <nav className="p-3 flex flex-col gap-1">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  to={item.href}
-                  end={item.href === "/"}
-                  className={({ isActive }) =>
-                    `px-4 py-3 rounded-full text-[15px] font-medium transition-colors ${
-                      isActive ? "text-primary bg-accent" : "text-foreground/80 hover:bg-accent/60"
-                    }`
-                  }
-                >
-                  {t(`nav.${item.key}`)}
-                </NavLink>
-              ))}
+              {navItems.map((item) => {
+                if (item.key === "donate") {
+                  return (
+                    <NavLink
+                      key={item.href}
+                      to={item.href}
+                      className="mt-2 px-4 py-3 rounded-full text-[15px] font-semibold text-white bg-donate-red shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] text-center inline-flex items-center justify-center gap-1.5"
+                    >
+                      <span aria-hidden>❤</span>
+                      {t(`nav.${item.key}`)}
+                    </NavLink>
+                  );
+                }
+                return (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    end={item.href === "/"}
+                    className={({ isActive }) =>
+                      `px-4 py-3 rounded-full text-[15px] font-medium transition-colors ${
+                        isActive ? "text-primary bg-accent" : "text-foreground/80 hover:bg-accent/60"
+                      }`
+                    }
+                  >
+                    {t(`nav.${item.key}`)}
+                  </NavLink>
+                );
+              })}
               <LanguageToggle variant="mobile" className="sm:hidden mt-1" />
             </nav>
           </div>
