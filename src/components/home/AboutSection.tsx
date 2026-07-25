@@ -40,7 +40,7 @@ export const AboutSection = () => {
           <p className="text-base md:text-lg text-muted-foreground leading-[1.85] mb-2">
             সুন্নাহর অনুসরণে, মানবতার কল্যাণে
           </p>
-          <h2 className="heading-display text-left">
+          <h2 className="text-4xl md:text-6xl font-bold leading-[1.2] text-left">
             <span className="gradient-donate-text">{highlight}</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85] whitespace-pre-line">
