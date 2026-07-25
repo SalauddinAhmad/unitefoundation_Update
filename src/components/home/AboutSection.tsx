@@ -37,8 +37,10 @@ export const AboutSection = () => {
         </div>
 
         <div className="order-1 lg:order-2">
+          <p className="text-base md:text-lg text-muted-foreground leading-[1.85] mb-2">
+            {heading}
+          </p>
           <h2 className="heading-display text-left">
-            {heading}{" "}
             <span className="gradient-donate-text">{highlight}</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85] whitespace-pre-line">
