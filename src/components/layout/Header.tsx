@@ -82,7 +82,7 @@ export const Header = () => {
                   <NavLink
                     key={item.href}
                     to={item.href}
-                    className="relative ml-2 inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[15px] font-semibold text-white gradient-donate-bg shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] hover:shadow-[0_12px_28px_-6px_hsl(var(--donate-red)/0.75)] hover:-translate-y-0.5 hover:brightness-110 transition-all duration-300 ring-1 ring-white/30 animate-pulse-slow"
+                    className="relative ml-2 inline-flex items-center gap-1.5 px-5 py-2 rounded-lg text-[15px] font-semibold text-white gradient-donate-bg shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] hover:shadow-[0_12px_28px_-6px_hsl(var(--donate-red)/0.75)] hover:-translate-y-0.5 hover:brightness-110 transition-all duration-300 ring-1 ring-white/30 animate-pulse-slow"
                   >
                     {t(`nav.${item.key}`)}
                   </NavLink>
@@ -112,7 +112,7 @@ export const Header = () => {
             <LanguageToggle className="hidden sm:inline-flex" />
             <NavLink
               to="/donate"
-              className="lg:hidden inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-[13px] font-semibold text-white gradient-donate-bg shadow-[0_6px_16px_-6px_hsl(var(--donate-red)/0.7)] ring-1 ring-white/30 animate-pulse-slow"
+              className="lg:hidden inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-[13px] font-semibold text-white gradient-donate-bg shadow-[0_6px_16px_-6px_hsl(var(--donate-red)/0.7)] ring-1 ring-white/30 animate-pulse-slow"
             >
               {t("nav.donate")}
             </NavLink>
@@ -137,7 +137,7 @@ export const Header = () => {
                     <NavLink
                       key={item.href}
                       to={item.href}
-                      className="mt-2 px-4 py-3 rounded-full text-[15px] font-semibold text-white gradient-donate-bg shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] text-center inline-flex items-center justify-center gap-1.5"
+                      className="mt-2 px-4 py-3 rounded-lg text-[15px] font-semibold text-white gradient-donate-bg shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] text-center inline-flex items-center justify-center gap-1.5"
                     >
                       {t(`nav.${item.key}`)}
                     </NavLink>
