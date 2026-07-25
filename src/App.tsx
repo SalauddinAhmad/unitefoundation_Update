@@ -20,6 +20,7 @@ const PartnerDetail = lazy(() => import("./pages/PartnerDetail.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsConditions = lazy(() => import("./pages/TermsConditions.tsx"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy.tsx"));
+const Subscribe = lazy(() => import("./pages/Subscribe.tsx"));
 
 
 // Admin dashboard
