@@ -71,8 +71,8 @@ const Subscribe = () => {
           {state !== "done" ? (
             <div className="relative flex flex-col items-center text-center space-y-6">
               {/* Single hero mark */}
-              <div className="w-20 h-20 rounded-2xl gradient-donate-bg flex items-center justify-center shadow-lg shadow-primary/20">
-                <Mail className="w-10 h-10 text-white" strokeWidth={1.5} />
+              <div className="w-12 h-12 rounded-xl gradient-donate-bg flex items-center justify-center shadow-md shadow-primary/20">
+                <Mail className="w-6 h-6 text-white" strokeWidth={1.5} />
               </div>
 
               <div className="space-y-3">
