@@ -226,16 +226,20 @@ export type HeroSlide = {
 
 
 export type AboutContent = {
+  tagline?: string;
   heading: string;
   highlight: string;
   body: string;
   quoteText: string;
   quoteSource: string;
+  quoteText2?: string;
+  quoteSource2?: string;
   points: string[];
   sideImage: string;
   expNumber: string;
   expLabel: string;
 };
+
 
 export type TrustItem = {
   icon: "shield" | "award" | "file" | "users";

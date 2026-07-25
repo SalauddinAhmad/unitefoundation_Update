@@ -5,12 +5,15 @@ import { useSettings } from "@/hooks/api/useDashboardData";
 export const AboutSection = () => {
   const { t } = useTranslation();
   const { data: settings, isLoading } = useSettings();
-  const a = settings?.about;
-  const heading = a?.heading || t("about.headingFallback");
-  const highlight = a?.highlight || t("about.highlightFallback");
+  const a: any = settings?.about;
+  const tagline = a?.tagline || "সুন্নাহর অনুসরণে, মানবতার কল্যাণে";
+  const heading = a?.heading || "ইউনাইট";
+  const highlight = a?.highlight || "ফাউন্ডেশন";
   const body = a?.body || t("about.bodyFallback");
   const quoteText = a?.quoteText || "";
   const quoteSource = a?.quoteSource || "";
+  const quoteText2 = a?.quoteText2 || "";
+  const quoteSource2 = a?.quoteSource2 || "";
   const points = a?.points?.length ? a.points : [];
   const sideImage = a?.sideImage && a.sideImage.trim() ? a.sideImage : "";
   const expNumber = a?.expNumber || t("about.expNumber");
@@ -38,11 +41,11 @@ export const AboutSection = () => {
 
         <div className="order-1 lg:order-2">
           <p className="text-base md:text-lg text-muted-foreground leading-[1.85] mb-2">
-            সুন্নাহর অনুসরণে, মানবতার কল্যাণে
+            {tagline}
           </p>
           <h2 className="text-4xl md:text-6xl font-bold leading-[1.2] text-left">
-            <span className="text-foreground">ইউনাইট</span>{" "}
-            <span className="gradient-donate-text">ফাউন্ডেশন</span>
+            <span className="text-foreground">{heading}</span>{" "}
+            <span className="gradient-donate-text">{highlight}</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85] whitespace-pre-line">
             {body}
@@ -53,6 +56,15 @@ export const AboutSection = () => {
               <p className="text-foreground italic leading-relaxed">"{quoteText}"</p>
               {quoteSource && (
                 <footer className="text-sm text-muted-foreground mt-2 font-en">{quoteSource}</footer>
+              )}
+            </blockquote>
+          )}
+
+          {quoteText2 && (
+            <blockquote className="mt-4 border-l-4 border-donate-highlight pl-5 py-2 bg-accent/40 rounded-r-card">
+              <p className="text-foreground italic leading-relaxed">"{quoteText2}"</p>
+              {quoteSource2 && (
+                <footer className="text-sm text-muted-foreground mt-2 font-en">{quoteSource2}</footer>
               )}
             </blockquote>
           )}
@@ -68,6 +80,7 @@ export const AboutSection = () => {
             </ul>
           )}
         </div>
+
       </div>
     </section>
   );
