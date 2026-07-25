@@ -52,11 +52,8 @@ export const Footer = () => {
           <div className="container-page py-8 grid gap-6 md:grid-cols-[1fr_auto] items-center">
             <div>
               <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                <Mail className="h-5 w-5 text-donate-highlight" /> নিউজলেটার সাবস্ক্রাইব করুন
+                <Mail className="h-5 w-5 text-donate-highlight" /> নিয়মিত নিউজলেটার পেতে সাবস্ক্রাইব করুন
               </h4>
-              <p className="mt-1.5 text-sm text-white/70 max-w-xl">
-                আমাদের সাম্প্রতিক কাজ, প্রকল্প ও দাওয়াতি কার্যক্রমের আপডেট সরাসরি আপনার ইনবক্সে পেতে সাবস্ক্রাইব করুন।
-              </p>
             </div>
             <form onSubmit={subscribe} className="flex w-full md:w-auto items-stretch gap-2">
               <input
