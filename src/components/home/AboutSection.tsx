@@ -38,7 +38,7 @@ export const AboutSection = () => {
 
         <div className="order-1 lg:order-2">
           <p className="text-base md:text-lg text-muted-foreground leading-[1.85] mb-2">
-            {heading}
+            সুন্নাহর অনুসরণে, মানবতার কল্যাণে
           </p>
           <h2 className="heading-display text-left">
             <span className="gradient-donate-text">{highlight}</span>
