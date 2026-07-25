@@ -122,9 +122,6 @@ const Subscribe = () => {
               </button>
             </form>
 
-            <p className="text-muted-foreground/70 text-sm">
-              যেকোনো সময় আনসাবস্ক্রাইব করতে পারবেন।
-            </p>
           </div>
         ) : (
           <div className="relative flex flex-col items-center text-center space-y-5 py-6">
