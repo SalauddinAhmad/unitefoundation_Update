@@ -613,9 +613,16 @@ const Settings = () => {
                 <SaveBar />
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-4">
+              <Field
+                label="উপরের ছোট ট্যাগলাইন"
+                value={form.about.tagline || ""}
+                onChange={(v) => setForm({ ...form, about: { ...form.about, tagline: v } })}
+                hint="যেমন: সুন্নাহর অনুসরণে, মানবতার কল্যাণে"
+              />
+
+              <div className="grid sm:grid-cols-2 gap-4 mt-4">
                 <Field
-                  label="হেডিং"
+                  label="হেডিং (কালো রঙে দেখাবে)"
                   value={form.about.heading}
                   onChange={(v) => setForm({ ...form, about: { ...form.about, heading: v } })}
                 />
@@ -638,7 +645,7 @@ const Settings = () => {
 
               <div className="grid sm:grid-cols-2 gap-4 mt-4">
                 <label className="block">
-                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">উক্তি / হাদীছ</span>
+                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">উক্তি / হাদীছ ১</span>
                   <textarea
                     value={form.about.quoteText}
                     onChange={(e) => setForm({ ...form, about: { ...form.about, quoteText: e.target.value } })}
@@ -647,12 +654,31 @@ const Settings = () => {
                   />
                 </label>
                 <Field
-                  label="উক্তির সূত্র"
+                  label="উক্তির সূত্র ১"
                   value={form.about.quoteSource}
                   onChange={(v) => setForm({ ...form, about: { ...form.about, quoteSource: v } })}
                   hint="উদাহরণ: — তিরমিযী, হা/২৯৫৩"
                 />
               </div>
+
+              <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                <label className="block">
+                  <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">উক্তি / হাদীছ ২</span>
+                  <textarea
+                    value={form.about.quoteText2 || ""}
+                    onChange={(e) => setForm({ ...form, about: { ...form.about, quoteText2: e.target.value } })}
+                    rows={3}
+                    className="w-full px-3.5 py-2.5 rounded-lg bg-secondary border border-transparent focus:bg-card focus:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none text-sm transition"
+                  />
+                </label>
+                <Field
+                  label="উক্তির সূত্র ২"
+                  value={form.about.quoteSource2 || ""}
+                  onChange={(v) => setForm({ ...form, about: { ...form.about, quoteSource2: v } })}
+                  hint="খালি রাখলে দ্বিতীয় উক্তি দেখাবে না"
+                />
+              </div>
+
 
               <div className="grid sm:grid-cols-[1fr_140px_1fr] gap-4 mt-4 items-end">
                 <ImageField
