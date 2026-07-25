@@ -44,22 +44,8 @@ export const Footer = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-footer/40 via-footer/70 to-footer pointer-events-none" aria-hidden />
 
       <div className="relative">
-        {/* Pre-footer CTA strip */}
-        <div className="border-b border-white/10">
-          <div className="container-page py-10 md:py-14 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl md:text-3xl font-bold text-white">
-                {t("footer.ctaTitle")}
-              </h3>
-              <p className="mt-2 text-white/70 max-w-xl">
-                {t("footer.ctaSubtitle")}
-              </p>
-            </div>
-            <Link to="/donate" className="btn-donate text-base whitespace-nowrap">
-              <Heart className="h-5 w-5" /> {t("common.donate")}
-            </Link>
-          </div>
-        </div>
+        {/* Pre-footer CTA strip removed */}
+
 
         {/* Newsletter strip */}
         <div className="border-b border-white/10">
