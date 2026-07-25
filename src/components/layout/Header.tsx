@@ -126,20 +126,34 @@ export const Header = () => {
         {open && (
           <div className="lg:hidden mt-2 rounded-3xl bg-card/95 backdrop-blur-xl shadow-card-hover overflow-hidden animate-fade-up">
             <nav className="p-3 flex flex-col gap-1">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  to={item.href}
-                  end={item.href === "/"}
-                  className={({ isActive }) =>
-                    `px-4 py-3 rounded-full text-[15px] font-medium transition-colors ${
-                      isActive ? "text-primary bg-accent" : "text-foreground/80 hover:bg-accent/60"
-                    }`
-                  }
-                >
-                  {t(`nav.${item.key}`)}
-                </NavLink>
-              ))}
+              {navItems.map((item) => {
+                if (item.key === "donate") {
+                  return (
+                    <NavLink
+                      key={item.href}
+                      to={item.href}
+                      className="mt-2 px-4 py-3 rounded-full text-[15px] font-semibold text-white bg-donate-red shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] text-center inline-flex items-center justify-center gap-1.5"
+                    >
+                      <span aria-hidden>❤</span>
+                      {t(`nav.${item.key}`)}
+                    </NavLink>
+                  );
+                }
+                return (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    end={item.href === "/"}
+                    className={({ isActive }) =>
+                      `px-4 py-3 rounded-full text-[15px] font-medium transition-colors ${
+                        isActive ? "text-primary bg-accent" : "text-foreground/80 hover:bg-accent/60"
+                      }`
+                    }
+                  >
+                    {t(`nav.${item.key}`)}
+                  </NavLink>
+                );
+              })}
               <LanguageToggle variant="mobile" className="sm:hidden mt-1" />
             </nav>
           </div>
