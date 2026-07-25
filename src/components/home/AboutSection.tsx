@@ -41,7 +41,7 @@ export const AboutSection = () => {
             সুন্নাহর অনুসরণে, মানবতার কল্যাণে
           </p>
           <h2 className="text-4xl md:text-6xl font-bold leading-[1.2] text-left">
-            <span className="gradient-donate-text">{highlight}</span>
+            <span className="gradient-donate-text">ইউনাইট ফাউন্ডেশন</span>
           </h2>
           <p className="mt-5 text-base md:text-lg text-muted-foreground leading-[1.85] whitespace-pre-line">
             {body}
