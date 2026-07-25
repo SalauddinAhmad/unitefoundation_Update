@@ -158,6 +158,7 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [preheader, setPreheader] = useState("");
+  const [message, setMessage] = useState("");
   const [testTo, setTestTo] = useState("");
   const [sending, setSending] = useState(false);
   const isHtml = false;
