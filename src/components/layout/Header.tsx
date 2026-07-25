@@ -82,7 +82,7 @@ export const Header = () => {
                   <NavLink
                     key={item.href}
                     to={item.href}
-                    className="relative ml-2 inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[15px] font-semibold text-white bg-donate-red shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] hover:shadow-[0_12px_28px_-6px_hsl(var(--donate-red)/0.75)] hover:-translate-y-0.5 hover:brightness-110 transition-all duration-300 ring-1 ring-white/30 animate-pulse-slow"
+                    className="relative ml-2 inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-[15px] font-semibold text-white gradient-donate-bg shadow-[0_8px_20px_-6px_hsl(var(--donate-red)/0.6)] hover:shadow-[0_12px_28px_-6px_hsl(var(--donate-red)/0.75)] hover:-translate-y-0.5 hover:brightness-110 transition-all duration-300 ring-1 ring-white/30 animate-pulse-slow"
                   >
                     <span aria-hidden>❤</span>
                     {t(`nav.${item.key}`)}
