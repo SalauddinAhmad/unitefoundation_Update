@@ -158,11 +158,9 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [preheader, setPreheader] = useState("");
-  const [message, setMessage] = useState("");
-  const [isHtml, setIsHtml] = useState(false);
   const [testTo, setTestTo] = useState("");
   const [sending, setSending] = useState(false);
-  const [preview, setPreview] = useState(false);
+  const isHtml = false;
 
   const validate = () => {
     if (!subject.trim()) { toast.error("সাবজেক্ট দিন"); return false; }
