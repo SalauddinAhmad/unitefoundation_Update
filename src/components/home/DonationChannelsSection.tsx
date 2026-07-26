@@ -294,19 +294,12 @@ export const DonationChannelsSection = () => {
           <article className="relative overflow-hidden rounded-2xl border border-donate-highlight/20 bg-white/[0.04] backdrop-blur-sm shadow-xl flex flex-col md:flex-row items-stretch">
             {/* Left: message */}
             <div className="flex-1 p-6 md:p-8 space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 h-9 w-9 shrink-0 rounded-full bg-donate-highlight/10 border border-donate-highlight/25 flex items-center justify-center">
-                  <span className="text-base leading-none" aria-hidden>🇮🇳</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight">
-                    India Donors
-                  </p>
-                  <h3 className="mt-1 text-lg md:text-xl font-extrabold text-primary-foreground leading-snug">
-                    ইন্ডিয়া থেকে দান করতে আগ্রহী দ্বীনি ভাই ও বোন
-                  </h3>
-                </div>
+              <div>
+                <h3 className="text-lg md:text-xl font-extrabold text-primary-foreground leading-snug">
+                  ইন্ডিয়া থেকে দান করতে আগ্রহী দ্বীনি ভাই ও বোন
+                </h3>
               </div>
+
 
               <p className="text-sm md:text-[15px] leading-relaxed text-primary-foreground/75">
                 নিচের হোয়াটসঅ্যাপ নাম্বারে এসএমএস করলে আপনাকে <span className="font-semibold text-primary-foreground">Google Pay</span>, <span className="font-semibold text-primary-foreground">PhonePe</span> অথবা <span className="font-semibold text-primary-foreground">QR কোড</span> প্রদান করা হবে — যার মাধ্যমে সহজেই আপনার অনুদান পাঠাতে পারবেন, ইনশাআল্লাহ।
