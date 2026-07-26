@@ -1,4 +1,4 @@
-import { Copy, CreditCard, QrCode, Smartphone } from "lucide-react";
+import { Copy, CreditCard, QrCode, Smartphone, MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/hooks/use-toast";
 import { usePaymentsData } from "@/hooks/usePaymentsData";
