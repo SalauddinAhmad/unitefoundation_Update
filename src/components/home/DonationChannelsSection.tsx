@@ -289,96 +289,45 @@ export const DonationChannelsSection = () => {
           </div>
         </div>
 
-        {/* India donors */}
-        <div className="mx-auto max-w-6xl mt-8 md:mt-10">
-          <article
-            className="group relative rounded-[28px] border border-white/10 shadow-2xl overflow-hidden"
-            style={{
-              background:
-                "linear-gradient(135deg, hsl(152 55% 14%) 0%, hsl(152 60% 10%) 60%, hsl(28 60% 14%) 100%)",
-            }}
-          >
-            {/* India flag ribbon */}
-            <div aria-hidden className="absolute inset-x-0 top-0 h-1 flex">
-              <span className="flex-1" style={{ background: "#FF9933" }} />
-              <span className="flex-1 bg-white" />
-              <span className="flex-1" style={{ background: "#138808" }} />
-            </div>
-
-            {/* Ashoka chakra watermark */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-16 -bottom-20 opacity-[0.07]"
-            >
-              <svg width="320" height="320" viewBox="0 0 100 100" fill="none" stroke="white" strokeWidth="0.6">
-                <circle cx="50" cy="50" r="42" />
-                <circle cx="50" cy="50" r="6" fill="white" stroke="none" />
-                {Array.from({ length: 24 }).map((_, i) => (
-                  <line
-                    key={i}
-                    x1="50"
-                    y1="50"
-                    x2={50 + 42 * Math.cos((i * Math.PI) / 12)}
-                    y2={50 + 42 * Math.sin((i * Math.PI) / 12)}
-                  />
-                ))}
-              </svg>
-            </div>
-
-            {/* Glow */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-24 -left-24 h-64 w-64 rounded-full blur-3xl opacity-40"
-              style={{ background: "hsl(var(--donate-highlight) / 0.5)" }}
-            />
-
-            <div className="relative flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8 p-6 md:p-8 lg:p-10">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3">
-                  <span
-                    className="inline-flex items-center gap-2 rounded-full border border-donate-highlight/40 bg-donate-highlight/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight"
-                  >
-                    <span className="text-sm leading-none" aria-hidden>🇮🇳</span>
-                    India Donors
-                  </span>
-                  <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-2.5 py-1 text-[10px] font-semibold text-primary-foreground/70">
-                    Google Pay · PhonePe · QR
-                  </span>
+        {/* India donors — subtle emerald slate */}
+        <div className="mx-auto max-w-4xl mt-8 md:mt-10">
+          <article className="relative overflow-hidden rounded-2xl border border-donate-highlight/20 bg-white/[0.04] backdrop-blur-sm shadow-xl flex flex-col md:flex-row items-stretch">
+            {/* Left: message */}
+            <div className="flex-1 p-6 md:p-8 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 h-9 w-9 shrink-0 rounded-full bg-donate-highlight/10 border border-donate-highlight/25 flex items-center justify-center">
+                  <span className="text-base leading-none" aria-hidden>🇮🇳</span>
                 </div>
-
-                <h3 className="mt-4 text-xl md:text-2xl lg:text-[26px] font-extrabold text-primary-foreground leading-snug">
-                  ইন্ডিয়া থেকে দান করতে আগ্রহী দ্বীনি ভাই ও বোন
-                </h3>
-                <p className="mt-3 text-sm md:text-[15px] leading-relaxed text-primary-foreground/75 max-w-2xl">
-                  আপনারা হোয়াটসঅ্যাপে এসএমএস (SMS) করলে <span className="font-semibold text-primary-foreground">Google Pay / PhonePe</span> বা <span className="font-semibold text-primary-foreground">QR কোড</span> পাঠানো হবে। আপনার সুবিধামতো অপশন ব্যবহার করে দান করতে পারেন, ইনশাআল্লাহ।
-                </p>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight">
+                    India Donors
+                  </p>
+                  <h3 className="mt-1 text-lg md:text-xl font-extrabold text-primary-foreground leading-snug">
+                    ইন্ডিয়া থেকে দান করতে আগ্রহী দ্বীনি ভাই ও বোন
+                  </h3>
+                </div>
               </div>
 
-              <div className="shrink-0 w-full lg:w-auto flex flex-col items-stretch lg:items-end gap-2.5">
-                <a
-                  href="https://wa.me/8801759754265"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group/btn relative inline-flex items-center justify-center gap-3 rounded-2xl px-6 py-4 font-extrabold text-white shadow-[0_10px_30px_-8px_rgba(37,211,102,0.6)] hover:shadow-[0_14px_36px_-8px_rgba(37,211,102,0.8)] hover:-translate-y-0.5 active:translate-y-0 transition-all overflow-hidden"
-                  style={{ background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)" }}
-                >
-                  <span
-                    aria-hidden
-                    className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity"
-                    style={{ background: "linear-gradient(135deg, #2fdd72 0%, #159a8b 100%)" }}
-                  />
-                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
-                    <MessageCircle className="h-5 w-5" />
-                  </span>
-                  <span className="relative flex flex-col items-start leading-tight">
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/80">WhatsApp SMS</span>
-                    <span className="text-base font-extrabold tracking-wide" dir="ltr">+88 017 5975 4265</span>
-                  </span>
-                </a>
-                <p className="text-center lg:text-right text-[11px] text-primary-foreground/60">
-                  ট্যাপ করলেই হোয়াটসঅ্যাপ চ্যাট খুলবে
-                </p>
-              </div>
+              <p className="text-sm md:text-[15px] leading-relaxed text-primary-foreground/75">
+                নিচের হোয়াটসঅ্যাপ নাম্বারে এসএমএস করলে আপনাকে <span className="font-semibold text-primary-foreground">Google Pay</span>, <span className="font-semibold text-primary-foreground">PhonePe</span> অথবা <span className="font-semibold text-primary-foreground">QR কোড</span> প্রদান করা হবে — যার মাধ্যমে সহজেই আপনার অনুদান পাঠাতে পারবেন, ইনশাআল্লাহ।
+              </p>
+            </div>
+
+            {/* Right: CTA */}
+            <div className="w-full md:w-auto md:min-w-[280px] p-6 md:p-8 border-t md:border-t-0 md:border-l border-white/10 bg-white/[0.02] flex flex-col items-center justify-center">
+              <a
+                href="https://wa.me/8801759754265"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 rounded-xl px-6 py-4 font-semibold text-white shadow-[0_10px_30px_-8px_rgba(37,211,102,0.55)] hover:shadow-[0_14px_36px_-8px_rgba(37,211,102,0.75)] hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                style={{ background: "#25D366" }}
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="text-base font-bold tracking-wide" dir="ltr">+88 01759754265</span>
+              </a>
+              <span className="mt-3 text-[10px] font-bold uppercase tracking-[0.22em] text-donate-highlight/80">
+                Direct WhatsApp
+              </span>
             </div>
           </article>
         </div>
