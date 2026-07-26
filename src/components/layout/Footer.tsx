@@ -52,7 +52,10 @@ export const Footer = () => {
           <div className="container-page py-8 grid gap-6 md:grid-cols-[1fr_auto] items-center">
             <div>
               <h4 className="text-lg font-bold text-white flex items-center gap-2">
-                <Mail className="h-5 w-5 text-donate-highlight" /> নিয়মিত নিউজলেটার পেতে সাবস্ক্রাইব করুন
+                <Link to="/subscribe" aria-label="সাবস্ক্রাইব পেজে যান" className="inline-flex items-center hover:opacity-80 transition-opacity">
+                  <Mail className="h-5 w-5 text-donate-highlight" />
+                </Link>
+                <span>নিয়মিত নিউজলেটার পেতে সাবস্ক্রাইব করুন</span>
               </h4>
             </div>
             <form onSubmit={subscribe} className="flex w-full md:w-auto items-stretch gap-2">
