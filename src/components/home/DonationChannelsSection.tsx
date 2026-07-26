@@ -289,6 +289,48 @@ export const DonationChannelsSection = () => {
           </div>
         </div>
 
+        {/* India donors */}
+        <div className="mx-auto max-w-6xl mt-6 md:mt-8">
+          <article
+            className="relative flex flex-col md:flex-row md:items-center gap-5 md:gap-6 rounded-[24px] border border-donate-highlight/25 shadow-2xl p-6 md:p-7 overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, hsl(152 45% 92%) 0%, hsl(35 85% 93%) 100%)",
+            }}
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-16 -right-16 h-48 w-48 rounded-full opacity-30"
+              style={{ background: "radial-gradient(circle, hsl(152 100% 25% / 0.35), transparent 70%)" }}
+            />
+            <div className="relative flex items-start gap-4 flex-1 min-w-0">
+              <div className="h-12 w-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <span className="text-2xl" aria-hidden>🇮🇳</span>
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-donate-orange">
+                  India Donors
+                </p>
+                <h3 className="mt-1.5 text-lg md:text-xl font-extrabold text-foreground leading-tight">
+                  ইন্ডিয়া থেকে দান করতে আগ্রহী দ্বীনি ভাই ও বোন
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+                  আপনারা হোয়াটসঅ্যাপে এসএমএস (SMS) করলে Google Pay / PhonePe বা QR কোড পাঠানো হবে। আপনার সুবিধামতো অপশন ব্যবহার করে আপনি দান করতে পারেন, ইনশাআল্লাহ।
+                </p>
+              </div>
+            </div>
+            <a
+              href="https://wa.me/8801759754265"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative shrink-0 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] hover:bg-[#1ebe57] text-white font-bold px-5 py-3 shadow-lg transition-colors"
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span dir="ltr">+88 01759754265</span>
+            </a>
+          </article>
+        </div>
+
+
         <p className="text-center text-xs text-primary-foreground/60 mt-10 italic max-w-xl mx-auto">
           {t("channels.quote")}
         </p>
