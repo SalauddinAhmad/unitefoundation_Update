@@ -585,7 +585,7 @@ const About = () => {
       </div>
     </section>
 
-    <TeamSection />
+    <TeamSection only="officers" />
 
   </SiteLayout>
   );
