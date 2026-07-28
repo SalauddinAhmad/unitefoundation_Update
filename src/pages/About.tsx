@@ -469,7 +469,10 @@ const About = () => {
       </div>
     </section>
 
+    <TeamSection only="advisors" />
+
     <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white">
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
