@@ -132,7 +132,7 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
             </div>
             <div className="mt-12 hidden lg:flex flex-wrap justify-center gap-6">
               {advisors.map((m) => (
-                <div key={m.id} className="w-[calc(20%-1.2rem)] max-w-[220px]"><TeamCard m={m} /></div>
+                <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
               ))}
             </div>
           </div>
@@ -147,7 +147,7 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
             </div>
             <div className="mt-12 hidden lg:flex flex-wrap justify-center gap-6">
               {officers.map((m) => (
-                <div key={m.id} className="w-[calc(20%-1.2rem)] max-w-[220px]"><TeamCard m={m} /></div>
+                <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
               ))}
             </div>
 
