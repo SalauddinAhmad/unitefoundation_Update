@@ -84,13 +84,16 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
 );
 
 
-const TeamSection = () => {
+const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
   const { data = [] } = useTeam();
   const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  const advisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
-  const officers = sorted.filter((m) => !/উপদেষ্টা|advisor/i.test(m.role || ""));
+  const allAdvisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
+  const allOfficers = sorted.filter((m) => !/উপদেষ্টা|advisor/i.test(m.role || ""));
+  const advisors = only === "officers" ? [] : allAdvisors;
+  const officers = only === "advisors" ? [] : allOfficers;
 
-  if (sorted.length === 0) return null;
+  if (advisors.length === 0 && officers.length === 0) return null;
+
 
   return (
     <section className="section-y relative overflow-hidden">
