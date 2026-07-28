@@ -41,15 +41,15 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
         </div>
         {(() => {
           const raw = m.role || "";
-          const [head, ...rest] = raw.split("|");
+          const [, ...rest] = raw.split("|");
           const desig = rest.join("|").trim();
-          const label = desig || head;
-          return label ? (
+          return desig ? (
             <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-              {label}
+              {desig}
             </div>
           ) : null;
         })()}
+
       </div>
 
       {/* Bio + socials */}
