@@ -28,38 +28,38 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
           </div>
         )}
 
-        {/* Bottom gradient veil */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
-
-        {/* Name + role over image */}
-        <div className="absolute inset-x-0 bottom-0 p-3.5 text-left">
-          <div className="text-[15px] font-extrabold leading-tight text-white drop-shadow-sm">
-            {m.name}
-          </div>
-          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.12em] text-white/80">
-            {(() => {
-              const raw = m.role || "";
-              const [head, ...rest] = raw.split("|");
-              const desig = rest.join("|").trim();
-              return desig || head;
-            })()}
-          </div>
-        </div>
-
         {/* Corner accent */}
         <div aria-hidden className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
           <Sparkles className="h-3.5 w-3.5 text-white" />
         </div>
       </div>
 
+      {/* Name + role below image */}
+      <div className="px-2 pt-3 text-center">
+        <div className="text-[15px] font-extrabold leading-tight text-foreground">
+          {m.name}
+        </div>
+        {(() => {
+          const raw = m.role || "";
+          const [head, ...rest] = raw.split("|");
+          const desig = rest.join("|").trim();
+          const label = desig || head;
+          return label ? (
+            <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+              {label}
+            </div>
+          ) : null;
+        })()}
+      </div>
+
       {/* Bio + socials */}
       {(m.bio || m.facebook || m.linkedin || m.email) && (
-        <div className="px-2 pt-3 pb-1.5 text-left">
+        <div className="px-2 pt-2 pb-1.5 text-center">
           {m.bio && (
             <p className="text-[12px] leading-relaxed text-muted-foreground line-clamp-2">{m.bio}</p>
           )}
           {(m.facebook || m.linkedin || m.email) && (
-            <div className="mt-2.5 flex items-center gap-1.5">
+            <div className="mt-2.5 flex items-center justify-center gap-1.5">
               {m.facebook && (
                 <a href={m.facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="h-7 w-7 rounded-full border border-primary/15 bg-primary/5 text-primary flex items-center justify-center transition-all hover:-translate-y-0.5 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]">
                   <Facebook className="h-3.5 w-3.5" />
@@ -82,6 +82,7 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
     </div>
   </article>
 );
+
 
 
 const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
