@@ -48,6 +48,9 @@ set net:max-retries 3;
 set net:timeout 20;
 set mirror:parallel-transfer-count 4;
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+echo '--- FTP login directory (this is where relative paths resolve) ---';
+pwd;
+cls -l .;
 mkdir -pf '$REMOTE_DIR';
 mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob .git/ \
@@ -56,6 +59,8 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob tmp/restart.txt \
   '$LOCAL_DIR' '$REMOTE_DIR';
 $RESTART_COMMAND
+echo '--- Uploaded files in $REMOTE_DIR ---';
+cls -l '$REMOTE_DIR';
 bye;
 "
 
