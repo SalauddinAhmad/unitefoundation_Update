@@ -77,6 +77,11 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 // --- Health ---
 app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/health/deploy', (_req, res) => res.json({
+  ok: true,
+  release: process.env.DEPLOY_RELEASE || 'local',
+  mailTransport: process.env.SMTP_TRANSPORT || 'sendmail',
+}));
 
 // --- Public diagnostics (no secrets exposed) ---
 // SMTP connectivity/auth check — public so it works even when the login token is broken

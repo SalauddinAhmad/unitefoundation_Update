@@ -96,6 +96,7 @@ jobs:
           rsync -a --exclude 'node_modules' --exclude '.env' --exclude 'uploads' server/ out/
           mkdir -p out/tmp
           date > out/tmp/restart.txt
+          printf '%s' '${{ github.sha }}' > out/DEPLOY_RELEASE
 
       - name: Deploy backend via FTPS
         if: ${{ github.event.inputs.method == 'ftps' }}
@@ -126,3 +127,20 @@ jobs:
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
         run: bash scripts/deploy-cpanel-zip.sh out public_html/api-app
+
+      - name: Verify live backend deployment
+        env:
+          EXPECTED_RELEASE: ${{ github.sha }}
+        run: |
+          for i in $(seq 1 12); do
+            BODY="$(curl -fsS --max-time 15 https://api.unitefoundation.bd/health/deploy || true)"
+            if printf '%s' "$BODY" | grep -Fq "$EXPECTED_RELEASE"; then
+              echo "✅ Live backend is running release $EXPECTED_RELEASE"
+              exit 0
+            fi
+            echo "Waiting for Passenger restart ($i/12)..."
+            sleep 5
+          done
+          echo "❌ Files uploaded, but the live backend is not running this release."
+          echo "Check the FTP account root/path and restart the app in cPanel Setup Node.js App."
+          exit 1
