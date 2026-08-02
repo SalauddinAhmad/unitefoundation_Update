@@ -16,6 +16,7 @@ FTP_PASS="${FTP_PASS:-${FTP_PASSWORD:-}}"
 [ -n "$FTP_PASS" ] || { echo "FTP_PASS or FTP_PASSWORD is required"; exit 1; }
 FTP_PORT="${FTP_PORT:-21}"
 FTP_DELETE="${FTP_DELETE:-0}"
+FTP_FRONTEND_ROOT="${FTP_FRONTEND_ROOT:-}"
 
 # A stale FTP DNS record previously allowed uploads to succeed on the old
 # server while the website continued to be served by the new origin.
@@ -72,27 +73,50 @@ if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
   trap 'rm -f "$PROBE_FILE"' EXIT
   printf '%s' "$PROBE_VALUE" > "$PROBE_FILE"
 
-  # Check the requested path first, then the FTP login directory. These are
-  # the two valid cPanel layouts: home/public_html and a public_html chroot.
-  CANDIDATES=("$REMOTE_DIR")
-  if [ "$REMOTE_DIR" = "public_html" ]; then
-    CANDIDATES+=(".")
-  fi
+  # cPanel can expose the primary domain at public_html, an addon domain at
+  # <domain>, or either path beneath an FTP chroot. Prefer an explicit value,
+  # then test the common layouts that already exist on this FTP account.
+  VERIFY_HOST="$(printf '%s' "$VERIFY_BASE" | sed -E 's#^https?://([^/:]+).*#\1#')"
+  CANDIDATES=()
+  [ -n "$FTP_FRONTEND_ROOT" ] && CANDIDATES+=("$FTP_FRONTEND_ROOT")
+  CANDIDATES+=("$REMOTE_DIR" "$VERIFY_HOST" "public_html/$VERIFY_HOST" ".")
+
+  # De-duplicate candidates while preserving priority.
+  UNIQUE_CANDIDATES=()
+  for CANDIDATE in "${CANDIDATES[@]}"; do
+    [ -n "$CANDIDATE" ] || continue
+    SEEN=0
+    for EXISTING in "${UNIQUE_CANDIDATES[@]}"; do
+      [ "$EXISTING" = "$CANDIDATE" ] && SEEN=1 && break
+    done
+    [ "$SEEN" = "1" ] || UNIQUE_CANDIDATES+=("$CANDIDATE")
+  done
+  CANDIDATES=("${UNIQUE_CANDIDATES[@]}")
 
   LIVE_ROOT=""
   for CANDIDATE in "${CANDIDATES[@]}"; do
     echo "🔬 Checking whether '$CANDIDATE' is the live document root..."
+    # Never create guessed directories during discovery. A typo in the path
+    # must fail safely instead of producing another misleading FTP tree.
+    if ! lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+cls -d '$CANDIDATE';
+bye;
+" >/dev/null 2>&1; then
+      echo "   ↪ path does not exist or is not accessible"
+      continue
+    fi
+
     lftp -c "
 $LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
-mkdir -pf '$CANDIDATE';
 put '$PROBE_FILE' -o '$CANDIDATE/$PROBE_NAME';
 bye;
 "
 
     CURL_RESOLVE=()
     if [ -n "${DEPLOY_ORIGIN_IP:-}" ]; then
-      VERIFY_HOST="$(printf '%s' "$VERIFY_BASE" | sed -E 's#^https?://([^/:]+).*#\1#')"
       CURL_RESOLVE=(--resolve "${VERIFY_HOST}:443:${DEPLOY_ORIGIN_IP}")
     fi
     LIVE_VALUE="$(curl -fsS --max-time 20 "${CURL_RESOLVE[@]}" \
@@ -115,7 +139,8 @@ bye;
   if [ -z "$LIVE_ROOT" ]; then
     echo "❌ FTP credentials do not reach the document root served by $VERIFY_BASE." >&2
     echo "   Checked: ${CANDIDATES[*]}. No files were deployed." >&2
-    echo "   Ask the hosting provider for the FTP account/path mapped to this domain." >&2
+    echo "   Set FTP_FRONTEND_ROOT to the Document Root shown in cPanel → Domains," >&2
+    echo "   or ask the host to map this FTP account to that directory." >&2
     exit 1
   fi
   REMOTE_DIR="$LIVE_ROOT"
