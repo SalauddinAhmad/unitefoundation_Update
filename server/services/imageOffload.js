@@ -28,11 +28,6 @@ const TARGETS = [
 
 
 
-function baseUrl() {
-  return (process.env.PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '').replace(/\/$/, '')
-    || 'https://api.unitefoundation.bd';
-}
-
 function extFromMime(mime = '') {
   if (mime.includes('png')) return 'png';
   if (mime.includes('webp')) return 'webp';
@@ -56,7 +51,7 @@ async function writeFileFor(prefix, mime, buffer) {
   const ext = extFromMime(mime);
   const name = `${Date.now()}-${uuid()}-${prefix}.${ext}`;
   await fs.writeFile(path.join(mediaDir, name), buffer);
-  return `${baseUrl()}/uploads/media/${name}`;
+  return `/uploads/media/${name}`;
 }
 
 async function offloadTable({ table, columns }) {

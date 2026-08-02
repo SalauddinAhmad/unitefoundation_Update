@@ -13,6 +13,7 @@ const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { uuid } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
+const { toRelativeMediaUrl } = require('../utils/mediaUrl');
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -25,11 +26,6 @@ const upload = multer({
 
 const uploadsRoot = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || './uploads');
 const mediaDir = path.join(uploadsRoot, 'media');
-
-function publicBaseUrl(req) {
-  const configured = (process.env.PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '').replace(/\/$/, '');
-  return configured || `${req.protocol}://${req.get('host')}`;
-}
 
 function safeName(name = 'image') {
   return name
@@ -54,6 +50,9 @@ function parseDataUri(dataUri) {
   return { mime: match[1], buffer: Buffer.from(match[2].replace(/\s/g, ''), 'base64') };
 }
 
+// NOTE: we intentionally store a RELATIVE path in the DB so links keep
+// working if the server IP / domain / protocol ever changes. The response
+// middleware turns it into an absolute URL per request.
 async function saveImageBuffer(req, buffer, mime, filename) {
   await fs.mkdir(mediaDir, { recursive: true });
   const id = uuid();
@@ -62,7 +61,7 @@ async function saveImageBuffer(req, buffer, mime, filename) {
   await fs.writeFile(path.join(mediaDir, finalName), buffer);
   return {
     id,
-    url: `${publicBaseUrl(req)}/uploads/media/${finalName}`,
+    url: `/uploads/media/${finalName}`,
     filename: finalName,
     mime: mime || `image/${ext === 'jpg' ? 'jpeg' : ext}`,
     size: buffer.length,
@@ -133,7 +132,7 @@ router.post('/', requireAuth, upload.single('file'), asyncH(async (req, res) => 
   }
 
   const id = stored?.id || uuid();
-  const imageUrl = stored?.url || body.url;
+  const imageUrl = stored?.url || toRelativeMediaUrl(body.url);
   const filename = body.filename || stored?.filename || null;
   const mime = stored?.mime || body.mime || null;
   const size = stored?.size || Number(body.size_bytes || 0);
@@ -147,7 +146,9 @@ router.post('/', requireAuth, upload.single('file'), asyncH(async (req, res) => 
     [
       id,
       imageUrl,
-      body.thumb_url && !String(body.thumb_url).startsWith('data:') ? body.thumb_url : imageUrl,
+      body.thumb_url && !String(body.thumb_url).startsWith('data:')
+        ? toRelativeMediaUrl(body.thumb_url)
+        : imageUrl,
       filename,
       mime,
       size,
