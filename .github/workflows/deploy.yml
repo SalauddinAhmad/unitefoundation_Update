@@ -84,9 +84,17 @@ jobs:
         run: bash scripts/deploy-cpanel-zip.sh dist public_html
 
       - name: Verify frontend is live
+        env:
+          ORIGIN_IP: 14.128.14.142
         run: |
           for i in $(seq 1 12); do
-            LIVE=$(curl -s --max-time 20 "https://unitefoundation.bd/release.txt?cb=$RANDOM" || true)
+            # The public URL may return an Imunify360/Cloudflare browser challenge
+            # to GitHub-hosted runners. Verify the same HTTPS virtual host directly
+            # against the cPanel origin so a successful upload is not marked failed.
+            LIVE=$(curl -fsS --max-time 20 \
+              --resolve "unitefoundation.bd:443:${ORIGIN_IP}" \
+              -H 'Cache-Control: no-cache' \
+              "https://unitefoundation.bd/release.txt?cb=$RANDOM" || true)
             echo "attempt $i -> '$LIVE'"
             if [ "$LIVE" = "${{ github.sha }}" ]; then
               echo "✅ Frontend live with this commit"; exit 0
