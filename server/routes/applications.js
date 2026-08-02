@@ -135,4 +135,13 @@ router.patch('/:kind/:id', requireAuth, asyncH(async (req, res) => {
   res.json({ ok: true });
 }));
 
+// Delete a single application (volunteer / member / career / donor)
+router.delete('/:kind/:id', requireAuth, asyncH(async (req, res) => {
+  if (!KINDS.includes(req.params.kind)) return res.status(400).json({ message: 'Invalid kind' });
+  const [r] = await pool.execute('DELETE FROM applications WHERE id=? AND kind=?', [req.params.id, req.params.kind]);
+  if (!r.affectedRows) return res.status(404).json({ message: 'Not found' });
+  res.json({ ok: true });
+}));
+
 module.exports = router;
+
