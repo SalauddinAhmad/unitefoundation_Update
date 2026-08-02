@@ -60,6 +60,10 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+          # The deploy script writes a unique probe into candidate FTP roots
+          # and continues only when that exact probe is visible on the origin.
+          DEPLOY_VERIFY_URL: https://unitefoundation.bd
+          DEPLOY_ORIGIN_IP: 14.128.14.142
         # The production bundle contains hundreds of chunks. cPanel FTPS can
         # take more than five minutes even while it is still uploading normally.
         timeout-minutes: 15
@@ -91,7 +95,7 @@ jobs:
         env:
           ORIGIN_IP: 14.128.14.142
         run: |
-          for i in $(seq 1 6); do
+          for i in $(seq 1 12); do
             LIVE=$(curl -fsS --max-time 20 \
               --resolve "unitefoundation.bd:443:${ORIGIN_IP}" \
               -H 'Cache-Control: no-cache' \

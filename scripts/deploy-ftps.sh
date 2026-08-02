@@ -46,9 +46,9 @@ set ftp:sync-mode true;
 echo "🔎 FTP host resolves to: $(getent hosts "$FTP_HOST" | awk '{print $1}' | tr '\n' ' ')"
 
 # ---------------------------------------------------------------
-# 1) Probe the login directory so we never upload into the wrong
-#    place (e.g. public_html/public_html when the FTP user is
-#    already chrooted into the document root).
+# 1) For frontend deployments, prove which FTP directory is the live
+#    document root before uploading the bundle. This prevents an FTP
+#    success against a stale server/root from ever becoming a green run.
 # ---------------------------------------------------------------
 PROBE="$(lftp -c "
 $LFTP_SETTINGS
@@ -62,15 +62,62 @@ echo "--- FTP login directory listing ---"
 echo "$PROBE"
 echo "-----------------------------------"
 
-LOGIN_DIR="$(printf '%s\n' "$PROBE" | grep -oE 'ftp://[^ ]*' | head -1 | sed 's|.*\(/.*\)|\1|')"
-TOP_SEGMENT="${REMOTE_DIR%%/*}"        # e.g. "public_html"
-REST="${REMOTE_DIR#"$TOP_SEGMENT"}"    # e.g. "/api-app" or ""
+if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
+  VERIFY_BASE="${DEPLOY_VERIFY_URL%/}"
+  PROBE_NAME=".deploy-probe-${GITHUB_RUN_ID:-$$}-${RANDOM}.txt"
+  PROBE_VALUE="${GITHUB_SHA:-$(date +%s)}-${RANDOM}"
+  PROBE_FILE="$(mktemp)"
+  trap 'rm -f "$PROBE_FILE"' EXIT
+  printf '%s' "$PROBE_VALUE" > "$PROBE_FILE"
 
-if ! printf '%s\n' "$PROBE" | grep -qx "${TOP_SEGMENT}/\?" && \
-   printf '%s\n' "$LOGIN_DIR" | grep -q "/${TOP_SEGMENT}\$"; then
-  # Already inside the document root — strip the duplicated segment.
-  REMOTE_DIR=".${REST}"
-  echo "ℹ️  FTP account is chrooted into '$TOP_SEGMENT' — using remote dir '$REMOTE_DIR'"
+  # Check the requested path first, then the FTP login directory. These are
+  # the two valid cPanel layouts: home/public_html and a public_html chroot.
+  CANDIDATES=("$REMOTE_DIR")
+  if [ "$REMOTE_DIR" = "public_html" ]; then
+    CANDIDATES+=(".")
+  fi
+
+  LIVE_ROOT=""
+  for CANDIDATE in "${CANDIDATES[@]}"; do
+    echo "🔬 Checking whether '$CANDIDATE' is the live document root..."
+    lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+mkdir -pf '$CANDIDATE';
+put '$PROBE_FILE' -o '$CANDIDATE/$PROBE_NAME';
+bye;
+"
+
+    CURL_RESOLVE=()
+    if [ -n "${DEPLOY_ORIGIN_IP:-}" ]; then
+      VERIFY_HOST="$(printf '%s' "$VERIFY_BASE" | sed -E 's#^https?://([^/:]+).*#\1#')"
+      CURL_RESOLVE=(--resolve "${VERIFY_HOST}:443:${DEPLOY_ORIGIN_IP}")
+    fi
+    LIVE_VALUE="$(curl -fsS --max-time 20 "${CURL_RESOLVE[@]}" \
+      -H 'Cache-Control: no-cache' \
+      "$VERIFY_BASE/$PROBE_NAME?cb=$RANDOM" 2>/dev/null || true)"
+
+    lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+rm -f '$CANDIDATE/$PROBE_NAME';
+bye;
+" >/dev/null 2>&1 || true
+
+    if [ "$LIVE_VALUE" = "$PROBE_VALUE" ]; then
+      LIVE_ROOT="$CANDIDATE"
+      break
+    fi
+  done
+
+  if [ -z "$LIVE_ROOT" ]; then
+    echo "❌ FTP credentials do not reach the document root served by $VERIFY_BASE." >&2
+    echo "   Checked: ${CANDIDATES[*]}. No files were deployed." >&2
+    echo "   Ask the hosting provider for the FTP account/path mapped to this domain." >&2
+    exit 1
+  fi
+  REMOTE_DIR="$LIVE_ROOT"
+  echo "✅ Confirmed live document root: '$REMOTE_DIR'"
 fi
 
 echo "⬆️  FTPS deploy: $LOCAL_DIR -> ftp://$FTP_HOST:$FTP_PORT/$REMOTE_DIR"
