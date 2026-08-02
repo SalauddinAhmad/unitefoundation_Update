@@ -51,7 +51,10 @@ jobs:
       - name: Deploy frontend via FTPS
         if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
         env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
+          # Always deploy to the current cPanel origin. The old FTP hostname can
+          # still resolve to the previous server and produce a false success.
+          FTP_HOST: 14.128.14.142
+          FTP_EXPECTED_IP: 14.128.14.142
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
@@ -84,8 +87,7 @@ jobs:
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: bash scripts/deploy-cpanel-zip.sh dist public_html
 
-      - name: Verify frontend is live (non-blocking)
-        continue-on-error: true
+      - name: Verify frontend is live
         env:
           ORIGIN_IP: 14.128.14.142
         run: |
@@ -100,9 +102,9 @@ jobs:
             fi
             sleep 10
           done
-          echo "⚠️  Could not confirm release.txt from origin (CDN cache or SPA fallback may hide it)."
-          echo "⚠️  The FTPS upload step already succeeded — treating this check as a warning only."
-          exit 0
+          echo "❌ New release was not found on the actual web origin."
+          echo "   The upload reached a different FTP root/server than unitefoundation.bd."
+          exit 1
 
 
 
@@ -124,7 +126,8 @@ jobs:
       - name: Deploy backend via FTPS
         if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
         env:
-          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_HOST: 14.128.14.142
+          FTP_EXPECTED_IP: 14.128.14.142
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}

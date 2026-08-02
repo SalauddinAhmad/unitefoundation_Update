@@ -17,6 +17,16 @@ FTP_PASS="${FTP_PASS:-${FTP_PASSWORD:-}}"
 FTP_PORT="${FTP_PORT:-21}"
 FTP_DELETE="${FTP_DELETE:-0}"
 
+# A stale FTP DNS record previously allowed uploads to succeed on the old
+# server while the website continued to be served by the new origin.
+if [ -n "${FTP_EXPECTED_IP:-}" ]; then
+  RESOLVED_IPS="$(getent ahostsv4 "$FTP_HOST" | awk '{print $1}' | sort -u | tr '\n' ' ')"
+  if ! printf '%s\n' "$RESOLVED_IPS" | grep -qw "$FTP_EXPECTED_IP"; then
+    echo "❌ FTP target mismatch: '$FTP_HOST' resolves to [$RESOLVED_IPS], expected $FTP_EXPECTED_IP" >&2
+    exit 1
+  fi
+fi
+
 if ! command -v lftp >/dev/null 2>&1; then
   echo "Installing lftp..."
   sudo apt-get update -qq && sudo apt-get install -y -qq lftp
