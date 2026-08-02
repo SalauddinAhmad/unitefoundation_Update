@@ -18,6 +18,15 @@ on:
           - both
           - frontend
           - backend
+      method:
+        description: 'কোন পদ্ধতিতে? (Imunify360 ব্লক করলে ftps বা ssh নিন)'
+        required: true
+        default: 'ftps'
+        type: choice
+        options:
+          - ftps
+          - ssh
+          - api
 
 jobs:
   # ────────────────────────────────────────────────────────────
@@ -42,7 +51,26 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SITE_URL: https://unitefoundation.bd
 
+      - name: Deploy frontend via FTPS
+        if: ${{ github.event.inputs.method == 'ftps' }}
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}
+        run: bash scripts/deploy-ftps.sh dist public_html
+
+      - name: Deploy frontend via SSH
+        if: ${{ github.event.inputs.method == 'ssh' }}
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: bash scripts/deploy-ssh.sh dist public_html
+
       - name: Deploy frontend via cPanel API
+        if: ${{ github.event.inputs.method == 'api' }}
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
           CPANEL_ORIGIN_IP: 14.128.14.142
@@ -68,7 +96,26 @@ jobs:
           mkdir -p out/tmp
           date > out/tmp/restart.txt
 
+      - name: Deploy backend via FTPS
+        if: ${{ github.event.inputs.method == 'ftps' }}
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+          FTP_PORT: ${{ secrets.FTP_PORT }}
+        run: bash scripts/deploy-ftps.sh out public_html/api-app
+
+      - name: Deploy backend via SSH
+        if: ${{ github.event.inputs.method == 'ssh' }}
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: bash scripts/deploy-ssh.sh out public_html/api-app
+
       - name: Deploy backend via cPanel API
+        if: ${{ github.event.inputs.method == 'api' }}
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
           CPANEL_ORIGIN_IP: 14.128.14.142
