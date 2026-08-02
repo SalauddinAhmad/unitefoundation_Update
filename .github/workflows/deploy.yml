@@ -1,8 +1,6 @@
 name: Deploy to cPanel
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       target:
@@ -59,6 +57,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+        timeout-minutes: 5
         run: bash scripts/deploy-ftps.sh dist public_html
 
       - name: Deploy frontend via SSH
@@ -129,6 +128,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+        timeout-minutes: 5
         run: bash scripts/deploy-ftps.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via SSH
