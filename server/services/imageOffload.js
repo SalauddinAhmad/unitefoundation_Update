@@ -20,9 +20,10 @@ const TARGETS = [
   { table: 'projects', columns: ['cover_image_url'] },
   { table: 'posts', columns: ['cover_image_url'] },
   { table: 'team_members', columns: ['photo'] },
-  { table: 'gallery_items', columns: ['image_url', 'thumb_url'] },
-  { table: 'partners', columns: ['logo_url'] },
-];
+  { table: 'gallery_items', columns: ['url', 'thumb_url'] },
+  { table: 'partners', columns: ['logo_url', 'logo'] },
+  { table: 'media_library', columns: ['url', 'thumb_url'] },
+
 
 function baseUrl() {
   return (process.env.PUBLIC_API_BASE_URL || process.env.API_BASE_URL || '').replace(/\/$/, '')
