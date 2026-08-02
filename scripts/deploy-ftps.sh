@@ -116,6 +116,10 @@ if [ -f "$LOCAL_DIR/index.html" ]; then
   LOCAL_SIZE=$(wc -c < "$LOCAL_DIR/index.html" | tr -d ' ')
   VERIFY_FILE="$(mktemp)"
   trap 'rm -f "$VERIFY_FILE"' EXIT
+  # mktemp creates the file immediately, while lftp `get` refuses to
+  # overwrite an existing local file by default. Remove the placeholder so
+  # the remote index can be downloaded to this unique path.
+  rm -f "$VERIFY_FILE"
   REMOTE_LS="$(lftp -c "
 $LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
