@@ -165,12 +165,15 @@ const Volunteer = () => {
           <div className="mt-5 rounded-card bg-accent/60 border border-accent px-5 md:px-6 py-4 text-sm md:text-base text-foreground/80 text-center">
             {t("volunteerPage.infoStripPre")}
             <a
-              href={`mailto:${site.email || "info@unite.org"}`}
+              href={`https://wa.me/${site.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="font-semibold text-primary underline-offset-4 hover:underline"
             >
-              {site.email || "info@unite.org"}
+              WhatsApp
             </a>
             {t("volunteerPage.infoStripPost")}
+
           </div>
 
           {/* Two-column content */}
