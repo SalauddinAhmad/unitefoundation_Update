@@ -40,22 +40,48 @@ import {
 
 
 type MenuItem = { to: string; icon: typeof LayoutDashboard; label: string; end?: boolean; badge?: string; perm: Permission };
+type MenuGroup = { title: string; items: MenuItem[] };
 
-const menu: MenuItem[] = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true, perm: "overview" },
-  { to: "/dashboard/donations", icon: HandCoins, label: "দানসমূহ", perm: "donations" },
-  { to: "/dashboard/volunteers", icon: Users2, label: "স্বেচ্ছাসেবক", perm: "volunteers" },
-  { to: "/dashboard/members", icon: HeartHandshake, label: "সদস্যপদ", perm: "members" },
-  { to: "/dashboard/projects", icon: FolderKanban, label: "প্রকল্প", perm: "projects" },
-  { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট", perm: "blog" },
-  { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি", perm: "gallery" },
-  { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", perm: "messages" },
-  { to: "/dashboard/newsletter", icon: Mail, label: "নিউজলেটার", perm: "newsletter" },
-  { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
-  { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
-  { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },
-  { to: "/dashboard/logs", icon: ScrollText, label: "অ্যাক্টিভিটি লগ", perm: "logs" },
-  { to: "/dashboard/forms", icon: FormInput, label: "ফর্ম ম্যানেজার", perm: "forms" },
+const menuGroups: MenuGroup[] = [
+  {
+    title: "সংক্ষিপ্ত বিবরণ",
+    items: [
+      { to: "/dashboard", icon: LayoutDashboard, label: "ড্যাশবোর্ড", end: true, perm: "overview" },
+    ],
+  },
+  {
+    title: "অনুদান ও সদস্য",
+    items: [
+      { to: "/dashboard/donations", icon: HandCoins, label: "দানসমূহ", perm: "donations" },
+      { to: "/dashboard/members", icon: HeartHandshake, label: "সদস্যপদ", perm: "members" },
+      { to: "/dashboard/volunteers", icon: Users2, label: "স্বেচ্ছাসেবক", perm: "volunteers" },
+      { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
+    ],
+  },
+  {
+    title: "কনটেন্ট",
+    items: [
+      { to: "/dashboard/projects", icon: FolderKanban, label: "প্রকল্প", perm: "projects" },
+      { to: "/dashboard/blog", icon: FileText, label: "ব্লগ ও কনটেন্ট", perm: "blog" },
+      { to: "/dashboard/gallery", icon: ImageIcon, label: "গ্যালারি", perm: "gallery" },
+    ],
+  },
+  {
+    title: "যোগাযোগ",
+    items: [
+      { to: "/dashboard/messages", icon: Inbox, label: "মেসেজ", perm: "messages" },
+      { to: "/dashboard/newsletter", icon: Mail, label: "নিউজলেটার", perm: "newsletter" },
+      { to: "/dashboard/forms", icon: FormInput, label: "ফর্ম ম্যানেজার", perm: "forms" },
+    ],
+  },
+  {
+    title: "প্রতিষ্ঠান",
+    items: [
+      { to: "/dashboard/team", icon: Users2, label: "আমাদের টিম", perm: "team" },
+      { to: "/dashboard/partners", icon: Building2, label: "আমাদের প্রতিষ্ঠান", perm: "partners" },
+      { to: "/dashboard/logs", icon: ScrollText, label: "অ্যাক্টিভিটি লগ", perm: "logs" },
+    ],
+  },
 ];
 
 const generalMenu: MenuItem[] = [
@@ -63,6 +89,14 @@ const generalMenu: MenuItem[] = [
   { to: "/dashboard/help", icon: HelpCircle, label: "সাহায্য", perm: "help" },
 ];
 
+const groupTitleClass =
+  "px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-none";
+
+const itemClass = (isActive: boolean) =>
+  "group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium leading-none transition-colors " +
+  (isActive
+    ? "bg-primary text-primary-foreground shadow-sm"
+    : "text-foreground/70 hover:bg-secondary hover:text-foreground");
 
 const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout?: () => void; can: (p: Permission) => boolean }) => (
   <div className="flex h-full flex-col">
@@ -72,81 +106,62 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
     </div>
 
     {/* Menu */}
-    <div className="flex-1 overflow-y-auto px-3">
-      <div className="px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground mb-2">
-        মেনু
-      </div>
-      <nav className="space-y-1">
-        {menu.filter((m) => can(m.perm)).map(({ to, icon: Icon, label, end, badge }) => (
-
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={onNav}
-            className={({ isActive }) =>
-              "relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors " +
-              (isActive
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-foreground/70 hover:bg-secondary hover:text-foreground")
-            }
-          >
-            {({ isActive }) => (
-              <>
-                {isActive && (
-                  <span className="absolute -left-3 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary" />
-                )}
-                <Icon className="h-[18px] w-[18px] shrink-0" />
-                <span className="flex-1">{label}</span>
-                {badge && (
-                  <span
-                    className={
-                      "text-[10px] font-bold px-1.5 py-0.5 rounded-full " +
-                      (isActive
-                        ? "bg-white/20 text-white"
-                        : "bg-primary/10 text-primary")
-                    }
-                  >
-                    {badge}
-                  </span>
-                )}
-              </>
-            )}
-          </NavLink>
+    <div className="flex-1 overflow-y-auto px-3 pb-2">
+      {menuGroups
+        .map((g) => ({ ...g, items: g.items.filter((m) => can(m.perm)) }))
+        .filter((g) => g.items.length > 0)
+        .map((group, gi) => (
+          <div key={group.title} className={gi === 0 ? "" : "mt-6"}>
+            <div className={groupTitleClass}>{group.title}</div>
+            <nav className="flex flex-col gap-1">
+              {group.items.map(({ to, icon: Icon, label, end, badge }) => (
+                <NavLink key={to} to={to} end={end} onClick={onNav} className={({ isActive }) => itemClass(isActive)}>
+                  {({ isActive }) => (
+                    <>
+                      {isActive && (
+                        <span className="absolute -left-3 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary" />
+                      )}
+                      <Icon className="h-[18px] w-[18px] shrink-0" />
+                      <span className="flex-1 min-w-0 truncate text-left">{label}</span>
+                      {badge && (
+                        <span
+                          className={
+                            "shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full " +
+                            (isActive ? "bg-white/20 text-white" : "bg-primary/10 text-primary")
+                          }
+                        >
+                          {badge}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
         ))}
-      </nav>
 
-      <div className="px-3 mt-7 mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+      <div className="mt-6 mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-none">
         সাধারণ
       </div>
-      <nav className="space-y-1">
+      <nav className="flex flex-col gap-1">
         {generalMenu.filter((m) => can(m.perm)).map(({ to, icon: Icon, label }) => (
-
-          <NavLink
-            key={to}
-            to={to}
-            onClick={onNav}
-            className={({ isActive }) =>
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors " +
-              (isActive
-                ? "bg-primary text-primary-foreground"
-                : "text-foreground/70 hover:bg-secondary hover:text-foreground")
-            }
-          >
-            <Icon className="h-[18px] w-[18px]" />
-            <span>{label}</span>
+          <NavLink key={to} to={to} onClick={onNav} className={({ isActive }) => itemClass(isActive)}>
+            <Icon className="h-[18px] w-[18px] shrink-0" />
+            <span className="flex-1 min-w-0 truncate text-left">{label}</span>
           </NavLink>
         ))}
         <button
           type="button"
           onClick={onLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium leading-none text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
         >
-          <LogOut className="h-[18px] w-[18px]" />
-          <span>লগ আউট</span>
+          <LogOut className="h-[18px] w-[18px] shrink-0" />
+          <span className="flex-1 min-w-0 truncate text-left">লগ আউট</span>
         </button>
       </nav>
     </div>
+
 
     {/* Promo / upgrade card */}
     <div className="m-4 mt-6 rounded-2xl p-5 text-white relative overflow-hidden"
