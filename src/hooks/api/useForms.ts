@@ -183,31 +183,16 @@ export function useSaveFormSchema() {
       if (payloadBytes > 200_000) {
         throw new Error("ফর্মের ডেটা অস্বাভাবিক বড় — বড়/base64 ইমেজ সরিয়ে Media Library URL ব্যবহার করুন।");
       }
-      let saved = false;
-      let lastError: unknown;
+      // Save only to the dedicated /forms endpoint. Mirroring into /settings
+      // could overwrite the whole site settings blob (hero slides, payments…)
+      // whenever the settings GET failed — never do that again.
+      await api.put(`/forms/${key}`, {
+        title: payload.title,
+        subtitle: payload.subtitle,
+        fields: payload.fields,
+        extras: payload.extras,
+      });
 
-      try {
-        await api.put(`/forms/${key}`, {
-          title: payload.title,
-          subtitle: payload.subtitle,
-          fields: payload.fields,
-          extras: payload.extras,
-        });
-        saved = true;
-      } catch (error) {
-        lastError = error;
-      }
-
-      try {
-        await saveSchemaToSettings(key, nextSchema);
-        saved = true;
-      } catch (error) {
-        lastError = error;
-      }
-
-      if (!saved) {
-        throw lastError instanceof Error ? lastError : new Error("ফর্ম সংরক্ষণ করা যায়নি");
-      }
 
       writeCache(key, nextSchema);
       return nextSchema;
