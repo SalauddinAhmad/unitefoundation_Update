@@ -51,6 +51,7 @@ jobs:
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: bash scripts/deploy-ftps.sh dist public_html
 
       - name: Deploy frontend via SSH
@@ -60,6 +61,7 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: bash scripts/deploy-ssh.sh dist public_html
 
       - name: Deploy frontend via cPanel API
@@ -71,6 +73,7 @@ jobs:
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: bash scripts/deploy-cpanel-zip.sh dist public_html
 
   backend:
@@ -96,7 +99,8 @@ jobs:
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
-        run: bash scripts/deploy-ftps.sh out public_html/api-app
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+        run: bash scripts/deploy-ftps.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via SSH
         if: ${{ github.event.inputs.method == 'ssh' }}
@@ -105,7 +109,8 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: bash scripts/deploy-ssh.sh out public_html/api-app
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+        run: bash scripts/deploy-ssh.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via cPanel API
         if: ${{ github.event.inputs.method == 'api' }}
@@ -116,4 +121,5 @@ jobs:
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-        run: bash scripts/deploy-cpanel-zip.sh out public_html/api-app
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+        run: bash scripts/deploy-cpanel-zip.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
