@@ -97,6 +97,17 @@ app.get('/health/deploy', (_req, res) => {
   });
 });
 
+// --- Crash guards -------------------------------------------------
+// On shared cPanel/Passenger hosting a single unhandled async error kills the
+// worker; Passenger then shows "running" while every request 503s until the
+// next spawn. Log and keep serving instead of dying.
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason && reason.stack ? reason.stack : reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err && err.stack ? err.stack : err);
+});
+
 // One-time maintenance: move any base64 `data:` images stored in the DB into
 // real files. Huge inline images made /projects and /posts several MB, which
 // the host would cut off mid-response (partial data on the site).
