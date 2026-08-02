@@ -34,8 +34,10 @@ if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
   fi
 fi
 
+BROWSER_UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+
 cpanel_curl() {
-  curl "${CURL_CONNECT_ARGS[@]}" "$@"
+  curl "${CURL_CONNECT_ARGS[@]}" --user-agent "$BROWSER_UA" --header "Accept: application/json" "$@"
 }
 
 urlencode() {
@@ -50,12 +52,18 @@ try:
     data = json.loads(raw)
 except Exception:
     text = raw.strip()
-    if "access denied" in text.lower():
+    snippet = text[:400].replace("\n", " ")
+    low = text.lower()
+    if "access denied" in low:
         print("cPanel access denied. Create a new API token on the current cPanel server and update the CPANEL_API_TOKEN GitHub secret.")
+    elif "imunify" in low or "ddos" in low or "captcha" in low or "challenge" in low:
+        print("Request blocked by the server security layer (Imunify360/LiteSpeed anti-DDoS). Ask the host to whitelist GitHub Actions IPs for port 2083.")
     elif text.startswith("<"):
         print("cPanel returned HTML instead of an API response. Check CPANEL_ORIGIN_IP and CPANEL_API_TOKEN.")
     else:
         print(text or "cPanel returned an empty response.")
+    print("--- raw response snippet ---")
+    print(snippet)
     sys.exit(1)
 status = data.get("status")
 if status is None:
@@ -66,6 +74,27 @@ print(json.dumps(data, ensure_ascii=False, indent=2))
 sys.exit(1)
 '
 }
+
+preflight_auth_check() {
+  local body code
+  body=$(cpanel_curl --silent --show-error --location --connect-timeout 20 --max-time 60 \
+    --write-out "\n%{http_code}" --header "$AUTH_HEADER" \
+    "${API_BASE}/execute/Fileman/list_files?dir=$(urlencode "${CPANEL_HOME%/}")&types=dir" || true)
+  code="${body##*$'\n'}"
+  body="${body%$'\n'*}"
+  echo "Preflight cPanel auth check: HTTP ${code}"
+  if [[ "$body" != \{* ]]; then
+    echo "Preflight response (first 300 chars): ${body:0:300}"
+    if [[ "${body,,}" == *"access denied"* ]]; then
+      echo "❌ cPanel API token rejected. Generate a new token in cPanel → Manage API Tokens and update the CPANEL_API_TOKEN secret." >&2
+    else
+      echo "❌ cPanel did not return an API response (likely a security/WAF page on port 2083)." >&2
+    fi
+    exit 1
+  fi
+  echo "✅ cPanel API token accepted."
+}
+
 
 cpanel_api2_mkdir() {
   local parent="$1"
