@@ -42,9 +42,23 @@ export const Hero = () => {
     );
   }
 
-  if (!slides.length) return null;
-  const current = slides[Math.min(i, slides.length - 1)];
-  const align = current.align as keyof typeof alignClasses;
+  // Never render a blank page: if no slide is configured (or settings were
+  // reset), fall back to a branded text-only hero.
+  const fallback = {
+    eyebrow: "ইউনাইট ফাউন্ডেশন",
+    title: "সুন্নাহর অনুসরণে, মানবতার কল্যাণে",
+    subtitle:
+      "ওহীভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে পরিচালিত একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম।",
+    primaryCtaLabel: "দান করুন",
+    primaryCtaTo: "/donate",
+    secondaryCtaLabel: "আমাদের সম্পর্কে",
+    secondaryCtaTo: "/about",
+    align: "left" as const,
+  };
+
+  const current = slides.length ? slides[Math.min(i, slides.length - 1)] : fallback;
+  const align = (current.align || "left") as keyof typeof alignClasses;
+
 
   return (
     <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-foreground">
