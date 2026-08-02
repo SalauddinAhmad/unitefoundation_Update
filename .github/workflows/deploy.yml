@@ -57,7 +57,9 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
-        timeout-minutes: 5
+        # The production bundle contains hundreds of chunks. cPanel FTPS can
+        # take more than five minutes even while it is still uploading normally.
+        timeout-minutes: 15
         run: bash scripts/deploy-ftps.sh dist public_html
 
       - name: Deploy frontend via SSH
@@ -128,7 +130,7 @@ jobs:
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
-        timeout-minutes: 5
+        timeout-minutes: 10
         run: bash scripts/deploy-ftps.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via SSH
