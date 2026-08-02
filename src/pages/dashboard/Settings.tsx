@@ -154,24 +154,47 @@ const Toggle = ({
   </div>
 );
 
-const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[] = [
-  { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
-  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
-  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
-  { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
-  { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
-  { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
-  { k: "page_heroes", icon: Layers, l: "পেজ হেডার ইমেজ", perm: "settings" },
-  
-  
-  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
-  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
-  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
-  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
-  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
-  { k: "email_templates", icon: Mail, l: "ইমেইল টেমপ্লেট", perm: "admins" },
-  { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+type SettingsTab = { k: string; icon: typeof Building2; l: string; perm?: Permission };
+
+const TAB_GROUPS: { title: string; items: SettingsTab[] }[] = [
+  {
+    title: "অ্যাকাউন্ট",
+    items: [
+      { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
+      { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
+      { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
+    ],
+  },
+  {
+    title: "প্রতিষ্ঠান",
+    items: [
+      { k: "organization", icon: Building2, l: "প্রতিষ্ঠানের তথ্য", perm: "settings" },
+      { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
+      { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
+    ],
+  },
+  {
+    title: "সাইট কনটেন্ট",
+    items: [
+      { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
+      { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
+      { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
+      { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
+      { k: "page_heroes", icon: Layers, l: "পেজ হেডার ইমেজ", perm: "settings" },
+    ],
+  },
+  {
+    title: "পেমেন্ট ও যোগাযোগ",
+    items: [
+      { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
+      { k: "email_templates", icon: Mail, l: "ইমেইল টেমপ্লেট", perm: "admins" },
+      { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+    ],
+  },
 ];
+
+const TABS: SettingsTab[] = TAB_GROUPS.flatMap((g) => g.items);
+
 
 
 const Settings = () => {
@@ -180,6 +203,10 @@ const Settings = () => {
   const { toast } = useToast();
   const { can } = useAuth();
   const visibleTabs = TABS.filter((t) => !t.perm || can(t.perm));
+  const visibleGroups = TAB_GROUPS.map((g) => ({
+    title: g.title,
+    items: g.items.filter((t) => !t.perm || can(t.perm)),
+  })).filter((g) => g.items.length > 0);
   const [form, setForm] = useState<SiteSettings | null>(null);
   const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
 
@@ -272,24 +299,40 @@ const Settings = () => {
     <>
       <PageHeader title="সেটিংস" subtitle="ফাউন্ডেশনের তথ্য, পেমেন্ট, নিরাপত্তা ও নোটিফিকেশন" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        <nav className="space-y-1">
-          {visibleTabs.map((i) => (
-            <button
-              key={i.k}
-              onClick={() => setActive(i.k)}
-              className={
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors " +
-                (active === i.k
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground/70 hover:bg-secondary hover:text-foreground")
-              }
-            >
-              <i.icon className="h-4 w-4" />
-              {i.l}
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-[268px_1fr] gap-6">
+        <nav className="lg:sticky lg:top-4 h-max rounded-xl border border-border bg-card p-2 space-y-4">
+          {visibleGroups.map((g, gi) => (
+            <div key={g.title}>
+              <div className="px-3 pt-2 pb-1.5 flex items-center gap-2">
+                <span className="text-[11px] font-bold text-primary/70 tabular-nums">
+                  {String(gi + 1).padStart(2, "0")}
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {g.title}
+                </span>
+              </div>
+              <div className="space-y-0.5">
+                {g.items.map((i) => (
+                  <button
+                    key={i.k}
+                    onClick={() => setActive(i.k)}
+                    className={
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors " +
+                      (active === i.k
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-foreground/70 hover:bg-secondary hover:text-foreground")
+                    }
+                  >
+                    <i.icon className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{i.l}</span>
+                  </button>
+                ))}
+              </div>
+              {gi < visibleGroups.length - 1 && <div className="mt-3 border-t border-border/60" />}
+            </div>
           ))}
         </nav>
+
 
         <div className="space-y-4">
           {active === "profile" && <ProfilePanel />}
