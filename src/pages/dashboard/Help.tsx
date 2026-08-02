@@ -30,6 +30,8 @@ import {
   ArrowRight,
   Copy,
   Check,
+  Building2,
+  Globe2,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
