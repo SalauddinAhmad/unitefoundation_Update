@@ -58,6 +58,30 @@ function absolutizePayload(payload, base, depth = 0) {
   return payload;
 }
 
+/** Deep-walk a request body and store /uploads links relative. */
+function relativizePayload(payload, depth = 0) {
+  if (depth > 12) return payload;
+  if (typeof payload === 'string') {
+    // handles both plain URLs and URLs embedded in HTML/JSON strings
+    return payload.replace(/(?:https?:)?\/\/[^/"'\s]+(\/uploads\/)/gi, '$1');
+  }
+  if (Array.isArray(payload)) return payload.map((v) => relativizePayload(v, depth + 1));
+  if (payload && typeof payload === 'object' && payload.constructor === Object) {
+    const out = {};
+    for (const [k, v] of Object.entries(payload)) out[k] = relativizePayload(v, depth + 1);
+    return out;
+  }
+  return payload;
+}
+
+/** Express middleware: normalize incoming bodies before they hit the DB. */
+function mediaUrlRequestMiddleware(req, _res, next) {
+  if (req.body && typeof req.body === 'object') {
+    try { req.body = relativizePayload(req.body); } catch { /* keep original */ }
+  }
+  next();
+}
+
 /**
  * Express middleware: rewrites relative /uploads/ paths in every JSON
  * response into absolute URLs for the current host.
@@ -72,6 +96,8 @@ function mediaUrlResponseMiddleware(req, res, next) {
 
 module.exports = {
   toRelativeMediaUrl,
+  relativizePayload,
+  mediaUrlRequestMiddleware,
   publicBaseUrl,
   absolutizeMediaUrl,
   absolutizePayload,

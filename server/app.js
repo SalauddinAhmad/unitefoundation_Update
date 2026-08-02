@@ -67,6 +67,13 @@ app.use('/forms', (req, res, next) => {
 // (gallery / blog cover / project cover) don't get truncated.
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+// Image links are stored relative ("/uploads/...") so a server IP or domain
+// change never breaks them; these two middlewares normalize what goes into
+// the DB and absolutize what goes out to the browser.
+const { mediaUrlRequestMiddleware, mediaUrlResponseMiddleware } = require('./utils/mediaUrl');
+app.use(mediaUrlRequestMiddleware);
+app.use(mediaUrlResponseMiddleware);
+
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 
 // --- Global rate limit ---
