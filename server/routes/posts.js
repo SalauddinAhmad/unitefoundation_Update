@@ -10,9 +10,16 @@ router.get('/', asyncH(async (req, res) => {
   const params = [];
   let where = '';
   if (status) { where = 'WHERE status=?'; params.push(status); }
-  const [rows] = await pool.execute(`SELECT * FROM posts ${where} ORDER BY created_at DESC`, params);
+  // Exclude `content` from the list — it is only needed on the detail page.
+  const [rows] = await pool.query(
+    `SELECT id,title,slug,excerpt,cover_image_url,category,status,author_id,author_name,
+            views,published_at,created_at,updated_at
+       FROM posts ${where} ORDER BY created_at DESC`,
+    params
+  );
   res.json(rows);
 }));
+
 
 router.get('/:slug', asyncH(async (req, res) => {
   const [rows] = await pool.execute('SELECT * FROM posts WHERE slug=? OR id=?', [req.params.slug, req.params.slug]);

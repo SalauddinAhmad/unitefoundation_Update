@@ -5,20 +5,26 @@ const asyncH = require('../utils/asyncH');
 const { shortId } = require('../utils/uid');
 const { requireAuth } = require('../middleware/auth');
 
+// Light column list — heavy fields (description/content) are only sent by
+// the detail endpoint, so the list response stays small and reliable.
+const LIST_COLS = `id,title,slug,category,short_description,budget,target,raised,
+  beneficiaries,donors,location,status,urgent,cover_image_url,gallery,created_at,updated_at`;
+
 router.get('/', asyncH(async (_req, res) => {
   let rows;
   try {
-    [rows] = await pool.execute('SELECT * FROM projects ORDER BY sort_order ASC, created_at DESC');
+    [rows] = await pool.query(`SELECT ${LIST_COLS},sort_order FROM projects ORDER BY sort_order ASC, created_at DESC`);
   } catch (e) {
     // Fallback if sort_order column doesn't exist yet (migration 018 not run)
     if (e && e.code === 'ER_BAD_FIELD_ERROR') {
-      [rows] = await pool.execute('SELECT * FROM projects ORDER BY created_at DESC');
+      [rows] = await pool.query(`SELECT ${LIST_COLS} FROM projects ORDER BY created_at DESC`);
     } else {
       throw e;
     }
   }
   res.json(rows.map(parseGallery));
 }));
+
 
 // Bulk reorder — accepts [{id, sort_order}]
 router.post('/reorder', requireAuth, asyncH(async (req, res) => {
