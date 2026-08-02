@@ -36,8 +36,10 @@ if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
   fi
 fi
 
+BROWSER_UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+
 cpanel_curl() {
-  curl "${CURL_CONNECT_ARGS[@]}" "$@"
+  curl "${CURL_CONNECT_ARGS[@]}" --user-agent "$BROWSER_UA" --header "Accept: application/json" "$@"
 }
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -112,6 +114,8 @@ except Exception:
         print("cPanel returned HTML instead of JSON. Verify the current cPanel origin IP and API token.")
     else:
         print(text or "cPanel returned an empty upload response.")
+    print("--- raw response snippet ---")
+    print(text[:400].replace("\n", " "))
     sys.exit(1)
 s = d.get("status") or d.get("result", {}).get("status")
 if s not in (1, True):
