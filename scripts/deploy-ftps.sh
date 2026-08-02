@@ -14,7 +14,8 @@ REMOTE_DIR="${2:?remote directory required}"
 
 FTP_HOST="${FTP_HOST:?FTP_HOST is required}"
 FTP_USER="${FTP_USER:?FTP_USER is required}"
-FTP_PASS="${FTP_PASS:?FTP_PASS is required}"
+FTP_PASS="${FTP_PASS:-${FTP_PASSWORD:-}}"
+[ -n "$FTP_PASS" ] || { echo "FTP_PASS or FTP_PASSWORD is required"; exit 1; }
 FTP_PORT="${FTP_PORT:-21}"
 FTP_DELETE="${FTP_DELETE:-0}"
 
