@@ -130,8 +130,16 @@ async function triggerOffload() {
 }
 app.get('/health/images', (_req, res) => res.json({ ok: true, running: offloadRunning, last: offloadResult }));
 app.post('/health/images/fix', async (_req, res) => res.json(await triggerOffload()));
-// Run automatically shortly after boot (non-blocking).
-setTimeout(() => { triggerOffload().catch(() => {}); }, 5000).unref?.();
+// Run automatically once (marker file), so every Passenger respawn doesn't
+// re-scan the whole database and blow the host's CPU/EP limits.
+const offloadMarker = path.join(__dirname, '.image-offload-done');
+if (!fs.existsSync(offloadMarker) && process.env.DISABLE_BOOT_OFFLOAD !== 'true') {
+  setTimeout(() => {
+    triggerOffload()
+      .then(() => { try { fs.writeFileSync(offloadMarker, new Date().toISOString()); } catch { /* ignore */ } })
+      .catch(() => {});
+  }, 5000).unref?.();
+}
 
 
 
