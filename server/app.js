@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
+const fs = require('fs');
 
 const errorHandler = require('./middleware/errorHandler');
 const { globalLimiter } = require('./middleware/rateLimit');
@@ -77,6 +78,17 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 // --- Health ---
 app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/health/deploy', (_req, res) => {
+  let release = process.env.DEPLOY_RELEASE || 'local';
+  try {
+    release = fs.readFileSync(path.join(__dirname, 'DEPLOY_RELEASE'), 'utf8').trim() || release;
+  } catch { /* local development has no release marker */ }
+  res.json({
+    ok: true,
+    release,
+    mailTransport: process.env.SMTP_TRANSPORT || 'sendmail',
+  });
+});
 
 // --- Public diagnostics (no secrets exposed) ---
 // SMTP connectivity/auth check — public so it works even when the login token is broken

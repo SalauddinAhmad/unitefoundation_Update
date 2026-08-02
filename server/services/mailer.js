@@ -17,6 +17,13 @@ function buildTransport({ host, port, secure }) {
 }
 
 function assertEnv() {
+  const useSendmail = String(process.env.SMTP_TRANSPORT || 'sendmail').toLowerCase() === 'sendmail';
+  if (useSendmail) {
+    if (!process.env.SMTP_FROM && !process.env.SMTP_USER) {
+      throw new Error('Mail sender missing: set SMTP_FROM or SMTP_USER in cPanel Node.js App');
+    }
+    return;
+  }
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     throw new Error('SMTP env vars missing: set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM in cPanel Node.js App');
   }
@@ -64,6 +71,22 @@ function isConnError(err) {
 async function resolveTransporter(force = false) {
   assertEnv();
   if (transporter && !force) return transporter;
+
+  // cPanel already has a local Exim mail transfer agent. Prefer it by default:
+  // it does not open an outbound SMTP socket, so hosting firewall changes cannot
+  // cause ETIMEDOUT. Set SMTP_TRANSPORT=smtp only when remote SMTP is required.
+  if (String(process.env.SMTP_TRANSPORT || 'sendmail').toLowerCase() === 'sendmail') {
+    transporter = buildSendmailTransport();
+    activeConfig = {
+      transport: 'sendmail',
+      path: process.env.SENDMAIL_PATH || '/usr/sbin/sendmail',
+      host: 'localhost',
+      port: null,
+      secure: false,
+    };
+    return transporter;
+  }
+
   let lastErr = null;
   for (const cfg of candidates()) {
     const t = buildTransport(cfg);
