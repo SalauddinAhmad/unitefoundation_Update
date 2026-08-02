@@ -59,6 +59,9 @@ jobs:
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
+          # Optional but recommended: exact path from cPanel → Domains →
+          # unitefoundation.bd → Document Root (relative to this FTP login).
+          FTP_FRONTEND_ROOT: ${{ secrets.FTP_FRONTEND_ROOT }}
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
           # The deploy script writes a unique probe into candidate FTP roots
           # and continues only when that exact probe is visible on the origin.
