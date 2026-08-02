@@ -23,6 +23,9 @@ const TARGETS = [
   { table: 'gallery_items', columns: ['url', 'thumb_url'] },
   { table: 'partners', columns: ['logo_url', 'logo'] },
   { table: 'media_library', columns: ['url', 'thumb_url'] },
+];
+
+
 
 
 function baseUrl() {
