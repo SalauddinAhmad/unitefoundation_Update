@@ -64,7 +64,8 @@ echo "-----------------------------------"
 
 if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
   VERIFY_BASE="${DEPLOY_VERIFY_URL%/}"
-  PROBE_NAME=".deploy-probe-${GITHUB_RUN_ID:-$$}-${RANDOM}.txt"
+  # Do not use a dotfile: many Apache configurations block dot-prefixed files.
+  PROBE_NAME="deploy-probe-${GITHUB_RUN_ID:-$$}-${RANDOM}.txt"
   PROBE_VALUE="${GITHUB_SHA:-$(date +%s)}-${RANDOM}"
   PROBE_FILE="$(mktemp)"
   trap 'rm -f "$PROBE_FILE"' EXIT
