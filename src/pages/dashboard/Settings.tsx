@@ -154,24 +154,47 @@ const Toggle = ({
   </div>
 );
 
-const TABS: { k: string; icon: typeof Building2; l: string; perm?: Permission }[] = [
-  { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
-  { k: "organization", icon: Building2, l: "প্রতিষ্ঠান", perm: "settings" },
-  { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
-  { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
-  { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
-  { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
-  { k: "page_heroes", icon: Layers, l: "পেজ হেডার ইমেজ", perm: "settings" },
-  
-  
-  { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
-  { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
-  { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
-  { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
-  { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
-  { k: "email_templates", icon: Mail, l: "ইমেইল টেমপ্লেট", perm: "admins" },
-  { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+type SettingsTab = { k: string; icon: typeof Building2; l: string; perm?: Permission };
+
+const TAB_GROUPS: { title: string; items: SettingsTab[] }[] = [
+  {
+    title: "অ্যাকাউন্ট",
+    items: [
+      { k: "profile", icon: KeyRound, l: "প্রোফাইল ও পাসওয়ার্ড" },
+      { k: "admins", icon: UserPlus, l: "অ্যাডমিন ব্যবস্থাপনা", perm: "admins" },
+      { k: "security", icon: ShieldCheck, l: "নিরাপত্তা ও রোল", perm: "settings.security" },
+    ],
+  },
+  {
+    title: "প্রতিষ্ঠান",
+    items: [
+      { k: "organization", icon: Building2, l: "প্রতিষ্ঠানের তথ্য", perm: "settings" },
+      { k: "socials", icon: Share2, l: "সোশ্যাল লিংক", perm: "settings" },
+      { k: "impact", icon: TrendingUp, l: "ইমপ্যাক্ট পরিসংখ্যান", perm: "settings" },
+    ],
+  },
+  {
+    title: "সাইট কনটেন্ট",
+    items: [
+      { k: "hero", icon: ImageIcon, l: "হোম স্লাইডার", perm: "settings" },
+      { k: "about", icon: Info, l: "About সেকশন", perm: "settings" },
+      { k: "mission", icon: Target, l: "লক্ষ্য সেকশন (About)", perm: "settings" },
+      { k: "milestones", icon: MilestoneIcon, l: "মাইলফলকসমূহ", perm: "settings" },
+      { k: "page_heroes", icon: Layers, l: "পেজ হেডার ইমেজ", perm: "settings" },
+    ],
+  },
+  {
+    title: "পেমেন্ট ও যোগাযোগ",
+    items: [
+      { k: "payment", icon: KeyRound, l: "পেমেন্ট গেটওয়ে", perm: "settings.payment" },
+      { k: "email_templates", icon: Mail, l: "ইমেইল টেমপ্লেট", perm: "admins" },
+      { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
+    ],
+  },
 ];
+
+const TABS: SettingsTab[] = TAB_GROUPS.flatMap((g) => g.items);
+
 
 
 const Settings = () => {
