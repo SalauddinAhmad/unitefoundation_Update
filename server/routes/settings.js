@@ -19,9 +19,20 @@ function normaliseSettings(v) {
 }
 
 router.get('/', asyncH(async (_req, res) => {
-  const [rows] = await pool.execute('SELECT data FROM settings WHERE id=1');
-  res.json(normaliseSettings(rows[0]?.data));
+  // Some legacy databases stored settings under a different row id. Merge any
+  // extra rows in as a base so older hero/about/payment data is not lost,
+  // while row id=1 always wins for keys it defines.
+  const [rows] = await pool.execute('SELECT id, data FROM settings ORDER BY id DESC');
+  let merged = {};
+  for (const r of rows) {
+    if (Number(r.id) === 1) continue;
+    merged = { ...merged, ...normaliseSettings(r.data) };
+  }
+  const primary = rows.find((r) => Number(r.id) === 1);
+  merged = { ...merged, ...normaliseSettings(primary?.data) };
+  res.json(merged);
 }));
+
 
 router.put('/', requireAuth, requireRole('admin'), asyncH(async (req, res) => {
   const incoming = req.body || {};
