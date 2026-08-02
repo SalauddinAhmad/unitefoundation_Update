@@ -1,16 +1,10 @@
 name: Deploy to cPanel
 
 on:
-  # Auto-deploy on push is DISABLED — deploy runs only when you click
-  # "Run workflow" from the GitHub Actions tab.
-  # To re-enable auto-deploy, uncomment the push block below.
-  #
-  # push:
-  #   branches: [main]
   workflow_dispatch:
     inputs:
       target:
-        description: 'কী deploy করবেন?'
+        description: 'Deploy target'
         required: true
         default: 'both'
         type: choice
@@ -19,7 +13,7 @@ on:
           - frontend
           - backend
       method:
-        description: 'কোন পদ্ধতিতে? (Imunify360 ব্লক করলে ftps বা ssh নিন)'
+        description: 'Deployment method'
         required: true
         default: 'ftps'
         type: choice
@@ -29,12 +23,10 @@ on:
           - api
 
 jobs:
-  # ────────────────────────────────────────────────────────────
-  # 1. FRONTEND — React build → /public_html/
-  # ────────────────────────────────────────────────────────────
   frontend:
     if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -81,12 +73,10 @@ jobs:
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
         run: bash scripts/deploy-cpanel-zip.sh dist public_html
 
-  # ────────────────────────────────────────────────────────────
-  # 2. BACKEND — server/ → /public_html/api-app/
-  # ────────────────────────────────────────────────────────────
   backend:
     if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'both' }}
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -127,19 +117,3 @@ jobs:
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
         run: bash scripts/deploy-cpanel-zip.sh out public_html/api-app
-
-        env:
-          EXPECTED_RELEASE: ${{ github.sha }}
-        run: |
-          for i in $(seq 1 24); do
-            BODY="$(curl -sS --max-time 15 https://api.unitefoundation.bd/health/deploy || true)"
-            if printf '%s' "$BODY" | grep -Fq "$EXPECTED_RELEASE"; then
-              echo "✅ Live backend is running release $EXPECTED_RELEASE"
-              exit 0
-            fi
-            echo "Waiting for Passenger restart ($i/24)..."
-            sleep 5
-          done
-          echo "❌ Files uploaded, but the live backend is not running this release."
-          echo "Check the FTP account root/path and restart the app in cPanel Setup Node.js App."
-          exit 1
