@@ -7,7 +7,11 @@ exports.globalLimiter = rateLimit({
   max: 3000,
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.method === 'GET' || req.method === 'OPTIONS',
+  skip: (req) =>
+    req.method === 'GET' ||
+    req.method === 'OPTIONS' ||
+    req.path === '/' ||
+    req.path.startsWith('/health'),
   message: { message: 'অনেক বেশি অনুরোধ। কিছুক্ষণ পর আবার চেষ্টা করুন।' },
 });
 
