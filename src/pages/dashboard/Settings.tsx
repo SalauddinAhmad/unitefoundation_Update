@@ -299,24 +299,40 @@ const Settings = () => {
     <>
       <PageHeader title="সেটিংস" subtitle="ফাউন্ডেশনের তথ্য, পেমেন্ট, নিরাপত্তা ও নোটিফিকেশন" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        <nav className="space-y-1">
-          {visibleTabs.map((i) => (
-            <button
-              key={i.k}
-              onClick={() => setActive(i.k)}
-              className={
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors " +
-                (active === i.k
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground/70 hover:bg-secondary hover:text-foreground")
-              }
-            >
-              <i.icon className="h-4 w-4" />
-              {i.l}
-            </button>
+      <div className="grid grid-cols-1 lg:grid-cols-[268px_1fr] gap-6">
+        <nav className="lg:sticky lg:top-4 h-max rounded-xl border border-border bg-card p-2 space-y-4">
+          {visibleGroups.map((g, gi) => (
+            <div key={g.title}>
+              <div className="px-3 pt-2 pb-1.5 flex items-center gap-2">
+                <span className="text-[11px] font-bold text-primary/70 tabular-nums">
+                  {String(gi + 1).padStart(2, "0")}
+                </span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {g.title}
+                </span>
+              </div>
+              <div className="space-y-0.5">
+                {g.items.map((i) => (
+                  <button
+                    key={i.k}
+                    onClick={() => setActive(i.k)}
+                    className={
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-left transition-colors " +
+                      (active === i.k
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-foreground/70 hover:bg-secondary hover:text-foreground")
+                    }
+                  >
+                    <i.icon className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{i.l}</span>
+                  </button>
+                ))}
+              </div>
+              {gi < visibleGroups.length - 1 && <div className="mt-3 border-t border-border/60" />}
+            </div>
           ))}
         </nav>
+
 
         <div className="space-y-4">
           {active === "profile" && <ProfilePanel />}
