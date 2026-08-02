@@ -120,34 +120,23 @@ async function fetchSettingsFormSchemas(): Promise<Partial<Record<FormKey, FormS
   }
 }
 
-async function saveSchemaToSettings(key: FormKey, schema: FormSchema) {
-  const settings = await api.get<Record<string, unknown>>("/settings", { auth: false }).catch(() => ({}));
-  const existing = normalizeSettingsFormSchemas(settings);
-  await api.put("/settings", {
-    ...settings,
-    form_schemas: {
-      ...existing,
-      [key]: schema,
-    },
-  });
-}
-
 async function fetchOne(key: FormKey): Promise<FormSchema> {
-  const settingsSchema = (await fetchSettingsFormSchemas())[key];
-  if (settingsSchema) {
-    writeCache(key, settingsSchema);
-    return settingsSchema;
-  }
-
   try {
     const r = await api.get<FormSchema & { extras?: FormSchema["extras"] }>(`/forms/${key}`, { auth: false });
     const schema = normalizeSchema(key, r);
     writeCache(key, schema);
     return schema;
   } catch {
+    // Legacy fallback: some schemas were mirrored inside /settings.
+    const settingsSchema = (await fetchSettingsFormSchemas())[key];
+    if (settingsSchema) {
+      writeCache(key, settingsSchema);
+      return settingsSchema;
+    }
     return readCache()[key] || FORM_DEFAULTS[key];
   }
 }
+
 
 export function useFormSchema(key: FormKey) {
   return useQuery({
