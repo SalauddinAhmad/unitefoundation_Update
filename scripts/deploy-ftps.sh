@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 # Deploy a local directory to cPanel over FTPS (port 21, explicit TLS).
-# This path avoids the cPanel UAPI on port 2083, so Imunify360 bot-protection
-# on the HTTPS API does not block it.
 #
 # Usage: bash scripts/deploy-ftps.sh <local-dir> <remote-dir-relative-to-home>
 # Required env: FTP_HOST, FTP_USER, FTP_PASS
@@ -24,33 +22,7 @@ if ! command -v lftp >/dev/null 2>&1; then
   sudo apt-get update -qq && sudo apt-get install -y -qq lftp
 fi
 
-DELETE_FLAG=""
-if [ "$FTP_DELETE" = "1" ]; then
-  DELETE_FLAG="--delete"
-fi
-
-echo "⬆️  FTPS deploy: $LOCAL_DIR -> ftp://$FTP_HOST:$FTP_PORT/$REMOTE_DIR"
-
-# Passenger watches tmp/restart.txt. It must be uploaded only after every
-# application file has finished; uploading it inside a parallel mirror can
-# restart Passenger while app.js is still the old version.
-RESTART_FILE="$LOCAL_DIR/tmp/restart.txt"
-RESTART_COMMAND=""
-if [ -f "$RESTART_FILE" ]; then
-  RESTART_COMMAND="mkdir -pf '$REMOTE_DIR/tmp'; put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';"
-fi
-
-# Entry files are excluded from mirror and uploaded exactly once afterwards.
-# This both forces fresh entry files and avoids the duplicate uploads that were
-# failing with "max-retries exceeded" after a successful mirror.
-FORCE_COMMANDS=""
-for f in index.html release.txt .htaccess; do
-  if [ -f "$LOCAL_DIR/$f" ]; then
-    FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
-  fi
-done
-
-lftp -c "
+LFTP_SETTINGS="
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
@@ -58,12 +30,65 @@ set net:max-retries 2;
 set net:timeout 15;
 set net:reconnect-interval-base 3;
 set net:reconnect-interval-max 10;
-set mirror:parallel-transfer-count 2;
 set ftp:sync-mode true;
+"
+
+echo "🔎 FTP host resolves to: $(getent hosts "$FTP_HOST" | awk '{print $1}' | tr '\n' ' ')"
+
+# ---------------------------------------------------------------
+# 1) Probe the login directory so we never upload into the wrong
+#    place (e.g. public_html/public_html when the FTP user is
+#    already chrooted into the document root).
+# ---------------------------------------------------------------
+PROBE="$(lftp -c "
+$LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
-echo '--- FTP login directory (this is where relative paths resolve) ---';
 pwd;
-cls -l .;
+cls -1 .;
+bye;
+" 2>&1)"
+
+echo "--- FTP login directory listing ---"
+echo "$PROBE"
+echo "-----------------------------------"
+
+LOGIN_DIR="$(printf '%s\n' "$PROBE" | grep -oE 'ftp://[^ ]*' | head -1 | sed 's|.*\(/.*\)|\1|')"
+TOP_SEGMENT="${REMOTE_DIR%%/*}"        # e.g. "public_html"
+REST="${REMOTE_DIR#"$TOP_SEGMENT"}"    # e.g. "/api-app" or ""
+
+if ! printf '%s\n' "$PROBE" | grep -qx "${TOP_SEGMENT}/\?" && \
+   printf '%s\n' "$LOGIN_DIR" | grep -q "/${TOP_SEGMENT}\$"; then
+  # Already inside the document root — strip the duplicated segment.
+  REMOTE_DIR=".${REST}"
+  echo "ℹ️  FTP account is chrooted into '$TOP_SEGMENT' — using remote dir '$REMOTE_DIR'"
+fi
+
+echo "⬆️  FTPS deploy: $LOCAL_DIR -> ftp://$FTP_HOST:$FTP_PORT/$REMOTE_DIR"
+
+# Passenger watches tmp/restart.txt — upload it last, after every app file.
+RESTART_FILE="$LOCAL_DIR/tmp/restart.txt"
+RESTART_COMMAND=""
+if [ -f "$RESTART_FILE" ]; then
+  RESTART_COMMAND="mkdir -pf '$REMOTE_DIR/tmp'; put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';"
+fi
+
+# Entry files are excluded from mirror and uploaded exactly once afterwards.
+FORCE_COMMANDS=""
+for f in index.html release.txt .htaccess; do
+  if [ -f "$LOCAL_DIR/$f" ]; then
+    FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
+  fi
+done
+
+DELETE_FLAG=""
+if [ "$FTP_DELETE" = "1" ]; then
+  DELETE_FLAG="--delete"
+fi
+
+lftp -c "
+$LFTP_SETTINGS
+set mirror:parallel-transfer-count 2;
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
 mkdir -pf '$REMOTE_DIR';
 mirror -R $DELETE_FLAG --verbose=1 \
   --parallel=2 \
@@ -77,10 +102,32 @@ mirror -R $DELETE_FLAG --verbose=1 \
   '$LOCAL_DIR' '$REMOTE_DIR';
 $FORCE_COMMANDS
 $RESTART_COMMAND
-
 echo '--- Uploaded files in $REMOTE_DIR ---';
 cls -l '$REMOTE_DIR';
 bye;
 "
+
+# ---------------------------------------------------------------
+# 2) Verify on the FTP server itself that the entry file landed.
+#    A successful mirror that writes nowhere useful is the exact
+#    failure mode we are guarding against.
+# ---------------------------------------------------------------
+if [ -f "$LOCAL_DIR/index.html" ]; then
+  LOCAL_SIZE=$(wc -c < "$LOCAL_DIR/index.html" | tr -d ' ')
+  REMOTE_LS="$(lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+cls -l '$REMOTE_DIR/index.html';
+bye;
+" 2>&1 || true)"
+  echo "remote index.html: $REMOTE_LS"
+  REMOTE_SIZE="$(printf '%s\n' "$REMOTE_LS" | awk '{print $5}' | head -1)"
+  if [ "$REMOTE_SIZE" != "$LOCAL_SIZE" ]; then
+    echo "❌ index.html mismatch on server (local=${LOCAL_SIZE}B remote=${REMOTE_SIZE:-missing})."
+    echo "   The FTP account is probably writing to a different document root than the live site."
+    exit 1
+  fi
+  echo "✅ index.html verified on server (${LOCAL_SIZE} bytes)"
+fi
 
 echo "✅ FTPS deploy complete: $REMOTE_DIR"
