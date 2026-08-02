@@ -203,6 +203,10 @@ const Settings = () => {
   const { toast } = useToast();
   const { can } = useAuth();
   const visibleTabs = TABS.filter((t) => !t.perm || can(t.perm));
+  const visibleGroups = TAB_GROUPS.map((g) => ({
+    title: g.title,
+    items: g.items.filter((t) => !t.perm || can(t.perm)),
+  })).filter((g) => g.items.length > 0);
   const [form, setForm] = useState<SiteSettings | null>(null);
   const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
 
