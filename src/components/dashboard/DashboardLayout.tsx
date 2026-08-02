@@ -194,7 +194,7 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
     })),
   ];
   const current =
-    [...menu, ...generalMenu].find((m) =>
+    [...menuGroups.flatMap((g) => g.items), ...generalMenu].find((m) =>
       m.to === "/dashboard" ? location.pathname === "/dashboard" : location.pathname.startsWith(m.to),
     )?.label || "ড্যাশবোর্ড";
 
