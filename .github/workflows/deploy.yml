@@ -45,6 +45,11 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SITE_URL: https://unitefoundation.bd
 
+      - name: Stamp release
+        run: printf '%s' '${{ github.sha }}' > dist/release.txt
+
+
+
       - name: Deploy frontend via FTPS
         if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
         env:
