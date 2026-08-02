@@ -168,6 +168,7 @@ if [[ "${#files[@]}" -eq 0 ]]; then
   exit 1
 fi
 
+preflight_auth_check
 ensure_remote_dir "$REMOTE_DIR"
 
 for file in "${files[@]}"; do
