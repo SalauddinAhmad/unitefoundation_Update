@@ -114,14 +114,20 @@ bye;
 # ---------------------------------------------------------------
 if [ -f "$LOCAL_DIR/index.html" ]; then
   LOCAL_SIZE=$(wc -c < "$LOCAL_DIR/index.html" | tr -d ' ')
+  VERIFY_FILE="$(mktemp)"
+  trap 'rm -f "$VERIFY_FILE"' EXIT
   REMOTE_LS="$(lftp -c "
 $LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
 cls -l '$REMOTE_DIR/index.html';
+get '$REMOTE_DIR/index.html' -o '$VERIFY_FILE';
 bye;
 " 2>&1 || true)"
   echo "remote index.html: $REMOTE_LS"
-  REMOTE_SIZE="$(printf '%s\n' "$REMOTE_LS" | awk '{print $5}' | head -1)"
+  REMOTE_SIZE=""
+  if [ -f "$VERIFY_FILE" ]; then
+    REMOTE_SIZE=$(wc -c < "$VERIFY_FILE" | tr -d ' ')
+  fi
   if [ "$REMOTE_SIZE" != "$LOCAL_SIZE" ]; then
     echo "❌ index.html mismatch on server (local=${LOCAL_SIZE}B remote=${REMOTE_SIZE:-missing})."
     echo "   The FTP account is probably writing to a different document root than the live site."
