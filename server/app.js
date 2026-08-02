@@ -97,6 +97,17 @@ app.get('/health/deploy', (_req, res) => {
   });
 });
 
+// --- Crash guards -------------------------------------------------
+// On shared cPanel/Passenger hosting a single unhandled async error kills the
+// worker; Passenger then shows "running" while every request 503s until the
+// next spawn. Log and keep serving instead of dying.
+process.on('unhandledRejection', (reason) => {
+  console.error('[unhandledRejection]', reason && reason.stack ? reason.stack : reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('[uncaughtException]', err && err.stack ? err.stack : err);
+});
+
 // One-time maintenance: move any base64 `data:` images stored in the DB into
 // real files. Huge inline images made /projects and /posts several MB, which
 // the host would cut off mid-response (partial data on the site).
@@ -119,8 +130,16 @@ async function triggerOffload() {
 }
 app.get('/health/images', (_req, res) => res.json({ ok: true, running: offloadRunning, last: offloadResult }));
 app.post('/health/images/fix', async (_req, res) => res.json(await triggerOffload()));
-// Run automatically shortly after boot (non-blocking).
-setTimeout(() => { triggerOffload().catch(() => {}); }, 5000).unref?.();
+// Run automatically once (marker file), so every Passenger respawn doesn't
+// re-scan the whole database and blow the host's CPU/EP limits.
+const offloadMarker = path.join(__dirname, '.image-offload-done');
+if (!fs.existsSync(offloadMarker) && process.env.DISABLE_BOOT_OFFLOAD !== 'true') {
+  setTimeout(() => {
+    triggerOffload()
+      .then(() => { try { fs.writeFileSync(offloadMarker, new Date().toISOString()); } catch { /* ignore */ } })
+      .catch(() => {});
+  }, 5000).unref?.();
+}
 
 
 
