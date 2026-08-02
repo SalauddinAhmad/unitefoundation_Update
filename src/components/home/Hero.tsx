@@ -62,7 +62,11 @@ export const Hero = () => {
 
   return (
     <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-foreground">
+      {!slides.length && (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/80 to-foreground" />
+      )}
       {slides.map((s, idx) => (
+
         <div
           key={idx}
           className={`absolute inset-0 transition-opacity duration-1000 ${idx === i ? "opacity-100" : "opacity-0"}`}
