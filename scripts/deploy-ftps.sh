@@ -31,6 +31,15 @@ fi
 
 echo "⬆️  FTPS deploy: $LOCAL_DIR -> ftp://$FTP_HOST:$FTP_PORT/$REMOTE_DIR"
 
+# Passenger watches tmp/restart.txt. It must be uploaded only after every
+# application file has finished; uploading it inside a parallel mirror can
+# restart Passenger while app.js is still the old version.
+RESTART_FILE="$LOCAL_DIR/tmp/restart.txt"
+RESTART_COMMAND=""
+if [ -f "$RESTART_FILE" ]; then
+  RESTART_COMMAND="mkdir -pf '$REMOTE_DIR/tmp'; put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';"
+fi
+
 lftp -c "
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
@@ -44,7 +53,9 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob .git/ \
   --exclude-glob node_modules/ \
   --exclude-glob .env \
+  --exclude-glob tmp/restart.txt \
   '$LOCAL_DIR' '$REMOTE_DIR';
+$RESTART_COMMAND
 bye;
 "
 
