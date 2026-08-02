@@ -82,8 +82,9 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 // SMTP connectivity/auth check — public so it works even when the login token is broken
 app.get('/health/smtp', async (req, res) => {
   try {
-    const { getTransporter } = require('./services/mailer');
-    await getTransporter().verify();
+    const { resolveTransporter, getActiveConfig } = require('./services/mailer');
+    await resolveTransporter(req.query.probe === '1');
+    const cfg = getActiveConfig() || {};
     // ?send=1 → actually send a real test email to the SMTP account itself
     // (self-send only, so this cannot be abused to spam others)
     if (req.query.send === '1') {
@@ -100,11 +101,13 @@ app.get('/health/smtp', async (req, res) => {
         to: self,
         messageId: info && info.messageId,
         response: info && info.response,
-        host: process.env.SMTP_HOST || null,
-        port: Number(process.env.SMTP_PORT || 465),
+        host: cfg.host || null,
+        port: cfg.port || null,
+        secure: cfg.secure,
       });
     }
-    res.json({ ok: true, host: process.env.SMTP_HOST || null, port: Number(process.env.SMTP_PORT || 465) });
+    res.json({ ok: true, host: cfg.host || null, port: cfg.port || null, secure: cfg.secure });
+
   } catch (err) {
     res.status(502).json({ ok: false, error: String((err && err.message) || err), code: err && err.code, responseCode: err && err.responseCode });
   }
