@@ -132,13 +132,13 @@ jobs:
         env:
           EXPECTED_RELEASE: ${{ github.sha }}
         run: |
-          for i in $(seq 1 12); do
-            BODY="$(curl -fsS --max-time 15 https://api.unitefoundation.bd/health/deploy || true)"
+          for i in $(seq 1 24); do
+            BODY="$(curl -sS --max-time 15 https://api.unitefoundation.bd/health/deploy || true)"
             if printf '%s' "$BODY" | grep -Fq "$EXPECTED_RELEASE"; then
               echo "✅ Live backend is running release $EXPECTED_RELEASE"
               exit 0
             fi
-            echo "Waiting for Passenger restart ($i/12)..."
+            echo "Waiting for Passenger restart ($i/24)..."
             sleep 5
           done
           echo "❌ Files uploaded, but the live backend is not running this release."
