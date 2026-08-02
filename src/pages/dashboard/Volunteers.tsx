@@ -6,6 +6,7 @@ const Volunteers = () => {
   const { data = [] } = useVolunteerApps();
   return (
     <ApplicationsTable
+      kind="volunteer"
       title="স্বেচ্ছাসেবক"
       subtitle="স্বেচ্ছাসেবক আবেদন পর্যালোচনা ও অনুমোদন করুন"
       data={data}

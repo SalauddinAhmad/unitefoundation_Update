@@ -18,6 +18,7 @@ const DistrictReps = () => {
   const { data = [] } = useCareerApps();
   return (
     <ApplicationsTable
+      kind="career"
       title="জেলা প্রতিনিধি আবেদন"
       subtitle="জেলা প্রতিনিধি প্রার্থীদের আবেদন পর্যালোচনা ও অনুমোদন করুন"
       data={data}

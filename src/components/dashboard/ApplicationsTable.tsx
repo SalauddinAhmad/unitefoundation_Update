@@ -3,13 +3,14 @@ import { Card, PageHeader, StatusBadge, Btn } from "@/components/dashboard/Dashb
 import { Application } from "@/data/dashboardMock";
 import {
   CheckCircle2, XCircle, Eye, Download, Phone, MapPin, Search, Filter,
-  Mail, Calendar, User, Copy, MessageSquare, Printer, X, Plus,
+  Mail, Calendar, User, Copy, MessageSquare, Printer, X, Plus, Trash2,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { exportRowsAsCsv } from "@/lib/csv";
 import { toast } from "sonner";
 import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
-import { appendExtra } from "@/lib/localExtras";
+import { appendExtra, removeExtra } from "@/lib/localExtras";
+import { useDeleteApplication } from "@/hooks/api/useDashboardData";
 
 interface Props {
   title: string;
@@ -20,6 +21,8 @@ interface Props {
   extrasBucket?: string;
   idPrefix?: string; // e.g. "VOL", "MEM", "JOB"
   typeOptions?: { value: string; label: string }[];
+  // Application kind on the backend — enables the delete action
+  kind?: "volunteer" | "member" | "career";
 }
 
 const STATUS_LABEL: Record<Application["status"], string> = {
@@ -29,11 +32,27 @@ const STATUS_LABEL: Record<Application["status"], string> = {
   rejected: "প্রত্যাখ্যাত",
 };
 
-export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefix = "APP", typeOptions }: Props) => {
+export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefix = "APP", typeOptions, kind }: Props) => {
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<"all" | Application["status"]>("all");
   const [active, setActive] = useState<Application | null>(null);
   const [entryOpen, setEntryOpen] = useState(false);
+  const delApp = useDeleteApplication();
+
+  const handleDelete = async (row: Application) => {
+    if (!window.confirm(`"${row.name}" এর আবেদনটি স্থায়ীভাবে ডিলিট করবেন? এটি ফিরিয়ে আনা যাবে না।`)) return;
+    try {
+      if (row.rawId && kind) {
+        await delApp.mutateAsync({ kind, id: row.rawId });
+      } else if (extrasBucket) {
+        removeExtra(extrasBucket, row.id);
+      }
+      setActive((a) => (a && a.id === row.id ? null : a));
+      toast.success(`${row.name} এর আবেদন ডিলিট হয়েছে`);
+    } catch {
+      toast.error("ডিলিট করা যায়নি, আবার চেষ্টা করুন");
+    }
+  };
 
   const counts = {
     new: data.filter((d) => d.status === "new").length,
@@ -263,6 +282,13 @@ export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefi
                       >
                         <XCircle className="h-4 w-4" />
                       </button>
+                      <button
+                        onClick={() => handleDelete(v)}
+                        className="p-1.5 rounded-md hover:bg-destructive/10 text-destructive"
+                        title="ডিলিট"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -275,6 +301,7 @@ export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefi
       <ApplicationDetailSheet
         app={active}
         onClose={() => setActive(null)}
+        onDelete={handleDelete}
       />
     </>
   );
@@ -286,9 +313,11 @@ export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefi
 const ApplicationDetailSheet = ({
   app,
   onClose,
+  onDelete,
 }: {
   app: Application | null;
   onClose: () => void;
+  onDelete?: (a: Application) => void;
 }) => {
   const copyAll = () => {
     if (!app) return;
@@ -393,6 +422,14 @@ const ApplicationDetailSheet = ({
               >
                 <Printer className="h-3.5 w-3.5" /> প্রিন্ট
               </button>
+              {onDelete && (
+                <button
+                  onClick={() => onDelete(app)}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive hover:bg-destructive/20 transition"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> ডিলিট
+                </button>
+              )}
             </div>
 
             {/* Sections */}
