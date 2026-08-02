@@ -33,6 +33,7 @@ if ! command -v lftp >/dev/null 2>&1; then
 fi
 
 LFTP_SETTINGS="
+set cmd:fail-exit true;
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
@@ -131,6 +132,7 @@ if [ -f "$RESTART_FILE" ]; then
 fi
 
 # Entry files are excluded from mirror and uploaded exactly once afterwards.
+# cmd:fail-exit ensures these commands never run if the asset mirror fails.
 FORCE_COMMANDS=""
 for f in index.html release.txt .htaccess; do
   if [ -f "$LOCAL_DIR/$f" ]; then
@@ -171,7 +173,7 @@ bye;
 #    failure mode we are guarding against.
 # ---------------------------------------------------------------
 if [ -f "$LOCAL_DIR/index.html" ]; then
-  LOCAL_SIZE=$(wc -c < "$LOCAL_DIR/index.html" | tr -d ' ')
+  LOCAL_HASH=$(sha256sum "$LOCAL_DIR/index.html" | awk '{print $1}')
   VERIFY_FILE="$(mktemp)"
   trap 'rm -f "$VERIFY_FILE"' EXIT
   # mktemp creates the file immediately, while lftp `get` refuses to
@@ -186,16 +188,45 @@ get '$REMOTE_DIR/index.html' -o '$VERIFY_FILE';
 bye;
 " 2>&1 || true)"
   echo "remote index.html: $REMOTE_LS"
-  REMOTE_SIZE=""
+  REMOTE_HASH=""
   if [ -f "$VERIFY_FILE" ]; then
-    REMOTE_SIZE=$(wc -c < "$VERIFY_FILE" | tr -d ' ')
+    REMOTE_HASH=$(sha256sum "$VERIFY_FILE" | awk '{print $1}')
   fi
-  if [ "$REMOTE_SIZE" != "$LOCAL_SIZE" ]; then
-    echo "❌ index.html mismatch on server (local=${LOCAL_SIZE}B remote=${REMOTE_SIZE:-missing})."
+  if [ "$REMOTE_HASH" != "$LOCAL_HASH" ]; then
+    echo "❌ index.html hash mismatch on server."
     echo "   The FTP account is probably writing to a different document root than the live site."
     exit 1
   fi
-  echo "✅ index.html verified on server (${LOCAL_SIZE} bytes)"
+  echo "✅ index.html content verified on server"
+
+  # Verify every local JS/CSS asset referenced by index.html. A fresh entry
+  # file with missing hashed chunks is not a successful frontend deployment.
+  ASSET_PATHS=$(grep -oE '(src|href)="[^"]+\.(js|css)(\?[^"]*)?"' "$LOCAL_DIR/index.html" \
+    | sed -E 's/^(src|href)="//; s/"$//; s/\?.*$//; s#^/##' | sort -u)
+  while IFS= read -r ASSET_PATH; do
+    [ -n "$ASSET_PATH" ] || continue
+    LOCAL_ASSET="$LOCAL_DIR/$ASSET_PATH"
+    if [ ! -f "$LOCAL_ASSET" ]; then
+      echo "❌ Referenced local asset is missing: $ASSET_PATH" >&2
+      exit 1
+    fi
+    ASSET_VERIFY_FILE="$(mktemp)"
+    rm -f "$ASSET_VERIFY_FILE"
+    lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+get '$REMOTE_DIR/$ASSET_PATH' -o '$ASSET_VERIFY_FILE';
+bye;
+"
+    LOCAL_ASSET_HASH=$(sha256sum "$LOCAL_ASSET" | awk '{print $1}')
+    REMOTE_ASSET_HASH=$(sha256sum "$ASSET_VERIFY_FILE" | awk '{print $1}')
+    rm -f "$ASSET_VERIFY_FILE"
+    if [ "$REMOTE_ASSET_HASH" != "$LOCAL_ASSET_HASH" ]; then
+      echo "❌ Asset hash mismatch: $ASSET_PATH" >&2
+      exit 1
+    fi
+    echo "✅ Asset verified: $ASSET_PATH"
+  done <<< "$ASSET_PATHS"
 fi
 
 echo "✅ FTPS deploy complete: $REMOTE_DIR"
