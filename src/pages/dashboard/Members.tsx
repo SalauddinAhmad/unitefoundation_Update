@@ -6,6 +6,7 @@ const Members = () => {
   const { data = [] } = useMemberApps();
   return (
     <ApplicationsTable
+      kind="member"
       title="সদস্যপদ"
       subtitle="আজীবন ও দাতা সদস্যপদের আবেদন ম্যানেজ করুন"
       data={data}

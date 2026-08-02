@@ -46,7 +46,8 @@ export type DetailField = { label: string; value: string; long?: boolean };
 export type DetailSection = { title: string; fields: DetailField[] };
 
 export type Application = {
-  id: string; name: string; phone: string; city: string; type: string; date: string;
+  id: string;
+  rawId?: string; name: string; phone: string; city: string; type: string; date: string;
   status: "new" | "reviewing" | "approved" | "rejected";
   email?: string;
   submittedAt?: string;

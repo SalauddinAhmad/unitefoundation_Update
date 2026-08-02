@@ -123,6 +123,7 @@ function toApplication(row: ApiApplication, idPrefix: string): Application {
 
   return {
     id: `${idPrefix}-${String(row.id).slice(0, 6).toUpperCase()}`,
+    rawId: String(row.id),
     name: row.name,
     phone: row.phone || "",
     email: row.email || undefined,
@@ -164,6 +165,18 @@ export const useCareerApps = () =>
     queryFn: () => fetchApps("career", "DR"),
     staleTime: STALE,
   });
+
+export const useDeleteApplication = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ kind, id }: { kind: "volunteer" | "member" | "career"; id: string }) =>
+      api.delete(`/applications/${kind}/${id}`, { auth: true }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["applications"] });
+      qc.invalidateQueries({ queryKey: ["stats", "overview"] });
+    },
+  });
+};
 
 export const useProjects = () =>
   useQuery({
