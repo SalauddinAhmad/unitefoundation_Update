@@ -128,7 +128,6 @@ jobs:
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
         run: bash scripts/deploy-cpanel-zip.sh out public_html/api-app
 
-      - name: Verify live backend deployment
         env:
           EXPECTED_RELEASE: ${{ github.sha }}
         run: |
