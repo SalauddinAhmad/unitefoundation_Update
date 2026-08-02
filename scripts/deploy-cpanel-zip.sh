@@ -101,10 +101,18 @@ UPLOAD_RES=$(cpanel_curl --silent --show-error --location \
 
 echo "$UPLOAD_RES" | python3 -c '
 import json, sys
+raw = sys.stdin.read()
 try:
-    d = json.loads(sys.stdin.read())
-except Exception as e:
-    print("bad JSON:", e); sys.exit(1)
+    d = json.loads(raw)
+except Exception:
+    text = raw.strip()
+    if "access denied" in text.lower():
+        print("cPanel access denied. Replace the CPANEL_API_TOKEN GitHub secret with a token created on the current server.")
+    elif text.startswith("<"):
+        print("cPanel returned HTML instead of JSON. Verify the current cPanel origin IP and API token.")
+    else:
+        print(text or "cPanel returned an empty upload response.")
+    sys.exit(1)
 s = d.get("status") or d.get("result", {}).get("status")
 if s not in (1, True):
     print(json.dumps(d, indent=2)); sys.exit(1)

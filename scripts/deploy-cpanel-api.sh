@@ -49,7 +49,13 @@ raw = sys.stdin.read()
 try:
     data = json.loads(raw)
 except Exception:
-    print(raw)
+    text = raw.strip()
+    if "access denied" in text.lower():
+        print("cPanel access denied. Create a new API token on the current cPanel server and update the CPANEL_API_TOKEN GitHub secret.")
+    elif text.startswith("<"):
+        print("cPanel returned HTML instead of an API response. Check CPANEL_ORIGIN_IP and CPANEL_API_TOKEN.")
+    else:
+        print(text or "cPanel returned an empty response.")
     sys.exit(1)
 status = data.get("status")
 if status is None:
