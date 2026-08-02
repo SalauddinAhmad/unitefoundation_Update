@@ -127,20 +127,21 @@ router.post('/compose', requireAuth, asyncH(async (req, res) => {
 
 // SMTP diagnostic — verifies transporter can connect & authenticate
 router.get('/smtp/test', requireAuth, asyncH(async (_req, res) => {
-  const { getTransporter } = require('../services/mailer');
+  const { resolveTransporter, getActiveConfig } = require('../services/mailer');
   try {
-    const t = getTransporter();
-    await t.verify();
+    await resolveTransporter(true);
+    const cfg = getActiveConfig() || {};
     res.json({
       ok: true,
-      host: process.env.SMTP_HOST || null,
-      port: Number(process.env.SMTP_PORT || 465),
-      secure: String(process.env.SMTP_SECURE || 'true') === 'true',
+      host: cfg.host || null,
+      port: cfg.port || null,
+      secure: cfg.secure,
       from: process.env.SMTP_FROM || process.env.SMTP_USER || null,
     });
   } catch (err) {
     res.status(502).json({ ok: false, error: String(err && err.message || err) });
   }
 }));
+
 
 module.exports = router;
