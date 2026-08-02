@@ -101,12 +101,22 @@ app.get('/health/smtp', async (req, res) => {
         to: self,
         messageId: info && info.messageId,
         response: info && info.response,
+        transport: cfg.transport || 'smtp',
+        path: cfg.path || null,
         host: cfg.host || null,
         port: cfg.port || null,
         secure: cfg.secure,
       });
     }
-    res.json({ ok: true, host: cfg.host || null, port: cfg.port || null, secure: cfg.secure });
+    res.json({
+      ok: true,
+      transport: cfg.transport || 'smtp',
+      path: cfg.path || null,
+      host: cfg.host || null,
+      port: cfg.port || null,
+      secure: cfg.secure,
+      note: cfg.transport === 'sendmail' ? 'Run with &send=1 to verify actual delivery.' : undefined,
+    });
 
   } catch (err) {
     res.status(502).json({ ok: false, error: String((err && err.message) || err), code: err && err.code, responseCode: err && err.responseCode });

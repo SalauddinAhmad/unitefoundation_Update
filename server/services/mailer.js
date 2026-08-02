@@ -40,6 +40,17 @@ function candidates() {
   return list;
 }
 
+// cPanel normally exposes a local Exim-compatible sendmail binary. This route
+// does not need an outbound SMTP socket, so it remains usable when the hosting
+// firewall blocks ports 25/465/587 for Node.js applications.
+function buildSendmailTransport() {
+  return nodemailer.createTransport({
+    sendmail: true,
+    newline: 'unix',
+    path: process.env.SENDMAIL_PATH || '/usr/sbin/sendmail',
+  });
+}
+
 let transporter = null;
 let activeConfig = null;
 
@@ -70,6 +81,24 @@ async function resolveTransporter(force = false) {
       if (!isConnError(err)) throw err; // auth errors etc. → don't keep trying
     }
   }
+
+  // All SMTP routes timed out. Fall back to the local cPanel mail transfer
+  // agent unless explicitly disabled. Sendmail transports have no meaningful
+  // remote connection to verify; a real self-test is available with
+  // /health/smtp?probe=1&send=1.
+  if (String(process.env.SMTP_SENDMAIL_FALLBACK || 'true') !== 'false') {
+    transporter = buildSendmailTransport();
+    activeConfig = {
+      transport: 'sendmail',
+      path: process.env.SENDMAIL_PATH || '/usr/sbin/sendmail',
+      host: 'localhost',
+      port: null,
+      secure: false,
+    };
+    console.warn('[mailer] all SMTP routes unreachable — using local sendmail transport');
+    return transporter;
+  }
+
   throw lastErr || new Error('SMTP connection failed');
 }
 
