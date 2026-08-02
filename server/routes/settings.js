@@ -24,12 +24,19 @@ router.get('/', asyncH(async (_req, res) => {
 }));
 
 router.put('/', requireAuth, requireRole('admin'), asyncH(async (req, res) => {
-  const data = req.body || {};
+  const incoming = req.body || {};
+  // Merge on top of what is already stored. A partial payload (for example a
+  // form-schema-only save, or a dashboard tab that posts a subset) must never
+  // be able to wipe hero slides, payments, founder, etc.
+  const [rows] = await pool.execute('SELECT data FROM settings WHERE id=1');
+  const current = normaliseSettings(rows[0]?.data);
+  const data = { ...current, ...incoming };
   await pool.execute(
     'INSERT INTO settings (id,data) VALUES (1,?) ON DUPLICATE KEY UPDATE data=VALUES(data)',
     [JSON.stringify(data)]
   );
   res.json(data);
 }));
+
 
 module.exports = router;

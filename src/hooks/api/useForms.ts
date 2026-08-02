@@ -120,34 +120,23 @@ async function fetchSettingsFormSchemas(): Promise<Partial<Record<FormKey, FormS
   }
 }
 
-async function saveSchemaToSettings(key: FormKey, schema: FormSchema) {
-  const settings = await api.get<Record<string, unknown>>("/settings", { auth: false }).catch(() => ({}));
-  const existing = normalizeSettingsFormSchemas(settings);
-  await api.put("/settings", {
-    ...settings,
-    form_schemas: {
-      ...existing,
-      [key]: schema,
-    },
-  });
-}
-
 async function fetchOne(key: FormKey): Promise<FormSchema> {
-  const settingsSchema = (await fetchSettingsFormSchemas())[key];
-  if (settingsSchema) {
-    writeCache(key, settingsSchema);
-    return settingsSchema;
-  }
-
   try {
     const r = await api.get<FormSchema & { extras?: FormSchema["extras"] }>(`/forms/${key}`, { auth: false });
     const schema = normalizeSchema(key, r);
     writeCache(key, schema);
     return schema;
   } catch {
+    // Legacy fallback: some schemas were mirrored inside /settings.
+    const settingsSchema = (await fetchSettingsFormSchemas())[key];
+    if (settingsSchema) {
+      writeCache(key, settingsSchema);
+      return settingsSchema;
+    }
     return readCache()[key] || FORM_DEFAULTS[key];
   }
 }
+
 
 export function useFormSchema(key: FormKey) {
   return useQuery({
@@ -194,31 +183,16 @@ export function useSaveFormSchema() {
       if (payloadBytes > 200_000) {
         throw new Error("ফর্মের ডেটা অস্বাভাবিক বড় — বড়/base64 ইমেজ সরিয়ে Media Library URL ব্যবহার করুন।");
       }
-      let saved = false;
-      let lastError: unknown;
+      // Save only to the dedicated /forms endpoint. Mirroring into /settings
+      // could overwrite the whole site settings blob (hero slides, payments…)
+      // whenever the settings GET failed — never do that again.
+      await api.put(`/forms/${key}`, {
+        title: payload.title,
+        subtitle: payload.subtitle,
+        fields: payload.fields,
+        extras: payload.extras,
+      });
 
-      try {
-        await api.put(`/forms/${key}`, {
-          title: payload.title,
-          subtitle: payload.subtitle,
-          fields: payload.fields,
-          extras: payload.extras,
-        });
-        saved = true;
-      } catch (error) {
-        lastError = error;
-      }
-
-      try {
-        await saveSchemaToSettings(key, nextSchema);
-        saved = true;
-      } catch (error) {
-        lastError = error;
-      }
-
-      if (!saved) {
-        throw lastError instanceof Error ? lastError : new Error("ফর্ম সংরক্ষণ করা যায়নি");
-      }
 
       writeCache(key, nextSchema);
       return nextSchema;
