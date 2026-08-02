@@ -90,6 +90,33 @@ app.get('/health/deploy', (_req, res) => {
   });
 });
 
+// One-time maintenance: move any base64 `data:` images stored in the DB into
+// real files. Huge inline images made /projects and /posts several MB, which
+// the host would cut off mid-response (partial data on the site).
+let offloadRunning = false;
+let offloadResult = null;
+async function triggerOffload() {
+  if (offloadRunning) return { ok: true, status: 'running' };
+  offloadRunning = true;
+  try {
+    const { runImageOffload } = require('./services/imageOffload');
+    const converted = await runImageOffload();
+    offloadResult = { converted: converted.length, at: new Date().toISOString() };
+    return { ok: true, ...offloadResult };
+  } catch (e) {
+    offloadResult = { error: e.message, at: new Date().toISOString() };
+    return { ok: false, ...offloadResult };
+  } finally {
+    offloadRunning = false;
+  }
+}
+app.get('/health/images', (_req, res) => res.json({ ok: true, running: offloadRunning, last: offloadResult }));
+app.post('/health/images/fix', async (_req, res) => res.json(await triggerOffload()));
+// Run automatically shortly after boot (non-blocking).
+setTimeout(() => { triggerOffload().catch(() => {}); }, 5000).unref?.();
+
+
+
 // --- Public diagnostics (no secrets exposed) ---
 // SMTP connectivity/auth check — public so it works even when the login token is broken
 app.get('/health/smtp', async (req, res) => {
