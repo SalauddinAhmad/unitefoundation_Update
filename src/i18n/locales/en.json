@@ -267,10 +267,22 @@
     "valuesEyebrow": "Our Values",
     "valuesHeading": "The values that guide us",
     "values": [
-      { "t": "Following the Sunnah, Serving Humanity", "d": "Dedicated to shaping life in the light of the Qur'an and authentic Hadith." },
-      { "t": "Transparency", "d": "Complete and public accounting of every taka." },
-      { "t": "Impact", "d": "Measurable results in da'wah, education and social welfare." },
-      { "t": "Participation", "d": "A shared journey of donors, volunteers and beneficiaries." }
+      {
+        "t": "Following the Sunnah, Serving Humanity",
+        "d": "Dedicated to shaping life in the light of the Qur'an and authentic Hadith."
+      },
+      {
+        "t": "Transparency",
+        "d": "Complete and public accounting of every taka."
+      },
+      {
+        "t": "Impact",
+        "d": "Measurable results in da'wah, education and social welfare."
+      },
+      {
+        "t": "Participation",
+        "d": "A shared journey of donors, volunteers and beneficiaries."
+      }
     ],
     "journey": "Our Journey",
     "milestones": "Milestones",
@@ -349,12 +361,12 @@
     "seoTitle": "Join us | Unite Foundation",
     "seoDesc": "Regular donor, life member, volunteer or career — connect with Unite Foundation in any way.",
     "heroTitle": "Join hands with us",
-    "sectionTitle": "There are many ways to join us",
-    "sectionSubtitle": "Select any option below — fill out its dedicated form and send your application directly to us.",
+    "sectionTitle": "Membership · Volunteer · Representative",
+    "sectionSubtitle": "Read the guidelines carefully and choose the option that matches your interest below.",
     "tabRegular": "Regular donor",
     "tabMember": "Life & donor member",
     "tabVolunteer": "Volunteer",
-    "tabRep": "District representative",
+    "tabRep": "Representative",
     "orgName": "Unite Foundation",
     "infoStripPre": "If you need help understanding anything, please message us on ",
     "infoStripPost": ".",
@@ -411,11 +423,27 @@
       "Mosque & Da'wah",
       "Wherever needed"
     ],
-    "regularAmounts": ["500", "1,000", "2,000", "5,000", "10,000", "Other"],
+    "regularAmounts": [
+      "500",
+      "1,000",
+      "2,000",
+      "5,000",
+      "10,000",
+      "Other"
+    ],
     "membershipTypes": [
-      { "value": "lifetime", "label": "Life member — one-time ৳50,000" },
-      { "value": "donor", "label": "Donor member — one-time ৳25,000" },
-      { "value": "honorary", "label": "Honorary member — one-time ৳1,00,000+" }
+      {
+        "value": "lifetime",
+        "label": "Life member — one-time ৳50,000"
+      },
+      {
+        "value": "donor",
+        "label": "Donor member — one-time ৳25,000"
+      },
+      {
+        "value": "honorary",
+        "label": "Honorary member — one-time ৳1,00,000+"
+      }
     ],
     "volunteerAreas": [
       "Relief distribution",
@@ -433,10 +461,27 @@
       "Project-based",
       "Weekends only"
     ],
-    "educationMediums": ["Qawmi Madrasa", "Aliya Madrasa", "General (College/University)"],
-    "professionOptions": ["Service holder", "Business", "Student", "Other"],
-    "paymentMethods": ["bKash", "Nagad", "Rocket", "Bank transfer"],
-    "politicalOptions": ["No", "Yes"],
+    "educationMediums": [
+      "Qawmi Madrasa",
+      "Aliya Madrasa",
+      "General (College/University)"
+    ],
+    "professionOptions": [
+      "Service holder",
+      "Business",
+      "Student",
+      "Other"
+    ],
+    "paymentMethods": [
+      "bKash",
+      "Nagad",
+      "Rocket",
+      "Bank transfer"
+    ],
+    "politicalOptions": [
+      "No",
+      "Yes"
+    ],
     "success": {
       "nextStepHeader": "Next steps",
       "newApplication": "New application",
@@ -498,9 +543,18 @@
           "Monthly impact report"
         ],
         "stats": [
-          { "v": "12,000+", "l": "Regular donors" },
-          { "v": "64", "l": "Districts covered" },
-          { "v": "100%", "l": "Transparency" }
+          {
+            "v": "12,000+",
+            "l": "Regular donors"
+          },
+          {
+            "v": "64",
+            "l": "Districts covered"
+          },
+          {
+            "v": "100%",
+            "l": "Transparency"
+          }
         ]
       },
       "member": {
@@ -514,9 +568,18 @@
           "A voice in the foundation's decisions"
         ],
         "stats": [
-          { "v": "240+", "l": "Life members" },
-          { "v": "180+", "l": "Donor members" },
-          { "v": "1,280+", "l": "Projects" }
+          {
+            "v": "240+",
+            "l": "Life members"
+          },
+          {
+            "v": "180+",
+            "l": "Donor members"
+          },
+          {
+            "v": "1,280+",
+            "l": "Projects"
+          }
         ]
       },
       "volunteer": {
@@ -533,9 +596,18 @@
           "Da'wah and mosque-centered activities"
         ],
         "stats": [
-          { "v": "3,450+", "l": "Volunteers" },
-          { "v": "14", "l": "District networks" },
-          { "v": "1,280+", "l": "Projects" }
+          {
+            "v": "3,450+",
+            "l": "Volunteers"
+          },
+          {
+            "v": "14",
+            "l": "District networks"
+          },
+          {
+            "v": "1,280+",
+            "l": "Projects"
+          }
         ]
       },
       "representative": {
@@ -551,9 +623,18 @@
           "Only 1 per district — please fill in the application carefully"
         ],
         "stats": [
-          { "v": "64", "l": "Districts" },
-          { "v": "1 person", "l": "Per district" },
-          { "v": "100%", "l": "Confidentiality" }
+          {
+            "v": "64",
+            "l": "Districts"
+          },
+          {
+            "v": "1 person",
+            "l": "Per district"
+          },
+          {
+            "v": "100%",
+            "l": "Confidentiality"
+          }
         ]
       }
     },
@@ -670,5 +751,3 @@
     }
   }
 }
-
-
