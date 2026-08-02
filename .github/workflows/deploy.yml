@@ -1,6 +1,8 @@
 name: Deploy to cPanel
 
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
     inputs:
       target:
@@ -24,7 +26,7 @@ on:
 
 jobs:
   frontend:
-    if: ${{ github.event.inputs.target == 'frontend' || github.event.inputs.target == 'both' }}
+    if: ${{ (github.event.inputs.target || 'both') == 'frontend' || (github.event.inputs.target || 'both') == 'both' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -43,8 +45,13 @@ jobs:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
           VITE_SITE_URL: https://unitefoundation.bd
 
+      - name: Stamp release
+        run: printf '%s' '${{ github.sha }}' > dist/release.txt
+
+
+
       - name: Deploy frontend via FTPS
-        if: ${{ github.event.inputs.method == 'ftps' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
@@ -55,7 +62,7 @@ jobs:
         run: bash scripts/deploy-ftps.sh dist public_html
 
       - name: Deploy frontend via SSH
-        if: ${{ github.event.inputs.method == 'ssh' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'ssh' }}
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -65,7 +72,7 @@ jobs:
         run: bash scripts/deploy-ssh.sh dist public_html
 
       - name: Deploy frontend via cPanel API
-        if: ${{ github.event.inputs.method == 'api' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'api' }}
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
           CPANEL_ORIGIN_IP: 14.128.14.142
@@ -76,8 +83,22 @@ jobs:
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: bash scripts/deploy-cpanel-zip.sh dist public_html
 
+      - name: Verify frontend is live
+        run: |
+          for i in $(seq 1 12); do
+            LIVE=$(curl -s --max-time 20 "https://unitefoundation.bd/release.txt?cb=$RANDOM" || true)
+            echo "attempt $i -> '$LIVE'"
+            if [ "$LIVE" = "${{ github.sha }}" ]; then
+              echo "✅ Frontend live with this commit"; exit 0
+            fi
+            sleep 10
+          done
+          echo "❌ Live site is not serving this build. Frontend upload did not take effect."
+          exit 1
+
+
   backend:
-    if: ${{ github.event.inputs.target == 'backend' || github.event.inputs.target == 'both' }}
+    if: ${{ (github.event.inputs.target || 'both') == 'backend' || (github.event.inputs.target || 'both') == 'both' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -92,7 +113,7 @@ jobs:
           printf '%s' '${{ github.sha }}' > out/DEPLOY_RELEASE
 
       - name: Deploy backend via FTPS
-        if: ${{ github.event.inputs.method == 'ftps' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
@@ -103,7 +124,7 @@ jobs:
         run: bash scripts/deploy-ftps.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via SSH
-        if: ${{ github.event.inputs.method == 'ssh' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'ssh' }}
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
@@ -113,7 +134,7 @@ jobs:
         run: bash scripts/deploy-ssh.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
 
       - name: Deploy backend via cPanel API
-        if: ${{ github.event.inputs.method == 'api' }}
+        if: ${{ (github.event.inputs.method || 'ftps') == 'api' }}
         env:
           CPANEL_HOST: cpanel.unitefoundation.bd
           CPANEL_ORIGIN_IP: 14.128.14.142

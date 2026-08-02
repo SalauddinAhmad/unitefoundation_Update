@@ -40,6 +40,16 @@ if [ -f "$RESTART_FILE" ]; then
   RESTART_COMMAND="mkdir -pf '$REMOTE_DIR/tmp'; put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';"
 fi
 
+# Entry files must always be re-uploaded even if lftp's size/time comparison
+# thinks they are unchanged — otherwise the browser keeps loading an old
+# index.html that points at old asset hashes.
+FORCE_COMMANDS=""
+for f in index.html release.txt .htaccess; do
+  if [ -f "$LOCAL_DIR/$f" ]; then
+    FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
+  fi
+done
+
 lftp -c "
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
@@ -58,7 +68,9 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob .env \
   --exclude-glob tmp/restart.txt \
   '$LOCAL_DIR' '$REMOTE_DIR';
+$FORCE_COMMANDS
 $RESTART_COMMAND
+
 echo '--- Uploaded files in $REMOTE_DIR ---';
 cls -l '$REMOTE_DIR';
 bye;
