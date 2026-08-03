@@ -100,6 +100,7 @@ const App = () => (
               <Route path="forms" element={<RequireAuth permission="forms"><DashForms /></RequireAuth>} />
               <Route path="logs" element={<RequireAuth permission="logs"><DashLogs /></RequireAuth>} />
               <Route path="help" element={<RequireAuth permission="help"><DashHelp /></RequireAuth>} />
+              <Route path="profile" element={<RequireAuth><DashProfile /></RequireAuth>} />
 
             </Route>
 
