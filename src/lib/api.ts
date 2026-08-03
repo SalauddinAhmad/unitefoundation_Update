@@ -104,16 +104,38 @@ async function request<T = unknown>(path: string, opts: Options = {}): Promise<T
   return payload as T;
 }
 
+// Shared cPanel/LiteSpeed + Imunify360 hosts sometimes drop PUT requests with
+// larger JSON bodies before Node ever sees them — fetch then rejects with a
+// network TypeError ("Failed to fetch"). Retry the same payload as POST with a
+// method-override header; the API accepts both verbs for these save endpoints.
+function isNetworkFailure(e: unknown) {
+  return e instanceof TypeError || (e instanceof Error && /failed to fetch|network/i.test(e.message));
+}
+
+async function putWithPostFallback<T>(p: string, body?: unknown, o?: Options): Promise<T> {
+  try {
+    return await request<T>(p, { ...o, method: "PUT", body });
+  } catch (e) {
+    if (!isNetworkFailure(e)) throw e;
+    return request<T>(p, {
+      ...o,
+      method: "POST",
+      body,
+      headers: { ...(o?.headers as Record<string, string>), "X-HTTP-Method-Override": "PUT" },
+    });
+  }
+}
+
 export const api = {
   get: <T = unknown>(p: string, o?: Options) => request<T>(p, { ...o, method: "GET" }),
   post: <T = unknown>(p: string, body?: unknown, o?: Options) =>
     request<T>(p, { ...o, method: "POST", body }),
-  put: <T = unknown>(p: string, body?: unknown, o?: Options) =>
-    request<T>(p, { ...o, method: "PUT", body }),
+  put: <T = unknown>(p: string, body?: unknown, o?: Options) => putWithPostFallback<T>(p, body, o),
   patch: <T = unknown>(p: string, body?: unknown, o?: Options) =>
     request<T>(p, { ...o, method: "PATCH", body }),
   delete: <T = unknown>(p: string, o?: Options) => request<T>(p, { ...o, method: "DELETE" }),
 };
+
 
 // ---------- Endpoint helpers (typed convenience wrappers) ----------
 // Extend these as backend endpoints come online.
