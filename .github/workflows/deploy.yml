@@ -173,7 +173,7 @@ jobs:
           # worker after tmp/restart.txt changes. The upload is already done at
           # this point, so allow enough time for the new worker to become live.
           for i in $(seq 1 30); do
-            RESPONSE=$(curl -sS --max-time 20 \
+            RESPONSE=$(curl -sS --connect-timeout 5 --max-time 8 \
               --resolve "api.unitefoundation.bd:443:${ORIGIN_IP}" \
               -H 'Cache-Control: no-cache' \
               "https://api.unitefoundation.bd/health/deploy?cb=$RANDOM" || true)
