@@ -2,6 +2,7 @@ const router = require('express').Router();
 const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { invalidate: invalidateNotifyPrefs } = require('../services/notifyPrefs');
 
 // Historically `settings.data` has been declared with mixed types across
 // environments — JSON in some databases (auto-parsed by mysql2 to an
@@ -48,6 +49,7 @@ const saveSettings = asyncH(async (req, res) => {
     'INSERT INTO settings (id,data) VALUES (1,?) ON DUPLICATE KEY UPDATE data=VALUES(data)',
     [JSON.stringify(data)]
   );
+  invalidateNotifyPrefs();
   res.json(data);
 });
 

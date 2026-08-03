@@ -7,6 +7,7 @@ const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 const { tplWrapContent, renderEmail } = require('../services/emailTemplate');
 const { validateEmail } = require('../utils/emailValidator');
+const { notifyAdmin } = require('../services/notifyPrefs');
 
 router.get('/', requireAuth, asyncH(async (_req, res) => {
   const [rows] = await pool.execute('SELECT * FROM messages ORDER BY created_at DESC');
@@ -52,8 +53,7 @@ router.post('/', asyncH(async (req, res) => {
       .catch((err) => console.error('[messages] sender ack email failed:', err && err.message));
 
     // 2) Notification to admin inbox
-    const adminTo = process.env.APPLICATIONS_NOTIFY_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER;
-    if (adminTo) {
+    {
       const notifyHtml = renderEmail({
         title: 'নতুন যোগাযোগ বার্তা',
         preheader: `${d.name} — ${d.subject || 'নতুন বার্তা'}`,
@@ -62,8 +62,8 @@ router.post('/', asyncH(async (req, res) => {
         details,
         cta: { label: 'ড্যাশবোর্ডে দেখুন', url: `${(process.env.FRONTEND_URL || 'https://unitefoundation.bd').replace(/\/$/, '')}/dashboard/messages` },
       });
-      sendMail({ to: adminTo, subject: `[নতুন বার্তা] ${d.subject || d.name}`, html: notifyHtml })
-        .catch((err) => console.error('[messages] admin notify email failed:', err && err.message));
+      notifyAdmin({ event: 'message', subject: `[নতুন বার্তা] ${d.subject || d.name}`, html: notifyHtml })
+        .catch(() => {});
     }
   } catch (err) {
     console.error('[messages] email dispatch error:', err && err.message);

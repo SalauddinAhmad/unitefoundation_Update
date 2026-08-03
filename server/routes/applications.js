@@ -7,6 +7,7 @@ const { requireAuth } = require('../middleware/auth');
 const { sendMail } = require('../services/mailer');
 const { renderEmail } = require('../services/emailTemplate');
 const { validateEmail } = require('../utils/emailValidator');
+const { notifyAdmin } = require('../services/notifyPrefs');
 
 const KINDS = ['volunteer','member','career','donor'];
 
@@ -69,9 +70,8 @@ function sendConfirmationEmails(kind, payload) {
       .catch((err) => console.error('[applications] applicant email failed:', err && err.message));
   }
 
-  // 2) Notification to admin inbox (if configured)
-  const adminTo = process.env.APPLICATIONS_NOTIFY_EMAIL || process.env.SMTP_FROM || process.env.SMTP_USER;
-  if (adminTo) {
+  // 2) Notification to admin inbox — respects Dashboard → Settings → নোটিফিকেশন
+  {
     const html = renderEmail({
       title: `নতুন ${kindLabel}`,
       preheader: `${payload.name || ''} — ${payload.phone || ''}`,
@@ -79,8 +79,11 @@ function sendConfirmationEmails(kind, payload) {
       details,
       cta: { label: 'ড্যাশবোর্ডে দেখুন', url: `${(process.env.FRONTEND_URL || 'https://unitefoundation.bd').replace(/\/$/, '')}/dashboard` },
     });
-    sendMail({ to: adminTo, subject: `[নতুন] ${kindLabel} — ${payload.name || ''}`, html })
-      .catch((err) => console.error('[applications] admin email failed:', err && err.message));
+    notifyAdmin({
+      event: kind === 'donor' ? 'donation' : 'application',
+      subject: `[নতুন] ${kindLabel} — ${payload.name || ''}`,
+      html,
+    }).catch(() => {});
   }
 }
 
