@@ -32,6 +32,8 @@ const extrasSchema = z.object({
   // Store only short media/video URLs here. Base64 data URIs make PUT payloads
   // large enough for cPanel/LiteSpeed to abort with browser "Failed to fetch".
   banner_url: z.string().max(3000).optional().default(''),
+  disabled: z.boolean().optional().default(false),
+  disabled_message: z.string().max(500).optional().default(''),
 }).optional().default({});
 
 const DATA_URI_RE = /^data:[^;,]+;base64,/i;
