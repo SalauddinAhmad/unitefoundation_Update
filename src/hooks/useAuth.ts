@@ -16,6 +16,7 @@ export type AuthUser = {
   name: string;
   email: string;
   role: Role;
+  avatar?: string;
 };
 
 const DEMO_USER: AuthUser = {
@@ -204,6 +205,33 @@ export function useAuth() {
     }
   }, []);
 
+  // Update own profile (name / avatar)
+  const updateProfile = useCallback(async (patch: { name?: string; avatar?: string }) => {
+    try {
+      const res = await api.patch<{ token?: string; user: AuthUser }>("/auth/me", patch);
+      if (res.token) auth.set(res.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(res.user));
+      setUser(res.user);
+      return { ok: true as const };
+    } catch (err) {
+      if (err instanceof ApiError) return { ok: false as const, message: err.message };
+      return { ok: false as const, message: "প্রোফাইল সংরক্ষণ করা যায়নি" };
+    }
+  }, []);
+
+  const changePassword = useCallback(
+    async (currentPassword: string, newPassword: string) => {
+      try {
+        await api.post("/auth/change-password", { currentPassword, newPassword });
+        return { ok: true as const };
+      } catch (err) {
+        if (err instanceof ApiError) return { ok: false as const, message: err.message };
+        return { ok: false as const, message: "পাসওয়ার্ড পরিবর্তন ব্যর্থ" };
+      }
+    },
+    [],
+  );
+
   const logout = useCallback(() => {
     auth.clear();
     localStorage.removeItem(USER_KEY);
@@ -222,6 +250,8 @@ export function useAuth() {
     verifyOtp,
     forgotPassword,
     resetPassword,
+    updateProfile,
+    changePassword,
     logout,
     isAuthenticated: !!user,
     role: user?.role,

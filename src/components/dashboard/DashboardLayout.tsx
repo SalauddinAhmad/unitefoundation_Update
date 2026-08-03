@@ -179,7 +179,7 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
   </div>
 );
 
-const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
+const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string; avatar?: string } | null; onLogout: () => void }) => {
   const nav = useNavigate();
   const location = useLocation();
   const { data: messages } = useMessages();
@@ -291,8 +291,12 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
               title="আমার অ্যাকাউন্ট"
               className="flex items-center gap-2.5 pl-2 md:pl-3 ml-1 md:ml-2 md:border-l md:border-border hover:opacity-80 transition outline-none"
             >
-              <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
-                {(user?.name || "UF").slice(0, 2).toUpperCase()}
+              <div className="h-9 w-9 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  (user?.name || "UF").slice(0, 2).toUpperCase()
+                )}
               </div>
               <div className="hidden md:block leading-tight text-left">
                 <div className="text-sm font-bold">{user?.name || "এডমিন"}</div>
@@ -303,8 +307,12 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-64">
             <DropdownMenuLabel className="flex items-center gap-3 py-2">
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
-                {(user?.name || "UF").slice(0, 2).toUpperCase()}
+              <div className="h-10 w-10 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primary/60 text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  (user?.name || "UF").slice(0, 2).toUpperCase()
+                )}
               </div>
               <div className="leading-tight min-w-0">
                 <div className="text-sm font-bold truncate">{user?.name || "এডমিন"}</div>
@@ -312,11 +320,11 @@ const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: 
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => nav("/dashboard/settings?tab=account")} className="cursor-pointer">
+            <DropdownMenuItem onClick={() => nav("/dashboard/profile")} className="cursor-pointer">
               <UserIcon className="h-4 w-4 mr-2" />
               আমার প্রোফাইল
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => nav("/dashboard/settings?tab=account")} className="cursor-pointer">
+            <DropdownMenuItem onClick={() => nav("/dashboard/settings")} className="cursor-pointer">
               <Settings className="h-4 w-4 mr-2" />
               অ্যাকাউন্ট সেটিংস
             </DropdownMenuItem>

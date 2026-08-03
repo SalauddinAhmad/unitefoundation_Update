@@ -17,7 +17,7 @@ const signToken = (u) => jwt.sign(
   { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
 );
 
-const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role });
+const publicUser = (u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, avatar: u.avatar || '' });
 
 function attachAuditUser(req, user) {
   req.user = { sub: user.id, id: user.id, email: user.email, name: user.name, role: user.role };
@@ -74,10 +74,36 @@ router.post('/verify-otp', authLimiter, asyncH(async (req, res) => {
 
 // GET /auth/me
 router.get('/me', requireAuth, asyncH(async (req, res) => {
-  const [rows] = await pool.execute('SELECT id,name,email,role FROM users WHERE id=?', [req.user.sub]);
+  const [rows] = await pool.execute('SELECT id,name,email,role,avatar FROM users WHERE id=?', [req.user.sub]);
   if (!rows[0]) return res.status(404).json({ message: 'Not found' });
-  res.json({ user: rows[0] });
+  res.json({ user: publicUser(rows[0]) });
 }));
+
+// PATCH /auth/me — self-service profile update (name + avatar)
+const updateMe = asyncH(async (req, res) => {
+  const { name, avatar } = z.object({
+    name: z.string().trim().min(2).max(150).optional(),
+    avatar: z.string().max(10_000_000).optional(),
+  }).parse(req.body || {});
+
+  const sets = [];
+  const vals = [];
+  if (name !== undefined) { sets.push('name=?'); vals.push(name); }
+  if (avatar !== undefined) { sets.push('avatar=?'); vals.push(avatar); }
+  if (sets.length) {
+    vals.push(req.user.sub);
+    await pool.execute(`UPDATE users SET ${sets.join(', ')} WHERE id=?`, vals);
+  }
+
+  const [rows] = await pool.execute('SELECT id,name,email,role,avatar FROM users WHERE id=?', [req.user.sub]);
+  if (!rows[0]) return res.status(404).json({ message: 'Not found' });
+  const user = publicUser(rows[0]);
+  logActivity({ req, action: 'update', entity: 'profile', summary: `${user.name} নিজের প্রোফাইল আপডেট করেছেন`, status: 200 });
+  res.json({ token: signToken(rows[0]), user });
+});
+
+router.patch('/me', requireAuth, updateMe);
+router.post('/me', requireAuth, updateMe);
 
 // POST /auth/logout (client just drops token; endpoint exists for symmetry)
 router.post('/logout', requireAuth, (_req, res) => res.json({ ok: true }));
