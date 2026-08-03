@@ -28,6 +28,8 @@ export type FormExtras = {
   stats?: FormStat[];
   banner_type?: "none" | "image" | "video";
   banner_url?: string; // data URI, absolute URL, or YouTube URL for video
+  disabled?: boolean; // when true, the public form is closed
+  disabled_message?: string; // notice shown instead of the form
 };
 
 export type FormSchema = {
@@ -47,6 +49,8 @@ export const EMPTY_EXTRAS: FormExtras = {
   stats: [],
   banner_type: "none",
   banner_url: "",
+  disabled: false,
+  disabled_message: "",
 };
 
 export const FORM_KEYS = [
