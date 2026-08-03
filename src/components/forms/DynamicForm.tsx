@@ -78,14 +78,17 @@ type Props = {
   variant?: "light" | "dark";
   footer?: ReactNode;
   extraBeforeSubmit?: ReactNode;
+  /** Dashboard preview: render fields even when the form is turned off. */
+  ignoreDisabled?: boolean;
 };
 
-export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer, extraBeforeSubmit }: Props) {
+export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer, extraBeforeSubmit, ignoreDisabled }: Props) {
   const [values, setValues] = useState<Values>(() => {
     const v: Values = {};
     for (const f of schema.fields) v[f.key] = initialValueFor(f);
     return v;
   });
+
 
   const zSchema = useMemo(() => buildZod(schema.fields), [schema.fields]);
   const set = (k: string, v: Values[string]) => setValues((s) => ({ ...s, [k]: v }));
