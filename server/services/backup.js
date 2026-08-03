@@ -13,6 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
+const crypto = require('crypto');
 const pool = require('../db/pool');
 
 const BACKUP_DIR = path.join(__dirname, '..', process.env.BACKUP_DIR || 'backups');
@@ -212,22 +213,91 @@ function backupPath(file) {
   return fs.existsSync(p) ? p : null;
 }
 
+function apiBase() {
+  return String(process.env.API_PUBLIC_URL || process.env.API_BASE_URL || 'https://api.unitefoundation.bd').replace(/\/+$/, '');
+}
+
+/** Signed, time-limited token so the emailed link works without a login. */
+function downloadToken(file, ttlDays = 30) {
+  const exp = Date.now() + ttlDays * 24 * 60 * 60 * 1000;
+  const secret = process.env.JWT_SECRET || 'unite-backup';
+  const sig = crypto.createHmac('sha256', secret).update(`${file}.${exp}`).digest('hex').slice(0, 32);
+  return `${exp}.${sig}`;
+}
+
+function verifyDownloadToken(file, token) {
+  const [exp, sig] = String(token || '').split('.');
+  if (!exp || !sig) return false;
+  if (Date.now() > Number(exp)) return false;
+  const secret = process.env.JWT_SECRET || 'unite-backup';
+  const good = crypto.createHmac('sha256', secret).update(`${file}.${exp}`).digest('hex').slice(0, 32);
+  try { return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(good)); } catch { return false; }
+}
+
+function downloadUrl(file) {
+  return `${apiBase()}/backups/file/${encodeURIComponent(file)}?t=${downloadToken(file)}`;
+}
+
+/** Recipients: comma/semicolon separated list (max 2). */
+function recipients(cfg) {
+  const raw = cfg.emailTo || process.env.ADMIN_EMAIL || process.env.SMTP_USER || '';
+  return String(raw)
+    .split(/[,;\s]+/)
+    .map((s) => s.trim())
+    .filter((s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s))
+    .slice(0, 2);
+}
+
+function emailHtml({ fileName, size, url, when }) {
+  const mb = (size / 1024 / 1024).toFixed(2);
+  return `<!doctype html><html><body style="margin:0;padding:24px;background:#f4f6f5;font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans Bengali',sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);">
+      <tr><td style="background:linear-gradient(135deg,#14532d,#1c7a44);padding:26px 28px;">
+        <div style="color:#ffffff;font-size:19px;font-weight:700;line-height:1.7;">ডেটাবেজ ব্যাকআপ সম্পন্ন</div>
+        <div style="color:#d6ead9;font-size:13px;line-height:1.8;">Unite Foundation — স্বয়ংক্রিয় ব্যাকআপ সিস্টেম</div>
+      </td></tr>
+      <tr><td style="padding:26px 28px;">
+        <p style="margin:0 0 18px;color:#374151;font-size:14px;line-height:1.9;">
+          আপনার সম্পূর্ণ ডেটাবেজের একটি নতুন ব্যাকআপ সফলভাবে তৈরি হয়েছে। নিচের বাটনে ক্লিক করে ফাইলটি ডাউনলোড করতে পারবেন।
+        </p>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7faf8;border:1px solid #e3ece6;border-radius:12px;">
+          <tr><td style="padding:14px 16px;font-size:13px;color:#6b7280;line-height:1.9;">ফাইল</td>
+              <td style="padding:14px 16px;font-size:13px;color:#111827;font-weight:600;line-height:1.9;text-align:right;">${fileName}</td></tr>
+          <tr><td style="padding:0 16px 14px;font-size:13px;color:#6b7280;line-height:1.9;">সাইজ</td>
+              <td style="padding:0 16px 14px;font-size:13px;color:#111827;font-weight:600;line-height:1.9;text-align:right;">${mb} MB</td></tr>
+          <tr><td style="padding:0 16px 16px;font-size:13px;color:#6b7280;line-height:1.9;">সময়</td>
+              <td style="padding:0 16px 16px;font-size:13px;color:#111827;font-weight:600;line-height:1.9;text-align:right;">${when}</td></tr>
+        </table>
+        <div style="text-align:center;margin:26px 0 8px;">
+          <a href="${url}" style="display:inline-block;background:#1c7a44;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 34px;border-radius:10px;line-height:1.6;">ব্যাকআপ ডাউনলোড করুন</a>
+        </div>
+        <p style="margin:14px 0 0;color:#9ca3af;font-size:11.5px;line-height:1.9;text-align:center;">
+          লিংকটি ৩০ দিন পর্যন্ত সচল থাকবে। ফাইলটি gzip করা SQL ডাম্প — phpMyAdmin দিয়ে সরাসরি রিস্টোর করা যায়।
+        </p>
+      </td></tr>
+      <tr><td style="background:#f7faf8;padding:16px 28px;text-align:center;color:#9ca3af;font-size:11px;line-height:1.9;">
+        © Unite Foundation — এই ইমেইলটি স্বয়ংক্রিয়ভাবে পাঠানো হয়েছে।
+      </td></tr>
+    </table>
+  </td></tr></table></body></html>`;
+}
+
 async function maybeEmail(filePath, fileName, size) {
   const cfg = getConfig();
   if (!cfg.emailCopy) return;
-  const to = cfg.emailTo || process.env.ADMIN_EMAIL || process.env.SMTP_USER;
-  if (!to) return;
-  // Never try to email huge dumps — most mailboxes reject > 20 MB.
-  if (size > 18 * 1024 * 1024) return;
+  const to = recipients(cfg);
+  if (!to.length) return;
+  const attachments = size > 18 * 1024 * 1024
+    ? []
+    : [{ filename: fileName, path: filePath }];
   try {
     const { sendMail } = require('./mailer');
     await sendMail({
-      to,
+      to: to.join(', '),
       subject: `ডেটাবেজ ব্যাকআপ — ${fileName}`,
-      html: `<p>স্বয়ংক্রিয় ডেটাবেজ ব্যাকআপ সফলভাবে তৈরি হয়েছে।</p>
-             <p><b>ফাইল:</b> ${fileName}<br/><b>সাইজ:</b> ${(size / 1024 / 1024).toFixed(2)} MB<br/>
-             <b>সময়:</b> ${new Date().toISOString()}</p>`,
-      attachments: [{ filename: fileName, path: filePath }],
+      html: emailHtml({ fileName, size, url: downloadUrl(fileName), when: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC' }),
+      attachments,
     });
   } catch (e) {
     console.error('[backup] email failed:', e.message);
@@ -274,5 +344,7 @@ module.exports = {
   maybeRunScheduled,
   isDue,
   nextRunAt,
+  verifyDownloadToken,
+  downloadUrl,
   isRunning: () => running,
 };
