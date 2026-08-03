@@ -8,7 +8,7 @@
 
 - **Frontend** (React) → `/public_html/` → `https://unitefoundation.bd`
 - **Backend** (Express + MySQL) → `/public_html/api-app/` → `https://api.unitefoundation.bd`
-- **Deploy** → GitHub push করলে GitHub Actions automatic upload করবে
+- **Deploy** → GitHub Actions থেকে manual run করলে frontend/backend upload হবে
 
 ---
 
@@ -97,9 +97,9 @@ GitHub repo → **Settings** → **Secrets and variables** → **Actions** → *
 
 ---
 
-## ধাপ ৬ — Code push করুন
+## ধাপ ৬ — Deployment run করুন
 
-GitHub-এ push করলেই workflow চলবে। GitHub → **Actions** tab-এ দেখতে পাবেন।
+Code GitHub-এ push করার পর **Actions → Deploy to cPanel → Run workflow** ক্লিক করুন। Target ও method নির্বাচন করে run দিন।
 
 - **frontend** job → `/public_html/`-এ dist upload
 - **backend** job → `/public_html/api-app/`-এ server code upload
@@ -192,8 +192,31 @@ https://api.unitefoundation.bd/health
 
 ---
 
+## 🔎 Backend deployment tracker
+
+প্রতিটি backend run শেষে GitHub Actions-এর **Summary** page-এ একটি tracker report দেখা যাবে। ব্যর্থ হলেও `backend-deploy-tracker` artifact download করলে প্রতিটি health-check attempt-এর raw evidence পাওয়া যাবে।
+
+Tracker একসাথে মিলিয়ে দেখে:
+
+- GitHub-এর expected commit SHA
+- FTP-তে verify হওয়া `BACKEND_REMOTE_PATH`
+- live Passenger `Application Root`
+- live `DEPLOY_RELEASE`
+- `tmp/restart.txt` mtime
+- worker start time ও uptime
+
+Common result code:
+
+- `APPLICATION_ROOT_MISMATCH` — cPanel Application Root এবং `BACKEND_REMOTE_PATH` আলাদা
+- `PASSENGER_NOT_RECYCLED` — marker নতুন হলেও Passenger worker restart হয়নি
+- `RELEASE_FILE_MISSING_IN_APP_ROOT` — upload সফল, কিন্তু running root-এ release marker নেই
+- `STALE_DIAGNOSTIC_CODE` — live worker এখনও পুরোনো code চালাচ্ছে; cPanel থেকে একবার restart করে Application Root মিলাতে হবে
+- `LIVE` — upload এবং running commit একই
+
+> গুরুত্বপূর্ণ: deploy step সবুজ কিন্তু tracker-এ commit না মিললে deployment সফল নয়। Workflow এখন এই অবস্থায় failure দেবে এবং evidence artifact রেখে দেবে।
+
 ## 🚀 Future Deploys
 
-এখন থেকে GitHub-এ push করলেই সব automatic হয়ে যাবে। কোনো manual কাজ নেই।
+এখন থেকে update deploy করতে GitHub Actions-এর **Run workflow** ব্যবহার করুন। একই সময়ে দ্বিতীয় deploy দিলে সেটি queue-তে অপেক্ষা করবে, ফলে দুই release-এর file মিশবে না।
 
 কোনো ধাপে আটকে গেলে screenshot পাঠান — সাহায্য করবো ইনশাআল্লাহ।

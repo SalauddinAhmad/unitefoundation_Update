@@ -109,6 +109,11 @@ app.get('/health/deploy', (_req, res) => {
     appJsMtime = fs.statSync(path.join(__dirname, 'app.js')).mtime.toISOString();
   } catch { /* ignore */ }
 
+  let deployMeta = null;
+  try {
+    deployMeta = JSON.parse(fs.readFileSync(path.join(__dirname, 'DEPLOY_META.json'), 'utf8'));
+  } catch { /* local development or an older deployment has no metadata */ }
+
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json({
     ok: true,
@@ -117,6 +122,7 @@ app.get('/health/deploy', (_req, res) => {
     releaseFileMtime,
     restartMtime,
     appJsMtime,
+    deployMeta,
     appRoot: __dirname,
     node: process.version,
     pid: process.pid,

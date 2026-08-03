@@ -161,7 +161,7 @@ fi
 # timestamp: /health/deploy uses it to prove which commit Passenger is serving.
 # cmd:fail-exit ensures these commands never run if the asset mirror fails.
 FORCE_COMMANDS=""
-for f in index.html release.txt .htaccess DEPLOY_RELEASE; do
+for f in index.html release.txt .htaccess DEPLOY_RELEASE DEPLOY_META.json; do
   if [ -f "$LOCAL_DIR/$f" ]; then
     FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
   fi
@@ -187,6 +187,7 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob release.txt \
   --exclude-glob .htaccess \
   --exclude-glob DEPLOY_RELEASE \
+  --exclude-glob DEPLOY_META.json \
   '$LOCAL_DIR' '$REMOTE_DIR';
 $FORCE_COMMANDS
 $RESTART_COMMAND
@@ -207,6 +208,10 @@ bye;
 #     directory than BACKEND_REMOTE_PATH (or Passenger never restarted).
 # ---------------------------------------------------------------
 if [ -f "$LOCAL_DIR/DEPLOY_RELEASE" ]; then
+  if [ ! -f "$RESTART_FILE" ]; then
+    echo "❌ Backend package has DEPLOY_RELEASE but no tmp/restart.txt." >&2
+    exit 1
+  fi
   RELEASE_LOCAL="$(cat "$LOCAL_DIR/DEPLOY_RELEASE")"
   RELEASE_TMP="$(mktemp)"; rm -f "$RELEASE_TMP"
   lftp -c "
@@ -233,7 +238,7 @@ rm -f '$REMOTE_DIR/tmp/restart.txt';
 put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';
 cls -l '$REMOTE_DIR/tmp/restart.txt';
 bye;
-" || true
+"
   echo "🔁 Passenger restart marker rewritten in '$REMOTE_DIR/tmp/restart.txt'"
 fi
 
