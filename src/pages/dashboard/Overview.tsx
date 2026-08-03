@@ -252,7 +252,7 @@ const Overview = () => {
     );
     pending.slice(0, 8).forEach((a) => {
       const kindLabel =
-        a.kind === "members" ? "সদস্যপদের" : a.kind === "careers" ? "জেলা প্রতিনিধি" : "স্বেচ্ছাসেবক";
+        a.kind === "members" ? "সদস্যপদের" : a.kind === "careers" ? "প্রতিনিধি" : "স্বেচ্ছাসেবক";
       items.push({
         type: a.kind === "members" ? "member" : "volunteer",
         text: `${a.name} ${kindLabel} আবেদন করেছেন`,
@@ -543,7 +543,7 @@ const Overview = () => {
             <ul className="space-y-3">
               {pending.slice(0, 5).map((v) => {
                 const label =
-                  v.kind === "members" ? "সদস্যপদ" : v.kind === "careers" ? "জেলা প্রতিনিধি" : "স্বেচ্ছাসেবক";
+                  v.kind === "members" ? "সদস্যপদ" : v.kind === "careers" ? "প্রতিনিধি" : "স্বেচ্ছাসেবক";
                 return (
                   <li key={String(v.id)} className="flex items-center gap-3 p-2 -mx-2 rounded-lg hover:bg-muted/60 transition-colors">
                     <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary flex items-center justify-center font-bold text-sm">

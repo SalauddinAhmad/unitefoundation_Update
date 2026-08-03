@@ -19,8 +19,8 @@ const DistrictReps = () => {
   return (
     <ApplicationsTable
       kind="career"
-      title="জেলা প্রতিনিধি আবেদন"
-      subtitle="জেলা প্রতিনিধি প্রার্থীদের আবেদন পর্যালোচনা ও অনুমোদন করুন"
+      title="প্রতিনিধি আবেদন"
+      subtitle="প্রতিনিধি প্রার্থীদের আবেদন পর্যালোচনা ও অনুমোদন করুন"
       data={data}
       extrasBucket={EXTRAS.careers}
       idPrefix="DR"
