@@ -47,24 +47,29 @@ set ftp:sync-mode true;
 
 echo "🔎 FTP host resolves to: $(getent hosts "$FTP_HOST" | awk '{print $1}' | tr '\n' ' ')"
 
-# ---------------------------------------------------------------
-# 1) For frontend deployments, prove which FTP directory is the live
-#    document root before uploading the bundle. This prevents an FTP
-#    success against a stale server/root from ever becoming a green run.
-# ---------------------------------------------------------------
-PROBE="$(lftp -c "
+if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
+  # ---------------------------------------------------------------
+  # 1) Frontend only: prove which FTP directory is the live document
+  #    root before uploading the bundle. Backend FTP users may not have
+  #    permission to list the login root even though api-app is writable,
+  #    so this discovery must never run for backend deployments.
+  # ---------------------------------------------------------------
+  if ! PROBE="$(lftp -c "
 $LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
 pwd;
 cls -1 .;
 bye;
-" 2>&1)"
+" 2>&1)"; then
+    echo "❌ Unable to inspect the frontend FTP login directory:" >&2
+    echo "$PROBE" >&2
+    exit 1
+  fi
 
-echo "--- FTP login directory listing ---"
-echo "$PROBE"
-echo "-----------------------------------"
+  echo "--- FTP login directory listing ---"
+  echo "$PROBE"
+  echo "-----------------------------------"
 
-if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
   VERIFY_BASE="${DEPLOY_VERIFY_URL%/}"
   # Do not use a dotfile: many Apache configurations block dot-prefixed files.
   PROBE_NAME="deploy-probe-${GITHUB_RUN_ID:-$$}-${RANDOM}.txt"
