@@ -3,6 +3,7 @@ import { Plus, Trash2, Image as ImgIcon, Youtube, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import { EMPTY_EXTRAS, type FormExtras } from "@/data/formDefaults";
 import { FormSideContent } from "@/components/forms/FormSideContent";
@@ -29,10 +30,28 @@ export function FormExtrasEditor({ value, onChange }: Props) {
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-5">
+      {/* Form on/off */}
+      <div className={"rounded-md p-3 space-y-2 border " + (v.disabled ? "border-destructive/40 bg-destructive/5" : "border-border bg-secondary/40")}>
+        <label className="flex items-center gap-3">
+          <Switch checked={!v.disabled} onCheckedChange={(on) => patch({ disabled: !on })} />
+          <span className="text-sm font-bold text-foreground">
+            {v.disabled ? "ফর্ম বন্ধ (কেউ পূরণ করতে পারবে না)" : "ফর্ম চালু (পাবলিক সাইটে খোলা)"}
+          </span>
+        </label>
+        {v.disabled && (
+          <Input
+            placeholder="বন্ধ থাকার বার্তা (যেমন: আবেদন গ্রহণ আপাতত বন্ধ আছে)"
+            value={v.disabled_message || ""}
+            onChange={(e) => patch({ disabled_message: e.target.value })}
+          />
+        )}
+      </div>
+
       <div>
         <h3 className="text-sm font-bold text-foreground">সাইড কনটেন্ট (ফর্মের পাশে দেখাবে)</h3>
         <p className="text-xs text-muted-foreground">ইনট্রো টেক্সট, বুলেট লিস্ট, উক্তি, পরিসংখ্যান ও ব্যানার — সবই এখান থেকে সম্পাদনা করুন।</p>
       </div>
+
 
       {/* Banner */}
       <div className="rounded-md bg-secondary/40 p-3 space-y-3">
