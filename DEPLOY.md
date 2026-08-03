@@ -192,6 +192,29 @@ https://api.unitefoundation.bd/health
 
 ---
 
+## 🔎 Backend deployment tracker
+
+প্রতিটি backend run শেষে GitHub Actions-এর **Summary** page-এ একটি tracker report দেখা যাবে। ব্যর্থ হলেও `backend-deploy-tracker` artifact download করলে প্রতিটি health-check attempt-এর raw evidence পাওয়া যাবে।
+
+Tracker একসাথে মিলিয়ে দেখে:
+
+- GitHub-এর expected commit SHA
+- FTP-তে verify হওয়া `BACKEND_REMOTE_PATH`
+- live Passenger `Application Root`
+- live `DEPLOY_RELEASE`
+- `tmp/restart.txt` mtime
+- worker start time ও uptime
+
+Common result code:
+
+- `APPLICATION_ROOT_MISMATCH` — cPanel Application Root এবং `BACKEND_REMOTE_PATH` আলাদা
+- `PASSENGER_NOT_RECYCLED` — marker নতুন হলেও Passenger worker restart হয়নি
+- `RELEASE_FILE_MISSING_IN_APP_ROOT` — upload সফল, কিন্তু running root-এ release marker নেই
+- `STALE_DIAGNOSTIC_CODE` — live worker এখনও পুরোনো code চালাচ্ছে; cPanel থেকে একবার restart করে Application Root মিলাতে হবে
+- `LIVE` — upload এবং running commit একই
+
+> গুরুত্বপূর্ণ: deploy step সবুজ কিন্তু tracker-এ commit না মিললে deployment সফল নয়। Workflow এখন এই অবস্থায় failure দেবে এবং evidence artifact রেখে দেবে।
+
 ## 🚀 Future Deploys
 
 এখন থেকে GitHub-এ push করলেই সব automatic হয়ে যাবে। কোনো manual কাজ নেই।
