@@ -109,6 +109,25 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
     : "w-full rounded-lg px-3 py-2.5 text-sm bg-background border border-input text-foreground placeholder:text-muted-foreground focus:border-primary outline-none transition";
   const labelCls = isDark ? "text-xs font-semibold text-white/90 mb-1.5 block" : "text-xs font-semibold text-foreground/80 mb-1.5 block";
 
+  if (schema.extras?.disabled && !ignoreDisabled) {
+    const msg = schema.extras.disabled_message?.trim()
+      || "এই ফর্মটি আপাতত বন্ধ রয়েছে। শীঘ্রই আবার চালু করা হবে, ইনশাআল্লাহ।";
+    return (
+      <div
+        className={
+          "rounded-xl border p-6 text-center " +
+          (isDark
+            ? "border-primary-foreground/25 bg-primary-foreground/10 text-primary-foreground"
+            : "border-border bg-secondary/40 text-foreground")
+        }
+      >
+        <Lock className={"h-6 w-6 mx-auto mb-3 " + (isDark ? "text-primary-foreground/80" : "text-muted-foreground")} />
+        <p className="text-sm font-semibold leading-relaxed">{msg}</p>
+      </div>
+    );
+  }
+
+
   return (
     <form onSubmit={submit} className={"space-y-3 " + (isDark ? "dyn-form-dark" : "dyn-form-light")}>
       <style>{`
