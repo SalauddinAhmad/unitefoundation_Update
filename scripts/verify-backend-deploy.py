@@ -17,16 +17,21 @@ def utc_now():
 
 def request_health(url, host, origin_ip):
     marker = "__DEPLOY_HTTP_STATUS__:"
+    content_marker = "__DEPLOY_CONTENT_TYPE__:"
     command = [
         "curl", "-sS", "--connect-timeout", "5", "--max-time", "8",
         "--resolve", f"{host}:443:{origin_ip}",
         "-H", "Cache-Control: no-cache, no-store",
-        "-w", f"\n{marker}%{{http_code}}",
+        "-H", "Accept: application/json",
+        "-w", f"\n{marker}%{{http_code}}\n{content_marker}%{{content_type}}",
         f"{url}?cb={time.time_ns()}",
     ]
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     output = result.stdout.rstrip()
-    raw, separator, status_text = output.rpartition(f"\n{marker}")
+    status_output, content_separator, content_type = output.rpartition(f"\n{content_marker}")
+    if not content_separator:
+        status_output, content_type = output, ""
+    raw, separator, status_text = status_output.rpartition(f"\n{marker}")
     if not separator:
         raw, status_text = output, "000"
     try:
@@ -38,11 +43,21 @@ def request_health(url, host, origin_ip):
         payload = json.loads(raw)
     except (json.JSONDecodeError, TypeError):
         payload = None
-    return result.returncode, http_status, raw, result.stderr.strip(), payload
+    return result.returncode, http_status, content_type.strip(), raw, result.stderr.strip(), payload
 
 
-def diagnose(payload, expected_sha, remote_path):
+def diagnose(payload, expected_sha, remote_path, non_json_response=None):
     if not isinstance(payload, dict):
+        if non_json_response:
+            status = non_json_response.get("httpStatus")
+            content_type = non_json_response.get("contentType") or "not reported"
+            preview = non_json_response.get("responsePreview") or "empty body"
+            return (
+                "ROUTING_MISMATCH",
+                f"The deploy health URL repeatedly returned HTTP {status} as '{content_type}', not JSON. "
+                f"The request is reaching a web-server/vhost route instead of the Passenger API. "
+                f"Response preview: {preview}",
+            )
         return (
             "NO_JSON_RESPONSE",
             "API did not return JSON. Passenger/app routing or startup is failing; inspect the cPanel Passenger error log.",
@@ -124,6 +139,7 @@ def main():
     parser.add_argument("--attempts", type=int, default=72)
     parser.add_argument("--interval", type=int, default=10)
     parser.add_argument("--required-consecutive", type=int, default=3)
+    parser.add_argument("--max-consecutive-non-json", type=int, default=3)
     parser.add_argument("--output", default="deploy-tracker/backend.json")
     args = parser.parse_args()
 
@@ -139,9 +155,11 @@ def main():
     }
     live = False
     consecutive_matches = 0
+    consecutive_non_json = 0
+    last_non_json = None
     final_payload = {}
     for number in range(1, args.attempts + 1):
-        code, http_status, raw, stderr, payload = request_health(args.url, host, args.origin_ip)
+        code, http_status, content_type, raw, stderr, payload = request_health(args.url, host, args.origin_ip)
         final_payload = payload if isinstance(payload, dict) else {}
         live_sha = str(final_payload.get("release") or "")
         report["attempts"].append({
@@ -149,15 +167,33 @@ def main():
             "at": utc_now(),
             "curlExitCode": code,
             "httpStatus": http_status,
+            "contentType": content_type or None,
             "liveSha": live_sha or None,
             "response": payload if isinstance(payload, dict) else raw[:1000],
             "stderr": stderr[:500] or None,
         })
         print(
             f"attempt {number}/{args.attempts} -> HTTP {http_status or 'unavailable'}, "
-            f"release '{live_sha or 'unavailable'}'",
+            f"content-type '{content_type or 'unavailable'}', release '{live_sha or 'unavailable'}'",
             flush=True,
         )
+        if not isinstance(payload, dict) and 200 <= http_status < 400:
+            consecutive_non_json += 1
+            compact_preview = " ".join(raw[:300].split()) or "empty body"
+            last_non_json = {
+                "httpStatus": http_status,
+                "contentType": content_type,
+                "responsePreview": compact_preview,
+            }
+            if consecutive_non_json >= args.max_consecutive_non_json:
+                print(
+                    f"Stopping after {consecutive_non_json} consecutive non-JSON success responses; "
+                    "further retries cannot fix a vhost/routing mismatch.",
+                    flush=True,
+                )
+                break
+        else:
+            consecutive_non_json = 0
         if live_sha == args.expected_sha:
             consecutive_matches += 1
             if consecutive_matches >= args.required_consecutive:
@@ -168,7 +204,12 @@ def main():
         if number < args.attempts:
             time.sleep(args.interval)
 
-    diagnosis_code, diagnosis = diagnose(final_payload or None, args.expected_sha, args.remote_path)
+    diagnosis_code, diagnosis = diagnose(
+        final_payload or None,
+        args.expected_sha,
+        args.remote_path,
+        last_non_json,
+    )
     report["finishedAt"] = utc_now()
     report["success"] = live
     report["diagnosisCode"] = diagnosis_code
