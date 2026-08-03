@@ -17,6 +17,8 @@ import {
   useDeletePost,
   type ApiPost,
 } from "@/hooks/api/usePublic";
+import { api } from "@/lib/api";
+
 
 type Post = BlogPost & {
   excerpt?: string;
@@ -144,6 +146,22 @@ export default function Blog() {
   const [category, setCategory] = useState<string>("all");
   const [editor, setEditor] = useState<{ open: boolean; post?: Post }>({ open: false });
   const [viewer, setViewer] = useState<Post | null>(null);
+
+  // The list endpoint omits `content` for performance — fetch the full post
+  // before opening the editor/viewer so the body text is visible.
+  const withFullContent = async (p: Post): Promise<Post> => {
+    if (p.html) return p;
+    try {
+      const row = await api.get<ApiPost>(`/posts/${p.id}`);
+      return { ...p, html: row?.content || "" };
+    } catch {
+      toast.error("পোস্টের কনটেন্ট লোড করা যায়নি");
+      return p;
+    }
+  };
+  const openEditor = async (p: Post) => setEditor({ open: true, post: await withFullContent(p) });
+  const openViewer = async (p: Post) => setViewer(await withFullContent(p));
+
 
 
   const filtered = useMemo(() => {
@@ -363,8 +381,8 @@ export default function Blog() {
                   <td className="py-3"><StatusBadge status={p.status} /></td>
                   <td className="py-3 pr-5">
                     <div className="flex items-center justify-end gap-0.5">
-                      <IconBtn title="দেখুন" onClick={() => setViewer(p)} icon={Eye} />
-                      <IconBtn title="এডিট" onClick={() => setEditor({ open: true, post: p })} icon={Edit3} />
+                      <IconBtn title="দেখুন" onClick={() => openViewer(p)} icon={Eye} />
+                      <IconBtn title="এডিট" onClick={() => openEditor(p)} icon={Edit3} />
                       <IconBtn title="কপি" onClick={() => duplicate(p)} icon={Copy} />
                       <IconBtn
                         title={p.status === "published" ? "ড্রাফটে নিন" : "পাবলিশ করুন"}
