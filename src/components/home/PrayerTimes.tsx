@@ -133,7 +133,12 @@ export const PrayerTimes = () => {
   const { i18n } = useTranslation();
   // Render everything in the active language ourselves — the section is marked
   // `notranslate`, so Google Translate never re-processes the ticking clock.
-  EN = (i18n.language || "bn").startsWith("en");
+  const EN = isEnglish(i18n.language);
+  const { toBn, L, DAYS, toBengaliDate, toHijri, fmtHM, fmtHMS, plabel } = useMemo(
+    () => makeFmt(EN),
+    [EN],
+  );
+
   const [now, setNow] = useState(new Date());
   const [method, setMethod] = useState<string>(() => localStorage.getItem("uf_prayer_method") ?? "MuslimWorldLeague");
   const [coords, setCoords] = useState(() => {
