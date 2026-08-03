@@ -34,7 +34,9 @@ router.get('/', asyncH(async (_req, res) => {
 }));
 
 
-router.put('/', requireAuth, requireRole('admin'), asyncH(async (req, res) => {
+// Accept the same payload over POST: some LiteSpeed/Imunify360 hosts drop
+// large PUT bodies, so the client retries with POST + X-HTTP-Method-Override.
+const saveSettings = asyncH(async (req, res) => {
   const incoming = req.body || {};
   // Merge on top of what is already stored. A partial payload (for example a
   // form-schema-only save, or a dashboard tab that posts a subset) must never
@@ -47,7 +49,10 @@ router.put('/', requireAuth, requireRole('admin'), asyncH(async (req, res) => {
     [JSON.stringify(data)]
   );
   res.json(data);
-}));
+});
+
+router.put('/', requireAuth, requireRole('admin'), saveSettings);
+router.post('/', requireAuth, requireRole('admin'), saveSettings);
 
 
 module.exports = router;
