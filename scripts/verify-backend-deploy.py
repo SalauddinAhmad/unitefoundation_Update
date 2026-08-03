@@ -49,8 +49,8 @@ def diagnose(payload, expected_sha, remote_path):
             "The live worker is still running code from before deployment diagnostics existed. The verified upload directory is not the active Application Root, or Passenger did not restart.",
         )
 
-    remote_tail = remote_path.strip("/").split("/")[-1]
-    if remote_tail and not app_root.rstrip("/").endswith(remote_tail):
+    normalized_remote = remote_path.strip("/")
+    if normalized_remote and not app_root.rstrip("/").endswith(f"/{normalized_remote}"):
         return (
             "APPLICATION_ROOT_MISMATCH",
             f"Passenger runs from '{app_root}', but GitHub uploads to '{remote_path}'. Set BACKEND_REMOTE_PATH to the FTP-relative path mapping to that Application Root.",
@@ -106,6 +106,7 @@ def main():
     parser.add_argument("--expected-sha", required=True)
     parser.add_argument("--remote-path", required=True)
     parser.add_argument("--origin-ip", required=True)
+    parser.add_argument("--method", required=True, choices=("ftps", "ssh", "api"))
     parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
     parser.add_argument("--attempts", type=int, default=30)
     parser.add_argument("--interval", type=int, default=10)
@@ -117,8 +118,9 @@ def main():
         "expectedSha": args.expected_sha,
         "remotePath": args.remote_path,
         "originIp": args.origin_ip,
+        "method": args.method,
         "startedAt": utc_now(),
-        "uploadMarkerVerified": True,
+        "uploadMarkerVerified": args.method == "ftps",
         "attempts": [],
     }
     live = False

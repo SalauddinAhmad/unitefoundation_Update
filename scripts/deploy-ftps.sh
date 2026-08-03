@@ -161,7 +161,7 @@ fi
 # timestamp: /health/deploy uses it to prove which commit Passenger is serving.
 # cmd:fail-exit ensures these commands never run if the asset mirror fails.
 FORCE_COMMANDS=""
-for f in index.html release.txt .htaccess DEPLOY_RELEASE; do
+for f in index.html release.txt .htaccess DEPLOY_RELEASE DEPLOY_META.json; do
   if [ -f "$LOCAL_DIR/$f" ]; then
     FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
   fi
@@ -187,6 +187,7 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob release.txt \
   --exclude-glob .htaccess \
   --exclude-glob DEPLOY_RELEASE \
+  --exclude-glob DEPLOY_META.json \
   '$LOCAL_DIR' '$REMOTE_DIR';
 $FORCE_COMMANDS
 $RESTART_COMMAND

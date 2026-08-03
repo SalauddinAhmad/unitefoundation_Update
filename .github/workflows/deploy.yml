@@ -186,11 +186,13 @@ jobs:
         env:
           ORIGIN_IP: 14.128.14.142
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
+          DEPLOY_METHOD: ${{ github.event.inputs.method || 'ftps' }}
         run: |
           python3 scripts/verify-backend-deploy.py \
             --expected-sha '${{ github.sha }}' \
             --remote-path "${BACKEND_REMOTE_PATH:-public_html/api-app}" \
-            --origin-ip "$ORIGIN_IP"
+            --origin-ip "$ORIGIN_IP" \
+            --method "$DEPLOY_METHOD"
 
       - name: Upload backend deployment tracker
         if: ${{ always() }}
