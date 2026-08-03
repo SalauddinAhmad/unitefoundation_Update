@@ -108,6 +108,10 @@ function MaghribIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="cur
 function IshaIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M20 14.5A8 8 0 019.5 4a7 7 0 108.5 10.5z"/><path strokeLinecap="round" d="M5 5l.5 1.5L7 7l-1.5.5L5 9l-.5-1.5L3 7l1.5-.5z"/></svg>; }
 
 export const PrayerTimes = () => {
+  const { i18n } = useTranslation();
+  // Render everything in the active language ourselves — the section is marked
+  // `notranslate`, so Google Translate never re-processes the ticking clock.
+  EN = (i18n.language || "bn").startsWith("en");
   const [now, setNow] = useState(new Date());
   const [method, setMethod] = useState<string>(() => localStorage.getItem("uf_prayer_method") ?? "MuslimWorldLeague");
   const [coords, setCoords] = useState(() => {
