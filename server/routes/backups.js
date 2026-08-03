@@ -9,6 +9,19 @@ const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { logActivity } = require('../services/audit');
 const backup = require('../services/backup');
 
+// --- Public (signed-token) download used by the emailed link ---
+router.get('/file/:file', asyncH(async (req, res) => {
+  const file = req.params.file;
+  if (!backup.verifyDownloadToken(file, req.query.t)) {
+    return res.status(403).json({ message: 'Invalid or expired download link' });
+  }
+  const p = backup.backupPath(file);
+  if (!p) return res.status(404).json({ message: 'Backup not found' });
+  res.setHeader('Content-Type', 'application/gzip');
+  res.setHeader('Content-Disposition', `attachment; filename="${file}"`);
+  fs.createReadStream(p).pipe(res);
+}));
+
 router.use(requireAuth, requireSuperAdmin);
 
 // Status + config + file list
@@ -24,17 +37,22 @@ router.get('/', asyncH(async (_req, res) => {
 
 // Update schedule / retention / email settings
 router.put('/config', asyncH(async (req, res) => {
+  const emailList = z.string().max(255).refine(
+    (v) => v.trim() === '' || v.split(/[,;\s]+/).filter(Boolean).every((e) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)),
+    { message: 'Invalid email list' },
+  );
   const d = z.object({
     enabled: z.boolean().optional(),
     frequency: z.enum(['hourly', 'daily', 'weekly']).optional(),
     retention: z.number().int().min(1).max(60).optional(),
     emailCopy: z.boolean().optional(),
-    emailTo: z.string().email().or(z.literal('')).optional(),
+    emailTo: emailList.optional(),
   }).parse(req.body || {});
   const cfg = backup.setConfig(d);
   logActivity({ req, action: 'update', entity: 'backups', summary: 'ব্যাকআপ সেটিংস আপডেট', meta: cfg });
   res.json(cfg);
 }));
+
 
 // Run one backup immediately
 router.post('/run', asyncH(async (req, res) => {
