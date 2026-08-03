@@ -133,12 +133,13 @@ def main():
     parser.add_argument("--origin-ip", required=True)
     parser.add_argument("--method", required=True, choices=("ftps", "ssh", "api"))
     parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
-    # cPanel Passenger can take over five minutes to recycle after restart.txt
-    # is replaced. Twelve minutes avoids marking a successful upload as failed
-    # while still leaving a finite, observable readiness deadline.
-    parser.add_argument("--attempts", type=int, default=72)
-    parser.add_argument("--interval", type=int, default=10)
-    parser.add_argument("--required-consecutive", type=int, default=3)
+    # cPanel Passenger usually recycles within ~1-2 minutes of restart.txt
+    # being replaced; 8 minutes of 8s polls is a generous ceiling without
+    # flooding the log. One matching JSON response is proof enough.
+    parser.add_argument("--attempts", type=int, default=60)
+    parser.add_argument("--interval", type=int, default=8)
+    parser.add_argument("--required-consecutive", type=int, default=1)
+
     parser.add_argument("--max-consecutive-non-json", type=int, default=3)
     parser.add_argument("--output", default="deploy-tracker/backend.json")
     args = parser.parse_args()
