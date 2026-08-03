@@ -148,7 +148,10 @@ jobs:
                   'runId': os.environ['DEPLOY_RUN_ID'],
                   'runAttempt': os.environ['DEPLOY_RUN_ATTEMPT'],
                   'method': os.environ['DEPLOY_METHOD'],
-                  'targetRemotePath': os.environ.get('BACKEND_REMOTE_PATH') or 'public_html/api-app',
+                  # cPanel's "Application Root" is relative to the account
+                  # home, not to public_html. The API vhost is routed to this
+                  # Passenger app independently of its document root.
+                  'targetRemotePath': 'api-app',
                   'packagedAt': datetime.now(timezone.utc).isoformat(),
               }, f, indent=2)
           PY
@@ -162,9 +165,11 @@ jobs:
           FTP_PASS: ${{ secrets.FTP_PASS }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
           FTP_PORT: ${{ secrets.FTP_PORT }}
-          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         timeout-minutes: 10
-        run: bash scripts/deploy-ftps.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
+        # The live Passenger app is /home/unitefound/api-app. Do not use the
+        # historical BACKEND_REMOTE_PATH secret here: it points at a second,
+        # inactive copy under public_html and can never restart the live app.
+        run: bash scripts/deploy-ftps.sh out api-app
 
       - name: Deploy backend via SSH
         if: ${{ (github.event.inputs.method || 'ftps') == 'ssh' }}
@@ -173,8 +178,7 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
-        run: bash scripts/deploy-ssh.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
+        run: bash scripts/deploy-ssh.sh out api-app
 
       - name: Deploy backend via cPanel API
         if: ${{ (github.event.inputs.method || 'ftps') == 'api' }}
@@ -185,20 +189,20 @@ jobs:
           CPANEL_USER: unitefound
           CPANEL_HOME: /home/unitefound
           CPANEL_API_TOKEN: ${{ secrets.CPANEL_API_TOKEN }}
-          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
-        run: bash scripts/deploy-cpanel-zip.sh out "${BACKEND_REMOTE_PATH:-public_html/api-app}"
+        run: bash scripts/deploy-cpanel-zip.sh out api-app
 
       - name: Verify backend is live
         env:
           ORIGIN_IP: 14.128.14.142
-          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
           DEPLOY_METHOD: ${{ github.event.inputs.method || 'ftps' }}
         run: |
           python3 scripts/verify-backend-deploy.py \
             --expected-sha '${{ github.sha }}' \
-            --remote-path "${BACKEND_REMOTE_PATH:-public_html/api-app}" \
+            --remote-path "api-app" \
             --origin-ip "$ORIGIN_IP" \
-            --method "$DEPLOY_METHOD"
+            --method "$DEPLOY_METHOD" \
+            --attempts 5 \
+            --interval 12
 
       - name: Upload backend deployment tracker
         if: ${{ always() }}
