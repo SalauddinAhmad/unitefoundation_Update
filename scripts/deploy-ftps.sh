@@ -200,6 +200,43 @@ bye;
 #    A successful mirror that writes nowhere useful is the exact
 #    failure mode we are guarding against.
 # ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# 2a) Backend deployments: prove that DEPLOY_RELEASE really landed in the
+#     directory we uploaded to. If this passes but /health/deploy keeps
+#     serving an old commit, the Node.js Application Root is a DIFFERENT
+#     directory than BACKEND_REMOTE_PATH (or Passenger never restarted).
+# ---------------------------------------------------------------
+if [ -f "$LOCAL_DIR/DEPLOY_RELEASE" ]; then
+  RELEASE_LOCAL="$(cat "$LOCAL_DIR/DEPLOY_RELEASE")"
+  RELEASE_TMP="$(mktemp)"; rm -f "$RELEASE_TMP"
+  lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+get '$REMOTE_DIR/DEPLOY_RELEASE' -o '$RELEASE_TMP';
+bye;
+" >/dev/null 2>&1 || true
+  RELEASE_REMOTE="$( [ -f "$RELEASE_TMP" ] && cat "$RELEASE_TMP" || true )"
+  rm -f "$RELEASE_TMP"
+  if [ "$RELEASE_REMOTE" != "$RELEASE_LOCAL" ]; then
+    echo "❌ DEPLOY_RELEASE did not land in '$REMOTE_DIR' (remote='$RELEASE_REMOTE')." >&2
+    exit 1
+  fi
+  echo "✅ Backend release marker verified in '$REMOTE_DIR'"
+
+  # Passenger only recycles when tmp/restart.txt is (re)written. Some FTP
+  # servers keep the original mtime on overwrite, so delete-then-put.
+  lftp -c "
+$LFTP_SETTINGS
+open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
+mkdir -pf '$REMOTE_DIR/tmp';
+rm -f '$REMOTE_DIR/tmp/restart.txt';
+put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';
+cls -l '$REMOTE_DIR/tmp/restart.txt';
+bye;
+" || true
+  echo "🔁 Passenger restart marker rewritten in '$REMOTE_DIR/tmp/restart.txt'"
+fi
+
 if [ -f "$LOCAL_DIR/index.html" ]; then
   LOCAL_HASH=$(sha256sum "$LOCAL_DIR/index.html" | awk '{print $1}')
   VERIFY_FILE="$(mktemp)"
