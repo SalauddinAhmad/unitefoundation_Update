@@ -316,6 +316,30 @@ app.use('/forms', require('./routes/forms'));
 app.use('/sslcommerz', require('./routes/sslcommerz'));
 app.use('/email-templates', require('./routes/emailTemplates'));
 app.use('/newsletter', require('./routes/newsletter'));
+app.use('/backups', require('./routes/backups'));
+
+// --- Automatic database backup scheduler -------------------------
+// Two triggers so it never depends on manual action:
+//  1) an hourly in-process timer (works while a worker stays alive)
+//  2) a lazy "is it due?" check on incoming traffic (works on shared
+//     cPanel/Passenger hosting where idle workers are recycled)
+if (process.env.DISABLE_AUTO_BACKUP !== 'true') {
+  const backupSvc = require('./services/backup');
+  let lastCheck = 0;
+  app.use((_req, _res, next) => {
+    const now = Date.now();
+    if (now - lastCheck > 10 * 60 * 1000) {
+      lastCheck = now;
+      setImmediate(() => backupSvc.maybeRunScheduled());
+    }
+    next();
+  });
+  // First check a minute after boot, then hourly.
+  setTimeout(() => backupSvc.maybeRunScheduled(), 60 * 1000).unref?.();
+  setInterval(() => backupSvc.maybeRunScheduled(), 60 * 60 * 1000).unref?.();
+}
+
+
 
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
