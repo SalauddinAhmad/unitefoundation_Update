@@ -269,17 +269,26 @@ bye;
   fi
   echo "✅ index.html content verified on server"
 
-  # Verify every local JS/CSS asset referenced by index.html. A fresh entry
-  # file with missing hashed chunks is not a successful frontend deployment.
+  # Verify every LOCAL JS/CSS asset referenced by index.html. External
+  # resources (Google Translate, CDNs, data:/blob: URIs) are never uploaded by
+  # this deploy, so they must not be validated as local files.
   ASSET_PATHS=$(grep -oE '(src|href)="[^"]+\.(js|css)(\?[^"]*)?"' "$LOCAL_DIR/index.html" \
-    | sed -E 's/^(src|href)="//; s/"$//; s/\?.*$//; s#^/##' | sort -u)
-  while IFS= read -r ASSET_PATH; do
-    [ -n "$ASSET_PATH" ] || continue
+    | sed -E 's/^(src|href)="//; s/"$//; s/\?.*$//' | sort -u)
+  while IFS= read -r RAW_PATH; do
+    [ -n "$RAW_PATH" ] || continue
+    case "$RAW_PATH" in
+      http://*|https://*|//*|data:*|blob:*|mailto:*|tel:*)
+        echo "↩️  Skipping external resource: $RAW_PATH"
+        continue
+        ;;
+    esac
+    ASSET_PATH="${RAW_PATH#/}"
     LOCAL_ASSET="$LOCAL_DIR/$ASSET_PATH"
     if [ ! -f "$LOCAL_ASSET" ]; then
       echo "❌ Referenced local asset is missing: $ASSET_PATH" >&2
       exit 1
     fi
+
     ASSET_VERIFY_FILE="$(mktemp)"
     rm -f "$ASSET_VERIFY_FILE"
     lftp -c "
