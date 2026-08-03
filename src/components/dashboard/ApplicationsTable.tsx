@@ -394,14 +394,16 @@ const ApplicationDetailSheet = ({
               >
                 <Phone className="h-3.5 w-3.5" /> কল
               </a>
-              <a
-                href={`https://wa.me/${app.phone.replace(/^0/, "88")}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent transition"
-              >
-                <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
-              </a>
+              {whatsAppLink(app.phone) && (
+                <a
+                  href={whatsAppLink(app.phone)!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent transition"
+                >
+                  <MessageSquare className="h-3.5 w-3.5" /> WhatsApp
+                </a>
+              )}
               {app.email && (
                 <a
                   href={`mailto:${app.email}`}
