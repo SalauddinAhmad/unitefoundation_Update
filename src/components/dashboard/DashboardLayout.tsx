@@ -179,7 +179,7 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
   </div>
 );
 
-const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string } | null; onLogout: () => void }) => {
+const Topbar = ({ onMenu, user, onLogout }: { onMenu: () => void; user: { name: string; email: string; avatar?: string } | null; onLogout: () => void }) => {
   const nav = useNavigate();
   const location = useLocation();
   const { data: messages } = useMessages();
