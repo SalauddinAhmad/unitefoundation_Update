@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { exportRowsAsCsv } from "@/lib/csv";
+import { whatsAppLink } from "@/lib/phone";
 import { toast } from "sonner";
 import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
 import { appendExtra, removeExtra } from "@/lib/localExtras";
