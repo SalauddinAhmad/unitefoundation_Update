@@ -147,6 +147,22 @@ export default function Blog() {
   const [editor, setEditor] = useState<{ open: boolean; post?: Post }>({ open: false });
   const [viewer, setViewer] = useState<Post | null>(null);
 
+  // The list endpoint omits `content` for performance — fetch the full post
+  // before opening the editor/viewer so the body text is visible.
+  const withFullContent = async (p: Post): Promise<Post> => {
+    if (p.html) return p;
+    try {
+      const row = await api.get<ApiPost>(`/posts/${p.id}`);
+      return { ...p, html: row?.content || "" };
+    } catch {
+      toast.error("পোস্টের কনটেন্ট লোড করা যায়নি");
+      return p;
+    }
+  };
+  const openEditor = async (p: Post) => setEditor({ open: true, post: await withFullContent(p) });
+  const openViewer = async (p: Post) => setViewer(await withFullContent(p));
+
+
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
