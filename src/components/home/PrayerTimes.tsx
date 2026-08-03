@@ -24,13 +24,23 @@ const METHODS: { value: string; label: string }[] = [
 ];
 
 const BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+// Module-level language flag — set at the top of each render so the
+// number/label formatters below emit English directly (no Google-Translate flicker).
+let EN = false;
 const toBn = (s: string | number) =>
-  String(s).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
+  EN ? String(s) : String(s).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
+const L = (bn: string, en: string) => (EN ? en : bn);
 
 const BN_DAYS = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
+const EN_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAYS = () => (EN ? EN_DAYS : BN_DAYS);
 const BN_MONTHS_BONGABDO = [
   "বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন",
   "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র",
+];
+const EN_MONTHS_BONGABDO = [
+  "Boishakh", "Joishtho", "Asharh", "Shrabon", "Bhadro", "Ashwin",
+  "Kartik", "Ogrohayon", "Poush", "Magh", "Falgun", "Choitro",
 ];
 
 function toBengaliDate(d: Date) {
