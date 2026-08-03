@@ -55,7 +55,7 @@ const menuGroups: MenuGroup[] = [
       { to: "/dashboard/donations", icon: HandCoins, label: "দানসমূহ", perm: "donations" },
       { to: "/dashboard/members", icon: HeartHandshake, label: "সদস্যপদ", perm: "members" },
       { to: "/dashboard/volunteers", icon: Users2, label: "স্বেচ্ছাসেবক", perm: "volunteers" },
-      { to: "/dashboard/careers", icon: Briefcase, label: "জেলা প্রতিনিধি", perm: "careers" },
+      { to: "/dashboard/careers", icon: Briefcase, label: "প্রতিনিধি", perm: "careers" },
     ],
   },
   {
