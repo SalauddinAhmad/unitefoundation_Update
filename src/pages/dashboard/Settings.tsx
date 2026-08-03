@@ -1087,11 +1087,31 @@ const Settings = () => {
               </div>
 
               <Field
-                label="নোটিফিকেশন ইমেইল"
-                type="email"
+                label="নোটিফিকেশন ইমেইল (একাধিক হলে কমা দিয়ে লিখুন)"
                 value={form.notifications.notify_email}
                 onChange={(v) => setNot("notify_email", v)}
               />
+              <div className="mt-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await api.post("/settings/notify-test", {});
+                      toast({ title: "টেস্ট ইমেইল পাঠানো হয়েছে" });
+                    } catch (e) {
+                      toast({ variant: "destructive", title: "টেস্ট ইমেইল পাঠানো যায়নি", description: (e as Error)?.message });
+
+                    }
+                  }}
+                  className="text-xs font-medium rounded-lg border border-border px-3 py-1.5 hover:bg-muted"
+                >
+                  টেস্ট ইমেইল পাঠান
+                </button>
+                <span className="ml-2 text-xs text-muted-foreground">
+                  আগে সংরক্ষণ করুন, তারপর টেস্ট করুন
+                </span>
+              </div>
+
 
               <div className="mt-4 rounded-xl border border-border p-2 px-4">
                 <Toggle

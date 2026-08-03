@@ -2,6 +2,8 @@ const router = require('express').Router();
 const pool = require('../db/pool');
 const asyncH = require('../utils/asyncH');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { invalidate: invalidateNotifyPrefs, getPrefs: getNotifyPrefs, recipientsOf: notifyRecipients, notifyAdmin } = require('../services/notifyPrefs');
+const { renderEmail } = require('../services/emailTemplate');
 
 // Historically `settings.data` has been declared with mixed types across
 // environments — JSON in some databases (auto-parsed by mysql2 to an
@@ -48,8 +50,28 @@ const saveSettings = asyncH(async (req, res) => {
     'INSERT INTO settings (id,data) VALUES (1,?) ON DUPLICATE KEY UPDATE data=VALUES(data)',
     [JSON.stringify(data)]
   );
+  invalidateNotifyPrefs();
   res.json(data);
 });
+
+// Send a test notification email to the configured recipients
+router.post('/notify-test', requireAuth, requireRole('admin'), asyncH(async (_req, res) => {
+  invalidateNotifyPrefs();
+  const prefs = await getNotifyPrefs();
+  const to = notifyRecipients(prefs);
+  if (!to.length) return res.status(400).json({ message: 'কোনো নোটিফিকেশন ইমেইল সেট করা নেই' });
+  const out = await notifyAdmin({
+    event: 'test',
+    subject: 'টেস্ট নোটিফিকেশন | Unite Foundation',
+    html: renderEmail({
+      title: 'টেস্ট নোটিফিকেশন',
+      preheader: 'নোটিফিকেশন ইমেইল ঠিকভাবে কাজ করছে',
+      intro: '<p style="margin:0;">এটি একটি টেস্ট ইমেইল। আপনি এটি পেয়ে থাকলে নোটিফিকেশন ইমেইল সঠিকভাবে কাজ করছে।</p>',
+    }),
+  });
+  if (out && out.error) return res.status(500).json({ message: out.error });
+  res.json({ ok: true, to });
+}));
 
 router.put('/', requireAuth, requireRole('admin'), saveSettings);
 router.post('/', requireAuth, requireRole('admin'), saveSettings);
