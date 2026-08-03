@@ -30,6 +30,17 @@ function writeCache(key: FormKey, schema: FormSchema) {
 
 const DATA_URI_RE = /^data:([^;,]+);base64,/i;
 
+// UTF-8 safe base64 (btoa alone throws on Bangla text).
+function toBase64(str: string): string {
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return btoa(bin);
+}
+
+
 function isDataUri(value?: string) {
   return Boolean(value && DATA_URI_RE.test(value));
 }
