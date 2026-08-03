@@ -5,7 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { z, type ZodTypeAny } from "zod";
 import { toast } from "@/hooks/use-toast";
 import type { FormField, FormSchema } from "@/data/formDefaults";
-import { ChevronRight, Send, ShieldCheck } from "lucide-react";
+import { ChevronRight, Lock, Send, ShieldCheck } from "lucide-react";
 import { emailRejectionReason } from "@/lib/emailValidator";
 
 type Values = Record<string, string | number | boolean | string[]>;
