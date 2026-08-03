@@ -56,7 +56,7 @@ function toBengaliDate(d: Date) {
     if (remaining < lens[m]) break;
     remaining -= lens[m];
   }
-  return { day: remaining + 1, month: BN_MONTHS_BONGABDO[Math.min(m, 11)], year: bnYear };
+  return { day: remaining + 1, month: (EN ? EN_MONTHS_BONGABDO : BN_MONTHS_BONGABDO)[Math.min(m, 11)], year: bnYear };
 }
 
 function toHijri(d: Date) {
