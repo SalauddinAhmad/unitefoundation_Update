@@ -381,8 +381,8 @@ export default function Blog() {
                   <td className="py-3"><StatusBadge status={p.status} /></td>
                   <td className="py-3 pr-5">
                     <div className="flex items-center justify-end gap-0.5">
-                      <IconBtn title="দেখুন" onClick={() => setViewer(p)} icon={Eye} />
-                      <IconBtn title="এডিট" onClick={() => setEditor({ open: true, post: p })} icon={Edit3} />
+                      <IconBtn title="দেখুন" onClick={() => openViewer(p)} icon={Eye} />
+                      <IconBtn title="এডিট" onClick={() => openEditor(p)} icon={Edit3} />
                       <IconBtn title="কপি" onClick={() => duplicate(p)} icon={Copy} />
                       <IconBtn
                         title={p.status === "published" ? "ড্রাফটে নিন" : "পাবলিশ করুন"}
