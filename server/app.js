@@ -45,7 +45,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Authorization', 'Content-Type', 'Accept'],
+  allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'X-HTTP-Method-Override'],
 }));
 
 // Form Manager saves should be tiny JSON payloads. If a stale dashboard tab or
