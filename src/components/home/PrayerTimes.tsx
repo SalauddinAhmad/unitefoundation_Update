@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MapPin, Loader2 } from "lucide-react";
 import {
   Coordinates,
