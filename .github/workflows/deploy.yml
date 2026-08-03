@@ -169,14 +169,22 @@ jobs:
         env:
           ORIGIN_IP: 14.128.14.142
         run: |
-          for i in $(seq 1 12); do
-            RESPONSE=$(curl -fsS --max-time 20 \
+          # Passenger on shared cPanel can take several minutes to recycle a
+          # worker after tmp/restart.txt changes. The upload is already done at
+          # this point, so allow enough time for the new worker to become live.
+          for i in $(seq 1 30); do
+            RESPONSE=$(curl -sS --max-time 20 \
               --resolve "api.unitefoundation.bd:443:${ORIGIN_IP}" \
               -H 'Cache-Control: no-cache' \
               "https://api.unitefoundation.bd/health/deploy?cb=$RANDOM" || true)
-            LIVE=$(printf '%s' "$RESPONSE" | python3 -c \
-              'import json,sys; d=json.load(sys.stdin); print(d.get("release", ""))' 2>/dev/null || true)
-            echo "attempt $i -> release '$LIVE'"
+            LIVE=$(python3 -c \
+              'import json,sys; print(json.loads(sys.argv[1]).get("release", ""))' \
+              "$RESPONSE" 2>/dev/null || true)
+            if [ -n "$LIVE" ]; then
+              echo "attempt $i -> release '$LIVE'"
+            else
+              echo "attempt $i -> no valid release response: ${RESPONSE:0:240}"
+            fi
             if [ "$LIVE" = "${{ github.sha }}" ]; then
               echo "✅ Backend live with this commit"; exit 0
             fi
