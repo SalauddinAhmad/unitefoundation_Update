@@ -1097,9 +1097,10 @@ const Settings = () => {
                   onClick={async () => {
                     try {
                       await api.post("/settings/notify-test", {});
-                      toast.success("টেস্ট ইমেইল পাঠানো হয়েছে");
+                      toast({ title: "টেস্ট ইমেইল পাঠানো হয়েছে" });
                     } catch (e) {
-                      toast.error((e as Error)?.message || "টেস্ট ইমেইল পাঠানো যায়নি");
+                      toast({ variant: "destructive", title: "টেস্ট ইমেইল পাঠানো যায়নি", description: (e as Error)?.message });
+
                     }
                   }}
                   className="text-xs font-medium rounded-lg border border-border px-3 py-1.5 hover:bg-muted"
