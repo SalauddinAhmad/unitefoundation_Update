@@ -86,16 +86,46 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 app.get('/health/deploy', (_req, res) => {
+  // Deploy diagnostics. `appRoot` is the directory Passenger actually loaded
+  // the app from — the single most useful signal when an upload succeeds but
+  // the live release never changes (wrong Application Root / remote path).
   let release = process.env.DEPLOY_RELEASE || 'local';
+  let releaseFileMtime = null;
+  let releaseFileFound = false;
+  const releasePath = path.join(__dirname, 'DEPLOY_RELEASE');
   try {
-    release = fs.readFileSync(path.join(__dirname, 'DEPLOY_RELEASE'), 'utf8').trim() || release;
+    release = fs.readFileSync(releasePath, 'utf8').trim() || release;
+    releaseFileFound = true;
+    releaseFileMtime = fs.statSync(releasePath).mtime.toISOString();
   } catch { /* local development has no release marker */ }
+
+  let restartMtime = null;
+  try {
+    restartMtime = fs.statSync(path.join(__dirname, 'tmp', 'restart.txt')).mtime.toISOString();
+  } catch { /* no passenger restart marker */ }
+
+  let appJsMtime = null;
+  try {
+    appJsMtime = fs.statSync(path.join(__dirname, 'app.js')).mtime.toISOString();
+  } catch { /* ignore */ }
+
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json({
     ok: true,
     release,
+    releaseFileFound,
+    releaseFileMtime,
+    restartMtime,
+    appJsMtime,
+    appRoot: __dirname,
+    node: process.version,
+    pid: process.pid,
+    startedAt: new Date(Date.now() - Math.round(process.uptime() * 1000)).toISOString(),
+    uptimeSeconds: Math.round(process.uptime()),
     mailTransport: process.env.SMTP_TRANSPORT || 'sendmail',
   });
 });
+
 
 // --- Crash guards -------------------------------------------------
 // On shared cPanel/Passenger hosting a single unhandled async error kills the
