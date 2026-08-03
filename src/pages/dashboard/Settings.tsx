@@ -1,9 +1,10 @@
 import { Card, PageHeader, Btn } from "@/components/dashboard/DashboardUI";
-import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target, Layers, Pencil, X as XIcon } from "lucide-react";
+import { Building2, KeyRound, ShieldCheck, Bell, Share2, UserPlus, Trash2, Mail, Loader2, Copy, TrendingUp, Plus, Image as ImageIcon, Info, Milestone as MilestoneIcon, ArrowUp, ArrowDown, Target, Layers, Pencil, X as XIcon, DatabaseBackup } from "lucide-react";
 import ImagePickerButton from "@/components/dashboard/ImagePickerButton";
 import MediaLibrary from "@/components/dashboard/MediaLibrary";
 import HeroSlidesEditor from "@/components/dashboard/HeroSlidesEditor";
 import EmailTemplatesPanel from "@/components/dashboard/EmailTemplatesPanel";
+import BackupPanel from "@/components/dashboard/BackupPanel";
 
 import { useSettings, useUpdateSettings, type SiteSettings, type Milestone } from "@/hooks/api/useDashboardData";
 import { api } from "@/lib/api";
@@ -191,6 +192,12 @@ const TAB_GROUPS: { title: string; items: SettingsTab[] }[] = [
       { k: "notifications", icon: Bell, l: "নোটিফিকেশন", perm: "settings" },
     ],
   },
+  {
+    title: "রক্ষণাবেক্ষণ",
+    items: [
+      { k: "backup", icon: DatabaseBackup, l: "অটো ব্যাকআপ", perm: "admins" },
+    ],
+  },
 ];
 
 const TABS: SettingsTab[] = TAB_GROUPS.flatMap((g) => g.items);
@@ -289,6 +296,8 @@ const Settings = () => {
 
         <div className="space-y-4">
           {active === "profile" && <ProfilePanel />}
+
+          {active === "backup" && <BackupPanel />}
 
           {active === "organization" && (
             <Card>
