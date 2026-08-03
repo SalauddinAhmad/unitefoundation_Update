@@ -17,6 +17,8 @@ import {
   useDeletePost,
   type ApiPost,
 } from "@/hooks/api/usePublic";
+import { api } from "@/lib/api";
+
 
 type Post = BlogPost & {
   excerpt?: string;
