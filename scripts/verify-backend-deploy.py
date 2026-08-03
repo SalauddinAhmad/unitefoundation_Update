@@ -133,11 +133,11 @@ def main():
     parser.add_argument("--origin-ip", required=True)
     parser.add_argument("--method", required=True, choices=("ftps", "ssh", "api"))
     parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
-    # cPanel Passenger usually recycles within ~1-2 minutes of restart.txt
-    # being replaced; 8 minutes of 8s polls is a generous ceiling without
-    # flooding the log. One matching JSON response is proof enough.
-    parser.add_argument("--attempts", type=int, default=60)
-    parser.add_argument("--interval", type=int, default=8)
+    # Five checks are enough: a matching response proves the deployment, while
+    # repeatedly receiving the same old JSON cannot repair a wrong app root.
+    # Keep this bounded so a configuration error fails in under one minute.
+    parser.add_argument("--attempts", type=int, default=5)
+    parser.add_argument("--interval", type=int, default=12)
     parser.add_argument("--required-consecutive", type=int, default=1)
 
     parser.add_argument("--max-consecutive-non-json", type=int, default=3)
