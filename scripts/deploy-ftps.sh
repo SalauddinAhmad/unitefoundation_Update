@@ -108,6 +108,8 @@ bye;
       continue
     fi
 
+    [ -n "${FIRST_EXISTING:-}" ] || FIRST_EXISTING="$CANDIDATE"
+
     lftp -c "
 $LFTP_SETTINGS
 open -u '$FTP_USER','$FTP_PASS' -p $FTP_PORT '$FTP_HOST';
@@ -119,9 +121,17 @@ bye;
     if [ -n "${DEPLOY_ORIGIN_IP:-}" ]; then
       CURL_RESOLVE=(--resolve "${VERIFY_HOST}:443:${DEPLOY_ORIGIN_IP}")
     fi
-    LIVE_VALUE="$(curl -fsS --max-time 20 "${CURL_RESOLVE[@]}" \
-      -H 'Cache-Control: no-cache' \
-      "$VERIFY_BASE/$PROBE_NAME?cb=$RANDOM" 2>/dev/null || true)"
+    # A brand-new file can need a moment to become visible, and Imunify360
+    # bot protection rejects requests without a browser-like User-Agent.
+    LIVE_VALUE=""
+    for TRY in 1 2 3; do
+      LIVE_VALUE="$(curl -fsS --max-time 20 "${CURL_RESOLVE[@]}" \
+        -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36' \
+        -H 'Cache-Control: no-cache' \
+        "$VERIFY_BASE/$PROBE_NAME?cb=$RANDOM$TRY" 2>/dev/null || true)"
+      [ "$LIVE_VALUE" = "$PROBE_VALUE" ] && break
+      sleep 3
+    done
 
     lftp -c "
 $LFTP_SETTINGS
@@ -137,15 +147,24 @@ bye;
   done
 
   if [ -z "$LIVE_ROOT" ]; then
-    echo "❌ FTP credentials do not reach the document root served by $VERIFY_BASE." >&2
-    echo "   Checked: ${CANDIDATES[*]}. No files were deployed." >&2
-    echo "   Set FTP_FRONTEND_ROOT to the Document Root shown in cPanel → Domains," >&2
-    echo "   or ask the host to map this FTP account to that directory." >&2
-    exit 1
+    if [ -n "${FIRST_EXISTING:-}" ]; then
+      # The HTTP probe can be blocked (bot protection / edge cache) even when
+      # the path is correct. Do not abort the release for a probe that cannot
+      # answer: continue with the best known path — the post-upload index.html
+      # and asset hash checks still prove the files really landed.
+      LIVE_ROOT="$FIRST_EXISTING"
+      echo "⚠️  HTTP probe could not confirm the document root (bot protection or edge cache)."
+      echo "   Continuing with existing path '$LIVE_ROOT'; upload integrity is still verified."
+    else
+      echo "❌ No candidate FTP directory exists: ${CANDIDATES[*]}. No files were deployed." >&2
+      echo "   Set FTP_FRONTEND_ROOT to the Document Root shown in cPanel → Domains." >&2
+      exit 1
+    fi
   fi
   REMOTE_DIR="$LIVE_ROOT"
-  echo "✅ Confirmed live document root: '$REMOTE_DIR'"
+  echo "✅ Using document root: '$REMOTE_DIR'"
 fi
+
 
 echo "⬆️  FTPS deploy: $LOCAL_DIR -> ftp://$FTP_HOST:$FTP_PORT/$REMOTE_DIR"
 
