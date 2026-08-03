@@ -90,14 +90,15 @@ function fmtHMS(d: Date) {
   return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}:${toBn(String(s).padStart(2, "0"))} ${ampm}`;
 }
 
-const PRAYERS: { key: string; label: string; icon: JSX.Element }[] = [
-  { key: "fajr", label: "ফজর", icon: <FajrIcon /> },
-  { key: "sunrise", label: "সূর্যোদয়", icon: <SunriseIcon /> },
-  { key: "dhuhr", label: "যোহর", icon: <DhuhrIcon /> },
-  { key: "asr", label: "আছর", icon: <AsrIcon /> },
-  { key: "maghrib", label: "মাগরিব", icon: <MaghribIcon /> },
-  { key: "isha", label: "এশা", icon: <IshaIcon /> },
+const PRAYERS: { key: string; label: string; labelEn: string; icon: JSX.Element }[] = [
+  { key: "fajr", label: "ফজর", labelEn: "Fajr", icon: <FajrIcon /> },
+  { key: "sunrise", label: "সূর্যোদয়", labelEn: "Sunrise", icon: <SunriseIcon /> },
+  { key: "dhuhr", label: "যোহর", labelEn: "Dhuhr", icon: <DhuhrIcon /> },
+  { key: "asr", label: "আছর", labelEn: "Asr", icon: <AsrIcon /> },
+  { key: "maghrib", label: "মাগরিব", labelEn: "Maghrib", icon: <MaghribIcon /> },
+  { key: "isha", label: "এশা", labelEn: "Isha", icon: <IshaIcon /> },
 ];
+const plabel = (p?: { label: string; labelEn: string }) => (p ? L(p.label, p.labelEn) : "");
 
 function FajrIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 18h18M6 18a6 6 0 0112 0M12 4v3M4.2 8.2l2.1 2.1M19.8 8.2l-2.1 2.1"/></svg>; }
 function SunriseIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 20h18M12 4v4M5.5 8.5l1.5 1.5M18.5 8.5L17 10M8 14a4 4 0 018 0"/></svg>; }
