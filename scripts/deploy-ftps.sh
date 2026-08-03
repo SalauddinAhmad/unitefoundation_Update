@@ -156,10 +156,12 @@ if [ -f "$RESTART_FILE" ]; then
   RESTART_COMMAND="mkdir -pf '$REMOTE_DIR/tmp'; put '$RESTART_FILE' -o '$REMOTE_DIR/tmp/restart.txt';"
 fi
 
-# Entry files are excluded from mirror and uploaded exactly once afterwards.
+# Entry/release files are excluded from mirror and uploaded exactly once
+# afterwards. DEPLOY_RELEASE must never be skipped because of a stale remote
+# timestamp: /health/deploy uses it to prove which commit Passenger is serving.
 # cmd:fail-exit ensures these commands never run if the asset mirror fails.
 FORCE_COMMANDS=""
-for f in index.html release.txt .htaccess; do
+for f in index.html release.txt .htaccess DEPLOY_RELEASE; do
   if [ -f "$LOCAL_DIR/$f" ]; then
     FORCE_COMMANDS="$FORCE_COMMANDS put '$LOCAL_DIR/$f' -o '$REMOTE_DIR/$f';"
   fi
@@ -184,6 +186,7 @@ mirror -R $DELETE_FLAG --verbose=1 \
   --exclude-glob index.html \
   --exclude-glob release.txt \
   --exclude-glob .htaccess \
+  --exclude-glob DEPLOY_RELEASE \
   '$LOCAL_DIR' '$REMOTE_DIR';
 $FORCE_COMMANDS
 $RESTART_COMMAND
