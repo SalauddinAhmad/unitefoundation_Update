@@ -209,28 +209,49 @@ const BackupPanel = () => {
             <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">
               ইমেইলে কপি পাঠানো হবে
             </span>
-            <div className="flex gap-2">
-              <select
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                value={config.emailCopy ? "on" : "off"}
-                disabled={busy}
-                onChange={(e) => patchConfig({ emailCopy: e.target.value === "on" })}
-              >
-                <option value="off">না</option>
-                <option value="on">হ্যাঁ</option>
-              </select>
-              <input
-                type="email"
-                placeholder="admin@unitefoundation.bd"
-                defaultValue={config.emailTo}
-                disabled={busy || !config.emailCopy}
-                onBlur={(e) => {
-                  if (e.target.value !== config.emailTo) patchConfig({ emailTo: e.target.value.trim() });
-                }}
-                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm"
-              />
-            </div>
+            <select
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+              value={config.emailCopy ? "on" : "off"}
+              disabled={busy}
+              onChange={(e) => patchConfig({ emailCopy: e.target.value === "on" })}
+            >
+              <option value="off">না</option>
+              <option value="on">হ্যাঁ</option>
+            </select>
           </label>
+
+          {(() => {
+            const list = (config.emailTo || "").split(/[,;\s]+/).filter(Boolean);
+            const save = (idx: number, val: string) => {
+              const next = [list[0] || "", list[1] || ""];
+              next[idx] = val.trim();
+              const joined = next.filter(Boolean).slice(0, 2).join(", ");
+              if (joined !== (config.emailTo || "")) patchConfig({ emailTo: joined });
+            };
+            return (
+              <div className="md:col-span-2 grid gap-3 md:grid-cols-2">
+                {[0, 1].map((i) => (
+                  <label key={i} className="block">
+                    <span className="text-xs font-semibold text-foreground/80 mb-1.5 block">
+                      {i === 0 ? "ইমেইল ঠিকানা ১" : "ইমেইল ঠিকানা ২ (ঐচ্ছিক)"}
+                    </span>
+                    <input
+                      type="email"
+                      placeholder="admin@unitefoundation.bd"
+                      defaultValue={list[i] || ""}
+                      disabled={busy || !config.emailCopy}
+                      onBlur={(e) => save(i, e.target.value)}
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    />
+                  </label>
+                ))}
+                <span className="md:col-span-2 text-[11px] text-muted-foreground">
+                  প্রতিটি ব্যাকআপের পর এই ঠিকানাগুলোতে ডাউনলোড লিংকসহ ইমেইল যাবে (লিংক ৩০ দিন সচল)।
+                </span>
+              </div>
+            );
+          })()}
+
         </div>
       </Card>
 
