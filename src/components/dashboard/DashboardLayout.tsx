@@ -90,10 +90,10 @@ const generalMenu: MenuItem[] = [
 ];
 
 const groupTitleClass =
-  "px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-none";
+  "px-3 mb-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-[1.6] py-0.5";
 
 const itemClass = (isActive: boolean) =>
-  "group relative flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium leading-none transition-colors " +
+  "group relative flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium leading-[1.9] transition-colors " +
   (isActive
     ? "bg-primary text-primary-foreground shadow-sm"
     : "text-foreground/70 hover:bg-secondary hover:text-foreground");
@@ -122,7 +122,7 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
                         <span className="absolute -left-3 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-primary" />
                       )}
                       <Icon className="h-[18px] w-[18px] shrink-0" />
-                      <span className="flex-1 min-w-0 truncate text-left">{label}</span>
+                      <span className="flex-1 min-w-0 truncate text-left py-0.5">{label}</span>
                       {badge && (
                         <span
                           className={
@@ -141,23 +141,23 @@ const SidebarContent = ({ onNav, onLogout, can }: { onNav?: () => void; onLogout
           </div>
         ))}
 
-      <div className="mt-6 mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-none">
+      <div className="mt-6 mb-1.5 px-3 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground/80 leading-[1.6] py-0.5">
         সাধারণ
       </div>
       <nav className="flex flex-col gap-1">
         {generalMenu.filter((m) => can(m.perm)).map(({ to, icon: Icon, label }) => (
           <NavLink key={to} to={to} onClick={onNav} className={({ isActive }) => itemClass(isActive)}>
             <Icon className="h-[18px] w-[18px] shrink-0" />
-            <span className="flex-1 min-w-0 truncate text-left">{label}</span>
+            <span className="flex-1 min-w-0 truncate text-left py-0.5">{label}</span>
           </NavLink>
         ))}
         <button
           type="button"
           onClick={onLogout}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium leading-none text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium leading-[1.9] text-foreground/70 hover:bg-destructive/10 hover:text-destructive transition-colors"
         >
           <LogOut className="h-[18px] w-[18px] shrink-0" />
-          <span className="flex-1 min-w-0 truncate text-left">লগ আউট</span>
+          <span className="flex-1 min-w-0 truncate text-left py-0.5">লগ আউট</span>
         </button>
       </nav>
     </div>
