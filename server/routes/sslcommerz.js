@@ -11,6 +11,8 @@ const { shortId } = require('../utils/uid');
 const { validateEmail } = require('../utils/emailValidator');
 const { sendMail } = require('../services/mailer');
 const { tplDonationReceipt, subjectOf } = require('../services/emailTemplate');
+const { renderEmail } = require('../services/emailTemplate');
+const { notifyAdmin } = require('../services/notifyPrefs');
 
 // Send receipt email once per donation (idempotent — checks receipt_sent flag)
 async function sendReceiptOnce(tran_id) {
@@ -37,6 +39,25 @@ async function sendReceiptOnce(tran_id) {
       html,
     });
     await pool.execute(`UPDATE donations SET receipt_sent=1 WHERE id=?`, [tran_id]);
+
+    // Admin notification (Dashboard → Settings → নোটিফিকেশন → নতুন দান পেলে ইমেইল)
+    notifyAdmin({
+      event: 'donation',
+      subject: `[নতুন দান] ${d.name || ''} — ${d.amount} টাকা`,
+      html: renderEmail({
+        title: 'নতুন দান গৃহীত',
+        preheader: `${d.name || ''} — ${d.amount} টাকা`,
+        intro: '<p style="margin:0;">ওয়েবসাইট থেকে একটি নতুন দান সফলভাবে সম্পন্ন হয়েছে।</p>',
+        details: [
+          { label: 'নাম', value: d.name || '' },
+          { label: 'ইমেইল', value: d.email || '' },
+          { label: 'পরিমাণ', value: `${d.amount} টাকা` },
+          { label: 'মাধ্যম', value: d.method || '' },
+          { label: 'উদ্দেশ্য', value: d.purpose || '' },
+          { label: 'ট্রানজেকশন', value: d.id },
+        ],
+      }),
+    }).catch(() => {});
   } catch (e) {
     console.error('[sslcommerz] receipt email failed for', tran_id, e.message);
   }
