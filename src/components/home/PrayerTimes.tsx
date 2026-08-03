@@ -65,7 +65,9 @@ function toHijri(d: Date) {
       day: "numeric", month: "numeric", year: "numeric",
     }).formatToParts(d);
     const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
-    const months = ["মুহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", "জুমাদাল উলা", "জুমাদাস সানিয়া", "রজব", "শাবান", "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"];
+    const months = EN
+      ? ["Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Ula", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"]
+      : ["মুহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", "জুমাদাল উলা", "জুমাদাস সানিয়া", "রজব", "শাবান", "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"];
     return { day: Number(get("day")), month: months[Number(get("month")) - 1] ?? "", year: Number(get("year")) };
   } catch {
     return null;
