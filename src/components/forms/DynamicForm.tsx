@@ -5,7 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { z, type ZodTypeAny } from "zod";
 import { toast } from "@/hooks/use-toast";
 import type { FormField, FormSchema } from "@/data/formDefaults";
-import { ChevronRight, Send, ShieldCheck } from "lucide-react";
+import { ChevronRight, Lock, Send, ShieldCheck } from "lucide-react";
 import { emailRejectionReason } from "@/lib/emailValidator";
 
 type Values = Record<string, string | number | boolean | string[]>;
@@ -78,14 +78,17 @@ type Props = {
   variant?: "light" | "dark";
   footer?: ReactNode;
   extraBeforeSubmit?: ReactNode;
+  /** Dashboard preview: render fields even when the form is turned off. */
+  ignoreDisabled?: boolean;
 };
 
-export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer, extraBeforeSubmit }: Props) {
+export function DynamicForm({ schema, submitLabel = "জমা দিন", onSubmit, variant = "dark", footer, extraBeforeSubmit, ignoreDisabled }: Props) {
   const [values, setValues] = useState<Values>(() => {
     const v: Values = {};
     for (const f of schema.fields) v[f.key] = initialValueFor(f);
     return v;
   });
+
 
   const zSchema = useMemo(() => buildZod(schema.fields), [schema.fields]);
   const set = (k: string, v: Values[string]) => setValues((s) => ({ ...s, [k]: v }));
@@ -105,6 +108,25 @@ export function DynamicForm({ schema, submitLabel = "জমা দিন", onSub
     ? "w-full rounded-lg px-3 py-2.5 text-sm bg-primary-foreground/10 border border-primary-foreground/25 text-primary-foreground placeholder:text-primary-foreground/60 focus:bg-primary-foreground/20 focus:border-primary-foreground outline-none transition"
     : "w-full rounded-lg px-3 py-2.5 text-sm bg-background border border-input text-foreground placeholder:text-muted-foreground focus:border-primary outline-none transition";
   const labelCls = isDark ? "text-xs font-semibold text-white/90 mb-1.5 block" : "text-xs font-semibold text-foreground/80 mb-1.5 block";
+
+  if (schema.extras?.disabled && !ignoreDisabled) {
+    const msg = schema.extras.disabled_message?.trim()
+      || "এই ফর্মটি আপাতত বন্ধ রয়েছে। শীঘ্রই আবার চালু করা হবে, ইনশাআল্লাহ।";
+    return (
+      <div
+        className={
+          "rounded-xl border p-6 text-center " +
+          (isDark
+            ? "border-primary-foreground/25 bg-primary-foreground/10 text-primary-foreground"
+            : "border-border bg-secondary/40 text-foreground")
+        }
+      >
+        <Lock className={"h-6 w-6 mx-auto mb-3 " + (isDark ? "text-primary-foreground/80" : "text-muted-foreground")} />
+        <p className="text-sm font-semibold leading-relaxed">{msg}</p>
+      </div>
+    );
+  }
+
 
   return (
     <form onSubmit={submit} className={"space-y-3 " + (isDark ? "dyn-form-dark" : "dyn-form-light")}>

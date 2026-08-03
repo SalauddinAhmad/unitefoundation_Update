@@ -76,6 +76,8 @@ function normalizeExtras(extras?: Partial<FormExtras>): FormExtras {
       : [],
     banner_type: extras?.banner_type || "none",
     banner_url: cleanString(extras?.banner_url, 3000),
+    disabled: Boolean(extras?.disabled),
+    disabled_message: cleanString(extras?.disabled_message, 500),
   } satisfies FormSchema["extras"];
 
   if (isDataUri(extras?.banner_url) || !next.banner_url) {
