@@ -83,7 +83,10 @@ router.get('/:key', asyncH(async (req, res) => {
   res.json(hydrate(rows[0]));
 }));
 
-router.put('/:key', requireAuth, asyncH(async (req, res) => {
+// Some shared cPanel/LiteSpeed + Imunify360 setups silently drop PUT requests
+// with larger JSON bodies (browser shows "Failed to fetch"). Accept the same
+// payload over POST so the client can retry without the WAF-triggering verb.
+const saveSchema = asyncH(async (req, res) => {
   if (!KEYS.includes(req.params.key)) return res.status(400).json({ message: 'Invalid key' });
   if (req.body && req.body.extras) req.body.extras = stripDataUriBanner(req.body.extras);
   const body = z.object({
