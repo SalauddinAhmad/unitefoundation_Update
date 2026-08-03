@@ -16,19 +16,29 @@ def utc_now():
 
 
 def request_health(url, host, origin_ip):
+    marker = "__DEPLOY_HTTP_STATUS__:"
     command = [
         "curl", "-sS", "--connect-timeout", "5", "--max-time", "8",
         "--resolve", f"{host}:443:{origin_ip}",
         "-H", "Cache-Control: no-cache, no-store",
+        "-w", f"\n{marker}%{{http_code}}",
         f"{url}?cb={time.time_ns()}",
     ]
     result = subprocess.run(command, capture_output=True, text=True, check=False)
-    raw = result.stdout.strip()
+    output = result.stdout.rstrip()
+    raw, separator, status_text = output.rpartition(f"\n{marker}")
+    if not separator:
+        raw, status_text = output, "000"
+    try:
+        http_status = int(status_text)
+    except (TypeError, ValueError):
+        http_status = 0
+    raw = raw.strip()
     try:
         payload = json.loads(raw)
     except (json.JSONDecodeError, TypeError):
         payload = None
-    return result.returncode, raw, result.stderr.strip(), payload
+    return result.returncode, http_status, raw, result.stderr.strip(), payload
 
 
 def diagnose(payload, expected_sha, remote_path):
@@ -108,7 +118,10 @@ def main():
     parser.add_argument("--origin-ip", required=True)
     parser.add_argument("--method", required=True, choices=("ftps", "ssh", "api"))
     parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
-    parser.add_argument("--attempts", type=int, default=30)
+    # cPanel Passenger can take over five minutes to recycle after restart.txt
+    # is replaced. Twelve minutes avoids marking a successful upload as failed
+    # while still leaving a finite, observable readiness deadline.
+    parser.add_argument("--attempts", type=int, default=72)
     parser.add_argument("--interval", type=int, default=10)
     parser.add_argument("--required-consecutive", type=int, default=3)
     parser.add_argument("--output", default="deploy-tracker/backend.json")
@@ -128,18 +141,23 @@ def main():
     consecutive_matches = 0
     final_payload = {}
     for number in range(1, args.attempts + 1):
-        code, raw, stderr, payload = request_health(args.url, host, args.origin_ip)
+        code, http_status, raw, stderr, payload = request_health(args.url, host, args.origin_ip)
         final_payload = payload if isinstance(payload, dict) else {}
         live_sha = str(final_payload.get("release") or "")
         report["attempts"].append({
             "attempt": number,
             "at": utc_now(),
             "curlExitCode": code,
+            "httpStatus": http_status,
             "liveSha": live_sha or None,
             "response": payload if isinstance(payload, dict) else raw[:1000],
             "stderr": stderr[:500] or None,
         })
-        print(f"attempt {number}/{args.attempts} -> release '{live_sha or 'unavailable'}'", flush=True)
+        print(
+            f"attempt {number}/{args.attempts} -> HTTP {http_status or 'unavailable'}, "
+            f"release '{live_sha or 'unavailable'}'",
+            flush=True,
+        )
         if live_sha == args.expected_sha:
             consecutive_matches += 1
             if consecutive_matches >= args.required_consecutive:
