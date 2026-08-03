@@ -133,7 +133,7 @@ export const PrayerTimes = () => {
 
   const detectLocation = () => {
     if (!navigator.geolocation) {
-      setLocError("এই ব্রাউজারে লোকেশন সাপোর্ট নেই");
+      setLocError(L("এই ব্রাউজারে লোকেশন সাপোর্ট নেই", "Location is not supported in this browser"));
       return;
     }
     setLocating(true);
@@ -143,7 +143,7 @@ export const PrayerTimes = () => {
         const { latitude, longitude } = pos.coords;
         let label = `${latitude.toFixed(2)}°, ${longitude.toFixed(2)}°`;
         try {
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=bn`);
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=${EN ? "en" : "bn"}`);
           const j = await res.json();
           const a = j.address ?? {};
           label = a.city || a.town || a.village || a.county || a.state || label;
@@ -153,7 +153,7 @@ export const PrayerTimes = () => {
         setLocating(false);
       },
       (err) => {
-        setLocError(err.code === 1 ? "লোকেশন অনুমতি দেয়া হয়নি" : "লোকেশন পাওয়া যায়নি");
+        setLocError(err.code === 1 ? L("লোকেশন অনুমতি দেয়া হয়নি", "Location permission denied") : L("লোকেশন পাওয়া যায়নি", "Could not get location"));
         setLocating(false);
       },
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
@@ -174,7 +174,7 @@ export const PrayerTimes = () => {
   const nextPrayerKey = today.nextPrayer(now);
   const nextTime = nextPrayerKey === Prayer.None ? tomorrow.fajr : today.timeForPrayer(nextPrayerKey)!;
   const nextName = nextPrayerKey === Prayer.None ? "fajr" : String(nextPrayerKey).toLowerCase();
-  const nextLabel = PRAYERS.find((p) => p.key === nextName)?.label ?? nextName;
+  const nextLabel = plabel(PRAYERS.find((p) => p.key === nextName)) || nextName;
 
   const currentKey = today.currentPrayer(now);
   const currentName = currentKey === Prayer.None ? null : String(currentKey).toLowerCase();
@@ -208,7 +208,7 @@ export const PrayerTimes = () => {
   ];
 
   return (
-    <section className="py-8 sm:py-20 md:py-28 bg-gradient-to-b from-primary/5 via-background to-background">
+    <section translate="no" className="notranslate py-8 sm:py-20 md:py-28 bg-gradient-to-b from-primary/5 via-background to-background">
       <div className="container-page">
         <div className="relative overflow-hidden rounded-[2rem] border border-primary/10 bg-card shadow-[0_20px_60px_-30px_hsl(var(--primary)/0.35)]">
           {/* Decorative arch pattern watermark */}
@@ -229,8 +229,8 @@ export const PrayerTimes = () => {
 
             <div className="relative px-4 pt-3 pb-1 flex items-center justify-between gap-2">
               <div className="text-[10px] text-primary-foreground/80 leading-tight min-w-0">
-                <div className="truncate">{BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month}</div>
-                {hijri && <div className="truncate opacity-80">{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} হিজরি</div>}
+                <div className="truncate">{DAYS()[now.getDay()]}, {toBn(bn.day)} {bn.month}</div>
+                {hijri && <div className="truncate opacity-80">{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} {L(" হিজরি", " AH")}</div>}
               </div>
               <button
                 onClick={detectLocation}
@@ -244,15 +244,15 @@ export const PrayerTimes = () => {
 
             <div className="relative px-4 py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[9px] uppercase tracking-[0.18em] text-primary-foreground/70 leading-none mb-1">এখন</p>
+                <p className="text-[9px] uppercase tracking-[0.18em] text-primary-foreground/70 leading-none mb-1">{L("এখন", "Now")}</p>
                 <div className="text-2xl font-bold tabular-nums tracking-tight leading-none">{fmtHMS(now)}</div>
               </div>
               <div className="text-right shrink-0 rounded-xl bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/15 px-3 py-1.5">
-                <span className="block text-[9px] uppercase tracking-widest text-primary-foreground/70 leading-none">পরবর্তী · {nextLabel}</span>
+                <span className="block text-[9px] uppercase tracking-widest text-primary-foreground/70 leading-none">{L("পরবর্তী", "Next")} · {nextLabel}</span>
                 <span className="block text-sm font-bold tabular-nums mt-0.5">
-                  {toBn(hh)}<span className="text-primary-foreground/60 text-[10px]">ঘ</span>
-                  {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">মি</span>
-                  {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">সে</span>
+                  {toBn(hh)}<span className="text-primary-foreground/60 text-[10px]">{L("ঘ","h")}</span>
+                  {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">{L("মি","m")}</span>
+                  {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-primary-foreground/60 text-[10px]">{L("সে","s")}</span>
                 </span>
               </div>
             </div>
@@ -266,22 +266,22 @@ export const PrayerTimes = () => {
                 <div className="flex flex-col">
                   <span className="text-3xl font-bold text-primary tabular-nums tracking-tight leading-none">{fmtHMS(now)}</span>
                   <span className="text-xs text-muted-foreground mt-1.5">
-                    {BN_DAYS[now.getDay()]}, {toBn(bn.day)} {bn.month} {toBn(bn.year)} বঙ্গাব্দ
+                    {DAYS()[now.getDay()]}, {toBn(bn.day)} {bn.month} {toBn(bn.year)} {L("বঙ্গাব্দ", "BS")}
                     <span className="opacity-40 mx-2">·</span>
-                    {hijri && <>{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)} হিজরি<span className="opacity-40 mx-2">·</span></>}
+                    {hijri && <>{toBn(hijri.day)} {hijri.month} {toBn(hijri.year)}{L(" হিজরি", " AH")}<span className="opacity-40 mx-2">·</span></>}
                     {now.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <div className="flex flex-col items-end">
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">পরবর্তী · {nextLabel}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{L("পরবর্তী", "Next")} · {nextLabel}</span>
                   <span className="text-lg font-bold text-primary tabular-nums">
-                    {toBn(hh)}<span className="text-muted-foreground text-sm mx-0.5">ঘ</span>
-                    {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-muted-foreground text-sm mx-0.5">মি</span>
-                    {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-muted-foreground text-sm mx-0.5">সে</span>
+                    {toBn(hh)}<span className="text-muted-foreground text-sm mx-0.5">{L("ঘ","h")}</span>
+                    {" "}{toBn(String(mm).padStart(2, "0"))}<span className="text-muted-foreground text-sm mx-0.5">{L("মি","m")}</span>
+                    {" "}{toBn(String(ss).padStart(2, "0"))}<span className="text-muted-foreground text-sm mx-0.5">{L("সে","s")}</span>
                   </span>
-                  <span className="text-[11px] text-muted-foreground">শুরু {fmtHM(nextTime).time} {fmtHM(nextTime).ampm}</span>
+                  <span className="text-[11px] text-muted-foreground">{L("শুরু", "Starts")} {fmtHM(nextTime).time} {fmtHM(nextTime).ampm}</span>
                 </div>
                 <button
                   onClick={detectLocation}
@@ -289,7 +289,7 @@ export const PrayerTimes = () => {
                   className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 hover:bg-primary/15 px-3 py-2 text-xs font-medium text-primary transition-colors disabled:opacity-60 border border-primary/20"
                 >
                   {locating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
-                  <span className="truncate max-w-[160px]">{locating ? "খোঁজা হচ্ছে..." : coords.label}</span>
+                  <span className="truncate max-w-[160px]">{locating ? L("খোঁজা হচ্ছে...", "Locating...") : coords.label}</span>
                 </button>
               </div>
             </div>
@@ -299,11 +299,11 @@ export const PrayerTimes = () => {
           {/* Sehri / Iftar band */}
           <div className="relative mt-3 sm:mt-4 mx-3 sm:mx-6 grid grid-cols-2 gap-2 sm:gap-3 z-10">
             <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
-              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">সাহরী</p>
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">{L("সাহরী", "Sehri")}</p>
               <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(sehri).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(sehri).ampm}</span></p>
             </div>
             <div className="rounded-xl sm:rounded-2xl bg-card border border-border shadow-sm px-3 sm:px-4 py-2 sm:py-3 text-center">
-              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">ইফতার</p>
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground">{L("ইফতার", "Iftar")}</p>
               <p className="text-sm sm:text-lg font-bold text-primary tabular-nums">{fmtHM(today.maghrib).time}<span className="text-[10px] sm:text-xs text-muted-foreground ml-1">{fmtHM(today.maghrib).ampm}</span></p>
             </div>
           </div>
@@ -328,15 +328,15 @@ export const PrayerTimes = () => {
                     ].join(" ")}
                   >
                     {isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">চলমান</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">{L("চলমান", "Now")}</span>
                     )}
                     {isNext && !isCurrent && (
-                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">পরবর্তী</span>
+                      <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest bg-primary-foreground text-primary px-1.5 sm:px-2 py-0.5 rounded-full shadow">{L("পরবর্তী", "Next")}</span>
                     )}
                     <div className={["w-5 h-5 sm:w-8 sm:h-8 mb-1 sm:mb-1.5 mt-0.5 sm:mt-1", highlight ? "text-primary-foreground" : "text-primary/80"].join(" ")}>
                       {meta.icon}
                     </div>
-                    <div className={["text-[11px] sm:text-sm font-semibold leading-tight", highlight ? "text-primary-foreground" : ""].join(" ")}>{meta.label}</div>
+                    <div className={["text-[11px] sm:text-sm font-semibold leading-tight", highlight ? "text-primary-foreground" : ""].join(" ")}>{plabel(meta)}</div>
                     <div className={["text-xs sm:text-base font-bold tabular-nums mt-0.5", highlight ? "text-primary-foreground" : "text-primary"].join(" ")}>
                       {fmtHM(time).time}
                     </div>
@@ -354,7 +354,7 @@ export const PrayerTimes = () => {
                   value={method}
                   onChange={(e) => setMethod(e.target.value)}
                   className="w-full sm:w-auto appearance-none text-xs font-medium rounded-full border border-input bg-background pl-4 pr-9 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
-                  aria-label="হিসাব পদ্ধতি"
+                  aria-label={L("হিসাব পদ্ধতি", "Calculation method")}
                 >
                   {METHODS.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
                 </select>
@@ -362,7 +362,7 @@ export const PrayerTimes = () => {
               </div>
               <p className="text-[10px] sm:text-[11px] text-muted-foreground text-center sm:text-right">
                 {locError ? <span className="text-destructive">{locError} · </span> : null}
-                সময়গুলি অটোম্যাটিক হিসাবের ভিত্তিতে, ১-২ মিনিট (+/-) হতে পারে।
+                {L("সময়গুলি অটোম্যাটিক হিসাবের ভিত্তিতে, ১-২ মিনিট (+/-) হতে পারে।", "Times are auto-calculated and may vary by 1-2 minutes (+/-).")}
               </p>
             </div>
           </div>
