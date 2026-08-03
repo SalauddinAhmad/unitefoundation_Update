@@ -161,6 +161,7 @@ export default function FormsManager() {
                       <p className="text-white/80 text-xs mt-1 mb-4 leading-relaxed">{current.subtitle}</p>
                       <DynamicForm
                         schema={current}
+                        ignoreDisabled
                         submitLabel="প্রিভিউ (সাবমিট নিষ্ক্রিয়)"
                         onSubmit={() => toast({ title: "প্রিভিউ মোড", description: "এটি লাইভ ফর্ম নয়।" })}
                       />
