@@ -74,3 +74,33 @@ describe("PrayerTimes i18n rendering", () => {
     expect(BENGALI_DIGITS.test(section.textContent ?? "")).toBe(true);
   });
 });
+
+describe("PrayerTimes locale isolation (flash regression)", () => {
+  it("renders bn and en instances side by side without leaking language", async () => {
+    const en = await renderWithLang(<PrayerTimes />, "en");
+    const bn = await renderWithLang(<PrayerTimes />, "bn");
+
+    await act(async () => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    const enSection = en.container.querySelector("section") as HTMLElement;
+    const bnSection = bn.container.querySelector("section") as HTMLElement;
+
+    expectNoBengali(enSection);
+    expect(enSection.textContent).toContain("Fajr");
+    expect(BENGALI_DIGITS.test(bnSection.textContent ?? "")).toBe(true);
+  });
+
+  it("formatters are pure per locale", async () => {
+    const { makeFmt } = await import("@/components/home/PrayerTimes");
+    const enFmt = makeFmt(true);
+    const bnFmt = makeFmt(false);
+    expect(enFmt.toBn(12)).toBe("12");
+    expect(bnFmt.toBn(12)).toBe("১২");
+    // calling one must not affect the other
+    expect(enFmt.toBn(9)).toBe("9");
+    expect(bnFmt.L("বাংলা", "English")).toBe("বাংলা");
+    expect(enFmt.L("বাংলা", "English")).toBe("English");
+  });
+});

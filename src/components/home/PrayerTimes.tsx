@@ -24,16 +24,9 @@ const METHODS: { value: string; label: string; labelEn: string }[] = [
 ];
 
 const BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
-// Module-level language flag — set at the top of each render so the
-// number/label formatters below emit English directly (no Google-Translate flicker).
-let EN = false;
-const toBn = (s: string | number) =>
-  EN ? String(s) : String(s).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
-const L = (bn: string, en: string) => (EN ? en : bn);
 
 const BN_DAYS = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
 const EN_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const DAYS = () => (EN ? EN_DAYS : BN_DAYS);
 const BN_MONTHS_BONGABDO = [
   "বৈশাখ", "জ্যৈষ্ঠ", "আষাঢ়", "শ্রাবণ", "ভাদ্র", "আশ্বিন",
   "কার্তিক", "অগ্রহায়ণ", "পৌষ", "মাঘ", "ফাল্গুন", "চৈত্র",
@@ -42,52 +35,81 @@ const EN_MONTHS_BONGABDO = [
   "Boishakh", "Joishtho", "Asharh", "Shrabon", "Bhadro", "Ashwin",
   "Kartik", "Ogrohayon", "Poush", "Magh", "Falgun", "Choitro",
 ];
+const BN_HIJRI = ["মুহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", "জুমাদাল উলা", "জুমাদাস সানিয়া", "রজব", "শাবান", "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"];
+const EN_HIJRI = ["Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Ula", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"];
 
-function toBengaliDate(d: Date) {
-  const year = d.getFullYear();
-  const boishakhStart = new Date(year, 3, 14);
-  const start = d >= boishakhStart ? boishakhStart : new Date(year - 1, 3, 14);
-  const bnYear = (d >= boishakhStart ? year : year - 1) - 593;
-  const dayOfYear = Math.floor((d.getTime() - start.getTime()) / 86400000);
-  const lens = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
-  let remaining = dayOfYear;
-  let m = 0;
-  for (; m < 12; m++) {
-    if (remaining < lens[m]) break;
-    remaining -= lens[m];
+/**
+ * Locale-bound formatters. Everything the section renders goes through these,
+ * so a single `en` value decides the output for an entire render pass.
+ * (No module-level mutable flag — that could leak a stale language between
+ * interleaved renders and make the ticking clock flash Bangla in English mode.)
+ */
+export function makeFmt(en: boolean) {
+  const toBn = (s: string | number) =>
+    en ? String(s) : String(s).replace(/\d/g, (d) => BN_DIGITS[Number(d)]);
+  const L = (bn: string, eng: string) => (en ? eng : bn);
+  const DAYS = () => (en ? EN_DAYS : BN_DAYS);
+
+  function toBengaliDate(d: Date) {
+    const year = d.getFullYear();
+    const boishakhStart = new Date(year, 3, 14);
+    const start = d >= boishakhStart ? boishakhStart : new Date(year - 1, 3, 14);
+    const bnYear = (d >= boishakhStart ? year : year - 1) - 593;
+    const dayOfYear = Math.floor((d.getTime() - start.getTime()) / 86400000);
+    const lens = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30];
+    let remaining = dayOfYear;
+    let m = 0;
+    for (; m < 12; m++) {
+      if (remaining < lens[m]) break;
+      remaining -= lens[m];
+    }
+    return {
+      day: remaining + 1,
+      month: (en ? EN_MONTHS_BONGABDO : BN_MONTHS_BONGABDO)[Math.min(m, 11)],
+      year: bnYear,
+    };
   }
-  return { day: remaining + 1, month: (EN ? EN_MONTHS_BONGABDO : BN_MONTHS_BONGABDO)[Math.min(m, 11)], year: bnYear };
-}
 
-function toHijri(d: Date) {
-  try {
-    const parts = new Intl.DateTimeFormat("en-TN-u-ca-islamic-umalqura", {
-      day: "numeric", month: "numeric", year: "numeric",
-    }).formatToParts(d);
-    const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
-    const months = EN
-      ? ["Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Ula", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"]
-      : ["মুহাররম", "সফর", "রবিউল আউয়াল", "রবিউস সানি", "জুমাদাল উলা", "জুমাদাস সানিয়া", "রজব", "শাবান", "রমজান", "শাওয়াল", "জিলকদ", "জিলহজ"];
-    return { day: Number(get("day")), month: months[Number(get("month")) - 1] ?? "", year: Number(get("year")) };
-  } catch {
-    return null;
+  function toHijri(d: Date) {
+    try {
+      const parts = new Intl.DateTimeFormat("en-TN-u-ca-islamic-umalqura", {
+        day: "numeric", month: "numeric", year: "numeric",
+      }).formatToParts(d);
+      const get = (t: string) => parts.find((p) => p.type === t)?.value ?? "";
+      const months = en ? EN_HIJRI : BN_HIJRI;
+      return { day: Number(get("day")), month: months[Number(get("month")) - 1] ?? "", year: Number(get("year")) };
+    } catch {
+      return null;
+    }
   }
+
+  function fmtHM(d: Date) {
+    let h = d.getHours();
+    const m = d.getMinutes();
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return { time: `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}`, ampm };
+  }
+  function fmtHMS(d: Date) {
+    let h = d.getHours();
+    const m = d.getMinutes();
+    const s = d.getSeconds();
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}:${toBn(String(s).padStart(2, "0"))} ${ampm}`;
+  }
+
+  const plabel = (p?: { label: string; labelEn: string }) => (p ? L(p.label, p.labelEn) : "");
+
+  return { toBn, L, DAYS, toBengaliDate, toHijri, fmtHM, fmtHMS, plabel };
 }
 
-function fmtHM(d: Date) {
-  let h = d.getHours();
-  const m = d.getMinutes();
-  const ampm = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return { time: `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}`, ampm };
-}
-function fmtHMS(d: Date) {
-  let h = d.getHours();
-  const m = d.getMinutes();
-  const s = d.getSeconds();
-  const ampm = h >= 12 ? "PM" : "AM";
-  h = h % 12 || 12;
-  return `${toBn(h)}:${toBn(String(m).padStart(2, "0"))}:${toBn(String(s).padStart(2, "0"))} ${ampm}`;
+/** Resolve the active language without waiting for a second render pass. */
+export function isEnglish(lang?: string) {
+  const fromI18n = lang;
+  const stored = typeof localStorage !== "undefined" ? localStorage.getItem("uf_lang") ?? undefined : undefined;
+  const htmlLang = typeof document !== "undefined" ? document.documentElement.lang || undefined : undefined;
+  return String(fromI18n || stored || htmlLang || "bn").toLowerCase().startsWith("en");
 }
 
 const PRAYERS: { key: string; label: string; labelEn: string; icon: JSX.Element }[] = [
@@ -98,7 +120,7 @@ const PRAYERS: { key: string; label: string; labelEn: string; icon: JSX.Element 
   { key: "maghrib", label: "মাগরিব", labelEn: "Maghrib", icon: <MaghribIcon /> },
   { key: "isha", label: "এশা", labelEn: "Isha", icon: <IshaIcon /> },
 ];
-const plabel = (p?: { label: string; labelEn: string }) => (p ? L(p.label, p.labelEn) : "");
+
 
 function FajrIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 18h18M6 18a6 6 0 0112 0M12 4v3M4.2 8.2l2.1 2.1M19.8 8.2l-2.1 2.1"/></svg>; }
 function SunriseIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-full h-full"><path d="M3 20h18M12 4v4M5.5 8.5l1.5 1.5M18.5 8.5L17 10M8 14a4 4 0 018 0"/></svg>; }
@@ -111,7 +133,12 @@ export const PrayerTimes = () => {
   const { i18n } = useTranslation();
   // Render everything in the active language ourselves — the section is marked
   // `notranslate`, so Google Translate never re-processes the ticking clock.
-  EN = (i18n.language || "bn").startsWith("en");
+  const EN = isEnglish(i18n.language);
+  const { toBn, L, DAYS, toBengaliDate, toHijri, fmtHM, fmtHMS, plabel } = useMemo(
+    () => makeFmt(EN),
+    [EN],
+  );
+
   const [now, setNow] = useState(new Date());
   const [method, setMethod] = useState<string>(() => localStorage.getItem("uf_prayer_method") ?? "MuslimWorldLeague");
   const [coords, setCoords] = useState(() => {
