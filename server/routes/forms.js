@@ -113,7 +113,12 @@ const saveSchema = asyncH(async (req, res) => {
     );
   }
   res.json({ ok: true, extras_persisted: withExtras });
-}));
+});
+
+router.put('/:key', requireAuth, saveSchema);
+router.post('/:key', requireAuth, saveSchema);
+
+
 
 function hydrate(row) {
   const extras = stripDataUriBanner(safeParse(row.extras, {}));
