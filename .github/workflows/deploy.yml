@@ -123,12 +123,29 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Prepare backend package
+        env:
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_RUN_ID: ${{ github.run_id }}
+          DEPLOY_RUN_ATTEMPT: ${{ github.run_attempt }}
+          DEPLOY_METHOD: ${{ github.event.inputs.method || 'ftps' }}
         run: |
           mkdir -p out
           rsync -a --exclude 'node_modules' --exclude '.env' --exclude 'uploads' server/ out/
           mkdir -p out/tmp
-          date > out/tmp/restart.txt
-          printf '%s' '${{ github.sha }}' > out/DEPLOY_RELEASE
+          date -u +'%Y-%m-%dT%H:%M:%SZ' > out/tmp/restart.txt
+          printf '%s' "$DEPLOY_SHA" > out/DEPLOY_RELEASE
+          python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          with open('out/DEPLOY_META.json', 'w', encoding='utf-8') as f:
+              json.dump({
+                  'sha': os.environ['DEPLOY_SHA'],
+                  'runId': os.environ['DEPLOY_RUN_ID'],
+                  'runAttempt': os.environ['DEPLOY_RUN_ATTEMPT'],
+                  'method': os.environ['DEPLOY_METHOD'],
+                  'packagedAt': datetime.now(timezone.utc).isoformat(),
+              }, f, indent=2)
+          PY
 
       - name: Deploy backend via FTPS
         if: ${{ (github.event.inputs.method || 'ftps') == 'ftps' }}
@@ -170,70 +187,17 @@ jobs:
           ORIGIN_IP: 14.128.14.142
           BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: |
-          # Passenger on shared cPanel can take several minutes to recycle a
-          # worker after tmp/restart.txt changes. The upload is already done at
-          # this point, so allow enough time for the new worker to become live.
-          LAST_RESPONSE=""
-          for i in $(seq 1 30); do
-            RESPONSE=$(curl -sS --connect-timeout 5 --max-time 8 \
-              --resolve "api.unitefoundation.bd:443:${ORIGIN_IP}" \
-              -H 'Cache-Control: no-cache' \
-              "https://api.unitefoundation.bd/health/deploy?cb=$RANDOM" || true)
-            [ -n "$RESPONSE" ] && LAST_RESPONSE="$RESPONSE"
-            LIVE=$(python3 -c \
-              'import json,sys; print(json.loads(sys.argv[1]).get("release", ""))' \
-              "$RESPONSE" 2>/dev/null || true)
-            if [ -n "$LIVE" ]; then
-              echo "attempt $i -> release '$LIVE'"
-            else
-              echo "attempt $i -> no valid release response: ${RESPONSE:0:240}"
-            fi
-            if [ "$LIVE" = "${{ github.sha }}" ]; then
-              echo "✅ Backend live with this commit"; exit 0
-            fi
-            sleep 10
-          done
+          python3 scripts/verify-backend-deploy.py \
+            --expected-sha '${{ github.sha }}' \
+            --remote-path "${BACKEND_REMOTE_PATH:-public_html/api-app}" \
+            --origin-ip "$ORIGIN_IP"
 
-          echo "❌ Backend health endpoint is not serving this commit." >&2
-          echo "--- Live diagnostics from /health/deploy ---" >&2
-          echo "${LAST_RESPONSE:-<no response>}" >&2
-
-          # Turn the failure into an actionable diagnosis instead of a guess.
-          python3 - "$LAST_RESPONSE" "${BACKEND_REMOTE_PATH:-public_html/api-app}" "${{ github.sha }}" <<'PY' >&2 || true
-          import json, sys
-          raw, remote_path, sha = sys.argv[1], sys.argv[2], sys.argv[3]
-          try:
-              d = json.loads(raw)
-          except Exception:
-              print("Diagnosis: the API did not return JSON. Passenger is likely serving")
-              print("an error page — open cPanel → Setup Node.js App → the app's stderr log.")
-              sys.exit(0)
-          app_root = d.get("appRoot", "")
-          print(f"Running Application Root : {app_root}")
-          print(f"Uploaded BACKEND_REMOTE_PATH : {remote_path}")
-          print(f"Served release : {d.get('release')} (expected {sha})")
-          print(f"Release file found : {d.get('releaseFileFound')} mtime={d.get('releaseFileMtime')}")
-          print(f"restart.txt mtime : {d.get('restartMtime')}")
-          print(f"Worker started at : {d.get('startedAt')} (uptime {d.get('uptimeSeconds')}s)")
-          tail = remote_path.strip("/").split("/")[-1]
-          if app_root and tail and not app_root.rstrip("/").endswith(tail):
-              print("")
-              print("ROOT CAUSE: the running app root does NOT match the directory we upload to.")
-              print(f"Set the BACKEND_REMOTE_PATH secret to the path (relative to the FTP login)")
-              print(f"that maps to: {app_root}")
-          elif not d.get("releaseFileFound"):
-              print("")
-              print("ROOT CAUSE: DEPLOY_RELEASE is missing in the running app root — the upload")
-              print("landed in a sibling directory, or the file is excluded/unreadable.")
-          elif (d.get("uptimeSeconds") or 0) > 600:
-              print("")
-              print("ROOT CAUSE: Passenger never recycled (worker older than the deploy).")
-              print("Fix: cPanel → Setup Node.js App → Restart, and confirm the app root")
-              print("contains tmp/restart.txt writable by the FTP user.")
-          else:
-              print("")
-              print("The worker restarted but is serving an older release marker — check for a")
-              print("second copy of the backend and for a startup crash in the stderr log.")
-          PY
-          exit 1
+      - name: Upload backend deployment tracker
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-deploy-tracker-${{ github.run_id }}-${{ github.run_attempt }}
+          path: deploy-tracker/backend.json
+          if-no-files-found: warn
+          retention-days: 14
 
