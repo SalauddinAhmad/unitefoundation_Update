@@ -10,17 +10,17 @@ import {
 
 const DEFAULT_COORDS = { lat: 23.8103, lng: 90.4125, label: "ঢাকা, বাংলাদেশ" };
 
-const METHODS: { value: string; label: string }[] = [
-  { value: "MuslimWorldLeague", label: "মুসলিম ওয়ার্ল্ড লীগ" },
-  { value: "Karachi", label: "করাচি (দক্ষিণ এশিয়া)" },
-  { value: "Egyptian", label: "মিশরীয়" },
-  { value: "UmmAlQura", label: "উম্মুল কুরা (মক্কা)" },
-  { value: "Dubai", label: "দুবাই" },
-  { value: "NorthAmerica", label: "উত্তর আমেরিকা (ISNA)" },
-  { value: "Kuwait", label: "কুয়েত" },
-  { value: "Qatar", label: "কাতার" },
-  { value: "Singapore", label: "সিঙ্গাপুর" },
-  { value: "Turkey", label: "তুরস্ক (Diyanet)" },
+const METHODS: { value: string; label: string; labelEn: string }[] = [
+  { value: "MuslimWorldLeague", label: "মুসলিম ওয়ার্ল্ড লীগ", labelEn: "Muslim World League" },
+  { value: "Karachi", label: "করাচি (দক্ষিণ এশিয়া)", labelEn: "Karachi (South Asia)" },
+  { value: "Egyptian", label: "মিশরীয়", labelEn: "Egyptian" },
+  { value: "UmmAlQura", label: "উম্মুল কুরা (মক্কা)", labelEn: "Umm al-Qura (Makkah)" },
+  { value: "Dubai", label: "দুবাই", labelEn: "Dubai" },
+  { value: "NorthAmerica", label: "উত্তর আমেরিকা (ISNA)", labelEn: "North America (ISNA)" },
+  { value: "Kuwait", label: "কুয়েত", labelEn: "Kuwait" },
+  { value: "Qatar", label: "কাতার", labelEn: "Qatar" },
+  { value: "Singapore", label: "সিঙ্গাপুর", labelEn: "Singapore" },
+  { value: "Turkey", label: "তুরস্ক (Diyanet)", labelEn: "Turkey (Diyanet)" },
 ];
 
 const BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
@@ -184,6 +184,7 @@ export const PrayerTimes = () => {
   const mm = Math.floor((diff % 3600) / 60);
   const ss = diff % 60;
 
+  const locLabel = coords.label === DEFAULT_COORDS.label ? L(DEFAULT_COORDS.label, "Dhaka, Bangladesh") : coords.label;
   const bn = toBengaliDate(now);
   const hijri = toHijri(now);
   const sehri = new Date(today.fajr.getTime() - 3 * 60000);
@@ -238,7 +239,7 @@ export const PrayerTimes = () => {
                 className="inline-flex items-center gap-1 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 backdrop-blur-sm px-2.5 py-1 text-[10px] font-medium transition-colors disabled:opacity-60 border border-primary-foreground/20 shrink-0"
               >
                 {locating ? <Loader2 className="w-3 h-3 animate-spin" /> : <MapPin className="w-3 h-3" />}
-                <span className="truncate max-w-[110px]">{locating ? "..." : coords.label}</span>
+                <span className="truncate max-w-[110px]">{locating ? "..." : locLabel}</span>
               </button>
             </div>
 
@@ -289,7 +290,7 @@ export const PrayerTimes = () => {
                   className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 hover:bg-primary/15 px-3 py-2 text-xs font-medium text-primary transition-colors disabled:opacity-60 border border-primary/20"
                 >
                   {locating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <MapPin className="w-3.5 h-3.5" />}
-                  <span className="truncate max-w-[160px]">{locating ? L("খোঁজা হচ্ছে...", "Locating...") : coords.label}</span>
+                  <span className="truncate max-w-[160px]">{locating ? L("খোঁজা হচ্ছে...", "Locating...") : locLabel}</span>
                 </button>
               </div>
             </div>
@@ -356,7 +357,7 @@ export const PrayerTimes = () => {
                   className="w-full sm:w-auto appearance-none text-xs font-medium rounded-full border border-input bg-background pl-4 pr-9 py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                   aria-label={L("হিসাব পদ্ধতি", "Calculation method")}
                 >
-                  {METHODS.map((m) => (<option key={m.value} value={m.value}>{m.label}</option>))}
+                  {METHODS.map((m) => (<option key={m.value} value={m.value}>{L(m.label, m.labelEn)}</option>))}
                 </select>
                 <svg className="w-3.5 h-3.5 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>
               </div>
