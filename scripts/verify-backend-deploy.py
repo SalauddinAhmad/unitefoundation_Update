@@ -110,6 +110,7 @@ def main():
     parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
     parser.add_argument("--attempts", type=int, default=30)
     parser.add_argument("--interval", type=int, default=10)
+    parser.add_argument("--required-consecutive", type=int, default=3)
     parser.add_argument("--output", default="deploy-tracker/backend.json")
     args = parser.parse_args()
 
@@ -124,6 +125,7 @@ def main():
         "attempts": [],
     }
     live = False
+    consecutive_matches = 0
     final_payload = {}
     for number in range(1, args.attempts + 1):
         code, raw, stderr, payload = request_health(args.url, host, args.origin_ip)
@@ -139,8 +141,12 @@ def main():
         })
         print(f"attempt {number}/{args.attempts} -> release '{live_sha or 'unavailable'}'", flush=True)
         if live_sha == args.expected_sha:
-            live = True
-            break
+            consecutive_matches += 1
+            if consecutive_matches >= args.required_consecutive:
+                live = True
+                break
+        else:
+            consecutive_matches = 0
         if number < args.attempts:
             time.sleep(args.interval)
 

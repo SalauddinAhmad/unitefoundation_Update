@@ -22,6 +22,10 @@ on:
           - ssh
           - api
 
+concurrency:
+  group: cpanel-production-deploy
+  cancel-in-progress: false
+
 jobs:
   frontend:
     if: ${{ github.ref == 'refs/heads/main' && ((github.event.inputs.target || 'both') == 'frontend' || (github.event.inputs.target || 'both') == 'both') }}
@@ -128,6 +132,7 @@ jobs:
           DEPLOY_RUN_ID: ${{ github.run_id }}
           DEPLOY_RUN_ATTEMPT: ${{ github.run_attempt }}
           DEPLOY_METHOD: ${{ github.event.inputs.method || 'ftps' }}
+          BACKEND_REMOTE_PATH: ${{ secrets.BACKEND_REMOTE_PATH }}
         run: |
           mkdir -p out
           rsync -a --exclude 'node_modules' --exclude '.env' --exclude 'uploads' server/ out/
@@ -143,6 +148,7 @@ jobs:
                   'runId': os.environ['DEPLOY_RUN_ID'],
                   'runAttempt': os.environ['DEPLOY_RUN_ATTEMPT'],
                   'method': os.environ['DEPLOY_METHOD'],
+                  'targetRemotePath': os.environ.get('BACKEND_REMOTE_PATH') or 'public_html/api-app',
                   'packagedAt': datetime.now(timezone.utc).isoformat(),
               }, f, indent=2)
           PY

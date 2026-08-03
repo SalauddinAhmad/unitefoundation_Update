@@ -8,7 +8,7 @@
 
 - **Frontend** (React) → `/public_html/` → `https://unitefoundation.bd`
 - **Backend** (Express + MySQL) → `/public_html/api-app/` → `https://api.unitefoundation.bd`
-- **Deploy** → GitHub push করলে GitHub Actions automatic upload করবে
+- **Deploy** → GitHub Actions থেকে manual run করলে frontend/backend upload হবে
 
 ---
 
@@ -97,9 +97,9 @@ GitHub repo → **Settings** → **Secrets and variables** → **Actions** → *
 
 ---
 
-## ধাপ ৬ — Code push করুন
+## ধাপ ৬ — Deployment run করুন
 
-GitHub-এ push করলেই workflow চলবে। GitHub → **Actions** tab-এ দেখতে পাবেন।
+Code GitHub-এ push করার পর **Actions → Deploy to cPanel → Run workflow** ক্লিক করুন। Target ও method নির্বাচন করে run দিন।
 
 - **frontend** job → `/public_html/`-এ dist upload
 - **backend** job → `/public_html/api-app/`-এ server code upload
@@ -217,6 +217,6 @@ Common result code:
 
 ## 🚀 Future Deploys
 
-এখন থেকে GitHub-এ push করলেই সব automatic হয়ে যাবে। কোনো manual কাজ নেই।
+এখন থেকে update deploy করতে GitHub Actions-এর **Run workflow** ব্যবহার করুন। একই সময়ে দ্বিতীয় deploy দিলে সেটি queue-তে অপেক্ষা করবে, ফলে দুই release-এর file মিশবে না।
 
 কোনো ধাপে আটকে গেলে screenshot পাঠান — সাহায্য করবো ইনশাআল্লাহ।
