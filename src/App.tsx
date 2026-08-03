@@ -45,6 +45,7 @@ const DashSettings = lazy(() => import("./pages/dashboard/Settings.tsx"));
 const DashLogs = lazy(() => import("./pages/dashboard/ActivityLog.tsx"));
 const DashForms = lazy(() => import("./pages/dashboard/FormsManager.tsx"));
 const DashHelp = lazy(() => import("./pages/dashboard/Help.tsx"));
+const DashProfile = lazy(() => import("./pages/dashboard/Profile.tsx"));
 
 const queryClient = new QueryClient();
 
