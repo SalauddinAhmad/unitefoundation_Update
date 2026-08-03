@@ -88,8 +88,19 @@ router.get('/:key', asyncH(async (req, res) => {
 // payload over POST so the client can retry without the WAF-triggering verb.
 const saveSchema = asyncH(async (req, res) => {
   if (!KEYS.includes(req.params.key)) return res.status(400).json({ message: 'Invalid key' });
+  // Some shared-hosting WAF rules inspect request bodies and silently drop
+  // certain payloads (the browser then reports a bare "Failed to fetch").
+  // The client may therefore send the same JSON base64-wrapped as { _b64 }.
+  if (req.body && typeof req.body._b64 === 'string') {
+    try {
+      req.body = JSON.parse(Buffer.from(req.body._b64, 'base64').toString('utf8'));
+    } catch {
+      return res.status(400).json({ message: 'Invalid encoded payload' });
+    }
+  }
   if (req.body && req.body.extras) req.body.extras = stripDataUriBanner(req.body.extras);
   const body = z.object({
+
     title: z.string().max(200).optional().default(''),
     subtitle: z.string().max(1000).optional().default(''),
     fields: z.array(fieldSchema).min(0),
