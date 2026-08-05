@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "./styles/external-fonts.css";
+
+
 @font-face {
   font-family: "Bornomala BN";
   src: url("/fonts/Bornomala-Regular.woff2") format("woff2");
