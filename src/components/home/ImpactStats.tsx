@@ -37,9 +37,12 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
       <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-donate-highlight/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500" />
       
       <div className="relative flex flex-col items-center">
-        <div className="text-3xl md:text-4xl font-black gradient-donate-text mb-2 tracking-tight">
-          {fmt(v)}
-          <span className="text-donate-highlight ml-0.5">{suffix || ""}</span>
+        <div className="relative mb-3">
+          <div className="text-4xl md:text-5xl font-black tracking-tighter text-foreground flex items-baseline justify-center">
+            <span className="drop-shadow-[0_2px_10px_rgba(var(--primary-rgb),0.2)]">{fmt(v)}</span>
+            <span className="text-primary text-2xl md:text-3xl font-bold ml-1">{suffix || ""}</span>
+          </div>
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-primary/40 to-donate-highlight/40 rounded-full blur-[1px] group-hover:w-20 transition-all duration-500" />
         </div>
         <div className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em] text-center group-hover:text-primary transition-colors duration-300">
           {label}
