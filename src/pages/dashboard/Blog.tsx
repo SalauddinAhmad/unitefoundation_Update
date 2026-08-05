@@ -495,7 +495,41 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const cmd = (c: string, v?: string) => { document.execCommand(c, false, v); editorRef.current?.focus(); if (editorRef.current) setHtml(editorRef.current.innerHTML); };
+  const cmd = (c: string, v?: string) => {
+    document.execCommand(c, false, v);
+    if (editorRef.current) {
+      setHtml(editorRef.current.innerHTML);
+    }
+  };
+
+  const applyFont = (fontFamily: string, isBold?: boolean) => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+      // If nothing selected, just change font for future typing if possible
+      cmd("fontName", fontFamily);
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    const span = document.createElement("span");
+    span.style.fontFamily = fontFamily;
+    if (isBold) span.style.fontWeight = "700";
+    
+    try {
+      range.surroundContents(span);
+    } catch (e) {
+      // Fallback if range crosses multiple nodes
+      const htmlContent = range.cloneContents();
+      const div = document.createElement("div");
+      div.appendChild(htmlContent);
+      const wrappedHtml = `<span style="font-family:${fontFamily}${isBold ? '; font-weight:700' : ''}">${div.innerHTML}</span>`;
+      cmd("insertHTML", wrappedHtml);
+    }
+    
+    if (editorRef.current) {
+      setHtml(editorRef.current.innerHTML);
+    }
+  };
 
   const insertLink = () => { const u = prompt("লিংক URL দিন:", "https://"); if (u) cmd("createLink", u); };
   const insertImage = () => setMediaOpen(true);
