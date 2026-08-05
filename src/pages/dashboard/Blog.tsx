@@ -605,10 +605,10 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                 <TBtn onClick={() => cmd("underline")} icon={Underline} title="আন্ডারলাইন" />
                 <div className="h-5 w-px bg-border mx-1" />
                 
-                {/* Bangla Fonts Dropdown */}
+                {/* বাংলা ফন্ট ড্রপডাউন */}
                 <div className="relative group">
                   <button type="button" className="inline-flex items-center gap-1 p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground">
-                    <span className="text-[11px] font-bold">বাংলা</span>
+                    <span className="text-[11px] font-bold">বাংলা ফন্ট</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
                   <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[200px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
@@ -620,17 +620,17 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     
                     <div className="h-px bg-border my-1" />
                     <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">অতিরিক্ত ফন্ট</div>
-                    <button type="button" onClick={() => cmd("fontName", "'AdorshoLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'AdorshoLipi', sans-serif" }}>আদর্শ লিপি</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Akaash', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Akaash', sans-serif" }}>আকাশ</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Alinur', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Alinur', sans-serif" }}>আলিনুর</button>
-                    <button type="button" onClick={() => cmd("fontName", "'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি</button>
+                    <button type="button" onClick={() => cmd("fontName", "'AdorshoLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'AdorshoLipi', sans-serif" }}>আদর্শ লিপি (AdorshoLipi)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Akaash', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Akaash', sans-serif" }}>আকাশ (Akaash)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Alinur', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Alinur', sans-serif" }}>আলিনুর (Alinur)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি (SolaimanLipi)</button>
                   </div>
                 </div>
 
-                {/* Arabic Fonts Dropdown */}
+                {/* আরবি ফন্ট ড্রপডাউন */}
                 <div className="relative group">
                   <button type="button" className="inline-flex items-center gap-1 p-1.5 rounded-md hover:bg-secondary text-foreground/80 hover:text-foreground">
-                    <span className="text-[11px] font-bold">ARABIC</span>
+                    <span className="text-[11px] font-bold">ARABIC FONTS</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
                   <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[200px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
@@ -638,7 +638,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Amiri', serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Amiri', serif" }}>Amiri (Bold)</button>
                     <button type="button" onClick={() => cmd("fontName", "'Scheherazade New', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade (Regular)</button>
                     <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Scheherazade New', serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade (Bold)</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Lateef', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic text-lg" style={{ fontFamily: "'Lateef', serif" }}>Lateef</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Lateef', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic text-lg" style={{ fontFamily: "'Lateef', serif" }}>Lateef (Original)</button>
                   </div>
                 </div>
 
