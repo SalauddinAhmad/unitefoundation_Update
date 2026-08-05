@@ -1,62 +1,56 @@
-/* 
-   Note: These fonts are being loaded directly from the source repository 
-   to ensure they are available immediately without manual upload.
-*/
-
 @font-face {
   font-family: 'AdorshoLipi';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/AdorshoLipi.woff2') format('woff2');
+  src: url('/fonts/AdorshoLipi.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Akaash';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/Akaash.woff2') format('woff2');
+  src: url('/fonts/Akaash.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Alinur';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/Alinur.woff2') format('woff2');
+  src: url('/fonts/Alinur.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Amiri';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/Amiri-Regular.woff2') format('woff2');
+  src: url('/fonts/Amiri-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Amiri';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/Amiri-Bold.woff2') format('woff2');
+  src: url('/fonts/Amiri-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Scheherazade New';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/ScheherazadeNew-Regular.woff2') format('woff2');
+  src: url('/fonts/ScheherazadeNew-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Scheherazade New';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/ScheherazadeNew-Bold.woff2') format('woff2');
+  src: url('/fonts/ScheherazadeNew-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Lateef';
-  src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/Lateef-Regular.woff2') format('woff2');
+  src: url('/fonts/Lateef-Regular.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
-

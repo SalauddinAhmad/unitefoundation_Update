@@ -611,7 +611,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <span className="text-[11px] font-bold">বাংলা</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
-                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[180px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
+                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[200px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
                     <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">সিস্টেম ফন্ট</div>
                     <button type="button" onClick={() => cmd("fontName", "'Bornomala BN', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-semibold" style={{ fontFamily: "'Bornomala BN', sans-serif" }}>বর্ণমালা (Regular)</button>
                     <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Bornomala BN', sans-serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Bornomala BN', sans-serif" }}>বর্ণমালা (Bold)</button>
@@ -633,12 +633,12 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <span className="text-[11px] font-bold">ARABIC</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
-                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[180px] p-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[200px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
                     <button type="button" onClick={() => cmd("fontName", "'Amiri', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic" style={{ fontFamily: "'Amiri', serif" }}>Amiri (Regular)</button>
                     <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Amiri', serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Amiri', serif" }}>Amiri (Bold)</button>
-                    <div className="h-px bg-border my-1" />
-                    <button type="button" onClick={() => cmd("fontName", "'Scheherazade New', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Lateef', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Lateef', serif" }}>Lateef</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Scheherazade New', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade (Regular)</button>
+                    <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Scheherazade New', serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade (Bold)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Lateef', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic text-lg" style={{ fontFamily: "'Lateef', serif" }}>Lateef</button>
                   </div>
                 </div>
 
