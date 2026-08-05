@@ -654,10 +654,10 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     
                     <div className="h-px bg-border my-1" />
                     <div className="px-2 py-1 text-[10px] uppercase tracking-wider text-muted-foreground font-bold">অতিরিক্ত ফন্ট</div>
-                    <button type="button" onClick={() => cmd("fontName", "'AdorshoLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'AdorshoLipi', sans-serif" }}>আদর্শ লিপি (AdorshoLipi)</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Akaash', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Akaash', sans-serif" }}>আকাশ (Akaash)</button>
-                    <button type="button" onClick={() => cmd("fontName", "'Alinur', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Alinur', sans-serif" }}>আলিনুর (Alinur)</button>
-                    <button type="button" onClick={() => cmd("fontName", "'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি (SolaimanLipi)</button>
+                    <button type="button" onClick={() => applyFont("'AdorshoLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'AdorshoLipi', sans-serif" }}>আদর্শ লিপি (AdorshoLipi)</button>
+                    <button type="button" onClick={() => applyFont("'Akaash', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Akaash', sans-serif" }}>আকাশ (Akaash)</button>
+                    <button type="button" onClick={() => applyFont("'Alinur', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Alinur', sans-serif" }}>আলিনুর (Alinur)</button>
+                    <button type="button" onClick={() => applyFont("'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি (SolaimanLipi)</button>
                   </div>
                 </div>
 
