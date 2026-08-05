@@ -78,9 +78,8 @@ export const ImpactStats = () => {
             {/* Removed eyebrow badge as requested */}
           </motion.div>
           
-          <h2 className="text-2xl md:text-3xl font-black leading-tight tracking-tight mb-4 flex flex-col items-center gap-2">
-            <span className="text-foreground">{section.heading || t("impact.heading")}</span>
-            <div className="h-1.5 w-16 bg-gradient-to-r from-primary to-donate-highlight rounded-full" />
+          <h2 className="text-xl md:text-2xl font-bold leading-tight text-foreground tracking-tight mb-4">
+            {section.heading || t("impact.heading")}
           </h2>
           
           { (section.subtitle || t("impact.subtitle")) && (
