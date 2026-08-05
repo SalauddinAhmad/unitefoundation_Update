@@ -5,6 +5,7 @@ import { usePostsPublic } from "@/hooks/api/usePublic";
 import { useLocaleNum } from "@/hooks/useLocaleNum";
 import { motion } from "framer-motion";
 import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -16,13 +17,13 @@ export const BlogSection = () => {
   
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     align: 'start',
-    loop: false,
+    loop: true,
     skipSnaps: false,
     dragFree: true,
     breakpoints: {
       '(min-width: 1024px)': { dragFree: false }
     }
-  });
+  }, [Autoplay({ delay: 4000, stopOnInteraction: false })]);
 
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
