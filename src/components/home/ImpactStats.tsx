@@ -31,7 +31,7 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative p-6 md:p-8 rounded-[2rem] bg-white dark:bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-border/40 hover:border-primary/30 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(var(--primary-rgb),0.1)] hover:-translate-y-2 overflow-hidden"
+      className="group relative p-6 md:p-8 rounded-[2rem] bg-white dark:bg-card shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-none border border-border/40 hover:border-primary/40 transition-all duration-700 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] hover:-translate-y-2 overflow-hidden flex flex-col justify-center min-h-[160px]"
     >
       {/* Glow Effect on Hover */}
       <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-donate-highlight/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500" />
@@ -71,7 +71,9 @@ export const ImpactStats = () => {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2" />
         <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-donate-highlight/5 rounded-full blur-[120px] translate-y-1/2" />
-        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.1]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
       </div>
 
       <div ref={ref} className="container-page relative z-10">
@@ -80,12 +82,9 @@ export const ImpactStats = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-white dark:bg-card px-4 py-2 rounded-full shadow-sm border border-border/50 mb-6"
+            className="flex flex-col items-center"
           >
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-primary">
-              {section.eyebrow || "রিয়েল-টাইম ইমপ্যাক্ট"}
-            </span>
+            {/* Removed eyebrow badge as requested */}
           </motion.div>
           
           <h2 className="text-2xl md:text-4xl font-black leading-tight text-foreground tracking-tight mb-4">
