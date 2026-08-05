@@ -1,3 +1,8 @@
+/* 
+   Note: These fonts are being loaded directly from the source repository 
+   to ensure they are available immediately without manual upload.
+*/
+
 @font-face {
   font-family: 'AdorshoLipi';
   src: url('https://raw.githubusercontent.com/SalauddinAhmad/Share/main/Webfont/AdorshoLipi.woff2') format('woff2');
@@ -54,3 +59,4 @@
   font-style: normal;
   font-display: swap;
 }
+
