@@ -20,7 +20,7 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
             src={m.photo}
             alt={m.name}
             loading="lazy"
-            className="h-full w-full object-cover object-top transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
+            className="h-full w-full object-cover object-top transition-all duration-[900ms] ease-out group-hover:scale-[1.08] group-hover:brightness-[1.05]"
           />
         ) : (
           <div className="h-full w-full flex items-center justify-center text-muted-foreground">
@@ -28,8 +28,11 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
           </div>
         )}
 
+        {/* Improved Overlay Effects */}
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        
         {/* Corner accent */}
-        <div aria-hidden className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div aria-hidden className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white/10 backdrop-blur-md ring-1 ring-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-110">
           <Sparkles className="h-3.5 w-3.5 text-white" />
         </div>
       </div>
