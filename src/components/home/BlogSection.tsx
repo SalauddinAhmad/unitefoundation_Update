@@ -1,48 +1,128 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Calendar, Clock, Eye } from "lucide-react";
+import { ArrowRight, Calendar, Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { usePostsPublic } from "@/hooks/api/usePublic";
 import { useLocaleNum } from "@/hooks/useLocaleNum";
+import { motion } from "framer-motion";
 
 export const BlogSection = () => {
   const { t } = useTranslation();
   const { fmt } = useLocaleNum();
   const { data: posts = [] } = usePostsPublic();
   const latest = posts.slice(0, 3);
+
   return (
-    <section className="section-y bg-secondary/40">
-      <div className="container-page">
-        <div className="flex items-end justify-between gap-6 mb-10">
-          <div>
-            <span className="eyebrow">{t("blogHome.eyebrow")}</span>
-            <h2 className="heading-display mt-3 max-w-xl">{t("blogHome.heading")}</h2>
-          </div>
-          <Link to="/blog" className="hidden md:inline-flex items-center gap-2 text-primary font-semibold hover:gap-3 transition-all">
-            {t("blogHome.allPosts")} <ArrowRight className="h-4 w-4" />
-          </Link>
+    <section className="section-y relative overflow-hidden bg-secondary/30">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      
+      <div className="container-page relative z-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
+              {t("blogHome.eyebrow")}
+            </span>
+            <h2 className="heading-display mt-4 leading-tight">
+              {t("blogHome.heading")}
+            </h2>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Link 
+              to="/blog" 
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background border border-primary/20 text-primary font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+            >
+              {t("blogHome.allPosts")} 
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </motion.div>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {latest.map((p) => (
-            <article key={p.slug} className="card-base flex flex-col">
-              <Link to={`/blog/${p.slug}`} className="block aspect-[16/10] overflow-hidden">
-                <img src={p.cover} alt={p.title} loading="lazy" width={900} height={600} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
-              </Link>
-              <div className="p-6 flex-1 flex flex-col">
-                <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="px-2 py-1 rounded bg-accent text-accent-foreground font-semibold">{p.category}</span>
-                  <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" />{p.date}</span>
-                  <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" />{fmt(p.views ?? 0)}</span>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {latest.map((p, idx) => (
+            <motion.article 
+              key={p.slug}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="group flex flex-col bg-background rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50"
+            >
+              <Link to={`/blog/${p.slug}`} className="relative block aspect-[16/10] overflow-hidden">
+                <img 
+                  src={p.cover} 
+                  alt={p.title} 
+                  loading="lazy" 
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-sm text-primary text-xs font-bold shadow-sm">
+                    {p.category}
+                  </span>
                 </div>
-                <h3 className="mt-3 text-lg font-bold leading-snug line-clamp-2 hover:text-primary transition-colors">
+              </Link>
+
+              <div className="p-6 md:p-8 flex-1 flex flex-col">
+                <div className="flex items-center gap-4 text-[11px] md:text-xs text-muted-foreground font-medium mb-4">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-primary/70" />
+                    {p.date}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Eye className="h-3.5 w-3.5 text-primary/70" />
+                    {fmt(p.views ?? 0)}
+                  </span>
+                </div>
+
+                <h3 className="text-lg md:text-xl font-bold leading-snug group-hover:text-primary transition-colors duration-300 line-clamp-2">
                   <Link to={`/blog/${p.slug}`}>{p.title}</Link>
                 </h3>
-                <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>
-                <Link to={`/blog/${p.slug}`} className="mt-4 inline-flex items-center gap-1.5 text-primary font-semibold text-sm hover:gap-2.5 transition-all">
-                  {t("common.read")} <ArrowRight className="h-4 w-4" />
-                </Link>
+                
+                <p className="mt-4 text-sm text-muted-foreground/80 line-clamp-2 flex-1 leading-relaxed">
+                  {p.excerpt}
+                </p>
+
+                <div className="mt-6 pt-6 border-t border-border/50">
+                  <Link 
+                    to={`/blog/${p.slug}`} 
+                    className="inline-flex items-center gap-2 text-primary font-bold text-sm group/btn"
+                  >
+                    <span className="relative overflow-hidden inline-block">
+                      <span className="inline-block transition-transform duration-300 group-hover/btn:-translate-y-full">
+                        {t("common.read")}
+                      </span>
+                      <span className="absolute top-full left-0 inline-block transition-transform duration-300 group-hover/btn:-translate-y-full">
+                        {t("common.read")}
+                      </span>
+                    </span>
+                    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                  </Link>
+                </div>
               </div>
-            </article>
+            </motion.article>
           ))}
+        </div>
+
+        {/* Mobile View All Button */}
+        <div className="mt-10 md:hidden flex justify-center">
+          <Link 
+            to="/blog" 
+            className="w-full text-center py-4 rounded-2xl bg-primary text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+          >
+            {t("blogHome.allPosts")}
+          </Link>
         </div>
       </div>
     </section>
