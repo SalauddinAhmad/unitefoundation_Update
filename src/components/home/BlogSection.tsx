@@ -58,9 +58,6 @@ export const BlogSection = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
-              ব্লগ ও আপডেট
-            </span>
             <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
               সর্বশেষ ব্লগ ও আপডেট
             </h2>
