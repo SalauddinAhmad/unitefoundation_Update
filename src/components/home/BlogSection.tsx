@@ -12,13 +12,13 @@ export const BlogSection = () => {
   const latest = posts.slice(0, 3);
 
   return (
-    <section className="section-y relative overflow-hidden bg-secondary/30">
+    <section className="py-12 md:py-16 relative overflow-hidden bg-secondary/30">
       {/* Decorative background elements */}
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="container-page relative z-10">
-        <div className="flex flex-col items-center text-center gap-6 mb-12">
+        <div className="flex flex-col items-center text-center gap-4 mb-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -29,7 +29,7 @@ export const BlogSection = () => {
             <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
               {t("blogHome.eyebrow")}
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-foreground max-w-2xl">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
               {t("blogHome.heading")}
             </h2>
           </motion.div>
@@ -46,7 +46,7 @@ export const BlogSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
           {latest.map((p, idx) => (
             <motion.article 
               key={p.slug}
@@ -71,7 +71,7 @@ export const BlogSection = () => {
                 </div>
               </Link>
 
-              <div className="p-6 md:p-8 flex-1 flex flex-col">
+              <div className="p-5 md:p-6 flex-1 flex flex-col">
                 <div className="flex items-center gap-4 text-[11px] md:text-xs text-muted-foreground font-medium mb-4">
                   <span className="inline-flex items-center gap-1.5">
                     <Calendar className="h-3.5 w-3.5 text-primary/70" />
@@ -91,7 +91,7 @@ export const BlogSection = () => {
                   {p.excerpt}
                 </p>
 
-                <div className="mt-6 pt-6 border-t border-border/50">
+                <div className="mt-4 pt-4 border-t border-border/50">
                   <Link 
                     to={`/blog/${p.slug}`} 
                     className="inline-flex items-center gap-2 text-primary font-bold text-sm group/btn"
@@ -113,7 +113,7 @@ export const BlogSection = () => {
         </div>
 
         {/* Styled "View All" Button at the bottom */}
-        <div className="mt-10 md:mt-12 flex justify-center">
+        <div className="mt-8 md:mt-10 flex justify-center">
           <Link 
             to="/blog" 
             className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:gap-3 transition-all"
