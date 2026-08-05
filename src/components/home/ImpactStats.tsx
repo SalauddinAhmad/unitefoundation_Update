@@ -27,22 +27,18 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
   
   return (
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative"
+      transition={{ duration: 0.4, delay: index * 0.05 }}
+      className="relative p-4 md:p-6 rounded-2xl bg-white dark:bg-card border border-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[120px] shadow-sm"
     >
-      <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] rotate-3 group-hover:rotate-0 transition-transform duration-500" />
-      <div className="relative p-8 md:p-10 rounded-[2.5rem] bg-white dark:bg-card border-2 border-primary/10 hover:border-primary transition-all duration-500 flex flex-col items-center justify-center min-h-[180px] shadow-sm hover:shadow-xl">
-        <div className="text-4xl md:text-5xl font-black text-primary mb-3 flex items-baseline tracking-tighter">
-          {fmt(v)}
-          <span className="text-xl md:text-2xl ml-1 opacity-70">{suffix || ""}</span>
-        </div>
-        <div className="h-1 w-8 bg-primary/20 rounded-full mb-4 group-hover:w-16 transition-all duration-500" />
-        <div className="text-xs md:text-sm text-muted-foreground font-bold uppercase tracking-widest text-center">
-          {label}
-        </div>
+      <div className="text-2xl md:text-3xl font-black text-primary mb-1 flex items-baseline tracking-tight">
+        {fmt(v)}
+        <span className="text-sm md:text-base ml-0.5 opacity-80 font-bold">{suffix || ""}</span>
+      </div>
+      <div className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider text-center line-clamp-2">
+        {label}
       </div>
     </motion.div>
   );
@@ -65,14 +61,14 @@ export const ImpactStats = () => {
     return () => obs.disconnect();
   }, []);
   return (
-    <section className="py-16 md:py-24 relative overflow-hidden bg-slate-50/50 dark:bg-secondary/10">
+    <section className="py-10 md:py-16 relative overflow-hidden bg-slate-50/50 dark:bg-secondary/10">
       {/* Advanced Geometric Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
       </div>
 
       <div ref={ref} className="container-page relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
