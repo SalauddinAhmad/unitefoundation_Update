@@ -633,7 +633,11 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <span className="text-[11px] font-bold">ARABIC FONTS</span>
                     <ChevronDown className="h-3 w-3" />
                   </button>
-                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[200px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[300px] overflow-y-auto">
+                  <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[220px] p-1 animate-in fade-in slide-in-from-top-1 duration-150 max-h-[350px] overflow-y-auto">
+                    <button type="button" onClick={() => cmd("fontName", "'KFGQPC Uthman Taha Naskh', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic" style={{ fontFamily: "'KFGQPC Uthman Taha Naskh', serif" }}>KFGQPC Uthman (Original)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Al-Quran IndoPak', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic" style={{ fontFamily: "'Al-Quran IndoPak', serif" }}>Al-Quran IndoPak (IndoPak)</button>
+                    <button type="button" onClick={() => cmd("fontName", "'Noto Kufi Arabic', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic" style={{ fontFamily: "'Noto Kufi Arabic', sans-serif" }}>Noto Kufi (Kufi Style)</button>
+                    <div className="h-px bg-border my-1" />
                     <button type="button" onClick={() => cmd("fontName", "'Amiri', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-arabic" style={{ fontFamily: "'Amiri', serif" }}>Amiri (Regular)</button>
                     <button type="button" onClick={() => cmd("insertHTML", `<span style="font-family:'Amiri', serif; font-weight:700;">${window.getSelection()}</span>`)} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-bold" style={{ fontFamily: "'Amiri', serif" }}>Amiri (Bold)</button>
                     <button type="button" onClick={() => cmd("fontName", "'Scheherazade New', serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'Scheherazade New', serif" }}>Scheherazade (Regular)</button>
