@@ -45,6 +45,10 @@ export const ProgramsSection = () => {
 
   return (
     <section className="py-12 md:py-16 relative overflow-hidden bg-secondary/40">
+      {/* Decorative background elements to match BlogSection */}
+      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+      
       <div className="container-page relative z-10">
         <div className="flex flex-col items-center text-center gap-6 mb-8">
           <motion.div 
@@ -54,6 +58,9 @@ export const ProgramsSection = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
+            <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
+              কার্যক্রম ও ইমপ্যাক্ট
+            </span>
             <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
               {t("programs.heading")}
             </h2>
