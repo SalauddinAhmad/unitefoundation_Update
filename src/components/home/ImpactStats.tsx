@@ -25,7 +25,7 @@ const Stat = ({ value, label, suffix, start }: { value: number; label: string; s
   const { fmt } = useLocaleNum();
   return (
     <div className="group relative p-6 md:p-8 rounded-3xl bg-secondary/30 border border-primary/5 hover:border-primary/20 hover:bg-secondary/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
-      <div className="text-4xl md:text-5xl font-extrabold gradient-donate-text mb-2 transition-transform duration-500 group-hover:scale-110">
+      <div className="text-3xl md:text-4xl font-extrabold gradient-donate-text mb-2 transition-transform duration-500 group-hover:scale-110">
         {fmt(v)}
         <span className="text-donate-highlight">{suffix || ""}</span>
       </div>
