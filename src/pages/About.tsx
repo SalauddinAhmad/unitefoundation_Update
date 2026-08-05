@@ -370,17 +370,43 @@ const About = () => {
           <span className="eyebrow">{t("aboutPage.valuesEyebrow")}</span>
           <h2 className="heading-display mt-3">{t("aboutPage.valuesHeading")}</h2>
         </div>
-        <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {values.map((v, i) => {
-            const Icon = valueIcons[i] || Heart;
-            return (
-              <div key={v.t} className="card-base p-6 text-center">
-                <div className="h-14 w-14 rounded-card gradient-donate-bg text-white flex items-center justify-center mx-auto"><Icon className="h-6 w-6" /></div>
-                <h3 className="mt-4 font-bold text-lg">{v.t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{v.d}</p>
-              </div>
-            );
-          })}
+        <div className="mt-16 relative">
+          {/* Central connector line */}
+          <div 
+            className="absolute top-1/2 left-0 right-0 h-0.5 -translate-y-1/2 hidden lg:block"
+            aria-hidden
+            style={{
+              background: "linear-gradient(90deg, transparent, hsl(var(--primary)/0.3) 15%, hsl(var(--primary)/0.3) 85%, transparent)"
+            }}
+          />
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative z-10">
+            {values.map((v, i) => {
+              const Icon = valueIcons[i] || Heart;
+              return (
+                <div key={v.t} className="group relative">
+                  {/* Decorative outer stroke/glow */}
+                  <div aria-hidden className="absolute -inset-[1px] rounded-[24px] bg-gradient-to-b from-primary/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                  
+                  <div className="card-base p-7 text-center h-full flex flex-col items-center relative bg-card border-2 border-primary/10 transition-all duration-300 group-hover:border-primary/40 group-hover:-translate-y-1">
+                    <div className="h-16 w-16 rounded-2xl gradient-donate-bg text-white flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                      <Icon className="h-7 w-7" />
+                    </div>
+                    <h3 className="mt-6 font-bold text-xl text-foreground">{v.t}</h3>
+                    <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{v.d}</p>
+                    
+                    {/* Node on the connector line */}
+                    <div 
+                      className="absolute -bottom-3 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-background border-4 border-primary/20 hidden lg:flex items-center justify-center group-hover:border-primary/50 transition-colors"
+                      aria-hidden
+                    >
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
