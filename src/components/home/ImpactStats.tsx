@@ -55,7 +55,7 @@ export const ImpactStats = () => {
       <div ref={ref} className="container-page">
         <div className="text-center max-w-2xl mx-auto">
           <span className="eyebrow">{section.eyebrow || t("impact.eyebrow")}</span>
-          <h2 className="heading-display mt-3">{section.heading || t("impact.heading")}</h2>
+          <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground">{section.heading || t("impact.heading")}</h2>
           <p className="mt-4 text-muted-foreground">
             {section.subtitle || t("impact.subtitle")}
           </p>
