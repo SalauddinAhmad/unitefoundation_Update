@@ -54,7 +54,7 @@ export const ProgramsSection = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
+            <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
               {t("programs.heading")}
             </h2>
           </motion.div>

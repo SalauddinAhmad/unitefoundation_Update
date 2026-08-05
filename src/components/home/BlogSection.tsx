@@ -62,7 +62,7 @@ export const BlogSection = () => {
               {t("blogHome.eyebrow")}
             </span>
             {t("blogHome.heading") && (
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
+              <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground max-w-2xl">
                 {t("blogHome.heading")}
               </h2>
             )}
