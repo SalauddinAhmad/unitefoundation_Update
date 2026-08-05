@@ -194,7 +194,7 @@ const BlogPost = () => {
 
             {hasHtml ? (
               <div
-                className="prose-bn mt-8 max-w-none [&_img]:rounded-card [&_img]:my-4 [&_h2]:mt-6 [&_h3]:mt-5 [&_p]:leading-[1.9] [&_p]:text-[17px] [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline"
+                className="prose-bn mt-8 max-w-none [&_img]:rounded-card [&_img]:my-4 [&_h2]:mt-6 [&_h3]:mt-5 [&_p]:leading-[1.9] [&_p]:text-[17px] [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face='monospace']]:font-mono"
                 dangerouslySetInnerHTML={{ __html: (post as any).html }}
               />
             ) : (
