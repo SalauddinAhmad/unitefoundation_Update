@@ -34,20 +34,16 @@ export const BlogSection = () => {
             </h2>
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          {/* Hidden on desktop, we'll move a styled button to the bottom */}
+          <div className="hidden">
             <Link 
               to="/blog" 
-              className="group hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background border border-primary/20 text-primary font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background border border-primary/20 text-primary font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
             >
               {t("blogHome.allPosts")} 
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
-          </motion.div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -116,13 +112,14 @@ export const BlogSection = () => {
           ))}
         </div>
 
-        {/* Mobile View All Button */}
-        <div className="mt-10 md:hidden flex justify-center">
+        {/* Styled "View All" Button at the bottom */}
+        <div className="mt-10 md:mt-12 flex justify-center">
           <Link 
             to="/blog" 
-            className="w-full text-center py-4 rounded-2xl bg-primary text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+            className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:gap-3 transition-all"
           >
             {t("blogHome.allPosts")}
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </div>
