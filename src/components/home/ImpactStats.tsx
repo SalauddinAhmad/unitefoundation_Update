@@ -27,24 +27,20 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
   
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group relative p-6 md:p-8 rounded-[2rem] bg-white dark:bg-card shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-none border border-border/40 hover:border-primary/40 transition-all duration-700 hover:shadow-[0_20px_50px_rgba(var(--primary-rgb),0.15)] hover:-translate-y-2 overflow-hidden flex flex-col justify-center min-h-[160px]"
+      className="group relative"
     >
-      {/* Glow Effect on Hover */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-donate-highlight/20 rounded-[2rem] blur opacity-0 group-hover:opacity-100 transition duration-500" />
-      
-      <div className="relative flex flex-col items-center">
-        <div className="relative mb-3">
-          <div className="text-4xl md:text-5xl font-black tracking-tighter text-foreground flex items-baseline justify-center">
-            <span className="drop-shadow-[0_2px_10px_rgba(var(--primary-rgb),0.2)]">{fmt(v)}</span>
-            <span className="text-primary text-2xl md:text-3xl font-bold ml-1">{suffix || ""}</span>
-          </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-12 h-1 bg-gradient-to-r from-primary/40 to-donate-highlight/40 rounded-full blur-[1px] group-hover:w-20 transition-all duration-500" />
+      <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] rotate-3 group-hover:rotate-0 transition-transform duration-500" />
+      <div className="relative p-8 md:p-10 rounded-[2.5rem] bg-white dark:bg-card border-2 border-primary/10 hover:border-primary transition-all duration-500 flex flex-col items-center justify-center min-h-[180px] shadow-sm hover:shadow-xl">
+        <div className="text-4xl md:text-5xl font-black text-primary mb-3 flex items-baseline tracking-tighter">
+          {fmt(v)}
+          <span className="text-xl md:text-2xl ml-1 opacity-70">{suffix || ""}</span>
         </div>
-        <div className="text-[10px] md:text-xs text-muted-foreground font-black uppercase tracking-[0.2em] text-center group-hover:text-primary transition-colors duration-300">
+        <div className="h-1 w-8 bg-primary/20 rounded-full mb-4 group-hover:w-16 transition-all duration-500" />
+        <div className="text-xs md:text-sm text-muted-foreground font-bold uppercase tracking-widest text-center">
           {label}
         </div>
       </div>
@@ -72,11 +68,7 @@ export const ImpactStats = () => {
     <section className="py-16 md:py-24 relative overflow-hidden bg-slate-50/50 dark:bg-secondary/10">
       {/* Advanced Geometric Background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-donate-highlight/5 rounded-full blur-[120px] translate-y-1/2" />
-        <div className="absolute inset-0 opacity-[0.05] dark:opacity-[0.1]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--primary) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
       </div>
 
       <div ref={ref} className="container-page relative z-10">
