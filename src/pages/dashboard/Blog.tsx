@@ -610,7 +610,9 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <ChevronDown className="h-3 w-3" />
                   </button>
                   <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[160px] p-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <button type="button" onClick={() => cmd("fontName", "'Bornomala BN', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-semibold" style={{ fontFamily: "'Bornomala BN', sans-serif" }}>বর্ণমালা ফন্ট</button>
                     <button type="button" onClick={() => cmd("fontName", "var(--font-heading)")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-semibold">হেডিং ফন্ট</button>
+
                     <button type="button" onClick={() => cmd("fontName", "var(--font-body)")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm">বডি ফন্ট</button>
                     <button type="button" onClick={() => cmd("fontName", "'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি</button>
                     <button type="button" onClick={() => cmd("fontName", "monospace")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-mono">মনোস্পেস</button>
@@ -638,7 +640,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                 contentEditable
                 suppressContentEditableWarning
                 onInput={() => editorRef.current && setHtml(editorRef.current.innerHTML)}
-                className="mt-4 min-h-[400px] focus:outline-none text-base leading-relaxed prose prose-base max-w-none [&_h1]:text-3xl [&_h1]:font-extrabold [&_h2]:text-2xl [&_h2]:font-bold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_img]:rounded-xl [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face='monospace']]:font-mono"
+                className="mt-4 min-h-[400px] focus:outline-none text-base leading-relaxed prose prose-base max-w-none [&_h1]:text-3xl [&_h1]:font-extrabold [&_h2]:text-2xl [&_h2]:font-bold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_img]:rounded-xl [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_font[face*='Bornomala']]:font-['Bornomala_BN',_sans-serif] [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face='monospace']]:font-mono"
               />
             </div>
           </div>
