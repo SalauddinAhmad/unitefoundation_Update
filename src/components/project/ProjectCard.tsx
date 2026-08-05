@@ -36,11 +36,7 @@ export const ProjectCard = ({ project }: { project: Project }) => {
             {project.shortDescription}
           </p>
           <div className="mt-3 flex items-center flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{project.location}</span>
-            <span className="inline-flex items-center gap-1" title="দাতা"><Users className="h-3.5 w-3.5" />{toBnNum(project.donors)} জন দাতা</span>
-            {!!project.beneficiaries && (
-              <span className="inline-flex items-center gap-1" title="উপকারভোগী"><HeartHandshake className="h-3.5 w-3.5" />{toBnNum(project.beneficiaries)} জন উপকারভোগী</span>
-            )}
+            {project.location && project.location !== "সারা দেশে" && <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{project.location}</span>}
           </div>
         </div>
 

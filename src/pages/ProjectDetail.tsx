@@ -53,7 +53,7 @@ const ProjectDetail = () => {
                   {project.status === "active" ? "চলমান" : project.status === "completed" ? "সম্পন্ন" : "ড্রাফট"}
                 </span>
               )}
-              {project.location && <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{project.location}</span>}
+              {project.location && project.location !== "সারা দেশে" && <span className="inline-flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5" />{project.location}</span>}
               {(project.startDate || project.endDate) && (
                 <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                   <Calendar className="h-3.5 w-3.5" />
@@ -101,23 +101,15 @@ const ProjectDetail = () => {
                   <div className="mt-4">
                     <ProgressBar raised={project.raised} target={project.target} />
                   </div>
-                  <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                    <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
-                    {!!project.beneficiaries && (
-                      <Stat icon={HeartHandshake} label="উপকারভোগী" value={`${toBnNum(project.beneficiaries)} জন`} />
-                    )}
+                   <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
                     <Stat icon={TrendingUp} label={t("projectDetail.raisedPct")} value={`${toBnNum(Math.round((project.raised/project.target)*100))}%`} />
                     <Stat icon={Target} label={t("projectDetail.remaining")} value={`৳${toBnNum(formatBDT(Math.max(0, project.target - project.raised)))}`} />
-                    <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
+                    {project.location !== "সারা দেশে" && <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />}
                   </div>
                 </>
               ) : (
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <Stat icon={Users} label={t("projectDetail.donors")} value={`${toBnNum(project.donors)} ${t("projectDetail.people")}`} />
-                  {!!project.beneficiaries && (
-                    <Stat icon={HeartHandshake} label="উপকারভোগী" value={`${toBnNum(project.beneficiaries)} জন`} />
-                  )}
-                  <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />
+                  {project.location !== "সারা দেশে" && <Stat icon={MapPin} label={t("projectDetail.area")} value={project.location} />}
                 </div>
               )}
               {project.status !== "completed" && (
