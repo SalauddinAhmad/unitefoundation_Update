@@ -610,7 +610,9 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                     <ChevronDown className="h-3 w-3" />
                   </button>
                   <div className="absolute top-full left-0 mt-1 hidden group-hover:block bg-card border border-border rounded-lg shadow-xl z-20 min-w-[160px] p-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <button type="button" onClick={() => cmd("fontName", "'Bornomala BN', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-semibold" style={{ fontFamily: "'Bornomala BN', sans-serif" }}>বর্ণমালা ফন্ট</button>
                     <button type="button" onClick={() => cmd("fontName", "var(--font-heading)")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-semibold">হেডিং ফন্ট</button>
+
                     <button type="button" onClick={() => cmd("fontName", "var(--font-body)")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm">বডি ফন্ট</button>
                     <button type="button" onClick={() => cmd("fontName", "'SolaimanLipi', sans-serif")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm" style={{ fontFamily: "'SolaimanLipi', sans-serif" }}>সোলায়মান লিপি</button>
                     <button type="button" onClick={() => cmd("fontName", "monospace")} className="w-full text-left px-3 py-2 rounded-md hover:bg-secondary text-sm font-mono">মনোস্পেস</button>
