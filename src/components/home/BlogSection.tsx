@@ -50,13 +50,13 @@ export const BlogSection = () => {
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="container-page relative z-10">
-        <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col items-center text-center gap-6 mb-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col items-center md:items-start text-center md:text-left"
+            className="flex flex-col items-center"
           >
             <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
               {t("blogHome.eyebrow")}
@@ -67,27 +67,6 @@ export const BlogSection = () => {
               </h2>
             )}
           </motion.div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full w-10 h-10 border-primary/20 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-              onClick={scrollPrev}
-              disabled={prevBtnDisabled}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full w-10 h-10 border-primary/20 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
-              onClick={scrollNext}
-              disabled={nextBtnDisabled}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
         </div>
 
         <div className="overflow-hidden" ref={emblaRef}>
@@ -160,15 +139,37 @@ export const BlogSection = () => {
           </div>
         </div>
 
-        {/* Styled "View All" Button at the bottom */}
-        <div className="mt-8 md:mt-10 flex justify-center">
-          <Link 
-            to="/blog" 
-            className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-3 rounded-btn shadow-donate hover:shadow-donate-hover group transition-all"
-          >
-            {t("blogHome.allPosts")}
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+        {/* Navigation and "View All" Button at the bottom */}
+        <div className="mt-8 md:mt-10 flex flex-col items-center gap-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full w-9 h-9 border-primary/20 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+              onClick={scrollPrev}
+              disabled={prevBtnDisabled}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            <Link 
+              to="/blog" 
+              className="inline-flex items-center gap-2 gradient-donate-bg text-white font-semibold px-7 py-2.5 rounded-btn shadow-donate hover:shadow-donate-hover group transition-all text-sm"
+            >
+              {t("blogHome.allPosts")}
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full w-9 h-9 border-primary/20 hover:bg-primary hover:text-white transition-all disabled:opacity-30"
+              onClick={scrollNext}
+              disabled={nextBtnDisabled}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>
