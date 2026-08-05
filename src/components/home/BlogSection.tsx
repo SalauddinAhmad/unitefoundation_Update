@@ -28,7 +28,7 @@ export const BlogSection = () => {
             <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
               {t("blogHome.eyebrow")}
             </span>
-            <h2 className="heading-display mt-4 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-foreground">
               {t("blogHome.heading")}
             </h2>
           </motion.div>
