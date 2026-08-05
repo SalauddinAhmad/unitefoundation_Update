@@ -18,30 +18,31 @@ export const BlogSection = () => {
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
       
       <div className="container-page relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col items-center text-center gap-6 mb-12">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
+            className="flex flex-col items-center"
           >
             <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">
               {t("blogHome.eyebrow")}
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-foreground">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-foreground max-w-2xl">
               {t("blogHome.heading")}
             </h2>
           </motion.div>
           
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <Link 
               to="/blog" 
-              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background border border-primary/20 text-primary font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+              className="group hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-background border border-primary/20 text-primary font-bold hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
             >
               {t("blogHome.allPosts")} 
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
