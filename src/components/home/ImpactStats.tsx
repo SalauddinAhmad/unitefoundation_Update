@@ -31,13 +31,13 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="relative p-4 md:p-6 rounded-2xl bg-white dark:bg-card border border-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[120px] shadow-sm"
+      className="relative p-3 md:p-5 rounded-xl bg-white dark:bg-card border border-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[90px] md:min-h-[110px] shadow-sm"
     >
-      <div className="text-2xl md:text-3xl font-black text-primary mb-1 flex items-baseline tracking-tight">
+      <div className="text-xl md:text-2xl font-black text-primary mb-0.5 flex items-baseline tracking-tight leading-none">
         {fmt(v)}
-        <span className="text-sm md:text-base ml-0.5 opacity-80 font-bold">{suffix || ""}</span>
+        <span className="text-[10px] md:text-sm ml-0.5 opacity-80 font-bold">{suffix || ""}</span>
       </div>
-      <div className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider text-center line-clamp-2">
+      <div className="text-[9px] md:text-[11px] text-muted-foreground font-bold uppercase tracking-wider text-center line-clamp-1">
         {label}
       </div>
     </motion.div>
@@ -89,7 +89,7 @@ export const ImpactStats = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {impactStats.map((s, idx) => (
             <Stat key={s.label} {...s} start={start} index={idx} />
           ))}
