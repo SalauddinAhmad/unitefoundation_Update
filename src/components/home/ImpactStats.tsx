@@ -33,7 +33,7 @@ const Stat = ({ value, label, suffix, start, index }: { value: number; label: st
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="relative p-3 md:p-5 rounded-xl bg-white dark:bg-card border border-primary/10 hover:border-primary/30 transition-all duration-300 flex flex-col items-center justify-center min-h-[90px] md:min-h-[110px] shadow-sm"
     >
-      <div className="text-xl md:text-2xl font-black text-primary mb-0.5 flex items-baseline tracking-tight leading-none">
+      <div className="text-xl md:text-2xl font-black text-[#ED2324] mb-0.5 flex items-baseline tracking-tight leading-none">
         {fmt(v)}
         <span className="text-[10px] md:text-sm ml-0.5 opacity-80 font-bold">{suffix || ""}</span>
       </div>
