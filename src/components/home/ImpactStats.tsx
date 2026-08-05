@@ -24,12 +24,12 @@ const Stat = ({ value, label, suffix, start }: { value: number; label: string; s
   const v = useCount(value, start);
   const { fmt } = useLocaleNum();
   return (
-    <div className="text-center">
-      <div className="text-4xl md:text-5xl font-extrabold gradient-donate-text">
+    <div className="group relative p-6 md:p-8 rounded-3xl bg-secondary/30 border border-primary/5 hover:border-primary/20 hover:bg-secondary/50 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
+      <div className="text-4xl md:text-5xl font-extrabold gradient-donate-text mb-2 transition-transform duration-500 group-hover:scale-110">
         {fmt(v)}
         <span className="text-donate-highlight">{suffix || ""}</span>
       </div>
-      <div className="mt-2 text-sm md:text-base text-muted-foreground font-medium">{label}</div>
+      <div className="text-xs md:text-sm text-muted-foreground font-bold uppercase tracking-wider group-hover:text-primary transition-colors">{label}</div>
     </div>
   );
 };
@@ -51,16 +51,29 @@ export const ImpactStats = () => {
     return () => obs.disconnect();
   }, []);
   return (
-    <section className="section-y bg-background">
-      <div ref={ref} className="container-page">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="eyebrow">{section.eyebrow || t("impact.eyebrow")}</span>
-          <h2 className="text-xl md:text-2xl font-bold mt-2 leading-tight text-foreground">{section.heading || t("impact.heading")}</h2>
-          <p className="mt-4 text-muted-foreground">
-            {section.subtitle || t("impact.subtitle")}
-          </p>
+    <section className="py-12 md:py-16 relative overflow-hidden bg-background">
+      {/* Background decorations */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]" />
+      </div>
+
+      <div ref={ref} className="container-page relative z-10">
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
+          {section.eyebrow && (
+            <span className="eyebrow bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block mb-3">
+              {section.eyebrow}
+            </span>
+          )}
+          <h2 className="text-xl md:text-2xl font-bold leading-tight text-foreground">
+            {section.heading || t("impact.heading")}
+          </h2>
+          { (section.subtitle || t("impact.subtitle")) && (
+            <p className="mt-3 text-sm md:text-base text-muted-foreground/80 max-w-xl mx-auto">
+              {section.subtitle || t("impact.subtitle")}
+            </p>
+          )}
         </div>
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {impactStats.map((s) => (
             <Stat key={s.label} {...s} start={start} />
           ))}
