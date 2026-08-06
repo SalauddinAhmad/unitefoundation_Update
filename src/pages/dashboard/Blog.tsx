@@ -523,7 +523,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
       } else if (bengaliRegex.test(line)) {
         p.style.fontFamily = "'Bornomala BN', sans-serif";
       } else {
-        // Default to Bornomala if it's mixed or standard text to keep it consistent
+        // Default to Bornomala if it's consistent
         p.style.fontFamily = "'Bornomala BN', sans-serif";
       }
       
@@ -535,6 +535,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
           const span = document.createElement("span");
           span.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
           span.dir = "rtl";
+          span.style.display = "inline-block";
           span.textContent = word;
           p.appendChild(span);
         } else {
