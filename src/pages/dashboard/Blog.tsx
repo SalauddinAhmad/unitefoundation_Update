@@ -499,16 +499,13 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
     e.preventDefault();
     const text = e.clipboardData.getData("text/plain");
     
-    // Create a temporary container to process the text
     const container = document.createElement("div");
     
-    // Simple regex to detect scripts
     // Arabic regex range: \u0600-\u06FF, \u0750-\u077F, \u08A0-\u08FF, \uFB50-\uFDFF, \uFE70-\uFEFF
     const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
     // Bengali regex range: \u0980-\u09FF
     const bengaliRegex = /[\u0980-\u09FF]/;
 
-    // Split text by lines to preserve structure but apply fonts
     const lines = text.split("\n");
     lines.forEach((line) => {
       if (!line.trim()) {
@@ -519,16 +516,33 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
       const p = document.createElement("p");
       p.style.margin = "0.5em 0";
       
-      // Check if line is primarily Arabic or Bengali
       if (arabicRegex.test(line)) {
         p.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
         p.dir = "rtl";
         p.style.textAlign = "right";
       } else if (bengaliRegex.test(line)) {
         p.style.fontFamily = "'Bornomala BN', sans-serif";
+      } else {
+        // Default to Bornomala if it's mixed or standard text to keep it consistent
+        p.style.fontFamily = "'Bornomala BN', sans-serif";
       }
       
-      p.textContent = line;
+      // Handle cases where Arabic and Bengali/English are mixed in the same line
+      // We wrap Arabic parts in spans to ensure they get the right font/direction
+      const words = line.split(/(\s+)/);
+      words.forEach(word => {
+        if (arabicRegex.test(word)) {
+          const span = document.createElement("span");
+          span.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
+          span.dir = "rtl";
+          span.textContent = word;
+          p.appendChild(span);
+        } else {
+          const textNode = document.createTextNode(word);
+          p.appendChild(textNode);
+        }
+      });
+
       container.appendChild(p);
     });
 
