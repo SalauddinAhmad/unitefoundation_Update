@@ -175,7 +175,7 @@ const DeploymentStatus = () => {
         </div>
         <div className="flex items-center gap-2">
           {status === 'failed' && (
-            <Btn variant="outline" size="sm" className="h-8 text-xs border-destructive/30 hover:bg-destructive/10" onClick={() => window.open('https://github.com/SalauddinAhmad/unite-foundation/actions', '_blank')}>
+            <Btn variant="outline" className="h-8 text-xs border-destructive/30 hover:bg-destructive/10" onClick={() => window.open('https://github.com/SalauddinAhmad/unite-foundation/actions', '_blank')}>
               GitHub লগ দেখুন <ExternalLink className="ml-1.5 h-3 w-3" />
             </Btn>
           )}
