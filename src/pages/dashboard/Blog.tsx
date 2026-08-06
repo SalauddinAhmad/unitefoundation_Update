@@ -495,6 +495,47 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    
+    // Create a temporary container to process the text
+    const container = document.createElement("div");
+    
+    // Simple regex to detect scripts
+    // Arabic regex range: \u0600-\u06FF, \u0750-\u077F, \u08A0-\u08FF, \uFB50-\uFDFF, \uFE70-\uFEFF
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    // Bengali regex range: \u0980-\u09FF
+    const bengaliRegex = /[\u0980-\u09FF]/;
+
+    // Split text by lines to preserve structure but apply fonts
+    const lines = text.split("\n");
+    lines.forEach((line) => {
+      if (!line.trim()) {
+        container.appendChild(document.createElement("br"));
+        return;
+      }
+
+      const p = document.createElement("p");
+      p.style.margin = "0.5em 0";
+      
+      // Check if line is primarily Arabic or Bengali
+      if (arabicRegex.test(line)) {
+        p.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
+      } else if (bengaliRegex.test(line)) {
+        p.style.fontFamily = "'Bornomala BN', sans-serif";
+      }
+      
+      p.textContent = line;
+      container.appendChild(p);
+    });
+
+    document.execCommand("insertHTML", false, container.innerHTML);
+    if (editorRef.current) {
+      setHtml(editorRef.current.innerHTML);
+    }
+  };
+
   const cmd = (c: string, v?: string) => {
     document.execCommand(c, false, v);
     if (editorRef.current) {
@@ -704,6 +745,7 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
                 contentEditable
                 suppressContentEditableWarning
                 onInput={() => editorRef.current && setHtml(editorRef.current.innerHTML)}
+                onPaste={onPaste}
                 className="mt-4 min-h-[400px] focus:outline-none text-base leading-relaxed prose prose-base max-w-none [&_h1]:text-3xl [&_h1]:font-extrabold [&_h2]:text-2xl [&_h2]:font-bold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground [&_a]:text-primary [&_a]:underline [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded-lg [&_img]:rounded-xl [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_font[face*='Bornomala']]:font-['Bornomala_BN',_sans-serif] [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face*='AdorshoLipi']]:font-['AdorshoLipi',_sans-serif] [&_font[face*='Akaash']]:font-['Akaash',_sans-serif] [&_font[face*='Alinur']]:font-['Alinur',_sans-serif] [&_font[face*='Amiri']]:font-['Amiri',_serif] [&_font[face*='Scheherazade']]:font-['Scheherazade_New',_serif] [&_font[face*='Lateef']]:font-['Lateef',_serif] [&_font[face*='KFGQPC']]:font-['KFGQPC_Uthman_Taha_Naskh',_serif] [&_font[face*='Al-Quran']]:font-['Al-Quran_IndoPak',_serif] [&_font[face*='Noto_Kufi']]:font-['Noto_Kufi_Arabic',_sans-serif] [&_font[face='monospace']]:font-mono"
               />
             </div>
