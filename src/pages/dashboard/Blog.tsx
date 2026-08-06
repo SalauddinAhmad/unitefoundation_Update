@@ -515,6 +515,10 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
 
       const p = document.createElement("p");
       p.style.margin = "0.5em 0";
+      // Ensure we don't carry over external styling if any somehow leaked, 
+      // though text/plain usually prevents this. We explicitly set our defaults.
+      p.style.color = "inherit";
+      p.style.backgroundColor = "transparent";
       
       if (arabicRegex.test(line)) {
         p.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
@@ -523,12 +527,10 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
       } else if (bengaliRegex.test(line)) {
         p.style.fontFamily = "'Bornomala BN', sans-serif";
       } else {
-        // Default to Bornomala if it's consistent
         p.style.fontFamily = "'Bornomala BN', sans-serif";
       }
       
       // Handle cases where Arabic and Bengali/English are mixed in the same line
-      // We wrap Arabic parts in spans to ensure they get the right font/direction
       const words = line.split(/(\s+)/);
       words.forEach(word => {
         if (arabicRegex.test(word)) {
