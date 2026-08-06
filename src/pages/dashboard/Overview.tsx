@@ -165,7 +165,7 @@ const DeploymentStatus = () => {
             </h4>
             <p className="text-xs text-muted-foreground mt-0.5">
               {status === 'failed' 
-                ? 'সর্বশেষ ব্যাকএন্ড ডেপ্লয়মেন্টে একটি ত্রুটি দেখা দিয়েছে (Mirror failure)। বিস্তারিত তথ্যের জন্য GitHub Actions লগ দেখুন।' 
+                ? 'সর্বশেষ ব্যাকএন্ড ডেপ্লয়মেন্টে একটি ত্রুটি দেখা দিয়েছে (STALE_DIAGNOSTIC_CODE)। বিস্তারিত তথ্যের জন্য GitHub Actions লগ দেখুন।' 
                 : status === 'success' 
                   ? 'ব্যাকএন্ড সার্ভিস বর্তমানে সঠিকভাবে কাজ করছে।' 
                   : 'সিস্টেম হেলথ চেক করা হচ্ছে...'}
