@@ -197,10 +197,14 @@ const DeploymentStatus = () => {
              DEPLOYMENT FAILURE LOG
           </div>
           <pre className="whitespace-pre-wrap leading-relaxed">
-{`🔎 FTP host resolves to: 14.128.14.142
-⬆️ FTPS deploy: out -> ftp://14.128.14.142:21/api-app
-mirror: Fatal error: max-retries exceeded
-Error: Process completed with exit code 1.`}
+{`Run python3 scripts/verify-backend-deploy.py \\
+attempt 1/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 2/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 3/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 4/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 5/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+DEPLOY DIAGNOSIS: STALE_DIAGNOSTIC_CODE
+The live worker is still running code from before deployment diagnostics existed. The verified upload directory is not the active Application Root, or Passenger did not restart.`}
           </pre>
           <div className="mt-2 text-[10px] italic text-muted-foreground">
             টিপ: এই ত্রুটিটি সাধারণত FTP সার্ভারের সাথে কানেকশন সমস্যার কারণে হয়। কিছুক্ষণ পর পুনরায় ট্রাই করুন।
