@@ -13,19 +13,20 @@ const normalize = (b: string | ContentBlock): ContentBlock =>
   typeof b === "string" ? { type: "paragraph", text: b } : b;
 
 const Block = ({ block }: { block: ContentBlock }) => {
+  const commonBn = "font-['Bornomala_BN',_sans-serif]";
   switch (block.type) {
     case "paragraph":
       return block.lead ? (
-        <p className="text-xl md:text-2xl font-semibold text-foreground leading-[1.7] tracking-tight">
+        <p className={`text-xl md:text-2xl font-semibold text-foreground leading-[1.7] tracking-tight ${commonBn}`}>
           {block.text}
         </p>
       ) : (
-        <p className="text-foreground/90 leading-[1.95] text-[17px]">{block.text}</p>
+        <p className={`text-foreground/90 leading-[1.95] text-[17px] ${commonBn}`}>{block.text}</p>
       );
     case "heading": {
       const Tag = (block.level === 3 ? "h3" : "h2") as "h2" | "h3";
       return (
-        <Tag className={`${block.level === 3 ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"} font-bold text-foreground mt-4 flex items-center gap-3`}>
+        <Tag className={`${block.level === 3 ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"} font-bold text-foreground mt-4 flex items-center gap-3 ${commonBn}`}>
           <span className="h-7 w-1.5 rounded-full bg-primary shrink-0" />
           {block.text}
         </Tag>
@@ -58,7 +59,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
       return (
         <blockquote className="relative my-4 rounded-card bg-gradient-to-br from-primary/8 via-accent/40 to-transparent border-l-4 border-primary p-7 md:p-8">
           <Quote className="absolute -top-3 left-6 h-8 w-8 text-primary bg-background rounded-full p-1.5 ring-1 ring-border" />
-          <p className="text-lg md:text-xl font-semibold text-foreground leading-relaxed">"{block.text}"</p>
+          <p className={`text-lg md:text-xl font-semibold text-foreground leading-relaxed ${commonBn}`}>"{block.text}"</p>
           {block.author && <footer className="mt-3 text-sm text-muted-foreground">— {block.author}</footer>}
         </blockquote>
       );
@@ -84,7 +85,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
       return (
         <Tag className={`my-2 space-y-2.5 ${block.ordered ? "list-decimal" : ""} pl-1`}>
           {block.items.map((it, i) => (
-            <li key={i} className="flex items-start gap-3 text-foreground/90 leading-relaxed text-[16px]">
+            <li key={i} className={`flex items-start gap-3 text-foreground/90 leading-relaxed text-[16px] ${commonBn}`}>
               {!block.ordered && <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />}
               <span>{it}</span>
             </li>
@@ -179,7 +180,7 @@ const BlogPost = () => {
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground" title="পঠিত সংখ্যা"><Eye className="h-4 w-4" />{toBnNum(views)} বার পঠিত</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl">{post.title}</h1>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl font-['Bornomala_BN',_sans-serif]">{post.title}</h1>
           </div>
         </div>
       </section>
@@ -188,13 +189,13 @@ const BlogPost = () => {
       <section className="py-10 md:py-14">
         <div className="container-page grid lg:grid-cols-[1fr_320px] gap-10 md:gap-14">
           <article>
-            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5 italic">
+            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5 italic font-['Bornomala_BN',_sans-serif]">
               {post.excerpt}
             </p>
 
             {hasHtml ? (
               <div
-                className="prose-bn mt-8 max-w-none [&_img]:rounded-card [&_img]:my-4 [&_h2]:mt-6 [&_h3]:mt-5 [&_p]:leading-[1.9] [&_p]:text-[17px] [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_font[face*='Bornomala']]:font-['Bornomala_BN',_sans-serif] [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face*='AdorshoLipi']]:font-['AdorshoLipi',_sans-serif] [&_font[face*='Akaash']]:font-['Akaash',_sans-serif] [&_font[face*='Alinur']]:font-['Alinur',_sans-serif] [&_font[face*='Amiri']]:font-['Amiri',_serif] [&_font[face*='Scheherazade']]:font-['Scheherazade_New',_serif] [&_font[face*='Lateef']]:font-['Lateef',_serif] [&_font[face*='KFGQPC']]:font-['KFGQPC_Uthman_Taha_Naskh',_serif] [&_font[face*='Al-Quran']]:font-['Al-Quran_IndoPak',_serif] [&_font[face*='Noto_Kufi']]:font-['Noto_Kufi_Arabic',_sans-serif] [&_font[face='monospace']]:font-mono"
+                className="prose-bn mt-8 max-w-none [&_img]:rounded-card [&_img]:my-4 [&_h2]:mt-6 [&_h3]:mt-5 [&_p]:leading-[1.9] [&_p]:text-[17px] [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_blockquote]:italic [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:text-primary [&_a]:underline [&_font[face*='Bornomala']]:font-['Bornomala_BN',_sans-serif] [&_font[face='var(--font-heading)']]:font-heading [&_font[face='var(--font-body)']]:font-sans [&_font[face*='SolaimanLipi']]:font-['SolaimanLipi',_sans-serif] [&_font[face*='AdorshoLipi']]:font-['AdorshoLipi',_sans-serif] [&_font[face*='Akaash']]:font-['Akaash',_sans-serif] [&_font[face*='Alinur']]:font-['Alinur',_sans-serif] [&_font[face*='Amiri']]:font-['Amiri',_serif] [&_font[face*='Scheherazade']]:font-['Scheherazade_New',_serif] [&_font[face*='Lateef']]:font-['Lateef',_serif] [&_font[face*='KFGQPC']]:font-['KFGQPC_Uthman_Taha_Naskh',_serif] [&_font[face*='Al-Quran']]:font-['Al-Quran_IndoPak',_serif] [&_font[face*='Noto_Kufi']]:font-['Noto_Kufi_Arabic',_sans-serif] [&_font[face='monospace']]:font-mono font-['Bornomala_BN',_sans-serif]"
                 dangerouslySetInnerHTML={{ __html: (post as any).html }}
               />
             ) : (
