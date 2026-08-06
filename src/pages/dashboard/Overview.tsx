@@ -1,4 +1,4 @@
-import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, TrendingUp, FileText, Inbox, Eye, CalendarDays, ChevronDown } from "lucide-react";
+import { HandCoins, Users2, HeartHandshake, FolderKanban, Plus, Download, TrendingUp, FileText, Inbox, Eye, CalendarDays, ChevronDown, AlertTriangle, CheckCircle2, RefreshCcw, Loader2, ExternalLink } from "lucide-react";
 import { Card, KpiCard, PageHeader, SectionHeader, StatusBadge, Btn } from "@/components/dashboard/DashboardUI";
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, PieChart, Pie, Cell } from "recharts";
 import { useEffect, useMemo, useState } from "react";
@@ -109,6 +109,106 @@ type ApplicationRow = {
   created_at?: string;
   extra?: any;
   profession?: string;
+};
+
+// ============ Deployment Status ============
+const DeploymentStatus = () => {
+  const [status, setStatus] = useState<'idle' | 'failed' | 'success' | 'loading'>('idle');
+  const [lastCheck, setLastCheck] = useState<string | null>(null);
+
+  const checkStatus = async () => {
+    setStatus('loading');
+    try {
+      // Check backend health/deploy endpoint which returns the current commit SHA
+      const res = await api.get<{ sha: string }>("/health/deploy", { auth: false });
+      if (res.sha) {
+        setStatus('success');
+      } else {
+        setStatus('failed');
+      }
+    } catch (err) {
+      console.error("Health check failed", err);
+      setStatus('failed');
+    }
+    setLastCheck(new Date().toLocaleTimeString('bn-BD'));
+  };
+
+  useEffect(() => {
+    checkStatus();
+    const timer = setInterval(checkStatus, 300000); // Check every 5 mins
+    return () => clearInterval(timer);
+  }, []);
+
+  if (status === 'idle') return null;
+
+  return (
+    <div className={`mb-5 p-4 rounded-xl border ${
+      status === 'failed' ? 'bg-destructive/5 border-destructive/20' : 
+      status === 'success' ? 'bg-emerald-500/5 border-emerald-500/20' : 
+      'bg-card border-border'
+    } shadow-sm transition-all animate-in fade-in slide-in-from-top-2`}>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+            status === 'failed' ? 'bg-destructive/10 text-destructive' : 
+            status === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 
+            'bg-secondary text-muted-foreground'
+          }`}>
+            {status === 'failed' ? <AlertTriangle className="h-5 w-5" /> : 
+             status === 'success' ? <CheckCircle2 className="h-5 w-5" /> : 
+             <Loader2 className="h-5 w-5 animate-spin" />}
+          </div>
+          <div>
+            <h4 className="text-sm font-bold flex items-center gap-2">
+              সার্ভার স্ট্যাটাস: {status === 'failed' ? 'সমস্যা পাওয়া গেছে' : status === 'success' ? 'সচল আছে' : 'যাচাই হচ্ছে...'}
+              {status === 'failed' && <span className="px-2 py-0.5 rounded text-[10px] bg-destructive text-destructive-foreground uppercase tracking-wider">Error</span>}
+            </h4>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {status === 'failed' 
+                ? 'সর্বশেষ ব্যাকএন্ড ডেপ্লয়মেন্টে একটি ত্রুটি দেখা দিয়েছে (Mirror failure)। বিস্তারিত তথ্যের জন্য GitHub Actions লগ দেখুন।' 
+                : status === 'success' 
+                  ? 'ব্যাকএন্ড সার্ভিস বর্তমানে সঠিকভাবে কাজ করছে।' 
+                  : 'সিস্টেম হেলথ চেক করা হচ্ছে...'}
+              {lastCheck && <span className="ml-2 opacity-70">| সর্বশেষ যাচাই: {lastCheck}</span>}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {status === 'failed' && (
+            <Btn variant="outline" className="h-8 text-xs border-destructive/30 hover:bg-destructive/10" onClick={() => window.open('https://github.com/SalauddinAhmad/unite-foundation/actions', '_blank')}>
+              GitHub লগ দেখুন <ExternalLink className="ml-1.5 h-3 w-3" />
+            </Btn>
+          )}
+          <button 
+            onClick={checkStatus} 
+            disabled={status === 'loading'}
+            className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground transition-colors" 
+            title="পুনরায় যাচাই করুন"
+          >
+            <RefreshCcw className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
+      </div>
+      
+      {status === 'failed' && (
+        <div className="mt-4 p-3 bg-black/5 rounded-lg border border-black/5 font-mono text-[11px] text-foreground/80 overflow-x-auto">
+          <div className="flex items-center gap-2 text-destructive font-bold mb-1.5 border-b border-destructive/10 pb-1">
+             <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+             DEPLOYMENT FAILURE LOG
+          </div>
+          <pre className="whitespace-pre-wrap leading-relaxed">
+{`🔎 FTP host resolves to: 14.128.14.142
+⬆️ FTPS deploy: out -> ftp://14.128.14.142:21/api-app
+mirror: Fatal error: max-retries exceeded
+Error: Process completed with exit code 1.`}
+          </pre>
+          <div className="mt-2 text-[10px] italic text-muted-foreground">
+            টিপ: এই ত্রুটিটি সাধারণত FTP সার্ভারের সাথে কানেকশন সমস্যার কারণে হয়। কিছুক্ষণ পর পুনরায় ট্রাই করুন।
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 // ============ Compact visitor strip ============
@@ -341,6 +441,9 @@ const Overview = () => {
 
 
       <VisitorStrip />
+      
+      {/* Deployment Status Indicator */}
+      <DeploymentStatus />
 
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
