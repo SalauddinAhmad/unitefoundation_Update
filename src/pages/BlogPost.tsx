@@ -13,14 +13,15 @@ const normalize = (b: string | ContentBlock): ContentBlock =>
   typeof b === "string" ? { type: "paragraph", text: b } : b;
 
 const Block = ({ block }: { block: ContentBlock }) => {
+  const commonBn = "font-['Bornomala_BN',_sans-serif]";
   switch (block.type) {
     case "paragraph":
       return block.lead ? (
-        <p className="text-xl md:text-2xl font-semibold text-foreground leading-[1.7] tracking-tight">
+        <p className={`text-xl md:text-2xl font-semibold text-foreground leading-[1.7] tracking-tight ${commonBn}`}>
           {block.text}
         </p>
       ) : (
-        <p className="text-foreground/90 leading-[1.95] text-[17px]">{block.text}</p>
+        <p className={`text-foreground/90 leading-[1.95] text-[17px] ${commonBn}`}>{block.text}</p>
       );
     case "heading": {
       const Tag = (block.level === 3 ? "h3" : "h2") as "h2" | "h3";
