@@ -179,7 +179,7 @@ const BlogPost = () => {
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground"><Calendar className="h-4 w-4" />{post.date}</span>
               <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground" title="পঠিত সংখ্যা"><Eye className="h-4 w-4" />{toBnNum(views)} বার পঠিত</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl">{post.title}</h1>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-foreground leading-tight max-w-4xl font-['Bornomala_BN',_sans-serif]">{post.title}</h1>
           </div>
         </div>
       </section>
