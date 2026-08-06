@@ -457,7 +457,8 @@ export const useSavePost = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, data }: { id?: string; data: Partial<ApiPost> }) => {
-      if (id) return api.patch(`/posts/${id}`, data);
+      // Use putWithPostFallback via api.put for updates to avoid network issues
+      if (id) return api.put(`/posts/${id}`, data);
       return api.post("/posts", data);
     },
     onSuccess: () => {
