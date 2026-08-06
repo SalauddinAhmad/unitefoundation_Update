@@ -26,7 +26,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
     case "heading": {
       const Tag = (block.level === 3 ? "h3" : "h2") as "h2" | "h3";
       return (
-        <Tag className={`${block.level === 3 ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"} font-bold text-foreground mt-4 flex items-center gap-3`}>
+        <Tag className={`${block.level === 3 ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"} font-bold text-foreground mt-4 flex items-center gap-3 ${commonBn}`}>
           <span className="h-7 w-1.5 rounded-full bg-primary shrink-0" />
           {block.text}
         </Tag>
