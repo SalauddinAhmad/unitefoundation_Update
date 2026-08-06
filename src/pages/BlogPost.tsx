@@ -85,7 +85,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
       return (
         <Tag className={`my-2 space-y-2.5 ${block.ordered ? "list-decimal" : ""} pl-1`}>
           {block.items.map((it, i) => (
-            <li key={i} className="flex items-start gap-3 text-foreground/90 leading-relaxed text-[16px]">
+            <li key={i} className={`flex items-start gap-3 text-foreground/90 leading-relaxed text-[16px] ${commonBn}`}>
               {!block.ordered && <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />}
               <span>{it}</span>
             </li>
