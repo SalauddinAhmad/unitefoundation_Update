@@ -495,6 +495,47 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const onPaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    
+    // Create a temporary container to process the text
+    const container = document.createElement("div");
+    
+    // Simple regex to detect scripts
+    // Arabic regex range: \u0600-\u06FF, \u0750-\u077F, \u08A0-\u08FF, \uFB50-\uFDFF, \uFE70-\uFEFF
+    const arabicRegex = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    // Bengali regex range: \u0980-\u09FF
+    const bengaliRegex = /[\u0980-\u09FF]/;
+
+    // Split text by lines to preserve structure but apply fonts
+    const lines = text.split("\n");
+    lines.forEach((line) => {
+      if (!line.trim()) {
+        container.appendChild(document.createElement("br"));
+        return;
+      }
+
+      const p = document.createElement("p");
+      p.style.margin = "0.5em 0";
+      
+      // Check if line is primarily Arabic or Bengali
+      if (arabicRegex.test(line)) {
+        p.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
+      } else if (bengaliRegex.test(line)) {
+        p.style.fontFamily = "'Bornomala BN', sans-serif";
+      }
+      
+      p.textContent = line;
+      container.appendChild(p);
+    });
+
+    document.execCommand("insertHTML", false, container.innerHTML);
+    if (editorRef.current) {
+      setHtml(editorRef.current.innerHTML);
+    }
+  };
+
   const cmd = (c: string, v?: string) => {
     document.execCommand(c, false, v);
     if (editorRef.current) {
