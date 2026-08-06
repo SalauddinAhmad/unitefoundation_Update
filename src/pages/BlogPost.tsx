@@ -59,7 +59,7 @@ const Block = ({ block }: { block: ContentBlock }) => {
       return (
         <blockquote className="relative my-4 rounded-card bg-gradient-to-br from-primary/8 via-accent/40 to-transparent border-l-4 border-primary p-7 md:p-8">
           <Quote className="absolute -top-3 left-6 h-8 w-8 text-primary bg-background rounded-full p-1.5 ring-1 ring-border" />
-          <p className="text-lg md:text-xl font-semibold text-foreground leading-relaxed">"{block.text}"</p>
+          <p className={`text-lg md:text-xl font-semibold text-foreground leading-relaxed ${commonBn}`}>"{block.text}"</p>
           {block.author && <footer className="mt-3 text-sm text-muted-foreground">— {block.author}</footer>}
         </blockquote>
       );
