@@ -207,7 +207,7 @@ DEPLOY DIAGNOSIS: STALE_DIAGNOSTIC_CODE
 The live worker is still running code from before deployment diagnostics existed. The verified upload directory is not the active Application Root, or Passenger did not restart.`}
           </pre>
           <div className="mt-2 text-[10px] italic text-muted-foreground">
-            টিপ: এই ত্রুটিটি সাধারণত FTP সার্ভারের সাথে কানেকশন সমস্যার কারণে হয়। কিছুক্ষণ পর পুনরায় ট্রাই করুন।
+            টিপ: এই ত্রুটিটি সাধারণত সার্ভার রিস্টার্ট না হওয়া বা ভুল ডিরেক্টরিতে আপলোড হওয়ার কারণে হয়। cPanel থেকে Passenger রিস্টার্ট করে দেখুন।
           </div>
         </div>
       )}
