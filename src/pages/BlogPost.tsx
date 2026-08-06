@@ -188,7 +188,7 @@ const BlogPost = () => {
       <section className="py-10 md:py-14">
         <div className="container-page grid lg:grid-cols-[1fr_320px] gap-10 md:gap-14">
           <article>
-            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5 italic">
+            <p className="text-lg text-muted-foreground leading-relaxed border-l-4 border-primary pl-5 italic font-['Bornomala_BN',_sans-serif]">
               {post.excerpt}
             </p>
 
