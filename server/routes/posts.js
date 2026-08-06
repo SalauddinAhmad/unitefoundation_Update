@@ -72,14 +72,18 @@ router.post('/', requireAuth, asyncH(async (req, res) => {
   res.status(201).json({ id });
 }));
 
-router.patch('/:id', requireAuth, asyncH(async (req, res) => {
+// Handle both PATCH and PUT (for fallback)
+const handleUpdate = asyncH(async (req, res) => {
   const d = schema.partial().parse(req.body);
   const keys = Object.keys(d);
   if (!keys.length) return res.json({ ok: true });
   const set = keys.map(k => `\`${k}\`=?`).join(',');
   await pool.execute(`UPDATE posts SET ${set} WHERE id=?`, [...keys.map(k => d[k]), req.params.id]);
   res.json({ ok: true });
-}));
+});
+
+router.patch('/:id', requireAuth, handleUpdate);
+router.put('/:id', requireAuth, handleUpdate);
 
 router.delete('/:id', requireAuth, asyncH(async (req, res) => {
   await pool.execute('DELETE FROM posts WHERE id=?', [req.params.id]);
