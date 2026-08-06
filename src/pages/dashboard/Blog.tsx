@@ -522,6 +522,8 @@ function PostEditor({ post, onClose, onSave, categories, defaults, onAddCategory
       // Check if line is primarily Arabic or Bengali
       if (arabicRegex.test(line)) {
         p.style.fontFamily = "'Noto Kufi Arabic', sans-serif";
+        p.dir = "rtl";
+        p.style.textAlign = "right";
       } else if (bengaliRegex.test(line)) {
         p.style.fontFamily = "'Bornomala BN', sans-serif";
       }
