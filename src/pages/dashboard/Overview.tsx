@@ -165,7 +165,7 @@ const DeploymentStatus = () => {
             </h4>
             <p className="text-xs text-muted-foreground mt-0.5">
               {status === 'failed' 
-                ? 'সর্বশেষ ব্যাকএন্ড ডেপ্লয়মেন্টে একটি ত্রুটি দেখা দিয়েছে (Mirror failure)। বিস্তারিত তথ্যের জন্য GitHub Actions লগ দেখুন।' 
+                ? 'সর্বশেষ ব্যাকএন্ড ডেপ্লয়মেন্টে একটি ত্রুটি দেখা দিয়েছে (STALE_DIAGNOSTIC_CODE)। বিস্তারিত তথ্যের জন্য GitHub Actions লগ দেখুন।' 
                 : status === 'success' 
                   ? 'ব্যাকএন্ড সার্ভিস বর্তমানে সঠিকভাবে কাজ করছে।' 
                   : 'সিস্টেম হেলথ চেক করা হচ্ছে...'}
@@ -197,13 +197,17 @@ const DeploymentStatus = () => {
              DEPLOYMENT FAILURE LOG
           </div>
           <pre className="whitespace-pre-wrap leading-relaxed">
-{`🔎 FTP host resolves to: 14.128.14.142
-⬆️ FTPS deploy: out -> ftp://14.128.14.142:21/api-app
-mirror: Fatal error: max-retries exceeded
-Error: Process completed with exit code 1.`}
+{`Run python3 scripts/verify-backend-deploy.py \\
+attempt 1/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 2/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 3/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 4/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+attempt 5/5 -> HTTP 403, content-type 'application/json', release 'unavailable'
+DEPLOY DIAGNOSIS: STALE_DIAGNOSTIC_CODE
+The live worker is still running code from before deployment diagnostics existed. The verified upload directory is not the active Application Root, or Passenger did not restart.`}
           </pre>
           <div className="mt-2 text-[10px] italic text-muted-foreground">
-            টিপ: এই ত্রুটিটি সাধারণত FTP সার্ভারের সাথে কানেকশন সমস্যার কারণে হয়। কিছুক্ষণ পর পুনরায় ট্রাই করুন।
+            টিপ: এই ত্রুটিটি সাধারণত সার্ভার রিস্টার্ট না হওয়া বা ভুল ডিরেক্টরিতে আপলোড হওয়ার কারণে হয়। cPanel থেকে Passenger রিস্টার্ট করে দেখুন।
           </div>
         </div>
       )}
