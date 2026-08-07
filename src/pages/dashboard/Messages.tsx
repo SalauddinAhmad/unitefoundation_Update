@@ -156,12 +156,18 @@ const Messages = () => {
     update(next);
   };
 
-  const removeActive = () => {
+  const removeActive = async () => {
     if (!active) return;
-    const next = list.filter((m) => m.id !== active.id);
-    update(next);
-    setSelected(next[0]?.id);
-    toast.success("মেসেজ ডিলিট করা হয়েছে");
+    try {
+      await api.delete(`/messages/${active.id}`);
+      const next = list.filter((m) => m.id !== active.id);
+      update(next);
+      setSelected(next[0]?.id);
+      toast.success("মেসেজ ডিলিট করা হয়েছে");
+    } catch (e) {
+      console.error("[messages] delete failed", e);
+      toast.error("মেসেজ ডিলিট করা যায়নি");
+    }
   };
 
   const sendReply = async () => {
