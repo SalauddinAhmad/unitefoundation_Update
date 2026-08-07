@@ -68,10 +68,10 @@ const Messages = () => {
     (async () => {
       try {
         const rows = await api.get<MessageEx[]>("/messages");
-        if (Array.isArray(rows) && rows.length) {
+        if (Array.isArray(rows)) {
           setList(rows);
           persist(rows);
-          if (!selected) setSelected(rows[0]?.id);
+          if (!selected && rows.length > 0) setSelected(rows[0]?.id);
         }
       } catch (e) {
         // Backend unreachable — keep local seed
