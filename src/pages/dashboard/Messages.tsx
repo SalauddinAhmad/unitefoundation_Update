@@ -68,10 +68,10 @@ const Messages = () => {
     (async () => {
       try {
         const rows = await api.get<MessageEx[]>("/messages");
-        if (Array.isArray(rows) && rows.length) {
+        if (Array.isArray(rows)) {
           setList(rows);
           persist(rows);
-          if (!selected) setSelected(rows[0]?.id);
+          if (!selected && rows.length > 0) setSelected(rows[0]?.id);
         }
       } catch (e) {
         // Backend unreachable — keep local seed
@@ -149,19 +149,33 @@ const Messages = () => {
 
   const update = (next: MessageEx[]) => { setList(next); persist(next); };
 
-  const openMessage = (id: string) => {
+  const openMessage = async (id: string) => {
     setSelected(id);
     setReplyText("");
-    const next = list.map((m) => (m.id === id && m.status === "unread" ? { ...m, status: "read" as const } : m));
-    update(next);
+    const msg = list.find((m) => m.id === id);
+    if (msg && msg.status === "unread") {
+      try {
+        await api.patch(`/messages/${id}`, { status: "read" });
+        const next = list.map((m) => (m.id === id ? { ...m, status: "read" as const } : m));
+        update(next);
+      } catch (e) {
+        console.error("[messages] status update failed", e);
+      }
+    }
   };
 
-  const removeActive = () => {
+  const removeActive = async () => {
     if (!active) return;
-    const next = list.filter((m) => m.id !== active.id);
-    update(next);
-    setSelected(next[0]?.id);
-    toast.success("মেসেজ ডিলিট করা হয়েছে");
+    try {
+      await api.delete(`/messages/${active.id}`);
+      const next = list.filter((m) => m.id !== active.id);
+      update(next);
+      setSelected(next[0]?.id);
+      toast.success("মেসেজ ডিলিট করা হয়েছে");
+    } catch (e) {
+      console.error("[messages] delete failed", e);
+      toast.error("মেসেজ ডিলিট করা যায়নি");
+    }
   };
 
   const sendReply = async () => {
