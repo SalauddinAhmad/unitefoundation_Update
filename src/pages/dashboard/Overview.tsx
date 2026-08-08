@@ -153,47 +153,53 @@ const DeploymentStatus = () => {
       status === 'success' ? 'bg-emerald-500/5 border-emerald-500/20' : 
       'bg-card border-border'
     } shadow-sm transition-all animate-in fade-in slide-in-from-top-2`}>
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-            status === 'failed' ? 'bg-destructive/10 text-destructive' : 
-            status === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 
-            'bg-secondary text-muted-foreground'
-          }`}>
-            {status === 'failed' ? <AlertTriangle className="h-5 w-5" /> : 
-             status === 'success' ? <CheckCircle2 className="h-5 w-5" /> : 
-             <Loader2 className="h-5 w-5 animate-spin" />}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
+              status === 'failed' ? 'bg-destructive/10 text-destructive' : 
+              status === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 
+              'bg-secondary text-muted-foreground'
+            }`}>
+              {status === 'failed' ? <AlertTriangle className="h-5 w-5" /> : 
+               status === 'success' ? <CheckCircle2 className="h-5 w-5" /> : 
+               <Loader2 className="h-5 w-5 animate-spin" />}
+            </div>
+            <div>
+              <h4 className="text-sm font-bold flex items-center gap-2">
+                সার্ভার স্ট্যাটাস: {status === 'failed' ? 'ডিপ্লয়মেন্ট এরর' : status === 'success' ? 'সচল আছে' : 'যাচাই হচ্ছে...'}
+                {status === 'failed' && <span className="px-2 py-0.5 rounded text-[10px] bg-destructive text-destructive-foreground uppercase tracking-wider">Failed</span>}
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {status === 'failed' 
+                  ? 'সর্বশেষ ফ্রন্টএন্ড ডিপ্লয়মেন্ট ব্যর্থ হয়েছে (Verify frontend is live)।' 
+                  : status === 'success' 
+                    ? `ব্যাকএন্ড সার্ভিস সচল (ভার্সন: ${details?.release?.slice(0, 7) || 'unknown'})।` 
+                    : 'সিস্টেম হেলথ চেক করা হচ্ছে...'}
+                {lastCheck && <span className="ml-2 opacity-70">| সর্বশেষ যাচাই: {lastCheck}</span>}
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="text-sm font-bold flex items-center gap-2">
-              সার্ভার স্ট্যাটাস: {status === 'failed' ? 'সংযোগ বিচ্ছিন্ন' : status === 'success' ? 'সচল আছে' : 'যাচাই হচ্ছে...'}
-              {status === 'failed' && <span className="px-2 py-0.5 rounded text-[10px] bg-destructive text-destructive-foreground uppercase tracking-wider">Error</span>}
-            </h4>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {status === 'failed' 
-                ? 'সার্ভারের সাথে সংযোগ স্থাপন করা যাচ্ছে না। অনুগ্রহ করে ইন্টারনেট কানেকশন বা সার্ভার কনফিগারেশন যাচাই করুন।' 
-                : status === 'success' 
-                  ? `ব্যাকএন্ড সার্ভিস সচল (ভার্সন: ${details?.release?.slice(0, 7) || 'unknown'})।` 
-                  : 'সিস্টেম হেলথ চেক করা হচ্ছে...'}
-              {lastCheck && <span className="ml-2 opacity-70">| সর্বশেষ যাচাই: {lastCheck}</span>}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {status === 'failed' && (
-            <Btn variant="outline" className="h-8 text-xs border-destructive/30 hover:bg-destructive/10" onClick={() => window.open('https://github.com/SalauddinAhmad/unite-foundation/actions', '_blank')}>
+          <div className="flex items-center gap-2">
+            <Btn variant="outline" className="h-8 text-xs" onClick={() => window.open('https://github.com/SalauddinAhmad/unite-foundation/actions', '_blank')}>
               GitHub লগ দেখুন <ExternalLink className="ml-1.5 h-3 w-3" />
             </Btn>
-          )}
-          <button 
-            onClick={checkStatus} 
-            disabled={status === 'loading'}
-            className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground transition-colors" 
-            title="পুনরায় যাচাই করুন"
-          >
-            <RefreshCcw className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
-          </button>
+            <button 
+              onClick={checkStatus} 
+              disabled={status === 'loading'}
+              className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground transition-colors" 
+              title="পুনরায় যাচাই করুন"
+            >
+              <RefreshCcw className={`h-4 w-4 ${status === 'loading' ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
         </div>
+
+        {status === 'failed' && (
+          <div className="bg-destructive/10 p-3 rounded-lg border border-destructive/20 font-mono text-[11px] leading-relaxed text-destructive overflow-x-auto whitespace-pre">
+            {`frontend\nfailed 10 minutes ago in 8m 5s\n...\n❌ New release was not found on the actual web origin.\n   The upload reached a different FTP root/server than unitefoundation.bd.`}
+          </div>
+        )}
       </div>
       
       {status === 'success' && details && (
