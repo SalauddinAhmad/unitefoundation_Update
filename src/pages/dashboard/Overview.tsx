@@ -197,7 +197,237 @@ const DeploymentStatus = () => {
 
         {status === 'failed' && (
           <div className="bg-destructive/10 p-3 rounded-lg border border-destructive/20 font-mono text-[11px] leading-relaxed text-destructive overflow-x-auto whitespace-pre">
-            {`frontend\nfailed 10 minutes ago in 8m 5s\n...\n❌ New release was not found on the actual web origin.\n   The upload reached a different FTP root/server than unitefoundation.bd.`}
+```markdown
+## Task: Complete remaining improvements for unitefoundation.bd
+
+### Current State
+Vite React SPA with TypeScript. Repo: github.com/SalauddinAhmad/unitefoundation_Update
+Already done: date-fns, shadcn/ui, i18n (bn+en), react-query, react-hook-form+zod, cmdk, recharts, SSLCommerz, full Express+PostgreSQL backend.
+
+### What to do:
+
+---
+
+### 1. Next.js Migration (Vite → Next.js 14 App Router)
+
+Convert all routes from react-router-dom to Next.js file-based routing:
+
+```
+app/
+├── layout.tsx              → root (QueryClient + TooltipProvider + Toaster + Sonner)
+├── page.tsx                → Index.tsx (SSG, revalidate daily)
+├── projects/
+│   ├── page.tsx            → Projects.tsx (ISR, revalidate hourly)
+│   └── [slug]/
+│       └── page.tsx        → ProjectDetail.tsx (ISR)
+├── blog/
+│   ├── page.tsx            → Blog.tsx (ISR, revalidate 30min)
+│   └── [slug]/
+│       └── page.tsx        → BlogPost.tsx (ISR)
+├── gallery/page.tsx        → Gallery.tsx (SSG)
+├── donate/page.tsx         → Donate.tsx (SSG)
+├── about/page.tsx          → About.tsx (SSG)
+├── contact/page.tsx        → Contact.tsx (SSG)
+├── volunteer/page.tsx      → Volunteer.tsx (SSG)
+├── partners/[slug]/page.tsx → PartnerDetail.tsx
+├── privacy-policy/page.tsx
+├── terms-conditions/page.tsx
+├── refund-policy/page.tsx
+├── subscribe/page.tsx
+├── login/page.tsx          → 'use client' (CSR)
+├── forgot-password/page.tsx → 'use client'
+├── dashboard/
+│   ├── layout.tsx          → DashboardLayout wrappped, 'use client'
+│   ├── page.tsx            → Overview.tsx
+│   ├── donations/page.tsx
+│   ├── volunteers/page.tsx
+│   ├── members/page.tsx
+│   ├── projects/page.tsx
+│   ├── blog/page.tsx
+│   ├── gallery/page.tsx
+│   ├── messages/page.tsx
+│   ├── newsletter/page.tsx
+│   ├── careers/page.tsx
+│   ├── team/page.tsx
+│   ├── partners/page.tsx
+│   ├── settings/page.tsx
+│   ├── forms/page.tsx
+│   ├── logs/page.tsx
+│   ├── help/page.tsx
+│   └── profile/page.tsx
+```
+
+- Convert all `<Link to="/x">` → `<Link href="/x">`
+- Convert `useParams` / `useLocation` → Next.js equivalents
+- Keep all existing lazy loading patterns (Suspense)
+- Keep existing i18n, react-query, all hooks
+- Dashboard routes: all 'use client' + wrap with RequireAuth
+- Add `loading.tsx` files (same spinner from current Loader component)
+
+### 2. Replace Seo Component → Native Metadata
+
+Remove `<Seo />` components. Use Next.js `metadata` export per page:
+
+```typescript
+// app/layout.tsx (root defaults)
+export const metadata: Metadata = {
+  title: { default: 'ইউনাইট ফাউন্ডেশন', template: '%s — ইউনাইট ফাউন্ডেশন' },
+  description: 'সুন্নাহর অনুসরণে, মানবতার কল্যাণে — অরাজনৈতিক ইসলামিক প্ল্যাটফর্ম',
+  metadataBase: new URL('https://unitefoundation.bd'),
+  openGraph: {
+    siteName: 'ইউনাইট ফাউন্ডেশন',
+    locale: 'bn_BD',
+    type: 'website',
+  },
+  twitter: { card: 'summary_large_image' },
+}
+```
+
+Per page examples:
+```typescript
+// app/projects/page.tsx
+export const metadata: Metadata = {
+  title: 'কার্যক্রম',
+  description: 'কর্জে হাসানাহ, ত্রাণ, এতিম ও অন্যান্য চলমান প্রকল্প',
+}
+
+// app/blog/[slug]/page.tsx
+export async function generateMetadata({ params }) {
+  const post = await getBlogPost(params.slug)
+  return { title: post.title, description: post.excerpt }
+}
+```
+
+### 3. Add JSON-LD Schema
+
+Add Organization schema in root layout:
+```typescript
+// app/layout.tsx (inside <head>)
+<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ইউনাইট ফাউন্ডেশন",
+  "alternateName": "Unite Foundation",
+  "url": "https://unitefoundation.bd/",
+  "logo": "https://unitefoundation.bd/favicon.svg",
+  "address": { "@type": "PostalAddress", "streetAddress": "৫৬-চামুরখান, কাঁচকুড়া, উত্তরখান", "addressLocality": "ঢাকা", "addressCountry": "BD" },
+  "telephone": "+8801614264901",
+  "email": "info@unitefoundation.bd",
+  "sameAs": ["https://www.facebook.com/UniteFoundation.UniteTv", "https://youtube.com/@unite.foundation"]
+}) }} />
+```
+
+Add BlogPosting schema in `app/blog/[slug]/page.tsx` via `generateMetadata` or separate script tag.
+
+### 4. Generate Dynamic sitemap.ts
+
+```typescript
+// app/sitemap.ts
+export default async function sitemap() {
+  const base = 'https://unitefoundation.bd'
+  return [
+    { url: base, priority: 1, changeFrequency: 'weekly' as const },
+    { url: `${base}/projects`, priority: 0.9, changeFrequency: 'weekly' as const },
+    { url: `${base}/blog`, priority: 0.8, changeFrequency: 'daily' as const },
+    { url: `${base}/donate`, priority: 0.9, changeFrequency: 'monthly' as const },
+    { url: `${base}/about`, priority: 0.7, changeFrequency: 'monthly' as const },
+    { url: `${base}/gallery`, priority: 0.6, changeFrequency: 'weekly' as const },
+    { url: `${base}/contact`, priority: 0.5, changeFrequency: 'monthly' as const },
+    { url: `${base}/volunteer`, priority: 0.6, changeFrequency: 'monthly' as const },
+    { url: `${base}/subscribe`, priority: 0.4, changeFrequency: 'monthly' as const },
+  ]
+}
+```
+
+Add `app/robots.ts`:
+```typescript
+export default function robots() {
+  return { rules: { userAgent: '*', allow: '/' }, sitemap: 'https://unitefoundation.bd/sitemap.xml' }
+}
+```
+
+### 5. Security Headers
+
+```javascript
+// next.config.js
+module.exports = {
+  async headers() {
+    return [{
+      source: '/(.*)',
+      headers: [
+        { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+      ],
+    }]
+  }
+}
+```
+
+### 6. PWA Manifest
+
+Create `app/manifest.ts`:
+```typescript
+import { MetadataRoute } from 'next'
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'ইউনাইট ফাউন্ডেশন',
+    short_name: 'Unite Foundation',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#0a0a0a',
+    theme_color: '#8b5cf6',
+    icons: [
+      { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+  }
+}
+```
+
+Generate PWA icons from existing logo.png (or favicon.svg).
+
+### 7. Add Breadcrumb to Pages
+
+Use existing `@/components/ui/breadcrumb` component. Add to these pages:
+- `/projects/[slug]` → হোম > কার্যক্রম > [project title]
+- `/blog/[slug]` → হোম > ব্লগ > [post title]
+- `/about`, `/gallery`, `/contact`, `/volunteer`
+
+```typescript
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb'
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem><BreadcrumbLink href="/">হোম</BreadcrumbLink></BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem><BreadcrumbPage>বর্তমান পেজ</BreadcrumbPage></BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>
+```
+
+### 8. Image Optimization
+
+Replace all `<img>` with Next.js `<Image>`:
+```typescript
+import Image from 'next/image'
+// next.config.js: images: { formats: ['image/avif', 'image/webp'] }
+```
+
+### Checklist (verify after)
+
+- [ ] `npm run build` succeeds
+- [ ] All 30+ routes work
+- [ ] Each page has unique title (check View Source)
+- [ ] `https://unitefoundation.bd/sitemap.xml` returns valid XML
+- [ ] Security headers present (test at securityheaders.com)
+- [ ] Schema validates (test at search.google.com/test/rich-results)
+- [ ] PWA manifest loads at `/manifest.json`
+- [ ] Breadcrumbs visible on inner pages
+- [ ] Bundle per route < 200KB
+```
           </div>
         )}
       </div>
