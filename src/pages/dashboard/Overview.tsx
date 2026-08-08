@@ -204,40 +204,18 @@ const DeploymentStatus = () => {
               <h3 className="text-destructive font-bold text-sm mb-2">প্রয়োজনীয় উন্নতি (Next.js Migration Roadmap):</h3>
               <div className="bg-black/20 p-3 rounded text-[10px] text-destructive/90 overflow-y-auto max-h-[300px]">
                 <pre className="whitespace-pre-wrap">
-{`## Task: Complete remaining improvements for unitefoundation.bd
+{`আমার unitefoundation_Update রিপোতে Overview.tsx-এ এইমাত্র DeploymentStatus উইজেট আর Next.js মাইগ্রেশন রোডম্যাপ এমবেড করা হয়েছে। রিপো pull করে নিয়ে এরপরের স্টেপগুলো করো:
 
-### Current State
-Vite React SPA with TypeScript. Repo: github.com/SalauddinAhmad/unitefoundation_Update
-Already done: date-fns, shadcn/ui, i18n (bn+en), react-query, react-hook-form+zod, cmdk, recharts, SSLCommerz, full Express+PostgreSQL backend.
+1. পুরো প্রজেক্ট Vite থেকে Next.js 14 App Router-এ মাইগ্রেট করো
+2. <Seo> কম্পোনেন্টগুলোর বদলে Next.js metadata API ব্যবহার করো
+3. root layout-এ JSON-LD Organization schema যোগ করো
+4. sitemap.ts + robots.ts তৈরি করো
+5. next.config.js-এ security headers (HSTS, X-Frame, X-Content-Type, Referrer-Policy) সেট করো
+6. PWA manifest.json তৈরি করো
+7. ইন্টারনাল পেজগুলোতে breadcrumb যোগ করো
+8. <img> গুলো next/image-এ কনভার্ট করো
 
-### What to do:
-
-1. Next.js Migration (Vite -> Next.js 14 App Router)
-   - Convert all routes to file-based routing.
-   - Convert <Link to> to <Link href>.
-   - Use 'use client' for interactive components.
-
-2. Replace Seo Component -> Native Metadata
-   - Use Next.js metadata API for each page.
-
-3. Add JSON-LD Schema
-   - Organization schema in root layout.
-   - BlogPosting schema in blog pages.
-
-4. Dynamic sitemap.ts and robots.ts
-   - Implement automated SEO file generation.
-
-5. Security Headers
-   - Configure HSTS, X-Frame-Options, etc.
-
-6. PWA Manifest
-   - Add manifest.ts for offline support and mobile install.
-
-7. Breadcrumbs
-   - Add structured navigation to inner pages.
-
-8. Image Optimization
-   - Replace <img> with next/image.`}
+সব শেষে \`npm run build\` দিয়ে টেস্ট করবে।`}
                 </pre>
               </div>
             </div>
