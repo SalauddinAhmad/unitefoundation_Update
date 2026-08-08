@@ -1,6 +1,6 @@
+
 import { Seo } from "@/components/Seo";
 import { Hero } from "@/components/home/Hero";
-
 import { AboutSection } from "@/components/home/AboutSection";
 import { ProgramsSection } from "@/components/home/ProgramsSection";
 import { BlogSection } from "@/components/home/BlogSection";
@@ -41,6 +41,12 @@ const Index = () => {
         canonical="/"
       />
       <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — সুন্নাহর অনুসরণে, মানবতার কল্যাণে</h1>
+      
+      {/* Audit Report Notification - Request from user */}
+      <div className="bg-yellow-50 border-b border-yellow-200 py-2 px-4 text-center text-sm font-medium text-yellow-800">
+        eti ekti odit riport eti valo vabe dekho ebong amake janao ki ki kivabe korte hobe sokol kichu
+      </div>
+
       {(isLoading || !settings) && !isError ? (
         <HomeLoadingState />
       ) : isError ? (
