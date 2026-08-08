@@ -479,7 +479,7 @@ const Overview = () => {
 
 
       <VisitorStrip />
-      <DeploymentStatus />
+      {/* <DeploymentStatus /> */}
       
 
       {/* KPIs */}
