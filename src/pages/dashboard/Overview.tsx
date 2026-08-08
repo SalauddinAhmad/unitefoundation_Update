@@ -206,16 +206,16 @@ const DeploymentStatus = () => {
                 <pre className="whitespace-pre-wrap">
 {`আমার unitefoundation_Update রিপোতে Overview.tsx-এ এইমাত্র DeploymentStatus উইজেট আর Next.js মাইগ্রেশন রোডম্যাপ এমবেড করা হয়েছে। রিপো pull করে নিয়ে এরপরের স্টেপগুলো করো:
 
-1. পুরো প্রজেক্ট Vite থেকে Next.js 14 App Router-এ মাইগ্রেট করো
-2. <Seo> কম্পোনেন্টগুলোর বদলে Next.js metadata API ব্যবহার করো
-3. root layout-এ JSON-LD Organization schema যোগ করো
-4. sitemap.ts + robots.ts তৈরি করো
-5. next.config.js-এ security headers (HSTS, X-Frame, X-Content-Type, Referrer-Policy) সেট করো
-6. PWA manifest.json তৈরি করো
-7. ইন্টারনাল পেজগুলোতে breadcrumb যোগ করো
-8. <img> গুলো next/image-এ কনভার্ট করো
+১. পুরো প্রজেক্ট Vite থেকে Next.js 14 App Router-এ মাইগ্রেট করো
+২. <Seo> কম্পোনেন্টগুলোর বদলে Next.js metadata API ব্যবহার করো
+৩. root layout-এ JSON-LD Organization schema যোগ করো
+৪. sitemap.ts + robots.ts তৈরি করো
+৫. next.config.js-এ security headers সেট করো
+৬. PWA manifest.json তৈরি করো
+৭. পেজগুলোতে breadcrumb যোগ করো
+৮. <img> গুলো next/image-এ কনভার্ট করো
 
-সব শেষে \`npm run build\` দিয়ে টেস্ট করবে।`}
+egulo complet hoyeche?`}
                 </pre>
               </div>
             </div>
