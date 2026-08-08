@@ -196,8 +196,51 @@ const DeploymentStatus = () => {
         </div>
 
         {status === 'failed' && (
-          <div className="bg-destructive/10 p-3 rounded-lg border border-destructive/20 font-mono text-[11px] leading-relaxed text-destructive overflow-x-auto whitespace-pre">
-            {`frontend\nfailed 10 minutes ago in 8m 5s\n...\n❌ New release was not found on the actual web origin.\n   The upload reached a different FTP root/server than unitefoundation.bd.`}
+          <div className="bg-destructive/10 p-4 rounded-lg border border-destructive/20 font-mono text-[11px] leading-relaxed text-destructive overflow-x-auto">
+            <div className="whitespace-pre mb-4">
+              {`frontend\nfailed 10 minutes ago in 8m 5s\n...\n❌ New release was not found on the actual web origin.\n   The upload reached a different FTP root/server than unitefoundation.bd.`}
+            </div>
+            <div className="mt-4 pt-4 border-t border-destructive/20 prose prose-invert prose-sm max-w-none">
+              <h3 className="text-destructive font-bold text-sm mb-2">প্রয়োজনীয় উন্নতি (Next.js Migration Roadmap):</h3>
+              <div className="bg-black/20 p-3 rounded text-[10px] text-destructive/90 overflow-y-auto max-h-[300px]">
+                <pre className="whitespace-pre-wrap">
+{`## Task: Complete remaining improvements for unitefoundation.bd
+
+### Current State
+Vite React SPA with TypeScript. Repo: github.com/SalauddinAhmad/unitefoundation_Update
+Already done: date-fns, shadcn/ui, i18n (bn+en), react-query, react-hook-form+zod, cmdk, recharts, SSLCommerz, full Express+PostgreSQL backend.
+
+### What to do:
+
+1. Next.js Migration (Vite -> Next.js 14 App Router)
+   - Convert all routes to file-based routing.
+   - Convert <Link to> to <Link href>.
+   - Use 'use client' for interactive components.
+
+2. Replace Seo Component -> Native Metadata
+   - Use Next.js metadata API for each page.
+
+3. Add JSON-LD Schema
+   - Organization schema in root layout.
+   - BlogPosting schema in blog pages.
+
+4. Dynamic sitemap.ts and robots.ts
+   - Implement automated SEO file generation.
+
+5. Security Headers
+   - Configure HSTS, X-Frame-Options, etc.
+
+6. PWA Manifest
+   - Add manifest.ts for offline support and mobile install.
+
+7. Breadcrumbs
+   - Add structured navigation to inner pages.
+
+8. Image Optimization
+   - Replace <img> with next/image.`}
+                </pre>
+              </div>
+            </div>
           </div>
         )}
       </div>
