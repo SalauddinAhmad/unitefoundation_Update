@@ -346,6 +346,8 @@ const Overview = () => {
     })();
   }, [range.key]);
 
+  const showStatus = false; // Hide deployment status per user request
+
   const exportDonationsCsv = async () => {
     const qs = new URLSearchParams();
     if (range.from) qs.set("from", range.from);
