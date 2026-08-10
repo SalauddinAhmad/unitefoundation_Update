@@ -39,8 +39,14 @@ BROWSER_UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 cpanel_curl() {
   curl "${CURL_CONNECT_ARGS[@]}" \
     --user-agent "$BROWSER_UA" --connect-timeout 30 --max-time 120 \
-    --header "Accept: application/json, text/plain, */*" \
+    --header "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7" \
     --header "Accept-Language: en-US,en;q=0.9" \
+    --header "Cache-Control: max-age=0" \
+    --header "Upgrade-Insecure-Requests: 1" \
+    --header "Sec-Fetch-Dest: document" \
+    --header "Sec-Fetch-Mode: navigate" \
+    --header "Sec-Fetch-Site: none" \
+    --header "Sec-Fetch-User: ?1" \
     --header "X-CPanel-Skip-WAF: 1" \
     --header "X-Requested-With: XMLHttpRequest" \
     --header "Origin: https://${CPANEL_HOST}:${CPANEL_PORT}" \
