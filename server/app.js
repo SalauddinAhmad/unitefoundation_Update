@@ -97,8 +97,8 @@ app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR |
 }));
 
 // --- Health ---
-app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
-app.get('/health', (_req, res) => res.json({ ok: true }));
+app.get('/', (_req, res) => res.status(200).send('API OK'));
+app.get('/health', (_req, res) => res.status(200).send('API OK'));
 app.get('/health/deploy', (_req, res) => {
   // Deploy diagnostics. `appRoot` is the directory Passenger actually loaded
   // the app from — the single most useful signal when an upload succeeds but
