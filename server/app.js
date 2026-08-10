@@ -186,7 +186,15 @@ async function triggerOffload() {
     offloadRunning = false;
   }
 }
-app.get('/health/images', (_req, res) => res.json({ ok: true, running: offloadRunning, last: offloadResult }));
+app.get('/health/images', (_req, res) => {
+  const { getOptimizationStatus } = require('./services/imageOptimizer');
+  res.json({ 
+    ok: true, 
+    running: offloadRunning, 
+    last: offloadResult,
+    optimizer: getOptimizationStatus()
+  });
+});
 app.post('/health/images/fix', async (_req, res) => res.json(await triggerOffload()));
 // Run automatically once (marker file), so every Passenger respawn doesn't
 // re-scan the whole database and blow the host's CPU/EP limits.
