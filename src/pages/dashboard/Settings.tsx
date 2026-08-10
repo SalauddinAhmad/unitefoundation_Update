@@ -330,8 +330,8 @@ const Settings = () => {
                     সব ইমেজ অপ্টিমাইজ করুন
                   </Btn>
                 </div>
-                <div className="bg-primary/5 rounded-lg p-3 text-[11px] text-primary/80 border border-primary/10">
-                  <b>টিপ:</b> এটি শুধুমাত্র ওইসব ইমেজ প্রসেস করবে যেগুলোর সাইজ ২০০ KB এর বেশি। প্রসেস শেষে ইমেজগুলো WebP ফরম্যাটে সেভ হবে যা অনেক বেশি মেমরি সাশ্রয়ী।
+                <div className="bg-amber-500/10 rounded-lg p-3 text-[11px] text-amber-700 border border-amber-500/20">
+                  <b>বিজ্ঞপ্তি:</b> বর্তমান সার্ভার এনভায়রনমেন্টে স্বয়ংক্রিয় ইমেজ কম্প্রেস লাইব্রেরিটি সক্রিয় নেই। পুরাতন ইমেজগুলো কমানোর জন্য আপনাকে cPanel এর <b>"Optimize Website"</b> বা <b>"Image Optimizer"</b> ব্যবহার করার পরামর্শ দেওয়া হচ্ছে। নতুন আপলোড করা ছবিগুলো অটোমেটিক অপ্টিমাইজ হবে।
                 </div>
               </Card>
             </div>
