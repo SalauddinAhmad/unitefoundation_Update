@@ -569,7 +569,7 @@ const ComposeModal = ({
       const item: { name: string; size: number; url?: string } = { name: f.name, size: f.size };
       if (f.type.startsWith("image/")) {
         try {
-          const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.82 });
+          const url = await compressImageToDataURL(f, { maxWidth: 1600, quality: 0.75, mimeType: "image/webp" });
           item.url = url;
           item.size = Math.round((url.length * 3) / 4);
           cmd("insertHTML", `<img src="${url}" alt="${f.name}" style="max-width:100%;border-radius:8px;margin:8px 0" />`);
