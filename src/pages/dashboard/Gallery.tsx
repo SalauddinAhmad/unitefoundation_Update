@@ -664,7 +664,7 @@ function AlbumEditor({ album, cats, onClose, onSave }: { album: Album; cats: Gal
     const { compressImageToDataURL } = await import("@/lib/imageCompress");
     for (const f of Array.from(files)) {
       try {
-        const url = await compressImageToDataURL(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.82 });
+        const url = await compressImageToDataURL(f, { maxWidth: 1600, maxHeight: 1600, quality: 0.75, mimeType: "image/webp" });
         addImageUrl(url);
       } catch {
         /* skip */
