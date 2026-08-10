@@ -1,9 +1,15 @@
 const fs = require('fs/promises');
 const path = require('path');
-const sharp = require('sharp'); // We'll try to use sharp if available, else fallback
+let sharp;
+try {
+  sharp = require('sharp');
+} catch (e) {
+  console.warn('[imageOptimizer] sharp not installed, bulk optimization will be skipped');
+}
 const pool = require('../db/pool');
 
 async function optimizeExistingImages() {
+  if (!sharp) return;
   console.log('Starting bulk image optimization...');
   
   const uploadsRoot = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || './uploads');

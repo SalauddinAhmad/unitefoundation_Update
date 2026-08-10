@@ -297,7 +297,45 @@ const Settings = () => {
         <div className="space-y-4">
           {active === "profile" && <ProfilePanel />}
 
-          {active === "backup" && <BackupPanel />}
+          {active === "backup" && (
+            <div className="space-y-4">
+              <BackupPanel />
+              <Card>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="font-bold flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4 text-primary" />
+                      পুরাতন ইমেজ অপ্টিমাইজেশন
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      সার্ভারে থাকা পূর্বের বড় সাইজের ইমেজগুলোর কোয়ালিটি ঠিক রেখে সাইজ কমিয়ে ১০০-১৫০ KB তে নিয়ে আসা।
+                    </p>
+                  </div>
+                  <Btn 
+                    variant="outline"
+                    onClick={async () => {
+                      if (!confirm("এটি আপনার সার্ভারে থাকা সকল ইমেজ স্ক্যান করবে এবং বড় ইমেজগুলোকে কম্প্রেস করবে। এটি সম্পন্ন হতে কিছু সময় লাগতে পারে। শুরু করবেন?")) return;
+                      try {
+                        const res = await api.post("/health/images/fix");
+                        if (res.ok) {
+                          toast({ title: "সফল", description: "ইমেজ অপ্টিমাইজেশন শুরু হয়েছে। এটি ব্যাকগ্রাউন্ডে চলবে।" });
+                        } else {
+                          toast({ title: "ত্রুটি", description: res.message || "অপ্টিমাইজেশন শুরু করা যায়নি।", variant: "destructive" });
+                        }
+                      } catch (err: any) {
+                        toast({ title: "ত্রুটি", description: "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।", variant: "destructive" });
+                      }
+                    }}
+                  >
+                    সব ইমেজ অপ্টিমাইজ করুন
+                  </Btn>
+                </div>
+                <div className="bg-primary/5 rounded-lg p-3 text-[11px] text-primary/80 border border-primary/10">
+                  <b>টিপ:</b> এটি শুধুমাত্র ওইসব ইমেজ প্রসেস করবে যেগুলোর সাইজ ২০০ KB এর বেশি। প্রসেস শেষে ইমেজগুলো WebP ফরম্যাটে সেভ হবে যা অনেক বেশি মেমরি সাশ্রয়ী।
+                </div>
+              </Card>
+            </div>
+          )}
 
           {active === "organization" && (
             <Card>
