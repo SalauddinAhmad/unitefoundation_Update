@@ -1,4 +1,4 @@
-import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube, ShieldCheck, FileText, MapPin, BadgeCheck } from "lucide-react";
+import { useEffect, CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube, ShieldCheck, FileText, MapPin, BadgeCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
@@ -89,7 +89,12 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
 
 
 const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
-  const { data = [] } = useTeam();
+  const { data = [], refetch } = useTeam();
+  
+  // Re-fetch when component mounts to ensure fresh data
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
   const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const advisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
   const officers = sorted.filter((m) => /দায়িত্বশীল|responsible|officer/i.test(m.role || ""));
