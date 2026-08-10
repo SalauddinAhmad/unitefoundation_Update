@@ -1,7 +1,7 @@
 export default function Index() {
   return (
     <body>
-      talk to bangla
+      ebar ki solve hobe?
     </body>
   );
 }
