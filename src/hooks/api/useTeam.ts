@@ -82,16 +82,20 @@ export const useSaveTeam = () => {
   return useMutation({
     mutationFn: async (member: TeamMember) => {
       const normalized = teamMemberSchema.parse(normalizeTeamMember(member));
-      // Decide create vs update from the current server-backed cache,
-      // NOT from localStorage (which can be stale on other admins' machines).
       const current = (qc.getQueryData<TeamMember[]>(["team"]) ?? loadLocal());
-      const exists = current.some((m) => m.id === normalized.id);
+      
+      // We check against the server-synced cache to see if we should POST or PATCH.
+      // If the ID is a fresh "TM-..." timestamp, it's definitely a new member.
+      const isNew = normalized.id.startsWith("TM-") && !current.some((m) => m.id === normalized.id);
+
       try {
-        if (exists) await api.patch(`/team/${normalized.id}`, normalized);
-        else await api.post("/team", normalized);
+        if (!isNew) {
+          await api.patch(`/team/${normalized.id}`, normalized);
+        } else {
+          await api.post("/team", normalized);
+        }
       } catch (e) {
-        // If the API call fails, persist locally as a last-resort fallback
-        const next = exists
+        const next = !isNew
           ? current.map((m) => (m.id === normalized.id ? normalized : m))
           : [...current, normalized];
         saveLocal(next);
