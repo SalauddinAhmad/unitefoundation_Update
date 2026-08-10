@@ -66,15 +66,20 @@ export const useTeam = () =>
     queryFn: async () => {
       try {
         const remote = await api.get<TeamMember[]>("/team", { auth: false });
-        // Trust the server even when it returns an empty array — otherwise
-        // deleting the last member would resurrect stale localStorage data.
-        if (Array.isArray(remote)) return remote.map(normalizeTeamMember);
+        // Trust the server even when it returns an empty array.
+        if (Array.isArray(remote)) {
+          const normalized = remote.map(normalizeTeamMember);
+          saveLocal(normalized); // Keep local sync for redundancy
+          return normalized;
+        }
         return loadLocal();
-      } catch {
+      } catch (e) {
+        console.error("Team fetch error:", e);
         return loadLocal();
       }
     },
-    staleTime: 30_000,
+    staleTime: 5000, // Reduced staleTime for more frequent updates
+    refetchOnWindowFocus: true,
   });
 
 export const useSaveTeam = () => {
