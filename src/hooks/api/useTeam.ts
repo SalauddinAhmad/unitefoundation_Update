@@ -26,12 +26,12 @@ const teamMemberSchema = z.object({
   id: z.string().trim().min(1).max(100),
   name: z.string().trim().min(1).max(120),
   role: z.string().trim().min(1).max(160),
-  bio: z.string().trim().max(1000),
-  photo: z.string().trim().max(10_000_000),
-  order: z.number().finite(),
-  facebook: z.string().trim().max(500),
-  linkedin: z.string().trim().max(500),
-  email: z.string().trim().max(255),
+  bio: z.string().trim().max(5000).optional().nullable(),
+  photo: z.string().trim().max(1000).optional().nullable(),
+  order: z.number().finite().optional(),
+  facebook: z.string().trim().max(1000).optional().nullable(),
+  linkedin: z.string().trim().max(1000).optional().nullable(),
+  email: z.string().trim().max(255).optional().nullable(),
 });
 
 const normalizeTeamMember = (member: Partial<TeamMember>): TeamMember => ({
