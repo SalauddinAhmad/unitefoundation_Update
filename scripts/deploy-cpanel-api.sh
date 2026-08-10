@@ -35,9 +35,17 @@ if [[ -n "${CPANEL_ORIGIN_IP:-}" ]]; then
 fi
 
 BROWSER_UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
-
+# Imunify360 / WAF protection on port 2083 can be very aggressive.
 cpanel_curl() {
-  curl "${CURL_CONNECT_ARGS[@]}" --user-agent "$BROWSER_UA" --header "Accept: application/json" --header "X-CPanel-Skip-WAF: 1" "$@"
+  curl "${CURL_CONNECT_ARGS[@]}" \
+    --user-agent "$BROWSER_UA" \
+    --header "Accept: application/json, text/plain, */*" \
+    --header "Accept-Language: en-US,en;q=0.9" \
+    --header "X-CPanel-Skip-WAF: 1" \
+    --header "X-Requested-With: XMLHttpRequest" \
+    --header "Origin: https://${CPANEL_HOST}:${CPANEL_PORT}" \
+    --header "Referer: https://${CPANEL_HOST}:${CPANEL_PORT}/" \
+    "$@"
 }
 
 urlencode() {
