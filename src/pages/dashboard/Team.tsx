@@ -101,8 +101,24 @@ const Team = () => {
       toast({ title: "নাম আবশ্যক", variant: "destructive" });
       return;
     }
+
+    // Force validation of category mapping
+    const { category, designation } = parseRole(editing.role);
+    if (!CATEGORIES.includes(category)) {
+      toast({ 
+        title: "ভুল ক্যাটাগরি", 
+        description: "ক্যাটাগরি 'উপদেষ্টা' অথবা 'দায়িত্বশীল' হতে হবে", 
+        variant: "destructive" 
+      });
+      return;
+    }
+
+    // Ensure role is correctly formatted
+    const finalRole = formatRole(category, designation);
+    const memberToSave = { ...editing, role: finalRole };
+
     try {
-      await save.mutateAsync(editing);
+      await save.mutateAsync(memberToSave);
       toast({ title: "সংরক্ষণ হয়েছে" });
       setEditing(null);
     } catch (e: any) {
