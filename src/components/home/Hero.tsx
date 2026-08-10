@@ -38,7 +38,7 @@ export const Hero = () => {
   // Prevent flash of default/build-time content — show skeleton until API resolves
   if (isLoading || (!settings && isFetching)) {
     return (
-      <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-muted animate-pulse" />
+      <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-[#F1F0FB] animate-pulse" />
     );
   }
 
