@@ -41,6 +41,7 @@ BROWSER_UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 # We include multiple common headers to look like a legitimate browser request.
 cpanel_curl() {
   curl "${CURL_CONNECT_ARGS[@]}" \
+    --connect-timeout 30 --max-time 120 \
     --user-agent "$BROWSER_UA" \
     --header "Accept: application/json, text/plain, */*" \
     --header "Accept-Language: en-US,en;q=0.9" \
