@@ -18,7 +18,15 @@ const app = express();
 
 // --- Core middleware ---
 app.set('trust proxy', 1);
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
+app.use(helmet({ 
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  // helmet default-enables noCache which blocks Cloudflare HITs.
+  // Explicitly allow caching; Cloudflare handles the edge TTL.
+  noSniff: true,
+  originAgentCluster: true,
+  dnsPrefetchControl: { allow: true },
+  contentSecurityPolicy: false // or configure specifically if needed
+}));
 
 // --- CORS ---
 // Keep CORS before body parsing. If a dashboard save request is rejected while
@@ -80,7 +88,12 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(globalLimiter);
 
 // --- Static uploads ---
-app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || './uploads')));
+app.use('/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || './uploads'), {
+  maxAge: '2h',
+  setHeaders: (res) => {
+    res.set('Cache-Control', 'public, max-age=7200');
+  }
+}));
 
 // --- Health ---
 app.get('/', (_req, res) => res.json({ ok: true, service: 'unite-foundation-api', ts: new Date().toISOString() }));
