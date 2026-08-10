@@ -154,7 +154,7 @@ upload_file() {
   local absolute_dir="${CPANEL_HOME%/}/${remote_subdir#/}"
 
   echo "Uploading ${rel} -> ${absolute_dir}/${base}"
-  cpanel_curl --silent --show-error --location --connect-timeout 20 --max-time 180 --retry 3 --retry-delay 5 \
+  cpanel_curl --silent --show-error --location --connect-timeout 20 --max-time 300 --retry 5 --retry-delay 10 \
     --header "$AUTH_HEADER" \
     --form "dir=${absolute_dir}" \
     --form "overwrite=1" \
