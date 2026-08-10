@@ -178,7 +178,7 @@ def main():
             f"content-type '{content_type or 'unavailable'}', release '{live_sha or 'unavailable'}'",
             flush=True,
         )
-        if not isinstance(payload, dict) and 200 <= http_status < 400:
+        if not isinstance(payload, dict) and (http_status == 200 or 200 <= http_status < 400):
             consecutive_non_json += 1
             compact_preview = " ".join(raw[:300].split()) or "empty body"
             last_non_json = {
