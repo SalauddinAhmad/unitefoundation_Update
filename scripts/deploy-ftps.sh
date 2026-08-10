@@ -38,11 +38,13 @@ set cmd:fail-exit true;
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
-set net:max-retries 10;
-set net:timeout 20;
+set net:max-retries 15;
+set net:timeout 30;
 set net:reconnect-interval-base 5;
 set net:reconnect-interval-max 15;
 set ftp:sync-mode true;
+set ftp:passive-mode true;
+set ftp:charset utf-8;
 "
 
 echo "🔎 FTP host resolves to: $(getent hosts "$FTP_HOST" | awk '{print $1}' | tr '\n' ' ')"
