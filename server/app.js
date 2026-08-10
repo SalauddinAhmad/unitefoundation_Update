@@ -172,10 +172,9 @@ async function triggerOffload() {
     // Also trigger bulk optimization if sharp is available
     try {
       const { optimizeExistingImages } = require('./services/imageOptimizer');
-      // Run in background
       optimizeExistingImages().catch(err => console.error('[Optimizer Background Error]', err));
     } catch (e) {
-      console.log('[Optimizer] Not available or failed to load');
+      console.log('[Optimizer] Background trigger failed');
     }
 
     offloadResult = { converted: converted.length, at: new Date().toISOString() };
