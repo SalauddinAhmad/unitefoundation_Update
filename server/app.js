@@ -19,6 +19,7 @@ const app = express();
 // --- Core middleware ---
 app.set('trust proxy', 1);
 app.use(helmet({ 
+  noCache: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' },
   // helmet default-enables noCache which blocks Cloudflare HITs.
   // Explicitly allow caching; Cloudflare handles the edge TTL.
@@ -127,7 +128,6 @@ app.get('/health/deploy', (_req, res) => {
     deployMeta = JSON.parse(fs.readFileSync(path.join(__dirname, 'DEPLOY_META.json'), 'utf8'));
   } catch { /* local development or an older deployment has no metadata */ }
 
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json({
     ok: true,
     release,
