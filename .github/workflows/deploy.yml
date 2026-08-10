@@ -201,8 +201,8 @@ jobs:
             --remote-path "public_html/api-app" \
             --origin-ip "$ORIGIN_IP" \
             --method "$DEPLOY_METHOD" \
-            --attempts 5 \
-            --interval 12
+            --attempts 25 \
+            --interval 15
 
       - name: Upload backend deployment tracker
         if: ${{ always() }}
