@@ -1,4 +1,5 @@
-import { useEffect, CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube, ShieldCheck, FileText, MapPin, BadgeCheck } from "lucide-react";
+import { useEffect } from "react";
+import { CheckCircle2, Heart, Target, Eye, Users, Sparkles, Sprout, TreeDeciduous, Facebook, Linkedin, Mail, Instagram, Youtube, ShieldCheck, FileText, MapPin, BadgeCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
