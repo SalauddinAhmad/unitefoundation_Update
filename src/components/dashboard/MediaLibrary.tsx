@@ -95,7 +95,7 @@ export default function MediaLibrary({ onClose, onSelect, hint, multiple = true 
     for (let i = 0; i < list.length; i++) {
       const f = list[i];
       try {
-        const compressed = await compressImage(f, { maxWidth: 1920, maxHeight: 1920, quality: 0.8, mimeType: "auto" });
+        const compressed = await compressImage(f, { maxWidth: 1600, maxHeight: 1600, quality: 0.75, mimeType: "image/webp" });
         const dataUrl = await new Promise<string>((resolve, reject) => {
           const r = new FileReader();
           r.onload = () => resolve(String(r.result));

@@ -142,7 +142,7 @@ export default function DashboardPartners() {
           const res = await fetch(p.logo);
           const blob = await res.blob();
           const file = new File([blob], `${p.slug}.png`, { type: blob.type || "image/png" });
-          logo_url = await compressImageToDataURL(file, { maxWidth: 512, quality: 0.9 });
+          logo_url = await compressImageToDataURL(file, { maxWidth: 512, quality: 0.8, mimeType: "image/webp" });
         } catch { /* skip logo */ }
         await save.mutateAsync({
           data: {

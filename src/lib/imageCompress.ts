@@ -11,9 +11,9 @@ export type CompressOptions = {
 };
 
 const DEFAULTS: Required<Omit<CompressOptions, "mimeType" | "maxBytes">> = {
-  maxWidth: 1920,
-  maxHeight: 1920,
-  quality: 0.82,
+  maxWidth: 1600,
+  maxHeight: 1600,
+  quality: 0.75, // Lowered slightly to hit targets better
 };
 
 const loadImage = (file: File | Blob): Promise<HTMLImageElement> =>
@@ -54,11 +54,11 @@ const canvasToBlob = (canvas: HTMLCanvasElement, type: string, quality: number):
  */
 export async function compressImage(file: File, opts: CompressOptions = {}): Promise<File> {
   if (!file.type.startsWith("image/")) return file;
-  // SVG / GIF: skip (SVG is vector, GIF may be animated)
   if (file.type === "image/svg+xml" || file.type === "image/gif") return file;
 
   const o = { ...DEFAULTS, ...opts };
-  if (opts.maxBytes && file.size <= opts.maxBytes) return file;
+  // Even if small, we re-compress if force WebP or specific sizing is needed
+  // to ensure consistency across the site.
 
   try {
     const img = await loadImage(file);
@@ -76,32 +76,37 @@ export async function compressImage(file: File, opts: CompressOptions = {}): Pro
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(img, 0, 0, w, h);
 
-    let outType: string;
-    if (opts.mimeType && opts.mimeType !== "auto") {
-      outType = opts.mimeType;
-    } else {
-      // Prefer WebP — supports alpha and is 25-40% smaller than JPEG.
-      // Fallback to JPEG/PNG if the browser can't encode WebP.
-      const canWebp = (() => {
-        try {
-          const c = document.createElement("canvas");
-          c.width = c.height = 1;
-          return c.toDataURL("image/webp").startsWith("data:image/webp");
-        } catch { return false; }
-      })();
-      if (canWebp) {
-        outType = "image/webp";
-      } else {
-        const alpha = canvasHasAlpha(ctx, w, h);
-        outType = alpha ? "image/png" : "image/jpeg";
-      }
+    // Default to webp as requested
+    let outType = opts.mimeType && opts.mimeType !== "auto" ? opts.mimeType : "image/webp";
+    
+    // Check if browser supports webp
+    const canWebp = (() => {
+      try {
+        const c = document.createElement("canvas");
+        return c.toDataURL("image/webp").startsWith("data:image/webp");
+      } catch { return false; }
+    })();
+
+    if (!canWebp && outType === "image/webp") {
+      const alpha = canvasHasAlpha(ctx, w, h);
+      outType = alpha ? "image/png" : "image/jpeg";
     }
 
-    const blob = await canvasToBlob(canvas, outType, o.quality);
-    // If compression made it larger (small images), keep original.
-    if (blob.size >= file.size) return file;
+    // Iterative compression to stay under ~200KB if target is not specified
+    let currentQuality = o.quality;
+    let blob = await canvasToBlob(canvas, outType, currentQuality);
+    
+    // If it's still too big (> 200KB) and we aren't at minimum quality yet, reduce quality
+    // Max size target is 200KB (204800 bytes)
+    const MAX_TARGET = 200 * 1024;
+    if (blob.size > MAX_TARGET && currentQuality > 0.3) {
+      // Simple one-step reduction if significantly over, otherwise binary search could be used
+      // but usually one drop is enough for most photos.
+      currentQuality = Math.max(0.3, currentQuality * (MAX_TARGET / blob.size));
+      blob = await canvasToBlob(canvas, outType, currentQuality);
+    }
 
-    const ext = outType === "image/png" ? "png" : outType === "image/webp" ? "webp" : "jpg";
+    const ext = outType.split("/")[1].replace("jpeg", "jpg");
     const base = file.name.replace(/\.[^.]+$/, "");
     return new File([blob], `${base}.${ext}`, { type: outType, lastModified: Date.now() });
   } catch {
