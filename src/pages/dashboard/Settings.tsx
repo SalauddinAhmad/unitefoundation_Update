@@ -216,6 +216,28 @@ const Settings = () => {
   })).filter((g) => g.items.length > 0);
   const [form, setForm] = useState<SiteSettings | null>(null);
   const [active, setActive] = useState<string>(visibleTabs[0]?.k || "organization");
+  const [optStatus, setOptStatus] = useState({
+    active: false,
+    processed: 0,
+    total: 0,
+    skipped: 0,
+    lastRun: null as string | null
+  });
+
+  useEffect(() => {
+    let timer: any;
+    const check = async () => {
+      try {
+        const res = await api.get<{ optimizer: any }>("/health/images");
+        if (res.optimizer) setOptStatus(res.optimizer);
+        if (res.optimizer?.active) {
+          timer = setTimeout(check, 3000);
+        }
+      } catch { /* silent */ }
+    };
+    if (active === "backup") check();
+    return () => clearTimeout(timer);
+  }, [active]);
 
 
   useEffect(() => {
@@ -318,7 +340,8 @@ const Settings = () => {
                       try {
                         const res = await api.post("/health/images/fix") as any;
                         if (res && res.ok) {
-                          toast({ title: "সফল", description: "ইমেজ অপ্টিমাইজেশন শুরু হয়েছে। এটি ব্যাকগ্রাউন্ডে চলবে।" });
+                          toast({ title: "সফল", description: "ইমেজ অপ্টিমাইজেশন শুরু হয়েছে।" });
+                          setOptStatus(prev => ({ ...prev, active: true }));
                         } else {
                           toast({ title: "ত্রুটি", description: (res && res.message) || "অপ্টিমাইজেশন শুরু করা যায়নি।", variant: "destructive" });
                         }
@@ -326,10 +349,42 @@ const Settings = () => {
                         toast({ title: "ত্রুটি", description: "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।", variant: "destructive" });
                       }
                     }}
+                    disabled={optStatus.active}
                   >
-                    সব ইমেজ অপ্টিমাইজ করুন
+                    {optStatus.active ? "কাজ চলছে..." : "সব ইমেজ অপ্টিমাইজ করুন"}
                   </Btn>
                 </div>
+
+                {optStatus.active || optStatus.lastRun ? (
+                  <div className="mb-4 p-4 rounded-xl bg-secondary/50 border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">কাজের অগ্রগতি</span>
+                      <span className="text-xs font-mono">{optStatus.processed + optStatus.skipped} / {optStatus.total}</span>
+                    </div>
+                    <div className="h-2 w-full bg-muted rounded-full overflow-hidden mb-3">
+                      <div 
+                        className="h-full bg-primary transition-all duration-500" 
+                        style={{ width: `${optStatus.total > 0 ? ((optStatus.processed + optStatus.skipped) / optStatus.total) * 100 : 0}%` }}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-2 rounded-lg bg-card border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase">সফল</div>
+                        <div className="text-lg font-bold">{optStatus.processed}</div>
+                      </div>
+                      <div className="p-2 rounded-lg bg-card border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase">বড় (অসমাপ্ত)</div>
+                        <div className="text-lg font-bold text-amber-600">{optStatus.skipped}</div>
+                      </div>
+                    </div>
+                    {optStatus.skipped > 0 && !optStatus.active && (
+                      <p className="mt-3 text-[10px] text-amber-700 leading-relaxed">
+                        * {optStatus.skipped} টি ইমেজ অনেক বড় হওয়ায় বর্তমান এনভায়রনমেন্টে ছোট করা সম্ভব হয়নি। এগুলো ম্যানুয়ালি বা cPanel থেকে কমানোর পরামর্শ দেওয়া হচ্ছে।
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
                 <div className="bg-amber-500/10 rounded-lg p-3 text-[11px] text-amber-700 border border-amber-500/20">
                   <b>বিজ্ঞপ্তি:</b> বর্তমান সার্ভার এনভায়রনমেন্টে স্বয়ংক্রিয় ইমেজ কম্প্রেস লাইব্রেরিটি সক্রিয় নেই। পুরাতন ইমেজগুলো কমানোর জন্য আপনাকে cPanel এর <b>"Optimize Website"</b> বা <b>"Image Optimizer"</b> ব্যবহার করার পরামর্শ দেওয়া হচ্ছে। নতুন আপলোড করা ছবিগুলো অটোমেটিক অপ্টিমাইজ হবে।
                 </div>
