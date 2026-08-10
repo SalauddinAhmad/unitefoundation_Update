@@ -38,7 +38,7 @@ set cmd:fail-exit true;
 set ftp:ssl-force true;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
-set net:max-retries 2;
+set net:max-retries 5;
 set net:timeout 15;
 set net:reconnect-interval-base 3;
 set net:reconnect-interval-max 10;
