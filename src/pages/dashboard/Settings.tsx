@@ -316,11 +316,11 @@ const Settings = () => {
                     onClick={async () => {
                       if (!confirm("এটি আপনার সার্ভারে থাকা সকল ইমেজ স্ক্যান করবে এবং বড় ইমেজগুলোকে কম্প্রেস করবে। এটি সম্পন্ন হতে কিছু সময় লাগতে পারে। শুরু করবেন?")) return;
                       try {
-                        const res = await api.post("/health/images/fix");
-                        if (res.ok) {
+                        const res = await api.post("/health/images/fix") as any;
+                        if (res && res.ok) {
                           toast({ title: "সফল", description: "ইমেজ অপ্টিমাইজেশন শুরু হয়েছে। এটি ব্যাকগ্রাউন্ডে চলবে।" });
                         } else {
-                          toast({ title: "ত্রুটি", description: res.message || "অপ্টিমাইজেশন শুরু করা যায়নি।", variant: "destructive" });
+                          toast({ title: "ত্রুটি", description: (res && res.message) || "অপ্টিমাইজেশন শুরু করা যায়নি।", variant: "destructive" });
                         }
                       } catch (err: any) {
                         toast({ title: "ত্রুটি", description: "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না।", variant: "destructive" });
