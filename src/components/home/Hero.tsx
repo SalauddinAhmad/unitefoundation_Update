@@ -38,7 +38,7 @@ export const Hero = () => {
   // Prevent flash of default/build-time content — show skeleton until API resolves
   if (isLoading || (!settings && isFetching)) {
     return (
-      <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-gradient-to-br from-primary/10 via-muted to-primary/5 animate-pulse" />
+      <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-muted animate-pulse" />
     );
   }
 
@@ -61,7 +61,7 @@ export const Hero = () => {
 
 
   return (
-    <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-foreground">
+    <section className="relative h-[78vh] min-h-[560px] max-h-[780px] w-full overflow-hidden bg-muted">
       {!slides.length && (
         <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/80 to-foreground" />
       )}
