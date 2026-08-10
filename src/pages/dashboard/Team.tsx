@@ -24,7 +24,7 @@ const parseRole = (role: string): { category: Category; designation: string } =>
   const raw = role || "";
   const [head, ...rest] = raw.split("|");
   const desig = rest.join("|").trim();
-  const cat: Category = /উপদেষ্টা|advisor/i.test(head || "") ? "উপদেষ্টা" : "দায়িত্বশীল";
+  const cat: Category = head && (head.includes("উপদেষ্টা") || /advisor/i.test(head)) ? "উপদেষ্টা" : "দায়িত্বশীল";
   return { category: cat, designation: desig };
 };
 const formatRole = (category: Category, designation: string) =>
