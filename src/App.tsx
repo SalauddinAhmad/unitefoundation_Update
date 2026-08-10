@@ -50,7 +50,7 @@ const DashProfile = lazy(() => import("./pages/dashboard/Profile.tsx"));
 const queryClient = new QueryClient();
 
 const Loader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-muted">
+  <div className="min-h-screen flex items-center justify-center bg-[#F1F0FB]">
     <div className="h-10 w-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
   </div>
 );
