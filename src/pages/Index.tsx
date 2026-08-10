@@ -33,19 +33,14 @@ const HomeLoadingState = () => (
 const Index = () => {
   const { data: settings, isLoading, isError } = useSettings();
 
-  return (
-    <SiteLayout hideFooter={(isLoading || !settings) && !isError}>
-      <Seo
-        title="ইউনাইট ফাউন্ডেশন | সুন্নাহর অনুসরণে, মানবতার কল্যাণে"
-        description="ওহীভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে ‘ইউনাইট ফাউন্ডেশন’ একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম।"
-        canonical="/"
-      />
-      <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — সুন্নাহর অনুসরণে, মানবতার কল্যাণে</h1>
-      
-
-      {(isLoading || !settings) && !isError ? (
-        <HomeLoadingState />
-      ) : isError ? (
+  if (isError) {
+    return (
+      <SiteLayout hideFooter={true}>
+        <Seo
+          title="ইউনাইট ফাউন্ডেশন | রক্ষণাবেক্ষণ"
+          description="আমাদের সিস্টেমে রক্ষণাবেক্ষণ চলছে।"
+          canonical="/"
+        />
         <section className="min-h-[70vh] flex flex-col items-center justify-center bg-background px-6 text-center">
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 animate-pulse">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
@@ -56,6 +51,22 @@ const Index = () => {
             আমাদের সিস্টেমে বর্তমানে জরুরি রক্ষণাবেক্ষণের কাজ চলছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। সাময়িক অসুবিধার জন্য আমরা আন্তরিকভাবে দুঃখিত।
           </p>
         </section>
+      </SiteLayout>
+    );
+  }
+
+  return (
+    <SiteLayout hideFooter={(isLoading || !settings)}>
+      <Seo
+        title="ইউনাইট ফাউন্ডেশন | সুন্নাহর অনুসরণে, মানবতার কল্যাণে"
+        description="ওহীভিত্তিক জীবন গড়ার দৃঢ় প্রত্যয়ে ‘ইউনাইট ফাউন্ডেশন’ একটি অরাজনৈতিক ও অলাভজনক ইসলামিক প্ল্যাটফর্ম।"
+        canonical="/"
+      />
+      <h1 className="sr-only">ইউনাইট ফাউন্ডেশন — সুন্নাহর অনুসরণে, মানবতার কল্যাণে</h1>
+      
+
+      {(isLoading || !settings) ? (
+        <HomeLoadingState />
       ) : (
         <>
       <Hero />
