@@ -250,7 +250,12 @@ const valueIcons = [Heart, CheckCircle2, Target, Users];
 const About = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || "bn").startsWith("en") ? "en" : "bn";
-  const { data: settings } = useSettings();
+  const { data: settings, refetch: refetchSettings } = useSettings();
+
+  // Re-fetch all relevant data when component mounts to ensure fresh content
+  useEffect(() => {
+    refetchSettings();
+  }, [refetchSettings]);
   const dynamicMilestones: Milestone[] = (settings?.milestones && settings.milestones.length)
     ? settings.milestones.map((m) => ({
         y: { bn: m.yearBn || m.yearEn, en: m.yearEn || m.yearBn },
