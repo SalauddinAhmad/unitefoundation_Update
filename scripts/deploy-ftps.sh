@@ -39,13 +39,16 @@ set ftp:ssl-allow true;
 set ftp:ssl-force false;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
-set net:max-retries 10;
-set net:timeout 20;
+set net:max-retries 15;
+set net:timeout 60;
 set net:reconnect-interval-base 5;
-set net:reconnect-interval-max 10;
-set ftp:sync-mode true;
+set net:reconnect-interval-max 15;
+set ftp:sync-mode false;
 set ftp:passive-mode true;
 set ftp:charset utf-8;
+set dns:max-retries 3;
+set dns:fatal-timeout 30;
+
 "
 
 echo "🔎 FTP host resolves to: $(getent ahostsv4 "$FTP_HOST" | awk '{print $1}' | sort -u | tr '\n' ' ')"
