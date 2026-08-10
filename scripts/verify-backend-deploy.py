@@ -136,8 +136,8 @@ def main():
     # Five checks are enough: a matching response proves the deployment, while
     # repeatedly receiving the same old JSON cannot repair a wrong app root.
     # Keep this bounded so a configuration error fails in under one minute.
-    parser.add_argument("--attempts", type=int, default=5)
-    parser.add_argument("--interval", type=int, default=12)
+    parser.add_argument("--attempts", type=int, default=15)
+    parser.add_argument("--interval", type=int, default=10)
     parser.add_argument("--required-consecutive", type=int, default=1)
 
     parser.add_argument("--max-consecutive-non-json", type=int, default=3)

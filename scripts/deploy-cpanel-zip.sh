@@ -103,7 +103,7 @@ done
 # 3. Upload the ZIP to staging
 echo "⬆️  Uploading ZIP (${ZIP_SIZE_MB} MB)..."
 UPLOAD_RES=$(cpanel_curl --silent --show-error --location \
-  --connect-timeout 30 --max-time 300 --retry 2 --retry-delay 5 \
+  --connect-timeout 30 --max-time 600 --retry 3 --retry-delay 10 \
   --header "$AUTH_HEADER" \
   --form "dir=${STAGING_ABS}" \
   --form "overwrite=1" \
