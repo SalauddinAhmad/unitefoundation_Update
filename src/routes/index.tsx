@@ -55,6 +55,21 @@ No VM guests are running outdated hypervisor (qemu) binaries on this host.
 ⬆️  FTPS deploy: out -> ftp://14.128.14.142:21/***
 mirror: Fatal error: max-retries exceeded
 Error: Process completed with exit code 1.`}
+      <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded text-red-900">
+        <h2 className="font-bold text-lg mb-2">Analysis:</h2>
+        <p>ডিপ্লয়মেন্ট এখনো <strong>max-retries exceeded</strong> এরর দিচ্ছে। এর সম্ভাব্য কারণগুলো:</p>
+        <ul className="list-disc ml-6 mt-2">
+          <li><strong>Firewall Block:</strong> cPanel এর সার্ভার (CSF/LFD) হয়তো GitHub Actions এর IP গুলো ব্লক করছে।</li>
+          <li><strong>Passive Mode Issues:</strong> FTP ডাটা ট্রান্সফারের জন্য নির্দিষ্ট পোর্ট রেঞ্জ সার্ভারে ওপেন থাকা প্রয়োজন।</li>
+        </ul>
+        <p className="mt-4 font-bold">পরবর্তী পদক্ষেপ:</p>
+        <ol className="list-decimal ml-6 mt-2">
+          <li>GitHub Secrets-এ <strong>FTP_HOST</strong> কে পুনরায় <code>ftp.unitefoundation.bd</code> করে দিন (IP এর বদলে)।</li>
+          <li>আমি স্ক্রিপ্টে রিট্রাই এবং টাইমআউট আরও বাড়িয়ে দিয়েছি, এখন আবার <strong>Re-run</strong> দিয়ে দেখুন।</li>
+          <li>যদি কাজ না হয়, তবে cPanel এ গিয়ে GitHub Actions এর IP রেঞ্জ হোয়াইটলিস্ট করতে হতে পারে অথবা <strong>SFTP (Port 22)</strong> ব্যবহার করার কথা ভাবতে হবে।</li>
+        </ol>
+      </div>
     </div>
   );
 }
+
