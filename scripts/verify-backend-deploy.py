@@ -195,7 +195,7 @@ def main():
                 break
         else:
             consecutive_non_json = 0
-        if live_sha == args.expected_sha or (not payload and http_status == 200):
+        if live_sha == args.expected_sha or (not payload and http_status == 200 and number > 2):
             consecutive_matches += 1
             if consecutive_matches >= args.required_consecutive:
                 live = True
