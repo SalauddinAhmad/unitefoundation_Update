@@ -198,11 +198,11 @@ jobs:
         run: |
           python3 scripts/verify-backend-deploy.py \
             --expected-sha '${{ github.sha }}' \
-            --remote-path "public_html/api-app" \
+            --remote-path "api-app" \
             --origin-ip "$ORIGIN_IP" \
             --method "$DEPLOY_METHOD" \
-            --attempts 25 \
-            --interval 15
+            --attempts 30 \
+            --interval 20
 
       - name: Upload backend deployment tracker
         if: ${{ always() }}
