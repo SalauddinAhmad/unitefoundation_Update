@@ -19,6 +19,7 @@ const app = express();
 // --- Core middleware ---
 app.set('trust proxy', 1);
 app.use(helmet({ 
+  noCache: false,
   crossOriginResourcePolicy: { policy: 'cross-origin' },
   // helmet default-enables noCache which blocks Cloudflare HITs.
   // Explicitly allow caching; Cloudflare handles the edge TTL.
