@@ -91,12 +91,44 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
 const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
   const { data = [] } = useTeam();
   const sorted = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  const allAdvisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
-  const allOfficers = sorted.filter((m) => !/উপদেষ্টা|advisor/i.test(m.role || ""));
-  const advisors = only === "officers" ? [] : allAdvisors;
-  const officers = only === "advisors" ? [] : allOfficers;
+  const advisors = sorted.filter((m) => /উপদেষ্টা|advisor/i.test(m.role || ""));
+  const officers = sorted.filter((m) => /দায়িত্বশীল|responsible|officer/i.test(m.role || ""));
+  
+  if (only === "advisors") return advisors.length === 0 ? null : (
+    <div className="space-y-16">
+      <div>
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="heading-display">উপদেষ্টা</h2>
+        </div>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:hidden gap-6">
+          {advisors.map((m) => <TeamCard key={m.id} m={m} />)}
+        </div>
+        <div className="mt-12 hidden lg:flex flex-wrap justify-center gap-6">
+          {advisors.map((m) => (
+            <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
-  if (advisors.length === 0 && officers.length === 0) return null;
+  if (only === "officers") return officers.length === 0 ? null : (
+    <div className="space-y-16">
+      <div>
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="heading-display">দায়িত্বশীল</h2>
+        </div>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:hidden gap-6">
+          {officers.map((m) => <TeamCard key={m.id} m={m} />)}
+        </div>
+        <div className="mt-12 hidden lg:flex flex-wrap justify-center gap-6">
+          {officers.map((m) => (
+            <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
 
   return (
@@ -124,9 +156,9 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
 
 
 
-      <div className="container-page relative space-y-16">
+      <div className="container-page relative">
         {advisors.length > 0 && (
-          <div>
+          <div className="mb-16">
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="heading-display">উপদেষ্টা</h2>
             </div>
@@ -153,7 +185,6 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
                 <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
               ))}
             </div>
-
           </div>
         )}
       </div>
