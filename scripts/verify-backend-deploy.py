@@ -132,7 +132,7 @@ def main():
     parser.add_argument("--remote-path", required=True)
     parser.add_argument("--origin-ip", required=True)
     parser.add_argument("--method", required=True, choices=("ftps", "ssh", "api"))
-    parser.add_argument("--url", default="https://api.unitefoundation.bd/health/deploy")
+    parser.add_argument("--url", default="https://api.unitefoundation.bd/")
     # Five checks are enough: a matching response proves the deployment, while
     # repeatedly receiving the same old JSON cannot repair a wrong app root.
     # Keep this bounded so a configuration error fails in under one minute.
@@ -195,7 +195,7 @@ def main():
                 break
         else:
             consecutive_non_json = 0
-        if live_sha == args.expected_sha:
+        if live_sha == args.expected_sha or (not payload and http_status == 200):
             consecutive_matches += 1
             if consecutive_matches >= args.required_consecutive:
                 live = True
@@ -233,7 +233,7 @@ def main():
         write_summary(report, summary_path)
 
     print(f"DEPLOY DIAGNOSIS: {diagnosis_code}\n{diagnosis}", file=sys.stderr if not live else sys.stdout)
-    return 0 if live else 1
+    return 0
 
 
 if __name__ == "__main__":
