@@ -47,7 +47,7 @@ set ftp:passive-mode true;
 set ftp:charset utf-8;
 "
 
-echo "🔎 FTP host resolves to: $(getent hosts "$FTP_HOST" | awk '{print $1}' | tr '\n' ' ')"
+echo "🔎 FTP host resolves to: $(getent ahostsv4 "$FTP_HOST" | awk '{print $1}' | sort -u | tr '\n' ' ')"
 
 if [ -n "${DEPLOY_VERIFY_URL:-}" ]; then
   # ---------------------------------------------------------------
