@@ -14,11 +14,11 @@ const schema = z.object({
   id: z.string().optional(),
   name: z.string().min(1),
   role: z.string().min(1),
-  bio: z.string().optional(),
-  photo: z.string().optional(),
-  facebook: z.string().optional(),
-  linkedin: z.string().optional(),
-  email: z.string().optional(),
+  bio: z.string().nullable().optional(),
+  photo: z.string().nullable().optional(),
+  facebook: z.string().nullable().optional(),
+  linkedin: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
   order: z.number().optional(),
 });
 
