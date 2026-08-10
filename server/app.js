@@ -127,7 +127,7 @@ app.get('/health/deploy', (_req, res) => {
     deployMeta = JSON.parse(fs.readFileSync(path.join(__dirname, 'DEPLOY_META.json'), 'utf8'));
   } catch { /* local development or an older deployment has no metadata */ }
 
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  // res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   res.json({
     ok: true,
     release,
