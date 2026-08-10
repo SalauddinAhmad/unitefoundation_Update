@@ -35,13 +35,14 @@ fi
 
 LFTP_SETTINGS="
 set cmd:fail-exit true;
-set ftp:ssl-force true;
+set ftp:ssl-allow true;
+set ftp:ssl-force false;
 set ftp:ssl-protect-data true;
 set ssl:verify-certificate false;
-set net:max-retries 15;
-set net:timeout 30;
+set net:max-retries 10;
+set net:timeout 20;
 set net:reconnect-interval-base 5;
-set net:reconnect-interval-max 15;
+set net:reconnect-interval-max 10;
 set ftp:sync-mode true;
 set ftp:passive-mode true;
 set ftp:charset utf-8;
