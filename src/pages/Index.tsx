@@ -46,8 +46,11 @@ const Index = () => {
       {(isLoading || !settings) && !isError ? (
         <HomeLoadingState />
       ) : isError ? (
-        <section className="min-h-[70vh] flex items-center justify-center bg-background px-6 text-center">
-          <p className="text-muted-foreground">তথ্য লোড করা যাচ্ছে না। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন।</p>
+        <section className="min-h-[70vh] flex flex-col items-center justify-center bg-background px-6 text-center">
+          <h2 className="text-2xl font-bold text-primary mb-4">জরুরি রক্ষণাবেক্ষণের কাজ চলছে</h2>
+          <p className="text-muted-foreground max-w-lg">
+            আমাদের সিস্টেমে বর্তমানে জরুরি রক্ষণাবেক্ষণের কাজ চলছে। অনুগ্রহ করে কিছুক্ষণ পর আবার চেষ্টা করুন। সাময়িক অসুবিধার জন্য আমরা আন্তরিকভাবে দুঃখিত।
+          </p>
         </section>
       ) : (
         <>
