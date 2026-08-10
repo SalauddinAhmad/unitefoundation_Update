@@ -54,19 +54,41 @@ const Team = () => {
 
   const reorder = async (fromId: string, toId: string) => {
     if (fromId === toId) return;
+    
+    // Sort current local data to ensure we have the correct visual order
     const list = [...data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    const from = list.findIndex((m) => m.id === fromId);
-    const to = list.findIndex((m) => m.id === toId);
-    if (from < 0 || to < 0) return;
-    const [moved] = list.splice(from, 1);
-    list.splice(to, 0, moved);
-    const changed = list
-      .map((m, idx) => ({ ...m, order: idx + 1 }))
-      .filter((m, idx) => (data.find((d) => d.id === m.id)?.order ?? 0) !== idx + 1);
-    for (const m of changed) {
-      await save.mutateAsync(m);
+    const fromIndex = list.findIndex((m) => m.id === fromId);
+    const toIndex = list.findIndex((m) => m.id === toId);
+    
+    if (fromIndex < 0 || toIndex < 0) return;
+    
+    const [moved] = list.splice(fromIndex, 1);
+    list.splice(toIndex, 0, moved);
+    
+    // Assign new sequence to ALL members in this group to ensure clean state
+    // We only update the order property
+    const updates = list.map((m, idx) => ({ 
+      ...m, 
+      order: idx + 1 
+    }));
+
+    try {
+      // Save all changed members
+      for (const m of updates) {
+        // Only trigger API if order actually changed or if it's the moved item
+        const original = data.find(d => d.id === m.id);
+        if (original?.order !== m.order || m.id === fromId) {
+          await save.mutateAsync(m);
+        }
+      }
+      toast({ title: "ক্রম আপডেট হয়েছে" });
+    } catch (e: any) {
+      toast({ 
+        title: "ক্রম আপডেট ব্যর্থ", 
+        description: e.message,
+        variant: "destructive" 
+      });
     }
-    toast({ title: "ক্রম আপডেট হয়েছে" });
   };
 
 

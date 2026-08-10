@@ -36,12 +36,30 @@ router.post('/', requireAuth, asyncH(async (req, res) => {
 router.patch('/:id', requireAuth, asyncH(async (req, res) => {
   const d = schema.partial().parse(req.body);
   const map = { ...d };
-  if ('order' in map) { map.sort_order = map.order; delete map.order; }
+  
+  // Handle field mapping for sort_order
+  if ('order' in map) { 
+    map.sort_order = map.order; 
+    delete map.order; 
+  }
+  
   delete map.id;
+  
   const keys = Object.keys(map);
   if (!keys.length) return res.json({ ok: true });
-  const set = keys.map(k => `\`${k}\`=?`).join(',');
-  await pool.execute(`UPDATE team_members SET ${set} WHERE id=?`, [...keys.map(k => map[k]), req.params.id]);
+  
+  const setClause = keys.map(k => `\`${k}\`=?`).join(',');
+  const values = keys.map(k => map[k]);
+  
+  const [result] = await pool.execute(
+    `UPDATE team_members SET ${setClause} WHERE id=?`, 
+    [...values, req.params.id]
+  );
+  
+  if (result.affectedRows === 0) {
+    return res.status(404).json({ message: 'Member not found' });
+  }
+  
   res.json({ ok: true });
 }));
 
