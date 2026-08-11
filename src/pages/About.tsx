@@ -119,10 +119,10 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
   );
 
   if (only === "officers") return officers.length === 0 ? null : (
-    <div className="space-y-16">
+    <div className="space-y-16 pt-12">
       <div>
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="heading-display">দায়িত্বশীল</h2>
+          <h2 className="heading-display mb-4">দায়িত্বশীল</h2>
         </div>
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:hidden gap-6">
           {officers.map((m) => <TeamCard key={m.id} m={m} />)}
