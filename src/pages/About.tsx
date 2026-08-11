@@ -39,7 +39,7 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
       </div>
 
       {/* Name + role below image */}
-      <div className="px-2 pt-3 text-center">
+      <div className="px-2 pt-3 pb-4 text-center">
         <div className="text-[15px] font-extrabold leading-tight text-foreground">
           {m.name}
         </div>
@@ -53,7 +53,6 @@ const TeamCard = ({ m }: { m: ReturnType<typeof useTeam>["data"] extends (infer 
             </div>
           ) : null;
         })()}
-
       </div>
 
       {/* Bio + socials */}
