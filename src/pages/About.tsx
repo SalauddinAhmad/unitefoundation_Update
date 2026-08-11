@@ -211,7 +211,7 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
         )}
 
         {officers.length > 0 && (
-          <div className="pt-8">
+          <div className="pt-8 pb-16">
             <div className="text-center max-w-2xl mx-auto">
               <h2 className="heading-display mb-4">দায়িত্বশীল</h2>
             </div>
