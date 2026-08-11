@@ -191,8 +191,25 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
                 <div key={m.id} className="w-[calc(16.666%-1.25rem)] max-w-[200px]"><TeamCard m={m} /></div>
               ))}
             </div>
+            
+            {/* Advisor Disclaimer for the main multi-section view */}
+            <div className="mt-20 max-w-4xl mx-auto px-4">
+              <div className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary/5 via-donate-orange/5 to-primary/5 p-8 md:p-10 text-center ring-1 ring-primary/10">
+                <div className="absolute top-0 right-0 p-4 opacity-10" aria-hidden>
+                  <ShieldCheck className="h-24 w-24 text-primary" />
+                </div>
+                <p className="relative z-10 text-[15px] md:text-lg leading-[1.8] text-foreground/80 font-medium whitespace-pre-line">
+                  ইউনাইট ফাউন্ডেশনের যেকোনো ধরনের প্রাতিষ্ঠানিক কার্যক্রম বা ভুলত্রুটির জন্য সম্মানিত উপদেষ্টা পরিষদের কোনো সদস্য ব্যক্তিগত বা প্রাতিষ্ঠানিকভাবে দায়ী থাকবেন না। ফাউন্ডেশনের সার্বিক কার্যক্রমের সম্পূর্ণ দায়ভার নির্বাহী কর্তৃপক্ষের।
+                  {"\n\n"}
+                  <span className="text-primary font-bold">
+                    আমরা আমাদের সম্মানিত উপদেষ্টা পরিষদের সর্বাঙ্গীন মঙ্গল কামনা করি। মহান আল্লাহ তাআলা তাঁদের সম্মানিত করুন, নেক হায়াত দান করুন এবং পরকালে জান্নাত পর্যন্ত একসাথে কবুল করুন—আমীন!
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
         )}
+
         {officers.length > 0 && (
           <div className="pt-8">
             <div className="text-center max-w-2xl mx-auto">
