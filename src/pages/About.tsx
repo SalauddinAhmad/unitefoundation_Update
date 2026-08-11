@@ -544,7 +544,7 @@ const About = () => {
 
     <TeamSection only="advisors" />
 
-    <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white">
+    <section className="relative section-y overflow-hidden bg-[#0C2B1D] text-white my-16 py-20">
 
       <div
         aria-hidden
