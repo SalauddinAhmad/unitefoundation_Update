@@ -101,10 +101,10 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
   const officers = sorted.filter((m) => /দায়িত্বশীল|responsible|officer/i.test(m.role || ""));
   
   if (only === "advisors") return advisors.length === 0 ? null : (
-    <div className="space-y-16">
+    <div className="space-y-16 pt-12">
       <div>
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="heading-display">উপদেষ্টা</h2>
+          <h2 className="heading-display mb-4">উপদেষ্টা</h2>
         </div>
         <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:hidden gap-6">
           {advisors.map((m) => <TeamCard key={m.id} m={m} />)}
