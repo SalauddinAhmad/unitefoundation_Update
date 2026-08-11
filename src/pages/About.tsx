@@ -162,11 +162,11 @@ const TeamSection = ({ only }: { only?: "advisors" | "officers" } = {}) => {
 
 
 
-      <div className="container-page relative">
+      <div className="container-page relative pt-12">
         {advisors.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-24">
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="heading-display">উপদেষ্টা</h2>
+              <h2 className="heading-display mb-4">উপদেষ্টা</h2>
             </div>
             <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:hidden gap-6">
               {advisors.map((m) => <TeamCard key={m.id} m={m} />)}
