@@ -82,7 +82,7 @@ const Volunteer = () => {
       <Seo
         title={t("volunteerPage.seoTitle")}
         description={t("volunteerPage.seoDesc")}
-        canonical="/volunteer"
+        canonical="/member"
       />
 
       {/* HERO */}
