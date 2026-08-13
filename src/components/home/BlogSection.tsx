@@ -20,10 +20,11 @@ export const BlogSection = () => {
     loop: true,
     skipSnaps: false,
     dragFree: true,
+    containScroll: 'trimSnaps',
     breakpoints: {
       '(min-width: 1024px)': { dragFree: false }
     }
-  }, [Autoplay({ delay: 4000, stopOnInteraction: false })]);
+  }, [Autoplay({ delay: 4000, stopOnInteraction: false, playOnInit: true })]);
 
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);

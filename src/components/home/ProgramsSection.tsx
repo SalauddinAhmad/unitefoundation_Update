@@ -18,10 +18,11 @@ export const ProgramsSection = () => {
     loop: true,
     skipSnaps: false,
     dragFree: true,
+    containScroll: 'trimSnaps',
     breakpoints: {
       '(min-width: 1024px)': { dragFree: false }
     }
-  }, [Autoplay({ delay: 5000, stopOnInteraction: false })]);
+  }, [Autoplay({ delay: 5000, stopOnInteraction: false, playOnInit: true })]);
 
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
