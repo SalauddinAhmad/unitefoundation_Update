@@ -128,8 +128,8 @@ const Volunteer = () => {
           </div>
 
           {/* Tabs */}
-          <div className="mt-10 mx-auto max-w-2xl rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div className="mt-10 mx-auto max-w-5xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {tabsBase.map((tb) => {
                 const isActive = tb.key === active;
                 const Icon = tb.icon;
@@ -140,23 +140,28 @@ const Volunteer = () => {
                     onClick={() => setActive(tb.key)}
                     aria-pressed={isActive}
                     className={
-                      "group flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 py-5 md:py-6 px-3 rounded-xl text-sm md:text-base font-semibold text-center transition-colors " +
+                      "group relative flex flex-col items-center justify-center gap-3 md:gap-4 p-6 md:p-8 rounded-2xl md:rounded-3xl border-2 transition-all duration-300 " +
                       (isActive
-                        ? "bg-accent text-accent-foreground"
-                        : "text-foreground/70 hover:bg-secondary hover:text-foreground")
+                        ? "bg-primary border-primary text-white shadow-lg scale-[1.02] z-10"
+                        : "bg-card border-border/50 text-foreground/70 hover:border-primary/30 hover:bg-secondary/50 hover:scale-[1.01]")
                     }
                   >
-                    <span
+                    <div
                       className={
-                        "h-10 w-10 rounded-full flex items-center justify-center transition-colors " +
+                        "h-14 w-14 md:h-16 md:w-16 rounded-2xl flex items-center justify-center transition-all duration-300 " +
                         (isActive
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary text-primary group-hover:bg-accent")
+                          ? "bg-white/20 text-white rotate-3"
+                          : "bg-secondary text-primary group-hover:bg-primary/10 group-hover:-rotate-3")
                       }
                     >
-                      <Icon className="h-5 w-5" />
+                      <Icon className="h-7 w-7 md:h-8 md:w-8" />
+                    </div>
+                    <span className="text-base md:text-lg font-bold tracking-tight">
+                      {tb.labelKey ? t(tb.labelKey) : tb.label}
                     </span>
-                    <span>{tb.labelKey ? t(tb.labelKey) : tb.label}</span>
+                    {isActive && (
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-primary rotate-45 rounded-sm" />
+                    )}
                   </button>
                 );
               })}
