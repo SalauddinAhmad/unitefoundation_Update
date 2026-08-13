@@ -66,7 +66,7 @@ export const BlogSection = () => {
         </div>
 
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex touch-pan-y -ml-4">
+          <div className="flex touch-pan-y -ml-4 will-change-transform">
             {latest.map((p, idx) => (
               <div 
                 key={p.slug}

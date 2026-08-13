@@ -66,7 +66,7 @@ export const ProgramsSection = () => {
         </div>
 
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex touch-pan-y -ml-4">
+          <div className="flex touch-pan-y -ml-4 will-change-transform">
             {projects.map((p, idx) => (
               <div 
                 key={p.id}
