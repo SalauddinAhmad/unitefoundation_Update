@@ -68,12 +68,8 @@ export const BlogSection = () => {
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex touch-pan-y -ml-4">
             {latest.map((p, idx) => (
-              <motion.div 
+              <div 
                 key={p.slug}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4 pb-4"
               >
                 <article className="group h-full flex flex-col bg-background rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
@@ -130,7 +126,7 @@ export const BlogSection = () => {
                     </div>
                   </div>
                 </article>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
