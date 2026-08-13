@@ -63,7 +63,7 @@ import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
 import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const key = active === "regular" ? "donor" : active === "monthly" ? "monthly" : "member";
+  const key = active === "monthly" ? "monthly" : "member";
   const { data: schema } = useSchemaForLeft(key);
   return <FormSideContent extras={schema?.extras} />;
 };
@@ -243,7 +243,7 @@ const RegularForm = () => {
   const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -279,7 +279,7 @@ const MonthlyForm = () => {
   const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -424,7 +424,6 @@ export const MembershipDonorSection = () => {
             }}
           >
             <div className="p-7 md:p-9 text-white">
-              {active === "regular" && <RegularForm />}
               {active === "monthly" && <MonthlyForm />}
               {active === "member" && <MemberForm />}
             </div>
