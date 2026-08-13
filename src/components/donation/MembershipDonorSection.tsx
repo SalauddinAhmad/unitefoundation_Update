@@ -19,10 +19,9 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-type TabKey = "regular" | "monthly" | "member";
+type TabKey = "monthly" | "member";
 
 const tabsBase: { key: TabKey; label: string; icon: typeof HeartHandshake }[] = [
-  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
   { key: "monthly", label: "মাসিক দাতা", icon: CalendarClock },
   { key: "member", label: "আজীবন দাতা", icon: HeartHandshake },
 ];
@@ -64,7 +63,7 @@ import { useFormSchema as useSchemaForLeft } from "@/hooks/api/useForms";
 import { FormSideContent } from "@/components/forms/FormSideContent";
 
 const LeftPanel = ({ active }: { active: TabKey }) => {
-  const key = active === "regular" ? "donor" : active === "monthly" ? "monthly" : "member";
+  const key = active === "monthly" ? "monthly" : "member";
   const { data: schema } = useSchemaForLeft(key);
   return <FormSideContent extras={schema?.extras} />;
 };
@@ -244,7 +243,7 @@ const RegularForm = () => {
   const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -280,7 +279,7 @@ const MonthlyForm = () => {
   const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="regular" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -348,7 +347,7 @@ const MemberForm = () => {
 
 export const MembershipDonorSection = () => {
   const { t } = useTranslation();
-  const [active, setActive] = useState<TabKey>("member");
+  const [active, setActive] = useState<TabKey>("monthly");
 
   return (
     <section id="join-us" className="py-14 md:py-20 border-t border-border bg-secondary/20">
@@ -425,7 +424,6 @@ export const MembershipDonorSection = () => {
             }}
           >
             <div className="p-7 md:p-9 text-white">
-              {active === "regular" && <RegularForm />}
               {active === "monthly" && <MonthlyForm />}
               {active === "member" && <MemberForm />}
             </div>
