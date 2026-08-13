@@ -19,10 +19,9 @@ import { site } from "@/data/site";
 import { toast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 
-type TabKey = "regular" | "monthly" | "member";
+type TabKey = "monthly" | "member";
 
 const tabsBase: { key: TabKey; label: string; icon: typeof HeartHandshake }[] = [
-  { key: "regular", label: "নিয়মিত দাতা", icon: Repeat },
   { key: "monthly", label: "মাসিক দাতা", icon: CalendarClock },
   { key: "member", label: "আজীবন দাতা", icon: HeartHandshake },
 ];
@@ -348,7 +347,7 @@ const MemberForm = () => {
 
 export const MembershipDonorSection = () => {
   const { t } = useTranslation();
-  const [active, setActive] = useState<TabKey>("member");
+  const [active, setActive] = useState<TabKey>("monthly");
 
   return (
     <section id="join-us" className="py-14 md:py-20 border-t border-border bg-secondary/20">
