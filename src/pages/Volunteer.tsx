@@ -55,11 +55,13 @@ const saveApplication = async (
   }
 };
 
-type TabKey = "volunteer" | "representative";
+type TabKey = "volunteer" | "representative" | "monthly" | "member";
 
-const tabsBase: { key: TabKey; labelKey: string; icon: typeof HandHeart }[] = [
+const tabsBase: { key: TabKey; labelKey?: string; label?: string; icon: typeof HandHeart }[] = [
   { key: "volunteer", labelKey: "volunteerPage.tabVolunteer", icon: HandHeart },
   { key: "representative", labelKey: "volunteerPage.tabRep", icon: UserPlus },
+  { key: "monthly", label: "মাসিক দাতা", icon: Clock },
+  { key: "member", label: "আজীবন দাতা", icon: ShieldCheck },
 ];
 
 // ---------- Helpers ----------
@@ -127,7 +129,7 @@ const Volunteer = () => {
 
           {/* Tabs */}
           <div className="mt-10 mx-auto max-w-2xl rounded-card border border-border bg-card p-2 md:p-3 shadow-[var(--shadow-card)]">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {tabsBase.map((tb) => {
                 const isActive = tb.key === active;
                 const Icon = tb.icon;
@@ -154,7 +156,7 @@ const Volunteer = () => {
                     >
                       <Icon className="h-5 w-5" />
                     </span>
-                    <span>{t(tb.labelKey)}</span>
+                    <span>{tb.labelKey ? t(tb.labelKey) : tb.label}</span>
                   </button>
                 );
               })}
@@ -191,6 +193,8 @@ const Volunteer = () => {
               <div className="p-7 md:p-9 text-white">
                 {active === "volunteer" && <VolunteerForm />}
                 {active === "representative" && <RepresentativeForm />}
+                {active === "monthly" && <MonthlyForm />}
+                {active === "member" && <MemberForm />}
               </div>
             </div>
           </div>
@@ -410,6 +414,7 @@ const useShowError = () => {
 // Dynamic forms (schemas managed from the dashboard's Form Manager).
 import { useFormSchema } from "@/hooks/api/useForms";
 import { DynamicForm } from "@/components/forms/DynamicForm";
+import { Link } from "react-router-dom";
 
 type SubmittedVals = Record<string, string | number | boolean | string[]>;
 
@@ -481,6 +486,108 @@ const RepresentativeForm = () => {
               profession: stringVal(vals.profession),
               message: stringVal(vals.whyJoin),
               extra: vals,
+            });
+            if (ok) setDone(true);
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+const TermsCheckbox = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
+  <label className="flex items-start gap-2.5 text-xs md:text-sm text-white/90 cursor-pointer select-none mt-2">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={(e) => onChange(e.target.checked)}
+      className="mt-0.5 h-4 w-4 rounded border-white/40 bg-white/20 text-primary focus:ring-white/40 shrink-0"
+    />
+    <span className="leading-relaxed">
+      আমি{" "}
+      <Link to="/terms-conditions" target="_blank" className="underline font-semibold hover:text-white">টার্মস অ্যান্ড কন্ডিশনস</Link>,{" "}
+      <Link to="/privacy-policy" target="_blank" className="underline font-semibold hover:text-white">প্রাইভেসি পলিসি</Link>{" "}
+      ও{" "}
+      <Link to="/refund-policy" target="_blank" className="underline font-semibold hover:text-white">রিফান্ড পলিসি</Link>{" "}
+      পড়েছি ও এতে সম্মত।
+    </span>
+  </label>
+);
+
+const guardTerms = (agreed: boolean): boolean => {
+  if (agreed) return true;
+  toast({
+    title: "শর্তাবলী গ্রহণ করুন",
+    description: "দান করতে হলে অনুগ্রহ করে টার্মস, প্রাইভেসি ও রিফান্ড পলিসিতে সম্মতি দিন।",
+    variant: "destructive",
+  });
+  return false;
+};
+
+const MonthlyForm = () => {
+  const { t } = useTranslation();
+  const { data: schema } = useFormSchema("monthly");
+  const [done, setDone] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
+
+  if (!schema) return null;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  return (
+    <>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
+          onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
+            const ok = await saveApplication("career", {
+              name: stringVal(vals.name),
+              phone: stringVal(vals.phone),
+              email: stringVal(vals.email),
+              profession: stringVal(vals.area),
+              message: stringVal(vals.note),
+              extra: { ...vals, plan: "monthly", type: "donor" },
+            });
+            if (ok) setDone(true);
+          }}
+        />
+      </div>
+    </>
+  );
+};
+
+const MemberForm = () => {
+  const { t } = useTranslation();
+  const { data: schema } = useFormSchema("member");
+  const [done, setDone] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+  const [agreed, setAgreed] = useState(false);
+
+  if (!schema) return null;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  return (
+    <>
+      <FormHeader title={schema.title} sub={schema.subtitle} />
+      <div className="mt-6">
+        <DynamicForm
+          key={resetKey}
+          schema={schema}
+          submitLabel={t("volunteerPage.submit")}
+          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
+          onSubmit={async (vals) => {
+            if (!guardTerms(agreed)) return;
+            const ok = await saveApplication("career", {
+              name: stringVal(vals.name),
+              phone: stringVal(vals.phone),
+              email: stringVal(vals.email),
+              address: stringVal(vals.address),
+              profession: stringVal(vals.profession),
+              message: stringVal(vals.note),
+              extra: { ...vals, type: "member" },
             });
             if (ok) setDone(true);
           }}

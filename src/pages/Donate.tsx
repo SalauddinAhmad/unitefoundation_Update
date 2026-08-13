@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/Seo";
 import { SiteLayout } from "@/components/layout/SiteLayout";
 import { DonationChannelsSection } from "@/components/home/DonationChannelsSection";
-import { MembershipDonorSection } from "@/components/donation/MembershipDonorSection";
+// MembershipDonorSection was removed as per request to move forms to Volunteer page
 
 
 const Donate = () => {
@@ -42,7 +42,7 @@ const Donate = () => {
 
 
       <DonationChannelsSection />
-      <MembershipDonorSection />
+      {/* MembershipDonorSection removed */}
     </SiteLayout>
   );
 };
