@@ -20,10 +20,11 @@ export const BlogSection = () => {
     loop: true,
     skipSnaps: false,
     dragFree: true,
+    containScroll: 'trimSnaps',
     breakpoints: {
       '(min-width: 1024px)': { dragFree: false }
     }
-  }, [Autoplay({ delay: 4000, stopOnInteraction: false })]);
+  }, [Autoplay({ delay: 4000, stopOnInteraction: false, playOnInit: true })]);
 
   const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
   const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
@@ -65,14 +66,10 @@ export const BlogSection = () => {
         </div>
 
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex touch-pan-y -ml-4">
+          <div className="flex touch-pan-y -ml-4 will-change-transform">
             {latest.map((p, idx) => (
-              <motion.div 
+              <div 
                 key={p.slug}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="flex-[0_0_85%] sm:flex-[0_0_50%] lg:flex-[0_0_33.333%] min-w-0 pl-4 pb-4"
               >
                 <article className="group h-full flex flex-col bg-background rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-border/50">
@@ -129,7 +126,7 @@ export const BlogSection = () => {
                     </div>
                   </div>
                 </article>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
