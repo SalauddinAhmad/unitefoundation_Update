@@ -5,7 +5,7 @@
     "about": "About Us",
     "gallery": "Gallery",
     "blog": "Blog",
-    "volunteer": "Volunteer",
+    "volunteer": "Member",
     "contact": "Contact",
     "donate": "Donate",
     "menu": "Main menu",
@@ -358,9 +358,9 @@
     "seeAll": "See all"
   },
   "volunteerPage": {
-    "seoTitle": "Join us | Unite Foundation",
+    "seoTitle": "Be a Member | Unite Foundation",
     "seoDesc": "Regular donor, life member, volunteer or career — connect with Unite Foundation in any way.",
-    "heroTitle": "Join hands with us",
+    "heroTitle": "Be a Member",
     "sectionTitle": "আমাদের পরিবারে আপনাকে স্বাগতম!",
     "sectionSubtitle": "Read the guidelines carefully and choose the option that matches your interest below.",
     "tabRegular": "Regular donor",

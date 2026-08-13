@@ -89,7 +89,7 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/volunteer" element={<Volunteer />} />
+            <Route path="/member" element={<Volunteer />} />
             <Route path="/partners/:slug" element={<PartnerDetail />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-conditions" element={<TermsConditions />} />

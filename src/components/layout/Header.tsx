@@ -18,7 +18,7 @@ export const Header = () => {
     { key: "about", href: "/about" },
     { key: "gallery", href: "/gallery" },
     { key: "blog", href: "/blog" },
-    { key: "volunteer", href: "/volunteer" },
+    { key: "volunteer", href: "/member" },
     { key: "contact", href: "/contact" },
     { key: "donate", href: "/donate" },
   ] as const;
