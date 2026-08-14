@@ -47,7 +47,7 @@ export type DetailSection = { title: string; fields: DetailField[] };
 
 export type Application = {
   id: string;
-  rawId?: string; name: string; phone: string; city: string; type: string; date: string;
+  rawId?: string; name: string; phone: string; city: string; type: string; formName?: string; date: string;
   status: "new" | "reviewing" | "approved" | "rejected";
   email?: string;
   submittedAt?: string;
@@ -57,7 +57,7 @@ export type Application = {
 export const volunteerApps: Application[] = [
   {
     id: "VOL-0420", name: "তানভীর হাসান", phone: "01711223344", city: "ঢাকা",
-    type: "ত্রাণ বিতরণ", date: "২০২৬-০৫-২৫", status: "new",
+    type: "ত্রাণ বিতরণ", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৫", status: "new",
     email: "tanvir.hasan@example.com", submittedAt: "২০২৬-০৫-২৫ ১০:২৪",
     details: [
       { title: "ব্যক্তিগত তথ্য", fields: [
@@ -82,16 +82,16 @@ export const volunteerApps: Application[] = [
       ]},
     ],
   },
-  { id: "VOL-0419", name: "সাদিয়া ইসলাম", phone: "01822334455", city: "চট্টগ্রাম", type: "শিক্ষা মেন্টরশিপ", date: "২০২৬-০৫-২৪", status: "reviewing" },
-  { id: "VOL-0418", name: "রাকিবুল হাসান", phone: "01933445566", city: "সিলেট", type: "মিডিয়া ও কনটেন্ট", date: "২০২৬-০৫-২৩", status: "approved" },
-  { id: "VOL-0417", name: "নুসরাত জাহান", phone: "01644556677", city: "রাজশাহী", type: "স্বাস্থ্যসেবা ক্যাম্প", date: "২০২৬-০৫-২২", status: "new" },
-  { id: "VOL-0416", name: "মেহেদী হাসান", phone: "01555667788", city: "খুলনা", type: "ফান্ডরাইজিং", date: "২০২৬-০৫-২১", status: "approved" },
+  { id: "VOL-0419", name: "সাদিয়া ইসলাম", phone: "01822334455", city: "চট্টগ্রাম", type: "শিক্ষা মেন্টরশিপ", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৪", status: "reviewing" },
+  { id: "VOL-0418", name: "রাকিবুল হাসান", phone: "01933445566", city: "সিলেট", type: "মিডিয়া ও কনটেন্ট", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৩", status: "approved" },
+  { id: "VOL-0417", name: "নুসরাত জাহান", phone: "01644556677", city: "রাজশাহী", type: "স্বাস্থ্যসেবা ক্যাম্প", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২২", status: "new" },
+  { id: "VOL-0416", name: "মেহেদী হাসান", phone: "01555667788", city: "খুলনা", type: "ফান্ডরাইজিং", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২১", status: "approved" },
 ];
 
 export const memberApps: Application[] = [
   {
     id: "MEM-0128", name: "আলহাজ্ব আব্দুল করিম", phone: "01711000111", city: "ঢাকা",
-    type: "আজীবন সদস্য (৳৫০,০০০)", date: "২০২৬-০৫-২৫", status: "reviewing",
+    type: "আজীবন সদস্য (৳৫০,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২৫", status: "reviewing",
     email: "abdul.karim@example.com", submittedAt: "২০২৬-০৫-২৫ ০৯:১২",
     details: [
       { title: "সদস্য তথ্য", fields: [
@@ -107,15 +107,15 @@ export const memberApps: Application[] = [
       ]},
     ],
   },
-  { id: "MEM-0127", name: "হাজী ইউনুস আলী", phone: "01822111222", city: "চট্টগ্রাম", type: "দাতা সদস্য (৳২৫,০০০)", date: "২০২৬-০৫-২৩", status: "approved" },
-  { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", date: "২০২৬-০৫-২০", status: "approved" },
+  { id: "MEM-0127", name: "হাজী ইউনুস আলী", phone: "01822111222", city: "চট্টগ্রাম", type: "দাতা সদস্য (৳২৫,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২৩", status: "approved" },
+  { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২০", status: "approved" },
 ];
 
 // জেলা প্রতিনিধি (District Representative) applications
 export const careerApps: Application[] = [
   {
     id: "DR-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "কুমিল্লা",
-    type: "চট্টগ্রাম", date: "২০২৬-০৫-২৫", status: "new",
+    type: "চট্টগ্রাম", formName: "প্রতিনিধি", date: "২০২৬-০৫-২৫", status: "new",
     email: "ariful.islam@example.com", submittedAt: "২০২৬-০৫-২৫ ১১:০২",
     details: [
       { title: "ব্যক্তিগত তথ্য", fields: [
@@ -147,10 +147,10 @@ export const careerApps: Application[] = [
       ]},
     ],
   },
-  { id: "DR-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "সিলেট", type: "সিলেট", date: "২০২৬-০৫-২৪", status: "reviewing" },
-  { id: "DR-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "রংপুর", type: "রংপুর", date: "২০২৬-০৫-২২", status: "approved" },
-  { id: "DR-0039", name: "মাহমুদুল হাসান", phone: "01611445566", city: "বগুড়া", type: "রাজশাহী", date: "২০২৬-০৫-২১", status: "new" },
-  { id: "DR-0038", name: "তাহমিনা বেগম", phone: "01555778899", city: "যশোর", type: "খুলনা", date: "২০২৬-০৫-২০", status: "reviewing" },
+  { id: "DR-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "সিলেট", type: "সিলেট", formName: "প্রতিনিধি", date: "২০২৬-০৫-২৪", status: "reviewing" },
+  { id: "DR-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "রংপুর", type: "রংপুর", formName: "প্রতিনিধি", date: "২০২৬-০৫-২২", status: "approved" },
+  { id: "DR-0039", name: "মাহমুদুল হাসান", phone: "01611445566", city: "বগুড়া", type: "রাজশাহী", formName: "প্রতিনিধি", date: "২০২৬-০৫-২১", status: "new" },
+  { id: "DR-0038", name: "তাহমিনা বেগম", phone: "01555778899", city: "যশোর", type: "খুলনা", formName: "প্রতিনিধি", date: "২০২৬-০৫-২০", status: "reviewing" },
 ];
 
 export type Project = {
