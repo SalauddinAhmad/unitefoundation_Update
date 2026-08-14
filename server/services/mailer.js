@@ -7,6 +7,8 @@ function buildTransport({ host, port, secure }) {
     port: Number(port),
     secure: Boolean(secure),
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    debug: true,
+    logger: true,
     pool: false,
     requireTLS: !secure,
     tls: { rejectUnauthorized: false },
