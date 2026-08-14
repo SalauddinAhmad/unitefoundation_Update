@@ -134,154 +134,291 @@ export const generateApplicationInvoice = (app: Application) => {
   const html = `<!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<title>${esc(app.id)} — ${esc(app.name)}</title>
-<style>
-  @font-face{
-    font-family:"Bornomala BN";
-    src:url("${origin}/fonts/Bornomala-Regular.woff2") format("woff2");
-    font-weight:400;font-style:normal;font-display:swap;
-  }
-  @font-face{
-    font-family:"Bornomala BN";
-    src:url("${origin}/fonts/Bornomala-Bold.woff2") format("woff2");
-    font-weight:700;font-style:normal;font-display:swap;
-  }
-  :root{ --ink:#1f2937; --muted:#555; --line:#ddd; --dark:#2c3e50; --bg-light:#f8f9fa; }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#fff;}
-  body{font-family:"Bornomala BN","Roboto",system-ui,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;line-height:1.55;}
-  .sheet{
-    width:210mm;min-height:297mm;margin:0 auto;background:#fff;position:relative;
-    padding:16mm 15mm 14mm;display:flex;flex-direction:column;
-  }
-  /* Letterhead */
-  .header-section{text-align:center;border-bottom:2px solid var(--dark);padding-bottom:12px;margin-bottom:18px}
-  .header-section .logo{height:52px;margin-bottom:6px;object-fit:contain}
-  .header-section h2{margin:0;color:var(--dark);font-size:24px;font-weight:700;letter-spacing:.2px}
-  .header-section .en{font-size:10px;letter-spacing:3px;color:#666;margin-top:3px;text-transform:uppercase}
-  .header-section p{margin:4px 0 0;color:#555;font-size:12px}
-  /* Title */
-  .form-title{
-    border:1px solid #000;background:#fff;padding:10px 14px;margin-bottom:14px;
-    text-align:center;
-  }
-  .form-title .t{font-weight:700;font-size:16px;color:#000;letter-spacing:.2px}
-  .id-line{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#333;margin-bottom:16px;border-bottom:1px solid #000;padding-bottom:6px}
-  /* Applicant block */
-  .applicant{display:flex;gap:18px;align-items:flex-start;margin-bottom:10px}
-  .photo{width:88px;height:108px;border:1px solid #bbb;object-fit:cover;flex:0 0 auto;background:#fafafa}
-  .applicant-info,.questions-section{width:100%;border-collapse:collapse;border:1px solid #ccc}
-  .applicant-info td{
-    padding:8px 11px;vertical-align:middle;font-size:12.5px;border:1px solid #e0e0e0;
-  }
-  .applicant-info tr:nth-child(odd){background:#fff}
-  .applicant-info tr:nth-child(even){background:#fafafa}
-  .questions-section td{
-    padding:7px 10px;vertical-align:top;font-size:12.5px;border-bottom:1px solid #e8e8e8;
-  }
-  .questions-section tr:last-child td{border-bottom:none}
-  .questions-section{border:1px solid #ddd}
-  .label{
-    font-weight:700;width:38%;color:#2c3e50;background:#f3f4f6;
-    border-right:1px solid #e0e0e0;white-space:nowrap;
-  }
-  .value{width:62%;color:#111;word-break:break-word;font-weight:500}
-  .section-heading{
-    font-size:13.5px;font-weight:700;color:var(--dark);
-    border-bottom:1px solid var(--dark);padding-bottom:4px;margin:20px 0 10px;
-    text-transform:none;letter-spacing:.2px;
-  }
-  /* Signatures */
-  .footer-section{margin-top:auto;padding-top:46px;display:flex;justify-content:space-between;text-align:center;gap:40px}
-  .signature-box{border-top:1px solid #777;min-width:200px;padding-top:5px;font-size:11.5px;color:#555}
-  .meta-foot{margin-top:14px;padding-top:8px;border-top:1px solid #e5e5e5;display:flex;justify-content:space-between;font-size:9.5px;color:#888}
-  .toolbar{position:fixed;bottom:22px;right:22px;display:flex;gap:10px}
-  .toolbar button{font-family:inherit;font-weight:700;font-size:13px;padding:11px 20px;border-radius:8px;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.18)}
-  .btn-print{background:var(--dark);color:#fff}
-  .btn-close{background:#fff;color:#334155;border:1px solid var(--line)}
-  @page{size:A4;margin:0}
-  @media print{
-    html,body{background:#fff}
-    .sheet{margin:0;box-shadow:none;border:none}
-    .toolbar{display:none!important}
-    tr,table,.applicant{page-break-inside:avoid}
-    .section-heading{page-break-after:avoid}
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>${esc(organizationName)} - ${esc(titleText)}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        @font-face {
+            font-family: 'Bornomala BN';
+            src: url('${origin}/fonts/Bornomala-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Bornomala BN';
+            src: url('${origin}/fonts/Bornomala-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Bornomala BN', 'Hind Siliguri', Arial, sans-serif;
+            color: #000000;
+            line-height: 1.4;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            background: #ffffff;
+            margin: 20px auto;
+            padding: 15mm 20mm;
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+        
+        .header-section {
+            text-align: center;
+            padding-bottom: 6px;
+            margin-bottom: 18px;
+            position: relative;
+        }
+        .header-section .logo { height: 50px; margin-bottom: 8px; }
+        .header-section h1 {
+            margin: 0 0 2px 0;
+            color: #000000;
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            color: #000000;
+            font-size: 12.5px;
+            margin-top: 4px;
+        }
+        .contact-info .separator { font-size: 10px; }
+        .header-divider {
+            width: 100%;
+            height: 1px;
+            background-color: #000000;
+            margin-top: 15px;
+            position: relative;
+        }
+        .header-divider::after {
+            content: '❖';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            padding: 0 12px;
+            color: #000000;
+            font-size: 11px;
+        }
+        
+        .title-bar {
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            padding: 8px 10px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            border-radius: 2px;
+            letter-spacing: 0.5px;
+        }
+        
+        .meta-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            padding: 8px 4px;
+            margin-bottom: 18px;
+        }
+        .meta-item {
+            font-size: 13px;
+            color: #000000;
+            font-weight: 600;
+        }
+        
+        .form-section { margin-bottom: 16px; }
+        .section-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 10px;
+            border-bottom: 1.5px solid #000000;
+            padding-bottom: 3px;
+        }
+        
+        .applicant-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .photo {
+            width: 90px;
+            height: 110px;
+            border: 1px solid #000;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #000;
+        }
+        .info-table td {
+            padding: 7px 10px;
+            border: 1px solid #000;
+            font-size: 13px;
+        }
+        .info-table td.label {
+            font-weight: 700;
+            background: #f8f8f8;
+            width: 35%;
+        }
+        
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 50px;
+            font-weight: 700;
+            color: #000000;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+        
+        .declaration-text {
+            font-size: 12.5px;
+            font-weight: 500;
+            margin-bottom: 25px;
+            border-left: 3px solid #000;
+            padding-left: 8px;
+        }
+        
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 40px;
+            padding-bottom: 20px;
+        }
+        .signature-block {
+            width: 220px;
+            text-align: center;
+        }
+        .sign-line { font-size: 12px; margin-bottom: 4px; }
+        .sign-label { font-size: 12.5px; font-weight: 600; }
+
+        .toolbar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        .toolbar button {
+            padding: 10px 20px;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background-color: #fff; }
+            .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; padding: 15mm 20mm; }
+            .no-print, .toolbar { display: none; }
+        }
+    </style>
 </head>
 <body>
-<div class="sheet">
-  <div class="header-section">
-    <img class="logo" src="${origin}/logo.png" alt="" onerror="this.remove()">
-    <h2>${esc(organizationName)}</h2>
-    <div class="en">${orgNameEn}</div>
-    <p>${esc(address)} &nbsp;|&nbsp; ${esc(website)}</p>
-    <p>${esc(contactLine)}</p>
-  </div>
 
-  <div class="form-title">
-    <div class="t">${esc(titleText)}</div>
-  </div>
-  <div class="id-line">
-    <span>নং: ${esc(app.id)}</span>
-    <span>অবস্থা: ${esc(statusLabels[app.status] || app.status)}</span>
-  </div>
+<div class="page">
+    <div class="watermark">unitefoundation.bd</div>
+    
+    <div class="header-section">
+        <img class="logo" src="${origin}/logo.png" alt="" onerror="this.remove()">
+        <h1>${esc(organizationName)}</h1>
+        <div class="contact-info">
+            <span>${esc(address)}</span>
+            <span class="separator">•</span>
+            <span>${esc(website)}</span>
+        </div>
+        <div class="contact-info">
+            <span>ইমেইল: info@unitefoundation.org</span>
+            <span class="separator">•</span>
+            <span>হেল্পলাইন: +৮৮০ ১৩২৪-৪৩৯৬৯৮</span>
+        </div>
+        <div class="header-divider"></div>
+    </div>
 
-  <div class="applicant">
-    ${photo ? `<img class="photo" src="${esc(photo)}" alt="" onerror="this.remove()">` : ""}
-    <table class="applicant-info">
-      <tr>
-        <td class="label">আবেদনকারীর পূর্ণ নাম</td>
-        <td class="value">${esc(app.name)}</td>
-      </tr>
-      <tr>
-        <td class="label">মোবাইল (WhatsApp)</td>
-        <td class="value">${esc(app.phone)}</td>
-      </tr>
-      <tr>
-        <td class="label">ইমেইল ঠিকানা</td>
-        <td class="value">${esc(app.email || "—")}</td>
-      </tr>
-      <tr>
-        <td class="label">শহর / জেলা</td>
-        <td class="value">${esc(app.city)}</td>
-      </tr>
-      <tr>
-        <td class="label">আবেদনের তারিখ</td>
-        <td class="value">${esc(app.date)}</td>
-      </tr>
-    </table>
-  </div>
+    <div class="title-bar">
+        ${esc(titleText)} আবেদন ফরম
+    </div>
 
-  ${sections
-    .filter((s) => s.fields.length)
-    .map(
-      (s) => `
-    <div class="section-heading">${esc(s.title)}</div>
-    <table class="questions-section">
-      ${s.fields
-        .map((f) => `<tr><td class="label">${esc(f.label)}</td><td class="value">${esc(f.value)}</td></tr>`)
-        .join("")}
-    </table>`
-    )
-    .join("")}
+    <div class="meta-section">
+        <div class="meta-item">আবেদন নম্বর: ${esc(app.id)}</div>
+        <div class="meta-item">আবেদনের তারিখ: ${esc(app.date)}</div>
+    </div>
 
-  <div class="footer-section">
-    <div class="signature-box">আবেদনকারীর স্বাক্ষর ও তারিখ</div>
-    <div class="signature-box">কর্তৃপক্ষের স্বাক্ষর ও সিলমোহর</div>
-  </div>
+    <div class="form-section">
+        <div class="section-title">১. ব্যক্তিগত তথ্য</div>
+        <div class="applicant-row">
+            ${photo ? `<img class="photo" src="${esc(photo)}" alt="">` : `<div class="photo" style="display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center">ছবি নেই</div>`}
+            <table class="info-table">
+                <tr><td class="label">নাম</td><td>${esc(app.name)}</td></tr>
+                <tr><td class="label">মোবাইল (WhatsApp)</td><td>${esc(app.phone)}</td></tr>
+                <tr><td class="label">ইমেইল ঠিকানা</td><td>${esc(app.email || "—")}</td></tr>
+                <tr><td class="label">শহর / জেলা</td><td>${esc(app.city)}</td></tr>
+            </table>
+        </div>
+    </div>
 
-  <div class="meta-foot">
-    <span>ইউনাইট ফাউন্ডেশনের ডিজিটাল সিস্টেম থেকে স্বয়ংক্রিয়ভাবে তৈরি — স্বাক্ষর ছাড়া বৈধ নয়।</span>
-    <span>প্রিন্ট: ${esc(printedAt)}</span>
-  </div>
+    ${sections.map(s => `
+        <div class="form-section">
+            <div class="section-title">${esc(s.title)}</div>
+            <table class="info-table">
+                ${s.fields.map(f => `
+                    <tr><td class="label">${esc(f.label)}</td><td>${esc(f.value)}</td></tr>
+                `).join('')}
+            </table>
+        </div>
+    `).join('')}
+
+    <div class="signature-section">
+        <div class="signature-block">
+            <div class="sign-line">..................................................</div>
+            <div class="sign-label">আবেদনকারীর স্বাক্ষর</div>
+        </div>
+        <div class="signature-block">
+            <div class="sign-line">..................................................</div>
+            <div class="sign-label">কর্তৃপক্ষের স্বাক্ষর ও সিলমোহর</div>
+        </div>
+    </div>
 </div>
 
 <div class="toolbar">
-  <button class="btn-close" onclick="window.close()">বন্ধ করুন</button>
-  <button class="btn-print" onclick="window.print()">প্রিন্ট / PDF সেভ</button>
+    <button onclick="window.close()" style="background:#eee;color:#000">বন্ধ করুন</button>
+    <button onclick="window.print()">প্রিন্ট / PDF সেভ</button>
 </div>
+
 </body>
 </html>`;
 
