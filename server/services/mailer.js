@@ -153,6 +153,7 @@ exports.sendMail = async ({ to, cc, bcc, subject, html, text }) => {
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const payload = { from, to, cc, bcc, subject, html, text };
   const t = await resolveTransporter();
+  console.log('[mailer] Attempting send to:', to, 'via', (activeConfig && activeConfig.transport) || 'smtp');
   try {
     return await t.sendMail(payload);
   } catch (err) {
