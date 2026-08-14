@@ -65,11 +65,12 @@ const Messages = () => {
     if (apiMessages) {
       const msgs = apiMessages as MessageEx[];
       setList(msgs);
-      if (!selected && msgs.length > 0) {
+      if (msgs.length > 0 && !selected) {
         setSelected(msgs[0].id);
       }
     }
   }, [apiMessages, selected]);
+
 
 
 
