@@ -157,7 +157,10 @@ exports.sendMail = async ({ to, cc, bcc, subject, html, text }) => {
   try {
     return await t.sendMail(payload);
   } catch (err) {
-    if (!isConnError(err)) throw err;
+    if (!isConnError(err)) {
+      console.error('[mailer] Non-connection error during sendMail:', err);
+      throw err;
+    }
     // Cached route died (IP/firewall change) — re-probe once.
     console.warn('[mailer] send failed, re-probing SMTP routes:', err && err.message);
     const t2 = await resolveTransporter(true);
