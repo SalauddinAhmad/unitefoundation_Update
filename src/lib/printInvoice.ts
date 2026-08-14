@@ -115,41 +115,47 @@ export const generateApplicationInvoice = (app: Application) => {
 <body>
 <div class="sheet">
   <div class="header-section">
+    <img class="logo" src="/logo.png" alt="" onerror="this.remove()">
     <h2>${esc(organizationName)}</h2>
-    <p>${esc(address)}</p>
-    <p>ইমেইল: info@unitefoundation.org | হেল্পলাইন: +৮৮০ ১৩২৪-৪৩৯৬৯৮</p>
+    <div class="en">${orgNameEn}</div>
+    <p>${esc(address)} &nbsp;|&nbsp; ${esc(website)}</p>
+    <p>${esc(contactLine)}</p>
   </div>
 
   <div class="form-title">
-    ${esc(app.type)} আবেদন ফরম (Application Summary)
+    <div class="t">${esc(app.type)} — আবেদন ফরম সারসংক্ষেপ</div>
+    <div class="id">নং: ${esc(app.id)} · অবস্থা: ${esc(statusLabels[app.status] || app.status)}</div>
   </div>
 
-  <table class="applicant-info">
-    <tr>
-      <td class="label">আবেদিত পদ / ধরন:</td>
-      <td class="value">${esc(app.type)}</td>
-    </tr>
-    <tr>
-      <td class="label">আবেদনের তারিখ:</td>
-      <td class="value">${esc(app.date)}</td>
-    </tr>
-    <tr>
-      <td class="label">আবেদনকারীর পূর্ণ নাম:</td>
-      <td class="value">${esc(app.name)}</td>
-    </tr>
-    <tr>
-      <td class="label">মোবাইল (WhatsApp):</td>
-      <td class="value">${esc(app.phone)}</td>
-    </tr>
-    <tr>
-      <td class="label">ইমেইল ঠিকানা:</td>
-      <td class="value">${esc(app.email || "—")}</td>
-    </tr>
-    <tr>
-      <td class="label">শহর / জেলা:</td>
-      <td class="value">${esc(app.city)}</td>
-    </tr>
-  </table>
+  <div class="applicant">
+    ${photo ? `<img class="photo" src="${esc(photo)}" alt="" onerror="this.remove()">` : ""}
+    <table class="applicant-info">
+      <tr>
+        <td class="label">আবেদনকারীর পূর্ণ নাম</td>
+        <td class="value">${esc(app.name)}</td>
+      </tr>
+      <tr>
+        <td class="label">আবেদিত পদ / ধরন</td>
+        <td class="value">${esc(app.type)}</td>
+      </tr>
+      <tr>
+        <td class="label">মোবাইল (WhatsApp)</td>
+        <td class="value">${esc(app.phone)}</td>
+      </tr>
+      <tr>
+        <td class="label">ইমেইল ঠিকানা</td>
+        <td class="value">${esc(app.email || "—")}</td>
+      </tr>
+      <tr>
+        <td class="label">শহর / জেলা</td>
+        <td class="value">${esc(app.city)}</td>
+      </tr>
+      <tr>
+        <td class="label">আবেদনের তারিখ</td>
+        <td class="value">${esc(app.date)}</td>
+      </tr>
+    </table>
+  </div>
 
   ${sections
     .filter((s) => s.fields.length)
@@ -165,18 +171,14 @@ export const generateApplicationInvoice = (app: Application) => {
     .join("")}
 
   <div class="footer-section">
-    <div>
-      <br><br>
-      <div class="signature-box">আবেদনকারীর স্বাক্ষর</div>
-    </div>
-    <div>
-      <br><br>
-      <div class="signature-box">কর্তৃপক্ষের স্বাক্ষর</div>
-    </div>
+    <div class="signature-box">আবেদনকারীর স্বাক্ষর ও তারিখ</div>
+    <div class="signature-box">যাচাইকারী কর্মকর্তা</div>
+    <div class="signature-box">কর্তৃপক্ষের স্বাক্ষর ও সিলমোহর</div>
   </div>
 
-  <div style="margin-top: 40px; font-size: 10px; color: #777; text-align: right;">
-    প্রিন্ট: ${esc(printedAt)} · ${esc(app.id)}
+  <div class="meta-foot">
+    <span>ইউনাইট ফাউন্ডেশনের ডিজিটাল সিস্টেম থেকে স্বয়ংক্রিয়ভাবে তৈরি — স্বাক্ষর ছাড়া বৈধ নয়।</span>
+    <span>প্রিন্ট: ${esc(printedAt)}</span>
   </div>
 </div>
 
