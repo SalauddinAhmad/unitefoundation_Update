@@ -156,10 +156,12 @@ export const generateApplicationInvoice = (app: Application) => {
     <section class="applicant">
       ${photo ? `<img class="photo" src="${esc(photo)}" alt="" onerror="this.remove()">` : ""}
       <div class="grid">
-        <div class="cell"><div class="label">নাম</div><div class="value">${esc(app.name)}</div></div>
-        <div class="cell"><div class="label">মোবাইল</div><div class="value">${esc(app.phone)}</div></div>
-        <div class="cell"><div class="label">ইমেইল</div><div class="value">${esc(app.email || "—")}</div></div>
+        <div class="cell"><div class="label">আবেদনকারীর পূর্ণ নাম</div><div class="value">${esc(app.name)}</div></div>
+        <div class="cell"><div class="label">আবেদিত পদ / ধরন</div><div class="value">${esc(app.type)}</div></div>
+        <div class="cell"><div class="label">মোবাইল (WhatsApp)</div><div class="value">${esc(app.phone)}</div></div>
+        <div class="cell"><div class="label">ইমেইল ঠিকানা</div><div class="value">${esc(app.email || "—")}</div></div>
         <div class="cell"><div class="label">শহর / জেলা</div><div class="value">${esc(app.city)}</div></div>
+        <div class="cell"><div class="label">আবেদনের তারিখ</div><div class="value">${esc(app.date)}</div></div>
       </div>
     </section>
 
