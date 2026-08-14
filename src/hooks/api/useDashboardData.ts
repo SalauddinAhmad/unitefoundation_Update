@@ -203,7 +203,7 @@ export const useMessages = () => {
   return useQuery({
     queryKey: ["messages"],
     queryFn: async () => {
-      const rows = await tryApi<any[]>("/messages", []);
+      const rows = await tryApi<any[]>("/messages", mockMessages as any);
       const normalized = (Array.isArray(rows) ? rows : []).map((r: any) => ({
         id: String(r.id ?? ""),
         name: r.name ?? "",
