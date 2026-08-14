@@ -54,13 +54,21 @@ export const generateApplicationInvoice = (app: Application) => {
 <head>
 <meta charset="UTF-8">
 <title>${esc(app.id)} — ${esc(app.name)}</title>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  @font-face{
+    font-family:"Bornomala BN";
+    src:url("${origin}/fonts/Bornomala-Regular.woff2") format("woff2");
+    font-weight:400;font-style:normal;font-display:swap;
+  }
+  @font-face{
+    font-family:"Bornomala BN";
+    src:url("${origin}/fonts/Bornomala-Bold.woff2") format("woff2");
+    font-weight:700;font-style:normal;font-display:swap;
+  }
   :root{ --ink:#1f2937; --muted:#555; --line:#ddd; --dark:#2c3e50; --bg-light:#f8f9fa; }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#fff;}
-  body{font-family:'Noto Sans Bengali','SolaimanLipi',Arial,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;line-height:1.55;}
+  body{font-family:"Bornomala BN","Roboto",system-ui,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;line-height:1.55;}
   .sheet{
     width:210mm;min-height:297mm;margin:0 auto;background:#fff;position:relative;
     padding:16mm 15mm 14mm;display:flex;flex-direction:column;
