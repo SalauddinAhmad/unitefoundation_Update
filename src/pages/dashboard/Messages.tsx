@@ -152,6 +152,7 @@ const Messages = () => {
         await api.patch(`/messages/${id}`, { status: "read" });
         const next = list.map((m) => (m.id === id ? { ...m, status: "read" as const } : m));
         update(next);
+
       } catch (e) {
         console.error("[messages] status update failed", e);
       }
