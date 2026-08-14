@@ -140,7 +140,7 @@ export const generateApplicationInvoice = (app: Application) => {
   </div>
 
   <div class="form-title">
-    <div class="t">${esc(app.type)} — আবেদন ফরম সারসংক্ষেপ</div>
+    <div class="t">${esc(app.type)}</div>
     <div class="id">নং: ${esc(app.id)} · অবস্থা: ${esc(statusLabels[app.status] || app.status)}</div>
   </div>
 
@@ -150,10 +150,6 @@ export const generateApplicationInvoice = (app: Application) => {
       <tr>
         <td class="label">আবেদনকারীর পূর্ণ নাম</td>
         <td class="value">${esc(app.name)}</td>
-      </tr>
-      <tr>
-        <td class="label">আবেদিত পদ / ধরন</td>
-        <td class="value">${esc(app.type)}</td>
       </tr>
       <tr>
         <td class="label">মোবাইল (WhatsApp)</td>
