@@ -246,7 +246,7 @@ export const ApplicationsTable = ({ title, subtitle, data, extrasBucket, idPrefi
                   <td className="px-5 py-3 font-mono text-xs text-foreground/70">{v.id}</td>
                   <td className="py-3">
                     <div className="flex items-center gap-3">
-                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0">
+                      <div className="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shrink-0">
                         {v.name.charAt(0)}
                       </div>
                       <div>
@@ -359,7 +359,7 @@ const ApplicationDetailSheet = ({
               </button>
               <SheetHeader className="text-left space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="h-14 w-14 rounded-2xl bg-white/15 backdrop-blur border border-white/20 flex items-center justify-center text-2xl font-extrabold">
+                  <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-extrabold">
                     {app.name.charAt(0)}
                   </div>
                   <div>

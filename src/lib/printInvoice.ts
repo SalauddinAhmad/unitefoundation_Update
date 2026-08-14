@@ -96,18 +96,15 @@ export const generateApplicationInvoice = (app: Application) => {
   };
 
 
-  // Pull a photo out of the details, if any
-  let photo = "";
+  // Applicant photo extraction disabled per user request
+  const photo = "";
   const sections = (app.details || [])
     .map((s) => ({
       title: s.title,
       fields: s.fields
         .filter((f) => {
           const v = String(f.value ?? "");
-          if (!photo && isImage(v)) {
-            photo = v;
-            return false;
-          }
+          if (isImage(v)) return false; // Hide images from the details list
           return v.trim() !== "";
         })
         .filter((f) => !isDuplicate(f.label))
@@ -262,13 +259,6 @@ export const generateApplicationInvoice = (app: Application) => {
             gap: 15px;
             margin-bottom: 15px;
         }
-        .photo {
-            width: 90px;
-            height: 110px;
-            border: 1px solid #000;
-            object-fit: cover;
-            flex-shrink: 0;
-        }
         
         .info-table {
             width: 100%;
@@ -381,7 +371,6 @@ export const generateApplicationInvoice = (app: Application) => {
     <div class="form-section">
         <div class="section-title">১. ব্যক্তিগত তথ্য</div>
         <div class="applicant-row">
-            ${photo ? `<img class="photo" src="${esc(photo)}" alt="">` : `<div class="photo" style="display:flex;align-items:center;justify-content:center;font-size:10px;text-align:center">ছবি অপথাকবে না</div>`}
             <table class="info-table">
                 <tr><td class="label">নাম</td><td>${esc(app.name)}</td></tr>
                 <tr><td class="label">মোবাইল (WhatsApp)</td><td>${esc(app.phone)}</td></tr>
