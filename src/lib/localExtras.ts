@@ -45,4 +45,6 @@ export const EXTRAS = {
   volunteers: "applications_volunteers",
   members: "applications_members",
   careers: "applications_careers",
+  messages: "messages",
 } as const;
+

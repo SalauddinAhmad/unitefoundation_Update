@@ -1,6 +1,7 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
-import { messages as seedMessages, type Message } from "@/data/dashboardMock";
+import { useMessages } from "@/hooks/api/useDashboardData";
 import {
+
   Search,
   Star,
   Archive,
@@ -38,24 +39,21 @@ import { api, ApiError } from "@/lib/api";
 import { toast } from "sonner";
 
 type ReplyItem = { id: string; body: string; at: string };
-type MessageEx = Message & { replies?: ReplyItem[] };
-
-const LS_KEY = "uf_messages_state";
-
-function loadState(): MessageEx[] {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedMessages;
-}
-function persist(list: MessageEx[]) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
-}
+type MessageEx = {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  preview: string;
+  date: string;
+  status: "unread" | "read" | "replied";
+  replies?: ReplyItem[];
+};
 
 const Messages = () => {
-  const [list, setList] = useState<MessageEx[]>(() => loadState());
-  const [selected, setSelected] = useState(list[0]?.id);
+  const { data: apiMessages, isLoading } = useMessages();
+  const [list, setList] = useState<MessageEx[]>([]);
+  const [selected, setSelected] = useState<string | undefined>();
   const [search, setSearch] = useState("");
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
@@ -63,27 +61,26 @@ const Messages = () => {
   const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "network" | "checking">("idle");
   const [smtpError, setSmtpError] = useState<string>("");
 
-  // Load messages from backend + SMTP health check
   useEffect(() => {
-    (async () => {
-      try {
-        const rows = await api.get<MessageEx[]>("/messages");
-        if (Array.isArray(rows)) {
-          setList(rows);
-          persist(rows);
-          if (!selected && rows.length > 0) setSelected(rows[0]?.id);
-        }
-      } catch (e) {
-        // Backend unreachable — keep local seed
-        console.warn("[messages] backend fetch failed", e);
+    if (apiMessages) {
+      const msgs = apiMessages as MessageEx[];
+      setList(msgs);
+      if (msgs.length > 0 && !selected) {
+        setSelected(msgs[0].id);
       }
-    })();
+    }
+  }, [apiMessages, selected]);
+
+
+
+
+
+  // SMTP health check
+  useEffect(() => {
     (async () => {
       setSmtpStatus("checking");
       try {
-        // 1) Public SMTP check — works even if the login token is broken
         await api.get("/health/smtp", { auth: false });
-        // 2) SMTP OK — now verify the login token itself
         try {
           const d = await api.get<{ token?: { valid: boolean; reason?: string } }>("/health/auth");
           if (d?.token && !d.token.valid) {
@@ -95,14 +92,11 @@ const Messages = () => {
             );
             return;
           }
-        } catch {
-          // old backend without /health/auth — skip token check
-        }
+        } catch {}
         setSmtpStatus("ok");
         setSmtpError("");
       } catch (e: unknown) {
         if (e instanceof ApiError && e.status === 404) {
-          // Old backend without /health/smtp — fall back to admin-only endpoint
           try {
             await api.get("/messages/smtp/test");
             setSmtpStatus("ok");
@@ -118,7 +112,6 @@ const Messages = () => {
           }
         }
         if (!(e instanceof ApiError)) {
-          // fetch itself failed (CORS / network) — not an SMTP problem
           setSmtpStatus("network");
           setSmtpError((e as Error)?.message || String(e));
           return;
@@ -128,13 +121,13 @@ const Messages = () => {
         setSmtpError(anyE?.data?.error || anyE?.data?.message || anyE?.message || String(e));
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const active = useMemo(
     () => list.find((m) => m.id === selected) || list[0],
     [list, selected],
   );
+
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -147,7 +140,15 @@ const Messages = () => {
     );
   }, [list, search]);
 
-  const update = (next: MessageEx[]) => { setList(next); persist(next); };
+
+
+  const update = (next: MessageEx[]) => { 
+    setList(next); 
+    try {
+      localStorage.setItem("uf_messages_state", JSON.stringify(next)); 
+    } catch {}
+  };
+
 
   const openMessage = async (id: string) => {
     setSelected(id);
@@ -158,6 +159,7 @@ const Messages = () => {
         await api.patch(`/messages/${id}`, { status: "read" });
         const next = list.map((m) => (m.id === id ? { ...m, status: "read" as const } : m));
         update(next);
+
       } catch (e) {
         console.error("[messages] status update failed", e);
       }
