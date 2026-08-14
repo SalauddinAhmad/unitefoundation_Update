@@ -181,7 +181,6 @@ export const generateApplicationInvoice = (app: Application) => {
 
   <div class="footer-section">
     <div class="signature-box">আবেদনকারীর স্বাক্ষর ও তারিখ</div>
-    <div class="signature-box">যাচাইকারী কর্মকর্তা</div>
     <div class="signature-box">কর্তৃপক্ষের স্বাক্ষর ও সিলমোহর</div>
   </div>
 
