@@ -172,6 +172,8 @@ export const generateApplicationInvoice = (app: Application) => {
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             display: flex; flex-direction: column;
             position: relative;
+            color-adjust: exact;
+            -webkit-print-color-adjust: exact;
         }
         
         .header-section {
