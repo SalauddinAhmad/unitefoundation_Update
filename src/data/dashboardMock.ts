@@ -91,7 +91,7 @@ export const volunteerApps: Application[] = [
 export const memberApps: Application[] = [
   {
     id: "MEM-0128", name: "আলহাজ্ব আব্দুল করিম", phone: "01711000111", city: "ঢাকা",
-    type: "আজীবন সদস্য (৳৫০,০০০)", date: "২০২৬-০৫-২৫", status: "reviewing",
+    type: "আজীবন সদস্য (৳৫০,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২৫", status: "reviewing",
     email: "abdul.karim@example.com", submittedAt: "২০২৬-০৫-২৫ ০৯:১২",
     details: [
       { title: "সদস্য তথ্য", fields: [
@@ -107,8 +107,8 @@ export const memberApps: Application[] = [
       ]},
     ],
   },
-  { id: "MEM-0127", name: "হাজী ইউনুস আলী", phone: "01822111222", city: "চট্টগ্রাম", type: "দাতা সদস্য (৳২৫,০০০)", date: "২০২৬-০৫-২৩", status: "approved" },
-  { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", date: "২০২৬-০৫-২০", status: "approved" },
+  { id: "MEM-0127", name: "হাজী ইউনুস আলী", phone: "01822111222", city: "চট্টগ্রাম", type: "দাতা সদস্য (৳২৫,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২৩", status: "approved" },
+  { id: "MEM-0126", name: "ডঃ ফরিদা ইয়াসমিন", phone: "01933222333", city: "সিলেট", type: "সম্মানিত সদস্য (৳১,০০,০০০)", formName: "সদস্যপদ", date: "২০২৬-০৫-২০", status: "approved" },
 ];
 
 // জেলা প্রতিনিধি (District Representative) applications
