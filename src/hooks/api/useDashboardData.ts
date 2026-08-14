@@ -105,11 +105,16 @@ const parseExtra = (v: any) => {
 const formatDate = (d?: string) => (d ? String(d).slice(0, 10) : "");
 const formatDateTime = (d?: string) => (d ? String(d).replace("T", " ").slice(0, 16) : "");
 
-function toApplication(row: ApiApplication, idPrefix: string): Application {
+function toApplication(row: ApiApplication, kind: "volunteer" | "member" | "career", idPrefix: string): Application {
   const ex = parseExtra(row.extra);
   // Prefer an explicit "type" from extras; fall back to profession.
   const type = ex.type || ex.area || ex.membershipType || row.profession || "—";
   const city = ex.city || ex.district || "—";
+  const formNameMap: Record<typeof kind, string> = {
+    volunteer: "স্বেচ্ছাসেবক",
+    career: "প্রতিনিধি",
+    member: "সদস্যপদ",
+  };
 
   const detailFields: { label: string; value: string; long?: boolean }[] = [];
   if (row.email) detailFields.push({ label: "ই-মেইল", value: row.email });
@@ -129,6 +134,7 @@ function toApplication(row: ApiApplication, idPrefix: string): Application {
     email: row.email || undefined,
     city,
     type,
+    formName: formNameMap[kind],
     date: formatDate(row.created_at),
     submittedAt: formatDateTime(row.created_at),
     status: row.status || "new",
