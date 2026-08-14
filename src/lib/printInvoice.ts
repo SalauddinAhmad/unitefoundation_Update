@@ -394,11 +394,11 @@ export const generateApplicationInvoice = (app: Application) => {
     <div class="signature-section">
         <div class="signature-block">
             <div class="sign-line">..................................................</div>
-            <div class="sign-label">আবেদনকারীর স্বাক্ষর</div>
+            <div class="sign-label">অনুমোদনকারীর সাক্ষর</div>
         </div>
         <div class="signature-block">
             <div class="sign-line">..................................................</div>
-            <div class="sign-label">কর্তৃপক্ষের স্বাক্ষর ও সিলমোহর</div>
+            <div class="sign-label">কর্তৃপক্ষের সাক্ষর</div>
         </div>
     </div>
 </div>
