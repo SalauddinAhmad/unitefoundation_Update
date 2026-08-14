@@ -62,12 +62,13 @@ const Messages = () => {
   const [smtpError, setSmtpError] = useState<string>("");
 
   useEffect(() => {
-    if (apiMessages) {
+    if (apiMessages && apiMessages.length > 0) {
       const msgs = apiMessages as MessageEx[];
       setList(msgs);
-      if (!selected && msgs.length > 0) setSelected(msgs[0].id);
+      if (!selected) setSelected(msgs[0].id);
     }
   }, [apiMessages, selected]);
+
 
 
   // SMTP health check
