@@ -57,56 +57,86 @@ export const generateApplicationInvoice = (app: Application) => {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@500;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --brand:#006837; --brand-dark:#004926; --gold:#c9a227; --ink:#0f172a; --muted:#64748b; --line:#e5e7eb; }
+  :root{ --ink:#222; --muted:#555; --line:#ddd; --bg-light:#f8f9fa; }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:#fff;}
-  body{font-family:'Noto Sans Bengali',system-ui,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{font-family:'SolaimanLipi',Arial,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact;line-height:1.6;}
   .sheet{
-    width:210mm;min-height:297mm;margin:0 auto;background:#fff;position:relative;overflow:hidden;
-    display:flex;flex-direction:column;
+    width:210mm;min-height:297mm;margin:0 auto;background:#fff;position:relative;padding:30px;
+    border:1px solid #eee;box-shadow:0 0 10px rgba(0,0,0,0.15);
   }
-  .watermark{display:none}
-  /* Letterhead */
-  .head{position:relative;padding:22px 28px 18px;background:#fff;color:var(--ink);border-bottom:1.5px solid var(--ink)}
-  .head-in{display:flex;align-items:center;gap:16px}
-  .mark{width:62px;height:62px;border-radius:0;background:transparent;border:none;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto}
-  .mark img{width:100%;height:100%;object-fit:contain}
-  .mark span{font-family:'Noto Serif Bengali',serif;font-size:26px;font-weight:700}
-  .org h1{margin:0;font-family:'Noto Serif Bengali',serif;font-size:26px;line-height:1.25;letter-spacing:.3px}
-  .org .en{font-size:10.5px;letter-spacing:3.4px;opacity:.85;margin-top:2px}
-  .org .meta{font-size:11.5px;opacity:.92;margin-top:5px}
-  .doc-tag{margin-left:auto;text-align:right}
-  .doc-tag .kind{font-size:10px;letter-spacing:2px;opacity:.8}
-  .doc-tag .id{font-family:'Noto Serif Bengali',serif;font-size:19px;font-weight:700;margin-top:2px}
-  /* Title bar */
-  .titlebar{display:flex;align-items:center;gap:12px;padding:14px 28px;border-bottom:1px solid var(--ink);background:#fff}
-  .titlebar h2{margin:0;font-size:16px;font-weight:700}
-  .titlebar .sub{font-size:11.5px;color:var(--ink);margin-top:2px}
-  .pill{margin-left:auto;font-size:11.5px;font-weight:700;padding:6px 14px;border:1px solid var(--ink);border-radius:4px;color:var(--ink);background:transparent}
-  /* Body */
-  .body{padding:22px 28px 0;flex:1}
-  .applicant{display:flex;gap:18px;align-items:flex-start;padding:16px;border:1px solid var(--ink);border-radius:0;background:#fff}
-  .photo{width:96px;height:118px;border-radius:0;border:1px solid var(--ink);background:#fff;object-fit:cover;flex:0 0 auto}
-  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 22px;flex:1}
-  .cell .label{font-size:9.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);font-weight:700}
-  .cell .value{font-size:13.5px;font-weight:600;margin-top:2px;word-break:break-word}
-  h3.sec{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;margin:24px 0 10px;color:var(--brand-dark);text-transform:none}
-  h3.sec:before{content:"";width:4px;height:15px;background:var(--ink)}
-  h3.sec:after{content:"";flex:1;height:1px;background:var(--ink)}
-  table{width:100%;border-collapse:collapse;border:1px solid var(--ink);border-radius:0;overflow:hidden}
-  tr:nth-child(even) td{background:#fff}
-  td{padding:8px 12px;border-bottom:1px solid var(--ink);font-size:12.5px;vertical-align:top}
-  tr:last-child td{border-bottom:none}
-  td.k{width:34%;color:var(--ink);font-weight:700;font-size:11.5px;border-right:1px solid var(--ink)}
-  /* Sign + footer */
-  .signs{display:flex;gap:40px;justify-content:space-between;margin:38px 0 8px;padding:0 6px}
-  .sign{flex:1;text-align:center}
-  .sign .line{border-top:1.5px solid var(--ink);margin-bottom:6px}
-  .sign span{font-size:11px;color:var(--muted)}
-  .foot{margin-top:auto;padding:12px 28px;border-top:1.5px solid var(--ink);display:flex;justify-content:space-between;font-size:10px;color:var(--ink);background:#fff}
+  .header-section {
+    text-align: center;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+  }
+  .header-section h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 26px;
+  }
+  .header-section p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+  }
+  .form-title {
+    text-align: center;
+    background-color: var(--bg-light);
+    padding: 10px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    border: 1px dashed #ccc;
+  }
+  .applicant-info, .questions-section {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+  }
+  .applicant-info td, .questions-section td {
+    padding: 8px 10px;
+    vertical-align: top;
+    font-size: 14px;
+    border-bottom: 1px dotted #ddd;
+  }
+  .label {
+    font-weight: bold;
+    width: 35%;
+    color: #444;
+  }
+  .value {
+    width: 65%;
+    color: #222;
+  }
+  .section-heading {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2c3e50;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+  }
+  .footer-section {
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    padding: 0 10px;
+  }
+  .signature-box {
+    border-top: 1px solid #777;
+    width: 200px;
+    padding-top: 5px;
+    font-size: 13px;
+    color: #555;
+  }
   .toolbar{position:fixed;bottom:22px;right:22px;display:flex;gap:10px}
   .toolbar button{font-family:inherit;font-weight:700;font-size:13px;padding:11px 20px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.18)}
-  .btn-print{background:var(--brand);color:#fff}
+  .btn-print{background:#2c3e50;color:#fff}
   .btn-close{background:#fff;color:#334155;border:1px solid var(--line)}
   @page{size:A4;margin:0}
   @media print{
