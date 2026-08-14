@@ -25,13 +25,6 @@ export const generateApplicationInvoice = (app: Application) => {
     approved: "অনুমোদিত",
     rejected: "প্রত্যাখ্যাত",
   };
-  const statusColors: Record<string, string> = {
-    new: "#2563eb",
-    reviewing: "#b45309",
-    approved: "#047857",
-    rejected: "#b91c1c",
-  };
-  const statusColor = statusColors[app.status] || "#334155";
 
   // Pull a photo out of the details, if any
   let photo = "";
