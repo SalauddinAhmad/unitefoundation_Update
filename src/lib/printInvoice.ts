@@ -17,6 +17,7 @@ export const generateApplicationInvoice = (app: Application) => {
   const orgNameEn = "UNITE FOUNDATION";
   const address = "উত্তরা-উত্তরখান, ঢাকা, বাংলাদেশ";
   const website = "www.unitefoundation.bd";
+  const contactLine = "ইমেইল: info@unitefoundation.org · হেল্পলাইন: +৮৮০ ১৩২৪-৪৩৯৬৯৮";
 
   const statusLabels: Record<string, string> = {
     new: "নতুন",
@@ -134,6 +135,7 @@ export const generateApplicationInvoice = (app: Application) => {
         <h1>${esc(organizationName)}</h1>
         <div class="en">${orgNameEn}</div>
         <div class="meta">${esc(address)} &nbsp;·&nbsp; ${esc(website)}</div>
+        <div class="meta">${esc(contactLine)}</div>
       </div>
       <div class="doc-tag">
         <div class="kind">APPLICATION RECORD</div>
@@ -154,10 +156,12 @@ export const generateApplicationInvoice = (app: Application) => {
     <section class="applicant">
       ${photo ? `<img class="photo" src="${esc(photo)}" alt="" onerror="this.remove()">` : ""}
       <div class="grid">
-        <div class="cell"><div class="label">নাম</div><div class="value">${esc(app.name)}</div></div>
-        <div class="cell"><div class="label">মোবাইল</div><div class="value">${esc(app.phone)}</div></div>
-        <div class="cell"><div class="label">ইমেইল</div><div class="value">${esc(app.email || "—")}</div></div>
+        <div class="cell"><div class="label">আবেদনকারীর পূর্ণ নাম</div><div class="value">${esc(app.name)}</div></div>
+        <div class="cell"><div class="label">আবেদিত পদ / ধরন</div><div class="value">${esc(app.type)}</div></div>
+        <div class="cell"><div class="label">মোবাইল (WhatsApp)</div><div class="value">${esc(app.phone)}</div></div>
+        <div class="cell"><div class="label">ইমেইল ঠিকানা</div><div class="value">${esc(app.email || "—")}</div></div>
         <div class="cell"><div class="label">শহর / জেলা</div><div class="value">${esc(app.city)}</div></div>
+        <div class="cell"><div class="label">আবেদনের তারিখ</div><div class="value">${esc(app.date)}</div></div>
       </div>
     </section>
 
