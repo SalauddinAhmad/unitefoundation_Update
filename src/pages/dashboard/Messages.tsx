@@ -39,28 +39,39 @@ import { api, ApiError } from "@/lib/api";
 import { toast } from "sonner";
 
 type ReplyItem = { id: string; body: string; at: string };
-type MessageEx = Message & { replies?: ReplyItem[] };
-
-const LS_KEY = "uf_messages_state";
-
-function loadState(): MessageEx[] {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return seedMessages;
-}
-function persist(list: MessageEx[]) {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
-}
+type MessageEx = {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  preview: string;
+  date: string;
+  status: "unread" | "read" | "replied";
+  replies?: ReplyItem[];
+};
 
 const Messages = () => {
-  const [list, setList] = useState<MessageEx[]>(() => loadState());
-  const [selected, setSelected] = useState(list[0]?.id);
+  const { data: apiMessages, isLoading } = useMessages();
+  const [list, setList] = useState<MessageEx[]>([]);
+  const [selected, setSelected] = useState<string | undefined>();
   const [search, setSearch] = useState("");
   const [replyText, setReplyText] = useState("");
   const [sending, setSending] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
+  const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "network" | "checking">("idle");
+  const [smtpError, setSmtpError] = useState<string>("");
+
+  useEffect(() => {
+    if (apiMessages) {
+      const msgs = apiMessages as MessageEx[];
+      setList(msgs);
+      if (!selected && msgs.length > 0) setSelected(msgs[0].id);
+    }
+  }, [apiMessages, selected]);
+
+  // SMTP health check
+  useEffect(() => {
+
   const [smtpStatus, setSmtpStatus] = useState<"idle" | "ok" | "fail" | "auth" | "network" | "checking">("idle");
   const [smtpError, setSmtpError] = useState<string>("");
 
