@@ -133,6 +133,15 @@ export const generateApplicationInvoice = (app: Application) => {
   const printedAt = new Date().toLocaleString("bn-BD");
   const origin = window.location.origin;
 
+  const formNameFromId = (id: string) => {
+    if (id.startsWith("VOL-")) return "স্বেচ্ছাসেবক";
+    if (id.startsWith("MEM-")) return "সদস্যপদ";
+    if (id.startsWith("DR-")) return "প্রতিনিধি";
+    return "আবেদন ফরম";
+  };
+  const titleText = app.formName || formNameFromId(app.id);
+
+
   const html = `<!DOCTYPE html>
 <html lang="bn">
 <head>
