@@ -96,18 +96,15 @@ export const generateApplicationInvoice = (app: Application) => {
   };
 
 
-  // Pull a photo out of the details, if any
-  let photo = "";
+  // Applicant photo extraction disabled per user request
+  const photo = "";
   const sections = (app.details || [])
     .map((s) => ({
       title: s.title,
       fields: s.fields
         .filter((f) => {
           const v = String(f.value ?? "");
-          if (!photo && isImage(v)) {
-            photo = v;
-            return false;
-          }
+          if (isImage(v)) return false; // Hide images from the details list
           return v.trim() !== "";
         })
         .filter((f) => !isDuplicate(f.label))
@@ -261,13 +258,6 @@ export const generateApplicationInvoice = (app: Application) => {
             display: flex;
             gap: 15px;
             margin-bottom: 15px;
-        }
-        .photo {
-            width: 90px;
-            height: 110px;
-            border: 1px solid #000;
-            object-fit: cover;
-            flex-shrink: 0;
         }
         
         .info-table {
