@@ -7,12 +7,14 @@ function buildTransport({ host, port, secure }) {
     port: Number(port),
     secure: Boolean(secure),
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    debug: true,
+    logger: true,
     pool: false,
     requireTLS: !secure,
     tls: { rejectUnauthorized: false },
-    connectionTimeout: Number(process.env.SMTP_CONNECT_TIMEOUT_MS || 8000),
-    greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 8000),
-    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 12000),
+    connectionTimeout: Number(process.env.SMTP_CONNECT_TIMEOUT_MS || 20000),
+    greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 20000),
+    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 30000),
   });
 }
 
@@ -151,10 +153,14 @@ exports.sendMail = async ({ to, cc, bcc, subject, html, text }) => {
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
   const payload = { from, to, cc, bcc, subject, html, text };
   const t = await resolveTransporter();
+  console.log('[mailer] Attempting send to:', to, 'via', (activeConfig && activeConfig.transport) || 'smtp');
   try {
     return await t.sendMail(payload);
   } catch (err) {
-    if (!isConnError(err)) throw err;
+    if (!isConnError(err)) {
+      console.error('[mailer] Non-connection error during sendMail:', err);
+      throw err;
+    }
     // Cached route died (IP/firewall change) — re-probe once.
     console.warn('[mailer] send failed, re-probing SMTP routes:', err && err.message);
     const t2 = await resolveTransporter(true);
