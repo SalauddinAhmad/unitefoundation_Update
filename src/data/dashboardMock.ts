@@ -115,7 +115,7 @@ export const memberApps: Application[] = [
 export const careerApps: Application[] = [
   {
     id: "DR-0042", name: "আরিফুল ইসলাম", phone: "01711999888", city: "কুমিল্লা",
-    type: "চট্টগ্রাম", date: "২০২৬-০৫-২৫", status: "new",
+    type: "চট্টগ্রাম", formName: "প্রতিনিধি", date: "২০২৬-০৫-২৫", status: "new",
     email: "ariful.islam@example.com", submittedAt: "২০২৬-০৫-২৫ ১১:০২",
     details: [
       { title: "ব্যক্তিগত তথ্য", fields: [
@@ -147,10 +147,10 @@ export const careerApps: Application[] = [
       ]},
     ],
   },
-  { id: "DR-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "সিলেট", type: "সিলেট", date: "২০২৬-০৫-২৪", status: "reviewing" },
-  { id: "DR-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "রংপুর", type: "রংপুর", date: "২০২৬-০৫-২২", status: "approved" },
-  { id: "DR-0039", name: "মাহমুদুল হাসান", phone: "01611445566", city: "বগুড়া", type: "রাজশাহী", date: "২০২৬-০৫-২১", status: "new" },
-  { id: "DR-0038", name: "তাহমিনা বেগম", phone: "01555778899", city: "যশোর", type: "খুলনা", date: "২০২৬-০৫-২০", status: "reviewing" },
+  { id: "DR-0041", name: "শারমিন আক্তার", phone: "01822888777", city: "সিলেট", type: "সিলেট", formName: "প্রতিনিধি", date: "২০২৬-০৫-২৪", status: "reviewing" },
+  { id: "DR-0040", name: "নাহিদ হাসান", phone: "01933777666", city: "রংপুর", type: "রংপুর", formName: "প্রতিনিধি", date: "২০২৬-০৫-২২", status: "approved" },
+  { id: "DR-0039", name: "মাহমুদুল হাসান", phone: "01611445566", city: "বগুড়া", type: "রাজশাহী", formName: "প্রতিনিধি", date: "২০২৬-০৫-২১", status: "new" },
+  { id: "DR-0038", name: "তাহমিনা বেগম", phone: "01555778899", city: "যশোর", type: "খুলনা", formName: "প্রতিনিধি", date: "২০২৬-০৫-২০", status: "reviewing" },
 ];
 
 export type Project = {
