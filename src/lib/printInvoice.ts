@@ -140,79 +140,78 @@ export const generateApplicationInvoice = (app: Application) => {
   .btn-close{background:#fff;color:#334155;border:1px solid var(--line)}
   @page{size:A4;margin:0}
   @media print{
-    html,body{background:#fff}
-    .sheet{margin:0;box-shadow:none;width:auto;min-height:auto}
+    html,body{background:#fff;padding:0}
+    .sheet{margin:0;box-shadow:none;border:none;width:auto;min-height:auto}
     .toolbar{display:none!important}
-    tr,.applicant,table{page-break-inside:avoid}
-    h3.sec{page-break-after:avoid}
   }
 </style>
 </head>
 <body>
 <div class="sheet">
-  <div class="watermark">${esc(organizationName)}</div>
-
-  <header class="head">
-    <div class="head-in">
-      <div class="mark"><img src="/logo.png" alt="" onerror="this.remove()"><span>ইউ</span></div>
-      <div class="org">
-        <h1>${esc(organizationName)}</h1>
-        <div class="en">${orgNameEn}</div>
-        <div class="meta">${esc(address)} &nbsp;·&nbsp; ${esc(website)}</div>
-        <div class="meta">${esc(contactLine)}</div>
-      </div>
-      <div class="doc-tag">
-        <div class="kind">APPLICATION RECORD</div>
-        <div class="id">${esc(app.id)}</div>
-      </div>
-    </div>
-  </header>
-
-  <div class="titlebar">
-    <div>
-      <h2>আবেদন ফরম — ${esc(app.type)}</h2>
-      <div class="sub">জমাদানের তারিখ: ${esc(app.date)}</div>
-    </div>
-    <div class="pill">${esc(statusLabels[app.status] || app.status)}</div>
+  <div class="header-section">
+    <h2>${esc(organizationName)}</h2>
+    <p>${esc(address)}</p>
+    <p>ইমেইল: info@unitefoundation.org | হেল্পলাইন: +৮৮০ ১৩২৪-৪৩৯৬৯৮</p>
   </div>
 
-  <main class="body">
-    <section class="applicant">
-      ${photo ? `<img class="photo" src="${esc(photo)}" alt="" onerror="this.remove()">` : ""}
-      <div class="grid">
-        <div class="cell"><div class="label">আবেদনকারীর পূর্ণ নাম</div><div class="value">${esc(app.name)}</div></div>
-        <div class="cell"><div class="label">আবেদিত পদ / ধরন</div><div class="value">${esc(app.type)}</div></div>
-        <div class="cell"><div class="label">মোবাইল (WhatsApp)</div><div class="value">${esc(app.phone)}</div></div>
-        <div class="cell"><div class="label">ইমেইল ঠিকানা</div><div class="value">${esc(app.email || "—")}</div></div>
-        <div class="cell"><div class="label">শহর / জেলা</div><div class="value">${esc(app.city)}</div></div>
-        <div class="cell"><div class="label">আবেদনের তারিখ</div><div class="value">${esc(app.date)}</div></div>
-      </div>
-    </section>
+  <div class="form-title">
+    ${esc(app.type)} আবেদন ফরম (Application Summary)
+  </div>
 
-    ${sections
-      .filter((s) => s.fields.length)
-      .map(
-        (s) => `
-    <h3 class="sec">${esc(s.title)}</h3>
-    <table>
+  <table class="applicant-info">
+    <tr>
+      <td class="label">আবেদিত পদ / ধরন:</td>
+      <td class="value">${esc(app.type)}</td>
+    </tr>
+    <tr>
+      <td class="label">আবেদনের তারিখ:</td>
+      <td class="value">${esc(app.date)}</td>
+    </tr>
+    <tr>
+      <td class="label">আবেদনকারীর পূর্ণ নাম:</td>
+      <td class="value">${esc(app.name)}</td>
+    </tr>
+    <tr>
+      <td class="label">মোবাইল (WhatsApp):</td>
+      <td class="value">${esc(app.phone)}</td>
+    </tr>
+    <tr>
+      <td class="label">ইমেইল ঠিকানা:</td>
+      <td class="value">${esc(app.email || "—")}</td>
+    </tr>
+    <tr>
+      <td class="label">শহর / জেলা:</td>
+      <td class="value">${esc(app.city)}</td>
+    </tr>
+  </table>
+
+  ${sections
+    .filter((s) => s.fields.length)
+    .map(
+      (s) => `
+    <div class="section-heading">${esc(s.title)}</div>
+    <table class="questions-section">
       ${s.fields
-        .map((f) => `<tr><td class="k">${esc(f.label)}</td><td>${esc(f.value)}</td></tr>`)
+        .map((f) => `<tr><td class="label">${esc(f.label)}</td><td class="value">${esc(f.value)}</td></tr>`)
         .join("")}
     </table>`
-      )
-      .join("")}
+    )
+    .join("")}
 
-    <div class="signs">
-      <div class="sign"><div class="line"></div><span>আবেদনকারীর স্বাক্ষর</span></div>
-      <div class="sign"><div class="line"></div><span>যাচাইকারী কর্মকর্তা</span></div>
-      <div class="sign"><div class="line"></div><span>অনুমোদনকারী / সিলমোহর</span></div>
+  <div class="footer-section">
+    <div>
+      <br><br>
+      <div class="signature-box">আবেদনকারীর স্বাক্ষর</div>
     </div>
-  </main>
+    <div>
+      <br><br>
+      <div class="signature-box">কর্তৃপক্ষের স্বাক্ষর</div>
+    </div>
+  </div>
 
-  <footer class="foot">
-    <div>ইউনাইট ফাউন্ডেশনের ডিজিটাল সিস্টেম থেকে স্বয়ংক্রিয়ভাবে তৈরি — স্বাক্ষর ছাড়া বৈধ নয়।</div>
-    <div>প্রিন্ট: ${esc(printedAt)} · ${esc(app.id)}</div>
-  </footer>
+  <div style="margin-top: 40px; font-size: 10px; color: #777; text-align: right;">
+    প্রিন্ট: ${esc(printedAt)} · ${esc(app.id)}
+  </div>
 </div>
 
 <div class="toolbar">
