@@ -69,12 +69,6 @@ const Messages = () => {
     }
   }, [apiMessages, selected]);
 
-  const update = (next: MessageEx[]) => { 
-    setList(next); 
-    try {
-      localStorage.setItem("uf_messages_state", JSON.stringify(next)); 
-    } catch {}
-  };
 
   // SMTP health check
   useEffect(() => {
