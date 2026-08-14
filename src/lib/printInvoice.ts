@@ -141,7 +141,10 @@ export const generateApplicationInvoice = (app: Application) => {
 
   <div class="form-title">
     <div class="t">${esc(app.type)}</div>
-    <div class="id">নং: ${esc(app.id)} · অবস্থা: ${esc(statusLabels[app.status] || app.status)}</div>
+  </div>
+  <div class="id-line">
+    <span>নং: ${esc(app.id)}</span>
+    <span>অবস্থা: ${esc(statusLabels[app.status] || app.status)}</span>
   </div>
 
   <div class="applicant">
