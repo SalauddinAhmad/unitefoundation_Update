@@ -91,21 +91,10 @@ export const generateApplicationInvoice = (app: Application) => {
     const normalized = label.trim().toLowerCase();
     return (
       duplicateLabels.has(label.trim()) ||
-      duplicateLabels.has(normalized) ||
-      normalized.includes("name") ||
-      normalized.includes("phone") ||
-      normalized.includes("email") ||
-      normalized.includes("mobile") ||
-      normalized.includes("whatsapp") ||
-      normalized.includes("city") ||
-      normalized.includes("district") ||
-      normalized.includes("date") ||
-      normalized.includes("আবেদনের তারিখ") ||
-      normalized.includes("মোবাইল") ||
-      normalized.includes("ইমেইল") ||
-      normalized.includes("শহর")
+      duplicateLabels.has(normalized)
     );
   };
+
 
   // Pull a photo out of the details, if any
   let photo = "";
