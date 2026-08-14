@@ -1,6 +1,7 @@
 import { Card, PageHeader, StatusBadge } from "@/components/dashboard/DashboardUI";
-import { messages as seedMessages, type Message } from "@/data/dashboardMock";
+import { useMessages } from "@/hooks/api/useDashboardData";
 import {
+
   Search,
   Star,
   Archive,
