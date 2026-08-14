@@ -293,19 +293,21 @@ const SuccessCard = ({
       <p className="mt-2 text-white/90 font-semibold">{c.subtitle}</p>
       <p className="mt-4 text-white/85 leading-relaxed text-sm md:text-base">{c.message}</p>
 
-      <div className="mt-6 rounded-card bg-white/10 backdrop-blur border border-white/20 p-5 text-left">
-        <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-3">
-          {t("volunteerPage.success.nextStepHeader")}
+      {c.bullets && c.bullets.length > 0 && (
+        <div className="mt-6 rounded-card bg-white/10 backdrop-blur border border-white/20 p-5 text-left">
+          <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-3">
+            {t("volunteerPage.success.nextStepHeader")}
+          </div>
+          <ul className="space-y-2.5">
+            {c.bullets.map((b) => (
+              <li key={b} className="flex items-start gap-2.5 text-sm text-white/95">
+                <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
+                <span className="leading-relaxed">{b}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul className="space-y-2.5">
-          {c.bullets.map((b) => (
-            <li key={b} className="flex items-start gap-2.5 text-sm text-white/95">
-              <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" />
-              <span className="leading-relaxed">{b}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      )}
 
       <div className="mt-6">
         <button
