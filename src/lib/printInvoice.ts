@@ -82,11 +82,11 @@ export const generateApplicationInvoice = (app: Application) => {
   .header-section p{margin:4px 0 0;color:#555;font-size:12px}
   /* Title */
   .form-title{
-    display:flex;align-items:center;justify-content:space-between;gap:10px;
-    border:1px solid var(--dark);padding:8px 14px;margin-bottom:16px;
+    border:1px solid #000;background:#fff;padding:10px 14px;margin-bottom:14px;
+    text-align:center;
   }
-  .form-title .t{font-weight:700;font-size:15px;color:var(--dark)}
-  .form-title .id{font-size:11px;color:#555;letter-spacing:.5px}
+  .form-title .t{font-weight:700;font-size:16px;color:#000;letter-spacing:.2px}
+  .id-line{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#333;margin-bottom:16px;border-bottom:1px solid #000;padding-bottom:6px}
   /* Applicant block */
   .applicant{display:flex;gap:18px;align-items:flex-start;margin-bottom:10px}
   .photo{width:88px;height:108px;border:1px solid #bbb;object-fit:cover;flex:0 0 auto;background:#fafafa}
