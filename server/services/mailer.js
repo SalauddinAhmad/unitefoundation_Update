@@ -14,7 +14,7 @@ function buildTransport({ host, port, secure }) {
     tls: { rejectUnauthorized: false },
     connectionTimeout: Number(process.env.SMTP_CONNECT_TIMEOUT_MS || 8000),
     greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT_MS || 8000),
-    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 12000),
+    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT_MS || 30000),
   });
 }
 
