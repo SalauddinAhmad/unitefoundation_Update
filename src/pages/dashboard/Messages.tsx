@@ -62,12 +62,15 @@ const Messages = () => {
   const [smtpError, setSmtpError] = useState<string>("");
 
   useEffect(() => {
-    if (apiMessages && apiMessages.length > 0) {
+    if (apiMessages) {
       const msgs = apiMessages as MessageEx[];
       setList(msgs);
-      if (!selected) setSelected(msgs[0].id);
+      if (!selected && msgs.length > 0) {
+        setSelected(msgs[0].id);
+      }
     }
   }, [apiMessages, selected]);
+
 
 
 
