@@ -198,12 +198,39 @@ export const usePosts = () =>
     staleTime: STALE,
   });
 
-export const useMessages = () =>
-  useQuery({
+export const useMessages = () => {
+  useExtrasInvalidator(EXTRAS.messages || "messages", ["messages"]);
+  return useQuery({
     queryKey: ["messages"],
-    queryFn: () => tryApi("/messages", mockMessages),
+    queryFn: async () => {
+      const rows = await tryApi<any[]>("/messages", mockMessages as any);
+      const normalized = (Array.isArray(rows) ? rows : []).map((r: any) => ({
+        id: String(r.id ?? ""),
+        name: r.name ?? "",
+        email: r.email ?? "",
+        subject: r.subject ?? "",
+        preview: r.preview ?? (r.body ? String(r.body).slice(0, 80) : ""),
+        date: r.date ?? (r.created_at ? relTime(r.created_at) : ""),
+        status: r.status ?? "unread",
+        replies: r.replies ?? [],
+      }));
+      return mergeExtras(EXTRAS.messages || "messages", normalized);
+    },
     staleTime: STALE,
   });
+};
+
+function relTime(s?: string) {
+  if (!s) return "";
+  const d = new Date(s);
+  const now = new Date();
+  const diff = now.getTime() - d.getTime();
+  if (diff < 60000) return "এইমাত্র";
+  if (diff < 3600000) return `${Math.floor(diff / 60000)} মিনিট আগে`;
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)} ঘণ্টা আগে`;
+  return d.toLocaleDateString("bn-BD");
+}
+
 
 export const useGallery = () =>
   useQuery({
