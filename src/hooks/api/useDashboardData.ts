@@ -203,8 +203,19 @@ export const useMessages = () => {
   return useQuery({
     queryKey: ["messages"],
     queryFn: async () => {
-      const rows = await tryApi<any[]>("/messages", mockMessages as any);
-      const normalized = (Array.isArray(rows) ? rows : []).map((r: any) => ({
+      // First, try to fetch real messages from the API
+      let rows: any[] = [];
+      try {
+        const data = await api.get<any[]>("/messages", { auth: true });
+        if (Array.isArray(data)) {
+          rows = data;
+        }
+      } catch (err) {
+        console.warn("[useMessages] API fetch failed, falling back to mocks", err);
+        rows = mockMessages as any[];
+      }
+
+      const normalized = rows.map((r: any) => ({
         id: String(r.id ?? ""),
         name: r.name ?? "",
         email: r.email ?? "",
@@ -214,9 +225,12 @@ export const useMessages = () => {
         status: r.status ?? "unread",
         replies: r.replies ?? [],
       }));
+
+      // Merge with any locally added extras
       return mergeExtras(EXTRAS.messages || "messages", normalized);
     },
-    staleTime: STALE,
+    staleTime: 30000, // Reduced stale time to 30s for more frequent updates
+    refetchInterval: 60000, // Auto-refetch every minute
   });
 };
 

@@ -65,8 +65,12 @@ const Messages = () => {
     if (apiMessages) {
       const msgs = apiMessages as MessageEx[];
       setList(msgs);
-      if (msgs.length > 0 && !selected) {
-        setSelected(msgs[0].id);
+      
+      // If we have a selection but it's not in the new list, or if no selection, pick the first one
+      if (msgs.length > 0) {
+        if (!selected || !msgs.find(m => m.id === selected)) {
+          setSelected(msgs[0].id);
+        }
       }
     }
   }, [apiMessages, selected]);
@@ -405,7 +409,7 @@ const Messages = () => {
 
               <div className="p-6 flex-1 overflow-y-auto text-sm text-foreground/85 leading-relaxed">
                 <p>আসসালামু আলাইকুম,</p>
-                <p className="mt-3 whitespace-pre-wrap">{active.preview}</p>
+                <div className="mt-3 whitespace-pre-wrap">{active.preview || active.subject}</div>
                 <p className="mt-6 text-foreground/70">— {active.name}</p>
 
                 {active.replies && active.replies.length > 0 && (
