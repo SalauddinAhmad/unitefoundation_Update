@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
 import { appendExtra, removeExtra } from "@/lib/localExtras";
 import { generateApplicationInvoice } from "@/lib/printInvoice";
+import { useDeleteApplication } from "@/hooks/api/useDashboardData";
 
 interface Props {
   title: string;
