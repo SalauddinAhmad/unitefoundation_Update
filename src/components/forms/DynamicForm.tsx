@@ -5,6 +5,8 @@ import { useMemo, useState, type ReactNode } from "react";
 import { z, type ZodTypeAny } from "zod";
 import { toast } from "@/hooks/use-toast";
 import type { FormField, FormSchema } from "@/data/formDefaults";
+import { districts } from "@/data/districts";
+
 import { ChevronRight, Lock, Send, ShieldCheck } from "lucide-react";
 import { emailRejectionReason } from "@/lib/emailValidator";
 
@@ -207,13 +209,17 @@ function renderField(
     switch (f.type) {
       case "textarea":
         return <textarea rows={4} value={String(val ?? "")} placeholder={f.placeholder} onChange={(e) => set(f.key, e.target.value)} className={inputCls + " resize-none"} />;
-      case "select":
+      case "select": {
+        const isDistrictField = f.key === "city" || f.key === "district";
+        const options = isDistrictField ? districts : (f.options || []);
         return (
           <select value={String(val ?? "")} onChange={(e) => set(f.key, e.target.value)} className={inputCls}>
             <option value="">— বাছাই করুন —</option>
-            {(f.options || []).map((o) => <option key={o} value={o} className="text-foreground">{o}</option>)}
+            {options.map((o) => <option key={o} value={o} className="text-foreground">{o}</option>)}
           </select>
         );
+      }
+
       case "radio-group":
         return (
           <div className="grid grid-cols-2 gap-2">
