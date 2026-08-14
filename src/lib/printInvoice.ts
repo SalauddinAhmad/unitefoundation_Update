@@ -17,7 +17,7 @@ export const generateApplicationInvoice = (app: Application) => {
   const orgNameEn = "UNITE FOUNDATION";
   const address = "উত্তরখান, উত্তরা, ঢাকা";
   const website = "www.unitefoundation.bd";
-  const contactLine = "ইমেইল: info@unitefoundation.org · হেল্পলাইন: +৮৮ ০১৬১৪-২৬৪৯০১";
+  const contactLine = "ইমেইল: contact@unitefoundation.bd · হেল্পলাইন: +৮৮ ০১৬১৪-২৬৪৯০১";
 
   const statusLabels: Record<string, string> = {
     new: "নতুন",
