@@ -88,24 +88,32 @@ export const generateApplicationInvoice = (app: Application) => {
   .form-title .t{font-weight:700;font-size:15px;color:var(--dark)}
   .form-title .id{font-size:11px;color:#555;letter-spacing:.5px}
   /* Applicant block */
-  .applicant{display:flex;gap:16px;align-items:flex-start;margin-bottom:6px}
-  .photo{width:90px;height:110px;border:1px solid #bbb;object-fit:cover;flex:0 0 auto}
-  .applicant-info,.questions-section{width:100%;border-collapse:collapse}
-  .applicant-info td,.questions-section td{
+  .applicant{display:flex;gap:18px;align-items:flex-start;margin-bottom:10px}
+  .photo{width:88px;height:108px;border:1px solid #bbb;object-fit:cover;flex:0 0 auto;background:#fafafa}
+  .applicant-info,.questions-section{width:100%;border-collapse:collapse;border:1px solid #ccc}
+  .applicant-info td{
+    padding:8px 11px;vertical-align:middle;font-size:12.5px;border:1px solid #e0e0e0;
+  }
+  .applicant-info tr:nth-child(odd){background:#fff}
+  .applicant-info tr:nth-child(even){background:#fafafa}
+  .questions-section td{
     padding:7px 10px;vertical-align:top;font-size:12.5px;border-bottom:1px solid #e8e8e8;
   }
-  .applicant-info tr:last-child td,.questions-section tr:last-child td{border-bottom:none}
+  .questions-section tr:last-child td{border-bottom:none}
   .questions-section{border:1px solid #ddd}
-  .label{font-weight:700;width:36%;color:#444;border-right:1px solid #eee}
-  .value{width:64%;color:#111;word-break:break-word}
+  .label{
+    font-weight:700;width:38%;color:#2c3e50;background:#f3f4f6;
+    border-right:1px solid #e0e0e0;white-space:nowrap;
+  }
+  .value{width:62%;color:#111;word-break:break-word;font-weight:500}
   .section-heading{
     font-size:13.5px;font-weight:700;color:var(--dark);
     border-bottom:1px solid var(--dark);padding-bottom:4px;margin:20px 0 10px;
     text-transform:none;letter-spacing:.2px;
   }
   /* Signatures */
-  .footer-section{margin-top:auto;padding-top:46px;display:flex;justify-content:space-between;text-align:center;gap:30px}
-  .signature-box{border-top:1px solid #777;min-width:180px;padding-top:5px;font-size:11.5px;color:#555}
+  .footer-section{margin-top:auto;padding-top:46px;display:flex;justify-content:space-between;text-align:center;gap:40px}
+  .signature-box{border-top:1px solid #777;min-width:200px;padding-top:5px;font-size:11.5px;color:#555}
   .meta-foot{margin-top:14px;padding-top:8px;border-top:1px solid #e5e5e5;display:flex;justify-content:space-between;font-size:9.5px;color:#888}
   .toolbar{position:fixed;bottom:22px;right:22px;display:flex;gap:10px}
   .toolbar button{font-family:inherit;font-weight:700;font-size:13px;padding:11px 20px;border-radius:8px;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.18)}
