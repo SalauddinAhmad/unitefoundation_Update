@@ -145,7 +145,7 @@ function toApplication(row: ApiApplication, kind: "volunteer" | "member" | "care
 const fetchApps = async (kind: "volunteer" | "member" | "career", prefix: string): Promise<Application[]> => {
   try {
     const rows = await api.get<ApiApplication[]>(`/applications/${kind}`, { auth: true });
-    return (rows || []).map((r) => toApplication(r, prefix));
+    return (rows || []).map((r) => toApplication(r, kind, prefix));
   } catch {
     return [];
   }
