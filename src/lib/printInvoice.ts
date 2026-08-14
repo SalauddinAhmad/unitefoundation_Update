@@ -124,7 +124,7 @@ export const generateApplicationInvoice = (app: Application) => {
 <body>
 <div class="sheet">
   <div class="header-section">
-    <img class="logo" src="/logo.png" alt="" onerror="this.remove()">
+    <img class="logo" src="${origin}/logo.png" alt="" onerror="this.remove()">
     <h2>${esc(organizationName)}</h2>
     <div class="en">${orgNameEn}</div>
     <p>${esc(address)} &nbsp;|&nbsp; ${esc(website)}</p>
