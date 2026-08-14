@@ -354,9 +354,7 @@ export const generateApplicationInvoice = (app: Application) => {
             <span>${esc(website)}</span>
         </div>
         <div class="contact-info">
-            <span>ইমেইল: info@unitefoundation.org</span>
-            <span class="separator">•</span>
-            <span>হেল্পলাইন: +৮৮০ ১৩২৪-৪৩৯৬৯৮</span>
+            <span>${esc(contactLine)}</span>
         </div>
         <div class="header-divider"></div>
     </div>
