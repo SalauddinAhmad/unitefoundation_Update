@@ -26,19 +26,109 @@ export const generateApplicationInvoice = (app: Application) => {
     rejected: "প্রত্যাখ্যাত",
   };
 
+  // Human-friendly Bengali labels for the raw field keys stored in extras.
+  const labelMap: Record<string, string> = {
+    name: "নাম",
+    fullName: "পূর্ণ নাম",
+    phone: "মোবাইল",
+    whatsapp: "WhatsApp",
+    mobile: "মোবাইল",
+    email: "ই-মেইল",
+    city: "শহর",
+    district: "জেলা",
+    address: "ঠিকানা",
+    profession: "পেশা",
+    age: "বয়স",
+    dob: "জন্ম তারিখ",
+    bloodGroup: "রক্তের গ্রুপ",
+    nid: "জাতীয় পরিচয়পত্র নং",
+    father: "পিতার নাম",
+    mother: "মাতার নাম",
+    education: "শিক্ষাগত যোগ্যতা",
+    facebook: "ফেসবুক প্রোফাইল",
+    reference: "রেফারেন্স",
+    area: "আগ্রহের ক্ষেত্র",
+    motivation: "আবেদনের উদ্দেশ্য",
+    experience: "অভিজ্ঞতা",
+    availability: "সময় উপলব্ধতা",
+    plan: "পরিকল্পনা",
+    type: "ধরন",
+    paymentMethod: "পেমেন্ট মাধ্যম",
+    transactionId: "ট্রানজেকশন আইডি",
+    field_10: "অতিরিক্ত তথ্য",
+  };
+
+  // Skip fields that are already shown in the top applicant summary table.
+  const duplicateLabels = new Set([
+    "name",
+    "নাম",
+    "পূর্ণ নাম",
+    "আবেদনকারীর পূর্ণ নাম",
+    "phone",
+    "মোবাইল",
+    "whatsapp",
+    "mobile",
+    "email",
+    "ই-মেইল",
+    "ইমেইল",
+    "city",
+    "district",
+    "শহর",
+    "জেলা",
+    "শহর / জেলা",
+    "date",
+    "তারিখ",
+    "আবেদনের তারিখ",
+    "created_at",
+    "submittedAt",
+    "status",
+    "অবস্থা",
+    "id",
+    "নং",
+  ]);
+
+  const isDuplicate = (label: string) => {
+    const normalized = label.trim().toLowerCase();
+    return (
+      duplicateLabels.has(label.trim()) ||
+      duplicateLabels.has(normalized) ||
+      normalized.includes("name") ||
+      normalized.includes("phone") ||
+      normalized.includes("email") ||
+      normalized.includes("mobile") ||
+      normalized.includes("whatsapp") ||
+      normalized.includes("city") ||
+      normalized.includes("district") ||
+      normalized.includes("date") ||
+      normalized.includes("আবেদনের তারিখ") ||
+      normalized.includes("মোবাইল") ||
+      normalized.includes("ইমেইল") ||
+      normalized.includes("শহর")
+    );
+  };
+
   // Pull a photo out of the details, if any
   let photo = "";
-  const sections = (app.details || []).map((s) => ({
-    title: s.title,
-    fields: s.fields.filter((f) => {
-      const v = String(f.value ?? "");
-      if (!photo && isImage(v)) {
-        photo = v;
-        return false;
-      }
-      return v.trim() !== "";
-    }),
-  }));
+  const sections = (app.details || [])
+    .map((s) => ({
+      title: s.title,
+      fields: s.fields
+        .filter((f) => {
+          const v = String(f.value ?? "");
+          if (!photo && isImage(v)) {
+            photo = v;
+            return false;
+          }
+          return v.trim() !== "";
+        })
+        .filter((f) => !isDuplicate(f.label))
+        .map((f) => ({
+          label: labelMap[f.label] || f.label,
+          value: f.value,
+        })),
+    }))
+    .filter((s) => s.fields.length);
+
 
   const printedAt = new Date().toLocaleString("bn-BD");
   const origin = window.location.origin;
