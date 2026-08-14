@@ -11,7 +11,7 @@ import { whatsAppLink } from "@/lib/phone";
 import { toast } from "sonner";
 import { ManualEntryDialog } from "@/components/dashboard/ManualEntryDialog";
 import { appendExtra, removeExtra } from "@/lib/localExtras";
-import { useDeleteApplication } from "@/hooks/api/useDashboardData";
+import { generateApplicationInvoice } from "@/lib/printInvoice";
 
 interface Props {
   title: string;
@@ -420,10 +420,10 @@ const ApplicationDetailSheet = ({
                 <Copy className="h-3.5 w-3.5" /> কপি
               </button>
               <button
-                onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-secondary hover:bg-accent transition"
+                onClick={() => generateApplicationInvoice(app)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition"
               >
-                <Printer className="h-3.5 w-3.5" /> প্রিন্ট
+                <Printer className="h-3.5 w-3.5" /> প্রিন্ট / PDF
               </button>
               {onDelete && (
                 <button
