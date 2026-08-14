@@ -97,7 +97,7 @@ async function processNext() {
 
 function start() {
   if (timer) return;
-  const interval = Math.max(3000, Number(process.env.NEWSLETTER_SEND_INTERVAL_MS || 5000));
+  const interval = Math.max(5000, Number(process.env.NEWSLETTER_SEND_INTERVAL_MS || 8000));
   timer = setInterval(processNext, interval);
   timer.unref?.();
   setTimeout(processNext, 1000).unref?.();
