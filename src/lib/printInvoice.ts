@@ -135,6 +135,7 @@ export const generateApplicationInvoice = (app: Application) => {
         <h1>${esc(organizationName)}</h1>
         <div class="en">${orgNameEn}</div>
         <div class="meta">${esc(address)} &nbsp;·&nbsp; ${esc(website)}</div>
+        <div class="meta">${esc(contactLine)}</div>
       </div>
       <div class="doc-tag">
         <div class="kind">APPLICATION RECORD</div>
