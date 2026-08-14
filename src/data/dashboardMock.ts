@@ -57,7 +57,7 @@ export type Application = {
 export const volunteerApps: Application[] = [
   {
     id: "VOL-0420", name: "তানভীর হাসান", phone: "01711223344", city: "ঢাকা",
-    type: "ত্রাণ বিতরণ", date: "২০২৬-০৫-২৫", status: "new",
+    type: "ত্রাণ বিতরণ", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৫", status: "new",
     email: "tanvir.hasan@example.com", submittedAt: "২০২৬-০৫-২৫ ১০:২৪",
     details: [
       { title: "ব্যক্তিগত তথ্য", fields: [
