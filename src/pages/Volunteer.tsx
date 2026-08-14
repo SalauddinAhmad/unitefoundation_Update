@@ -506,10 +506,9 @@ const MonthlyForm = () => {
   const { data: schema } = useFormSchema("monthly");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
-  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="monthly" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -518,9 +517,7 @@ const MonthlyForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
-            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("career", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
@@ -542,10 +539,9 @@ const MemberForm = () => {
   const { data: schema } = useFormSchema("member");
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0);
-  const [agreed, setAgreed] = useState(false);
 
   if (!schema) return null;
-  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); setAgreed(false); }} />;
+  if (done) return <SuccessCard topic="member" onReset={() => { setDone(false); setResetKey((k) => k + 1); }} />;
   return (
     <>
       <FormHeader title={schema.title} sub={schema.subtitle} />
@@ -554,9 +550,7 @@ const MemberForm = () => {
           key={resetKey}
           schema={schema}
           submitLabel={t("volunteerPage.submit")}
-          extraBeforeSubmit={<TermsCheckbox checked={agreed} onChange={setAgreed} />}
           onSubmit={async (vals) => {
-            if (!guardTerms(agreed)) return;
             const ok = await saveApplication("career", {
               name: stringVal(vals.name),
               phone: stringVal(vals.phone),
