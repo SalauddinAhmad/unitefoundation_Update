@@ -48,6 +48,7 @@ export const generateApplicationInvoice = (app: Application) => {
   }));
 
   const printedAt = new Date().toLocaleString("bn-BD");
+  const origin = window.location.origin;
 
   const html = `<!DOCTYPE html>
 <html lang="bn">
