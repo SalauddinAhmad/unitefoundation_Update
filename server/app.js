@@ -369,9 +369,9 @@ app.use('/email-templates', require('./routes/emailTemplates'));
 app.use('/newsletter', require('./routes/newsletter'));
 app.use('/backups', require('./routes/backups'));
 
-
-
-
+// Persistent newsletter queue: one delivery per interval across all Passenger
+// processes, guarded by a MySQL named lock to protect shared-hosting NPROC.
+require('./services/newsletterQueue').start();
 // --- 404 + errors ---
 app.use((_req, res) => res.status(404).json({ message: 'Not found' }));
 app.use(errorHandler);
@@ -389,6 +389,7 @@ if (require.main === module) {
     console.log(`${signal} received, shutting down API...`);
     server.close(async () => {
       try {
+        require('./services/newsletterQueue').stop();
         await require('./db/pool').end();
         require('./services/mailer').closeTransporter();
       } catch (err) {

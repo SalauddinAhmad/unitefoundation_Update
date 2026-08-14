@@ -76,7 +76,7 @@ router.get('/export.csv', requireAuth, asyncH(async (_req, res) => {
   res.send('\uFEFF' + header + '\n' + body);
 }));
 
-// --- Admin: broadcast to all active subscribers (individual sends) ---------
+// --- Admin: queue a broadcast; the shared-hosting-safe worker sends slowly ---
 router.post('/broadcast', requireAuth, asyncH(async (req, res) => {
   const d = z.object({
     subject: z.string().trim().min(1).max(200),
@@ -105,32 +105,44 @@ router.post('/broadcast', requireAuth, asyncH(async (req, res) => {
     return res.json({ ok: true, test: true, sentTo: d.testTo });
   }
 
-  const [rows] = await pool.execute(
-    "SELECT email FROM newsletter_subscribers WHERE status = 'active'"
+  const [[countRow]] = await pool.execute(
+    "SELECT COUNT(*) AS total FROM newsletter_subscribers WHERE status = 'active'"
   );
-  const emails = rows.map((r) => r.email).filter(Boolean);
-  if (emails.length === 0) return res.json({ ok: true, total: 0, sent: 0, failed: 0 });
+  const total = Number(countRow.total || 0);
+  if (total === 0) return res.json({ ok: true, total: 0, queued: false });
 
-  // Fire-and-forget: send individually in small batches so recipients never see each other
+  const campaignId = uuid();
   const html = buildHtml();
-  const BATCH = Number(process.env.NEWSLETTER_BATCH_SIZE || 10);
-  const DELAY = Number(process.env.NEWSLETTER_BATCH_DELAY_MS || 500);
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    await connection.execute(
+      `INSERT INTO newsletter_campaigns (id, subject, html, total_count)
+       VALUES (?, ?, ?, ?)`,
+      [campaignId, d.subject, html, total]
+    );
+    await connection.execute(
+      `INSERT INTO newsletter_queue (campaign_id, email)
+       SELECT ?, email FROM newsletter_subscribers WHERE status = 'active'`,
+      [campaignId]
+    );
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 
-  (async () => {
-    let sent = 0, failed = 0;
-    for (let i = 0; i < emails.length; i += BATCH) {
-      const chunk = emails.slice(i, i + BATCH);
-      await Promise.all(chunk.map((to) =>
-        sendMail({ to, subject: d.subject, html })
-          .then(() => { sent++; })
-          .catch((err) => { failed++; console.error('[newsletter] send failed:', to, err && err.message); })
-      ));
-      if (i + BATCH < emails.length) await new Promise((r) => setTimeout(r, DELAY));
-    }
-    console.log(`[newsletter] broadcast done — total=${emails.length} sent=${sent} failed=${failed}`);
-  })();
+  res.json({ ok: true, total, queued: true, campaignId });
+}));
 
-  res.json({ ok: true, total: emails.length, queued: true });
+router.get('/campaigns/latest', requireAuth, asyncH(async (_req, res) => {
+  const [rows] = await pool.execute(
+    `SELECT id, subject, status, total_count, sent_count, failed_count, created_at, completed_at
+     FROM newsletter_campaigns ORDER BY created_at DESC LIMIT 10`
+  );
+  res.json(rows);
 }));
 
 module.exports = router;

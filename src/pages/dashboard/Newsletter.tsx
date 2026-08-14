@@ -185,11 +185,11 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
 
   const sendAll = async () => {
     if (!validate()) return;
-    if (!confirm(`${totalActive} জন সাবস্ক্রাইবারকে আলাদা আলাদা ইমেইল পাঠানো হবে। নিশ্চিত?`)) return;
+    if (!confirm(`${totalActive} জন সাবস্ক্রাইবারের ইমেইল নিরাপদ কিউতে যোগ হবে এবং ধীরে ধীরে পাঠানো হবে। নিশ্চিত?`)) return;
     setSending(true);
     try {
       const r: any = await api.post("/newsletter/broadcast", { subject, title, preheader, message, isHtml });
-      toast.success(`${r?.total ?? totalActive} জনকে পাঠানো শুরু হয়েছে (ব্যাকগ্রাউন্ডে)`);
+      toast.success(`${r?.total ?? totalActive}টি ইমেইল কিউতে যোগ হয়েছে—সার্ভারে চাপ না দিয়ে ধীরে ধীরে পাঠানো হবে`);
       onClose();
     } catch (e: any) {
       toast.error(e?.message || "পাঠানো যায়নি");
@@ -207,7 +207,7 @@ const BroadcastModal = ({ totalActive, onClose }: BroadcastModalProps) => {
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <div>
             <h3 className="font-bold text-lg flex items-center gap-2"><Send className="h-4 w-4" /> সবাইকে ইমেইল পাঠান</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">প্রত্যেক সাবস্ক্রাইবারের কাছে আলাদা ইমেইল যাবে ({totalActive} জন)</p>
+            <p className="text-xs text-muted-foreground mt-0.5">নিরাপদ কিউ থেকে পর্যায়ক্রমে আলাদা ইমেইল যাবে ({totalActive} জন)</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-secondary rounded-lg"><X className="h-4 w-4" /></button>
         </div>
