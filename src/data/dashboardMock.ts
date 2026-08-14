@@ -82,10 +82,10 @@ export const volunteerApps: Application[] = [
       ]},
     ],
   },
-  { id: "VOL-0419", name: "সাদিয়া ইসলাম", phone: "01822334455", city: "চট্টগ্রাম", type: "শিক্ষা মেন্টরশিপ", date: "২০২৬-০৫-২৪", status: "reviewing" },
-  { id: "VOL-0418", name: "রাকিবুল হাসান", phone: "01933445566", city: "সিলেট", type: "মিডিয়া ও কনটেন্ট", date: "২০২৬-০৫-২৩", status: "approved" },
-  { id: "VOL-0417", name: "নুসরাত জাহান", phone: "01644556677", city: "রাজশাহী", type: "স্বাস্থ্যসেবা ক্যাম্প", date: "২০২৬-০৫-২২", status: "new" },
-  { id: "VOL-0416", name: "মেহেদী হাসান", phone: "01555667788", city: "খুলনা", type: "ফান্ডরাইজিং", date: "২০২৬-০৫-২১", status: "approved" },
+  { id: "VOL-0419", name: "সাদিয়া ইসলাম", phone: "01822334455", city: "চট্টগ্রাম", type: "শিক্ষা মেন্টরশিপ", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৪", status: "reviewing" },
+  { id: "VOL-0418", name: "রাকিবুল হাসান", phone: "01933445566", city: "সিলেট", type: "মিডিয়া ও কনটেন্ট", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২৩", status: "approved" },
+  { id: "VOL-0417", name: "নুসরাত জাহান", phone: "01644556677", city: "রাজশাহী", type: "স্বাস্থ্যসেবা ক্যাম্প", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২২", status: "new" },
+  { id: "VOL-0416", name: "মেহেদী হাসান", phone: "01555667788", city: "খুলনা", type: "ফান্ডরাইজিং", formName: "স্বেচ্ছাসেবক", date: "২০২৬-০৫-২১", status: "approved" },
 ];
 
 export const memberApps: Application[] = [
