@@ -127,6 +127,8 @@ const Messages = () => {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return list;
+    const q = search.toLowerCase().trim();
+    if (!q) return list;
     return list.filter(
       (m) =>
         m.name.toLowerCase().includes(q) ||
@@ -134,6 +136,7 @@ const Messages = () => {
         m.subject.toLowerCase().includes(q),
     );
   }, [list, search]);
+
 
   const update = (next: MessageEx[]) => { 
     setList(next); 
